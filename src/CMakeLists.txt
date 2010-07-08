@@ -94,6 +94,7 @@ IF(${_hrp2Dynamics_FOUND})
   SET (dynamic-hrp2_plugins_dependencies dynamic)
 ENDIF(${_hrp2Dynamics_FOUND})
 
+SET(dynamic-hrp2_plugins_dependencies dynamic)
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
