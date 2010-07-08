@@ -81,6 +81,8 @@ SET(libs
 	integrator-force
 	angle-estimator
 	waist-attitude-from-sensor
+	dynamic
+	dynamic-hrp2
 )
 
 IF(${_dynamicsJRLJapan_FOUND})
