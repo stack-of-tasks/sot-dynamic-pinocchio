@@ -121,7 +121,9 @@ FOREACH(lib ${libs})
 		)
 	ENDIF(WIN32)
 	
-	ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
+	IF(${lib}_plugins_dependencies)
+		ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
+	ENDIF(${lib}_plugins_dependencies)
 	
 	INSTALL(TARGETS ${lib}
   	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/plugin)
