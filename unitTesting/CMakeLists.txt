@@ -26,7 +26,9 @@ TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
 	integrator-force-rk4
 	integrator-force
 	angle-estimator
-	waist-attitude-from-sensor)
+	waist-attitude-from-sensor
+	dynamic
+	dynamic-hrp2)
   
 	IF (UNIX)  
 		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})
