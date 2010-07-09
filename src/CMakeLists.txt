@@ -126,6 +126,7 @@ FOREACH(lib ${libs})
 	
 	IF(${lib}_plugins_dependencies)
 		ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
+		TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
 	ENDIF(${lib}_plugins_dependencies)
 	
 	INSTALL(TARGETS ${lib}
