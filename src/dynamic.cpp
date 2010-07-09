@@ -955,12 +955,12 @@ commandLine( const std::string& cmdLine,
   else if( cmdLine == "setComputeCom" )
     {
       unsigned int b; cmdArgs >> b;
-      comActivation(b);
+      comActivation((b!=0));
     }
   else if( cmdLine == "setComputeZmp" )
     {
       unsigned int b; cmdArgs >> b;
-      zmpActivation(b);
+      zmpActivation((b!=0));
     }
   else if( cmdLine == "setProperty" )
     {
