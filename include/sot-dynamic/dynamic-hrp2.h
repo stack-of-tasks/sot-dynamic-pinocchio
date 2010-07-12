@@ -38,7 +38,7 @@
 /* --------------------------------------------------------------------- */
 
 #if defined (WIN32) 
-#  if defined (dynamic-hrp2_EXPORTS)
+#  if defined (dynamic_hrp2_EXPORTS)
 #    define SOTDYNAMICHRP2_EXPORT __declspec(dllexport)
 #  else  
 #    define SOTDYNAMICHRP2_EXPORT __declspec(dllimport)

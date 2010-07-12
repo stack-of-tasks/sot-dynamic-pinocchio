@@ -91,6 +91,13 @@ IF(${DYNAMICSJRLJAPAN_FOUND})
 	ENDIF(${_hrp2Dynamics_FOUND})
 ENDIF(${_dynamicsJRLJapan_FOUND})
 
+IF(${_hrp2Dynamics_FOUND})
+  LIST(APPEND libs dynamic-hrp2)
+  SET (dynamic-hrp2_plugins_dependencies dynamic)
+ENDIF(${_hrp2Dynamics_FOUND})
+
+SET(dynamic-hrp2_plugins_dependencies dynamic)
+
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
@@ -120,7 +127,10 @@ FOREACH(lib ${libs})
 		)
 	ENDIF(WIN32)
 	
-	ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
+	IF(${lib}_plugins_dependencies)
+		ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
+		TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
+	ENDIF(${lib}_plugins_dependencies)
 	
 	INSTALL(TARGETS ${lib}
   	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/plugin)

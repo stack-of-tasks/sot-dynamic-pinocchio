@@ -45,7 +45,7 @@ namespace ml = maal::boost;
 /* --------------------------------------------------------------------- */
 
 #if defined (WIN32) 
-#  if defined (waist_attitue_from_sensor_EXPORTS)
+#  if defined (waist_attitude_from_sensor_EXPORTS)
 #    define SOTWAISTATTITUDEFROMSENSOR_EXPORT __declspec(dllexport)
 #  else  
 #    define SOTWAISTATTITUDEFROMSENSOR_EXPORT __declspec(dllimport)
