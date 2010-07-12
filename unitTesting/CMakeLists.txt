@@ -27,8 +27,11 @@ TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
 	integrator-force
 	angle-estimator
 	waist-attitude-from-sensor
-	dynamic
-	dynamic-hrp2)
+	)
+	
+IF(${DYNAMICSJRLJAPAN_FOUND} AND ${_hrp2Dynamics_FOUND})
+	TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic dynamic-hrp2)
+ENDIF(${DYNAMICSJRLJAPAN_FOUND} AND ${_hrp2Dynamics_FOUND})
   
 	IF (UNIX)  
 		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})

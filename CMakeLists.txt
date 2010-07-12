@@ -53,29 +53,63 @@ ELSE(PACKAGE_REQUIREMENTS STREQUAL "")
   SET(PACKAGE_REQUIREMENTS "${PACKAGE_REQUIREMENTS}, ${DYNAMICSJRLJAPAN_REQUIRED}")
 ENDIF(PACKAGE_REQUIREMENTS STREQUAL "")
 
+# --- HRP2DYNAMICS ---------------------------------------
+SET(_hrp2Dynamics_FOUND 0)
+SET(_hrp2Dynamics_REQUIRED "hrp2Dynamics >= 1.3.0")
+#PKG_CHECK_MODULES(_hrp2Dynamics REQUIRED ${_hrp2Dynamics_REQUIRED})
+PKG_CHECK_MODULES(_hrp2Dynamics ${_hrp2Dynamics_REQUIRED})
 
-#
-#  Dependency to package hrp2Dynamics
-#
-SET(HRP2DYNAMICS_FOUND 0)
-SET(HRP2DYNAMICS_REQUIRED "hrp2Dynamics >= 1.3.0")
-PKG_CHECK_MODULES(HRP2DYNAMICS REQUIRED ${HRP2DYNAMICS_REQUIRED})
-EXEC_PROGRAM(${PKG_CONFIG_EXECUTABLE} ARGS  --variable=docdir hrp2Dynamics
-  OUTPUT_VARIABLE HRP2DYNAMICS_DOCDIR)
-MESSAGE(STATUS "pkg-config: ${PKG_CONFIG_EXECUTABLE}")
-MESSAGE(STATUS "HRP2DYNAMICS_DOCDIR=${HRP2DYNAMICS_DOCDIR}")
-SET(HRP2DYNAMICS_FOUND 1)
+IF(${_hrp2Dynamics_FOUND})
+LIST(APPEND PACKAGE_REQUIREMENTS ${_hrp2Dynamics_REQUIRED})
+#  MESSAGE(FATAL_ERROR "Check that package hrp2Dynamics is installed in a directory pointed out by PKG_CONFIG_PATH.")
+ENDIF(${_hrp2Dynamics_FOUND})
 
-IF(NOT ${HRP2DYNAMICS_FOUND})
-  MESSAGE(FATAL_ERROR "Check that package hrp2Dynamics is installed in a directory pointed out by PKG_CONFIG_PATH.")
-ENDIF(NOT ${HRP2DYNAMICS_FOUND})
-  
-IF(PACKAGE_REQUIREMENTS STREQUAL "")
-  SET(PACKAGE_REQUIREMENTS ${HRP2DYNAMICS_REQUIRED})
-ELSE(PACKAGE_REQUIREMENTS STREQUAL "")
-  SET(PACKAGE_REQUIREMENTS "${PACKAGE_REQUIREMENTS}, ${HRP2DYNAMICS_REQUIRED}")
-ENDIF(PACKAGE_REQUIREMENTS STREQUAL "")
+# --- HRP2-10-Optimized ---------------------------------------
+SET(_hrp210optimized_FOUND 0)
+SET(_hrp210optimized_REQUIRED "hrp2-10-optimized >= 1.0")
+#PKG_CHECK_MODULES(_hrp2Dynamics REQUIRED ${_hrp2Dynamics_REQUIRED})
+PKG_CHECK_MODULES(_hrp210optimized ${_hrp210optimized_REQUIRED})
 
+IF(${_hrp210optimized_FOUND})
+LIST(APPEND PACKAGE_REQUIREMENTS ${_hrp210optimized_REQUIRED})
+#  MESSAGE(FATAL_ERROR "Check that package hrp2Dynamics is installed in a directory pointed out by PKG_CONFIG_PATH.")
+ENDIF(${_hrp210optimized_FOUND})
+
+# --- Robots ---------------------------------------
+
+SET(_hrp2_10_small_FOUND 0)
+SET(_hrp2_10_small_package "hrp2_10-small")
+PKG_CHECK_MODULES(_hrp2_10_small ${_hrp2_10_small_package})
+IF(NOT ${_hrp2_10_small_FOUND})
+  MESSAGE(STATUS "hrp2_10_small not found.")
+ELSE(NOT ${_hrp2_10_small_FOUND})
+  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10-small --variable=datadir
+    OUTPUT_VARIABLE HRP2_10-SMALL_DIRECTORY )  
+  MESSAGE(STATUS "HRP2_10-SMALL_DIRECTORY: ${HRP2_10-SMALL_DIRECTORY}") 
+ENDIF(NOT ${_hrp2_10_small_FOUND})
+
+SET(_hrp2_10_small_old_FOUND 0)
+SET(_hrp2_10_small_old_package "hrp2_10-small-old")
+PKG_CHECK_MODULES(_hrp2_10_small_old ${_hrp2_10_small_old_package})
+IF(NOT ${_hrp2_10_small_old_FOUND})
+  MESSAGE(STATUS "hrp2_10_small_old not found.")
+ELSE(NOT ${_hrp2_10_small_old_FOUND})
+  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10-small-old --variable=datadir
+    OUTPUT_VARIABLE HRP2_10-SMALL-OLD_DIRECTORY )  
+  MESSAGE(STATUS "HRP2_10-SMALL-OLD_DIRECTORY: ${HRP2_10-SMALL-OLD_DIRECTORY}") 
+ENDIF(NOT ${_hrp2_10_small_old_FOUND})
+
+
+SET(_hrp2_10_FOUND 0)
+SET(_hrp2_10_package "hrp2_10")
+PKG_CHECK_MODULES(_hrp2_10 ${_hrp2_10_package})
+IF(NOT ${_hrp2_10_FOUND})
+  MESSAGE(STATUS "hrp2_10 not found.")
+ELSE(NOT ${_hrp2_10_FOUND})
+  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10 --variable=datadir
+    OUTPUT_VARIABLE HRP2_10_DIRECTORY )  
+  MESSAGE(STATUS "HRP2_10_DIRECTORY: ${HRP2_10_DIRECTORY}") 
+ENDIF(NOT ${_hrp2_10_FOUND})
 
 #
 #  Dependency to package dynamic-graph

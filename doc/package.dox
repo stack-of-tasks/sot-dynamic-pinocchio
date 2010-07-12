@@ -159,7 +159,7 @@ SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 TAGFILES               = \
 	/home/blue/sot-lib/share/doc/dynamicsJRLJapan/html/dynamicsJRLJapan.doxytag=/home/blue/sot-lib/share/doc/dynamicsJRLJapan/html \
-	/home/blue/sot-lib/share/doc/hrp2Dynamics/html/hrp2Dynamics.doxytag=/home/blue/sot-lib/share/doc/hrp2Dynamics/html \
+	/html/hrp2Dynamics.doxytag=/html \
 	/home/blue/sot-lib/share/doc/dynamic-graph/html/dynamic-graph.doxytag=/home/blue/sot-lib/share/doc/dynamic-graph/html \
 	/home/blue/sot-lib/share/doc/sot-core/html/sot-core.doxytag=/home/blue/sot-lib/share/doc/sot-core/html \
 	/home/blue/sot-lib/share/doc/MatrixAbstractLayer/html/MatrixAbstractLayer.doxytag=/home/blue/sot-lib/share/doc/MatrixAbstractLayer/html

@@ -81,18 +81,15 @@ SET(libs
 	integrator-force
 	angle-estimator
 	waist-attitude-from-sensor
-	dynamic
-	dynamic-hrp2
 )
 
-IF(${_dynamicsJRLJapan_FOUND})
+IF(${DYNAMICSJRLJAPAN_FOUND})
   LIST(APPEND libs dynamic)
+	IF(${_hrp2Dynamics_FOUND})
+	  LIST(APPEND libs dynamic-hrp2)
+	  SET (dynamic-hrp2_plugins_dependencies dynamic)
+	ENDIF(${_hrp2Dynamics_FOUND})
 ENDIF(${_dynamicsJRLJapan_FOUND})
-
-IF(${_hrp2Dynamics_FOUND})
-  LIST(APPEND libs dynamic-hrp2)
-  SET (dynamic-hrp2_plugins_dependencies dynamic)
-ENDIF(${_hrp2Dynamics_FOUND})
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
