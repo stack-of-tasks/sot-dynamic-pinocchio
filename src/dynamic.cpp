@@ -104,9 +104,9 @@ Dynamic( const std::string & name, bool build )
   signalRegistration( jointPositionSIN<<freeFlyerPositionSIN
 		      <<jointVelocitySIN<<freeFlyerVelocitySIN
 		      <<jointAccelerationSIN<<freeFlyerAccelerationSIN);
-  signalRegistration( zmpSOUT<<comSOUT<<JcomSOUT<<footHeightSOUT
-		      <<upperJlSOUT<<lowerJlSOUT<<inertiaSOUT 
-		      <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
+  signalRegistration( zmpSOUT<<comSOUT<<JcomSOUT<<footHeightSOUT);
+	signalRegistration(upperJlSOUT<<lowerJlSOUT<<inertiaSOUT
+			 <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
   signalRegistration( MomentaSOUT << AngularMomentumSOUT );
 
   sotDEBUGOUT(5);
@@ -465,7 +465,7 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
   //  aJoint->computeJacobianJointWrtConfig();
   //res.initFromMotherLib(aJoint->jacobianJointWrtConfig());
 
-	// adaptation to the new dynamic -- to be optimized
+  // adaptation to the new dynamic -- to be optimized
     matrix4d initialTr;
     initialTr = aJoint->initialPosition();
     MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,0,3) = 0.0;
@@ -474,21 +474,21 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
 
     matrix4d invrot;
     for(unsigned int i=0;i<3;i++)
-		for(unsigned int j=0;j<3;j++)
-		{
-			MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j)=0.0;
-			for(unsigned int k=0;k<3;k++)
-			{
-				MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j)+=
-				MAL_S4x4_MATRIX_ACCESS_I_J(res,i,k) *
-				MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,j,k);
-			}
-		}
+      for(unsigned int j=0;j<3;j++)
+        {
+  	MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j)=0.0;
+  	for(unsigned int k=0;k<3;k++)
+  	  {
+  	    MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j)+=
+  	      MAL_S4x4_MATRIX_ACCESS_I_J(res,i,k) *
+  	      MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,j,k);
+  	  }
+        }
     for(unsigned int i=0;i<3;i++)
-		for(unsigned int j=0;j<3;j++)
-		MAL_S4x4_MATRIX_ACCESS_I_J(res,i,j) =
-			MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j);
-	//end of the adaptation
+      for(unsigned int j=0;j<3;j++)
+        MAL_S4x4_MATRIX_ACCESS_I_J(res,i,j) =
+  	MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j);
+    //end of the adaptation
 
 	  
   sotDEBUGOUT(25);
@@ -740,12 +740,16 @@ computeNewtonEuler( int& dummy,int time )
   ml::Vector vel = jointVelocitySIN(time);
   ml::Vector acc = jointAccelerationSIN(time);
 
+  sotDEBUG(5) << "computeNewtonEuler: " << pos << endl;
   firstSINTERN(time);
   if( freeFlyerPositionSIN )
     {
       const ml::Vector& ffpos = freeFlyerPositionSIN(time);
-      for( int i=0;i<6;++i ) pos(i) = ffpos(i); 
-    }
+
+      for( int i=0;i<6;++i ) pos(i) = ffpos(i) ;
+      sotDEBUG(5) << "computeNewtonEuler: (" << name << ") ffpos = " << ffpos << endl;
+   }
+  sotDEBUG(5) << "computeNewtonEuler: (" << name << ") pos = " << pos << endl;
   if( freeFlyerVelocitySIN )
     {
       const ml::Vector& ffvel = freeFlyerVelocitySIN(time);
@@ -806,28 +810,30 @@ initNewtonEuler( int& dummy,int time )
 ml::Vector& Dynamic::
 getUpperJointLimits( ml::Vector& res,const int& time )
 {
-  sotDEBUGIN(25);
+  sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
   res.resize( NBJ );
   for( unsigned int i=0;i<NBJ;++i )
     {
       res(i)=m_HDR->upperBoundDof( i );
     }
-  sotDEBUGOUT(25);
+  sotDEBUG(15) << "upperLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
   return res;
 }
 
 ml::Vector& Dynamic::
 getLowerJointLimits( ml::Vector& res,const int& time )
 {
-  sotDEBUGIN(25);
+  sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
   res.resize( NBJ );
   for( unsigned int i=0;i<NBJ;++i )
     {
       res(i)=m_HDR->lowerBoundDof( i );
     }
-  sotDEBUGOUT(25);
+  sotDEBUG(15) << "lowerLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
   return res;
 }
 
