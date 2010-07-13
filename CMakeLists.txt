@@ -62,6 +62,7 @@ PKG_CHECK_MODULES(_hrp2Dynamics ${_hrp2Dynamics_REQUIRED})
 IF(${_hrp2Dynamics_FOUND})
 LIST(APPEND PACKAGE_REQUIREMENTS ${_hrp2Dynamics_REQUIRED})
 #  MESSAGE(FATAL_ERROR "Check that package hrp2Dynamics is installed in a directory pointed out by PKG_CONFIG_PATH.")
+MESSAGE("h2D libs are '${_hrp2Dynamics_LIBRARIES}'")
 ENDIF(${_hrp2Dynamics_FOUND})
 
 # --- HRP2-10-Optimized ---------------------------------------
