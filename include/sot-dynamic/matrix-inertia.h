@@ -72,7 +72,7 @@ private:
  
   std::vector< ml::Matrix >  Ic;
   std::vector< ml::Vector >      phi;
-  std::vector< sotMatrixTwist >  iVpi;
+  std::vector< MatrixTwist >  iVpi;
   std::vector< MatrixForce >  iVpiT;
   ml::Matrix inertia_;
 

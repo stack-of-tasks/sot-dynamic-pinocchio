@@ -2,8 +2,6 @@
 #  Copyright 
 # 
 
-SET(EXECUTABLE_NAME test${PROJECT_NAME})
-
 ADD_DEFINITIONS(-DDEBUG=2)
 
 # provide path to library libdynamic-graph.so
@@ -12,44 +10,62 @@ LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
 # provide path to library libsot-core.so
 LINK_DIRECTORIES(${SOT_CORE_LIBRARY_DIRS})
 
-ADD_EXECUTABLE(${EXECUTABLE_NAME}
-  dummy.cpp)
-
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 
 LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
 
-TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
-  	zmpreffromcom
-	force-compensation
-	integrator-force-exact
-	mass-apparent
-	integrator-force-rk4
-	integrator-force
-	angle-estimator
-	waist-attitude-from-sensor
-	)
-  
-	IF (UNIX)  
-		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})
-		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${SOT_CORE_LIBRARIES})
-		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${MATRIXABSTRACTLAYER_LIBRARIES})
-		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${_hrp2Dynamics_LIBRARIES})
-		TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMICSJRLJAPAN_LIBRARIES})
-		
+# Add MatrixAbstractLayer compilation flags and link to library libMatrixAbstractLayer.so
+ADD_DEFINITIONS(${MATRIXABSTRACTLAYER_CFLAGS})
+
+IF(WIN32)
+foreach(dlink ${MATRIXABSTRACTLAYER_LDFLAGS})
+	SET ( ${PROJECT_NAME}_src_LDFLAGS "${${PROJECT_NAME}_src_LDFLAGS}  ${dlink}")
+endforeach(dlink)
+ENDIF(WIN32)
+
+SET(tests
+	dummy
+	test_djj
+	test_dyn
+	test_results)
+
+FOREACH(test ${tests})
+	SET(EXECUTABLE_NAME "${test}_exe")
+	ADD_EXECUTABLE(${EXECUTABLE_NAME}
+	  ${test}.cpp)
+	
+	TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
+	  	zmpreffromcom
+		force-compensation
+		integrator-force-exact
+		mass-apparent
+		integrator-force-rk4
+		integrator-force
+		angle-estimator
+		waist-attitude-from-sensor
+		)
+	  
+		IF (UNIX)  
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${SOT_CORE_LIBRARIES})
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${MATRIXABSTRACTLAYER_LIBRARIES})
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${_hrp2Dynamics_LIBRARIES})
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMICSJRLJAPAN_LIBRARIES})
+		ENDIF(UNIX)
+
 		IF(${DYNAMICSJRLJAPAN_FOUND})
 			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic)
 			IF(${_hrp2Dynamics_FOUND})
 				TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-hrp2)
 			ENDIF(${_hrp2Dynamics_FOUND})
 		ENDIF(${DYNAMICSJRLJAPAN_FOUND})
-	ENDIF(UNIX)
+		
+		IF(WIN32)
+		SET_TARGET_PROPERTIES(${EXECUTABLE_NAME}
+		 PROPERTIES
+		  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
+		)
+		ENDIF(WIN32)
 	
-	IF(WIN32)
-	SET_TARGET_PROPERTIES(${EXECUTABLE_NAME}
-	 PROPERTIES
-	  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
-	)
-	ENDIF(WIN32)
-
-ADD_TEST(dummy ${EXECUTABLE_NAME})
+	ADD_TEST(${test} ${EXECUTABLE_NAME})
+ENDFOREACH(test)
