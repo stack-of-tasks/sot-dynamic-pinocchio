@@ -85,10 +85,10 @@ SET(libs
 
 IF(${DYNAMICSJRLJAPAN_FOUND})
   LIST(APPEND libs dynamic)
-	IF(${_hrp2Dynamics_FOUND})
+	IF(${HRP2DYNAMICS_FOUND})
 	  LIST(APPEND libs dynamic-hrp2)
 	  SET (dynamic-hrp2_plugins_dependencies dynamic)
-	ENDIF(${_hrp2Dynamics_FOUND})
+	ENDIF(${HRP2DYNAMICS_FOUND})
 ENDIF(${DYNAMICSJRLJAPAN_FOUND})
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
@@ -109,7 +109,7 @@ FOREACH(lib ${libs})
 		TARGET_LINK_LIBRARIES(${lib} ${DYNAMIC_GRAPH_LIBRARIES})
 		TARGET_LINK_LIBRARIES(${lib} ${SOT_CORE_LIBRARIES})
 		TARGET_LINK_LIBRARIES(${lib} ${MATRIXABSTRACTLAYER_LIBRARIES})
-		TARGET_LINK_LIBRARIES(${lib} "hrp2Dynamics")
+		TARGET_LINK_LIBRARIES(${lib} ${HRP2DYNAMICS_LIBRARIES})
 		TARGET_LINK_LIBRARIES(${lib} ${DYNAMICSJRLJAPAN_LIBRARIES})
 	ENDIF(UNIX)
 	
