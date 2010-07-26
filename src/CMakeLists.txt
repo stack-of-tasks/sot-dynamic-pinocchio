@@ -50,6 +50,26 @@ IF(${DYNAMICSJRLJAPAN_FOUND})
 	ENDIF(${HRP2DYNAMICS_FOUND})
 ENDIF(${DYNAMICSJRLJAPAN_FOUND})
 
+IF(${_hrp210optimized_FOUND})
+ 
+ MESSAGE(STATUS "A MODIFIER")
+ 
+  LIST(APPEND libs dynamic-hrp2_10)
+  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_plugins_compile_flags 
+       ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+  SET(dynamic-hrp2_10_plugins_link_flags 
+       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+
+  LIST(APPEND libs dynamic-hrp2_10_old)
+  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_old_plugins_compile_flags 
+       ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+  SET(dynamic-hrp2_10_old_plugins_link_flags 
+       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+
+ENDIF(${_hrp210optimized_FOUND})
+
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
@@ -78,6 +98,10 @@ FOREACH(lib ${libs})
 		  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
 		)
 	ENDIF(WIN32)
+	SET_TARGET_PROPERTIES(${lib}
+		PROPERTIES
+		COMPILE_FLAGS "${${lib}_plugins_compile_flags}"
+		LINK_FLAGS "${${lib}_plugins_link_flags}")
 	
 	IF(${lib}_plugins_dependencies)
 		ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
