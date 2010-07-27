@@ -146,6 +146,10 @@ class SOTDYNAMIC_EXPORT Dynamic
 			  const unsigned int & bodyRank );
   void destroyPositionSignal( const std::string& signame );
   dg::SignalTimeDependent< ml::Vector,int >&
+      createVelocitySignal( const std::string& signame,
+  			     const unsigned int & bodyRank );
+    void destroyVelocitySignal( const std::string& signame );
+  dg::SignalTimeDependent< ml::Vector,int >&
     createAccelerationSignal( const std::string& signame,
 			     const unsigned int & bodyRank );
   void destroyAccelerationSignal( const std::string& signame );
@@ -185,6 +189,7 @@ class SOTDYNAMIC_EXPORT Dynamic
 
   dg::SignalTimeDependent<ml::Matrix,int>& jacobiansSOUT( const std::string& name );
   dg::SignalTimeDependent<MatrixHomogeneous,int>& positionsSOUT( const std::string& name );
+  dg::SignalTimeDependent<ml::Vector,int>& velocitiesSOUT( const std::string& name );
   dg::SignalTimeDependent<ml::Vector,int>& accelerationsSOUT( const std::string& name );
 
   dg::SignalTimeDependent<double,int> footHeightSOUT;
@@ -210,6 +215,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   ml::Matrix& computeGenericJacobian( CjrlJoint* j,ml::Matrix& res,int time );
   ml::Matrix& computeGenericEndeffJacobian( CjrlJoint* j,ml::Matrix& res,int time );
   MatrixHomogeneous& computeGenericPosition( CjrlJoint* j,MatrixHomogeneous& res,int time );
+  ml::Vector& computeGenericVelocity( CjrlJoint* j,ml::Vector& res,int time );
   ml::Vector& computeGenericAcceleration( CjrlJoint* j,ml::Vector& res,int time );
 
   ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );

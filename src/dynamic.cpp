@@ -331,6 +331,64 @@ destroyPositionSignal( const std::string& signame )
   delete sig;
 }
 
+/* --- VELOCITY --- */
+/* --- VELOCITY --- */
+/* --- VELOCITY --- */
+
+SignalTimeDependent< ml::Vector,int >& Dynamic::
+createVelocitySignal( const std::string& signame,const unsigned int& bodyRank )
+{
+  sotDEBUGIN(15);
+
+  vector<CjrlJoint *> aVec = m_HDR->jointVector();
+
+  if( bodyRank>=aVec.size() )
+    {
+      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
+				     "Joint rank is too high.",
+				     "(rank=%d, while creating velocity signal).",
+				     bodyRank );
+    }
+  CjrlJoint * aJoint = aVec[bodyRank];
+
+  SignalTimeDependent< ml::Vector,int > * sig
+    = new SignalTimeDependent< ml::Vector,int >
+    ( boost::bind(&Dynamic::computeGenericVelocity,this,aJoint,_1,_2),
+      newtonEulerSINTERN,
+      "sotDynamic("+name+")::output(ml::Vector)::"+signame );
+  genericSignalRefs.push_back( sig );
+  signalRegistration( *sig );
+
+  sotDEBUGOUT(15);
+  return *sig;
+}
+
+
+void Dynamic::
+destroyVelocitySignal( const std::string& signame )
+{
+  bool deletable = false;
+  SignalTimeDependent< ml::Vector,int > * sig = & velocitiesSOUT( signame );
+  for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
+	iter != genericSignalRefs.end();
+	++iter )
+    {
+      if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
+    }
+
+  if(! deletable )
+    {
+      SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
+				     "Cannot destroy signal",
+				     " (while trying to remove generic pos. signal <%s>).",
+				     signame.c_str() );
+    }
+
+  signalDeregistration( signame );
+
+  delete sig;
+}
+
 /* --- ACCELERATION --- */
 /* --- ACCELERATION --- */
 /* --- ACCELERATION --- */
@@ -491,6 +549,26 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
     //end of the adaptation
 
 	  
+  sotDEBUGOUT(25);
+  return res;
+}
+
+ml::Vector& Dynamic::
+computeGenericVelocity( CjrlJoint* j,ml::Vector& res,int time )
+{
+  sotDEBUGIN(25);
+  newtonEulerSINTERN(time);
+  CjrlRigidVelocity aRV = j->jointVelocity();
+  vector3d al= aRV.linearVelocity();
+  vector3d ar= aRV.rotationVelocity();
+
+  res.resize(6);
+  for( int i=0;i<3;++i )
+    {
+      res(i)=al(i);
+      res(i+3)=ar(i);
+    }
+
   sotDEBUGOUT(25);
   return res;
 }
@@ -714,6 +792,23 @@ positionsSOUT( const std::string& name )
 				  name.c_str()); 
   }
 }
+
+dg::SignalTimeDependent<ml::Vector,int>& Dynamic::
+velocitiesSOUT( const std::string& name )
+{
+  SignalBase<int> & sigabs = Entity::getSignal(name);
+  try {
+    dg::SignalTimeDependent<ml::Vector,int>& res
+      = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+    return res;
+ } catch( std::bad_cast e ) {
+    SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+				  "Impossible cast.",
+				  " (while getting signal <%s> of type Vector.",
+				  name.c_str());
+  }
+}
+
 dg::SignalTimeDependent<ml::Vector,int>& Dynamic::
 accelerationsSOUT( const std::string& name )
 {
@@ -925,6 +1020,17 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       destroyPositionSignal(Jname);
+    }
+  else if( cmdLine == "createVelocity" )
+    {
+      std::string Jname; cmdArgs >> Jname;
+      unsigned int rank; cmdArgs >> rank;
+      createVelocitySignal(Jname,rank);
+    }
+  else if( cmdLine == "destroyVelocity" )
+    {
+      std::string Jname; cmdArgs >> Jname;
+      destroyVelocitySignal(Jname);
     }
   else if( cmdLine == "createAcceleration" )
     {
