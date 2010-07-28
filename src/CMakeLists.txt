@@ -51,9 +51,6 @@ IF(${DYNAMICSJRLJAPAN_FOUND})
 ENDIF(${DYNAMICSJRLJAPAN_FOUND})
 
 IF(${_hrp210optimized_FOUND})
- 
- MESSAGE(STATUS "A MODIFIER")
- 
   LIST(APPEND libs dynamic-hrp2_10)
   SET (dynamic-hrp2_10_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_plugins_compile_flags 
