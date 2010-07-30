@@ -215,13 +215,56 @@ SET(install_pkg_libdir "\${libdir}")
 SET(install_pkg_datarootdir "\${datarootdir}")
 SET(install_pkg_include_dir "\${includedir}")
 
+# the shared libraries that will be listed in the .pc file
+SET(libs
+	zmpreffromcom
+	force-compensation
+	integrator-force-exact
+	mass-apparent
+	integrator-force-rk4
+	integrator-force
+	angle-estimator
+	waist-attitude-from-sensor
+)
+
+IF(${DYNAMICSJRLJAPAN_FOUND})
+  LIST(APPEND libs dynamic)
+	IF(${HRP2DYNAMICS_FOUND})
+	  LIST(APPEND libs dynamic-hrp2)
+	  SET (dynamic-hrp2_plugins_dependencies dynamic)
+	ENDIF(${HRP2DYNAMICS_FOUND})
+ENDIF(${DYNAMICSJRLJAPAN_FOUND})
+
+IF(${_hrp210optimized_FOUND})
+  LIST(APPEND libs dynamic-hrp2_10)
+  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_plugins_compile_flags 
+       ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+  SET(dynamic-hrp2_10_plugins_link_flags 
+       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+
+  LIST(APPEND libs dynamic-hrp2_10_old)
+  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_old_plugins_compile_flags 
+       ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+  SET(dynamic-hrp2_10_old_plugins_link_flags 
+       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+
+ENDIF(${_hrp210optimized_FOUND})	
+
+# Add libs to the .pc file
+FOREACH(lib ${libs})
+	SET(pc-libs "${pc-libs} ${LIBINCL_KW}${lib}${CMAKE_IMPORT_LIBRARY_SUFFIX}")
+ENDFOREACH(lib)
+
 IF(UNIX)
-  SET (${PROJECT_NAME}_LDFLAGS "-Wl,-R${install_pkg_libdir} ${${PROJECT_NAME}_LDFLAGS}")
+  SET (${PROJECT_NAME}_LDFLAGS "-Wl,-R${install_pkg_libdir} ${pc-libs} ${${PROJECT_NAME}_LDFLAGS}")
 ENDIF(UNIX)
 
 IF(WIN32)
-  SET (${PROJECT_NAME}_LDFLAGS "${${PROJECT_NAME}_LDFLAGS}")
+  SET (${PROJECT_NAME}_LDFLAGS "${pc-libs}")
 ENDIF(WIN32)
+
 
 # Install the file in the appropriate place.
 SET(install_libdir_pkgconfig ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
