@@ -90,10 +90,7 @@ FOREACH(lib ${libs})
 	ENDIF(UNIX)
 	
 	IF(WIN32)
-		SET_TARGET_PROPERTIES(${lib}
-		  PROPERTIES
-		  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
-		)
+		SET(${lib}_plugins_link_flags "${${PROJECT_NAME}_src_LDFLAGS} ${${lib}_plugins_link_flags}")
 	ENDIF(WIN32)
 	SET_TARGET_PROPERTIES(${lib}
 		PROPERTIES
