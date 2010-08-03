@@ -21,8 +21,6 @@
 #include <sot-core/debug.h>
 #include <dynamic-graph/factory.h>
 
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
-
 using namespace sot;
 using namespace dynamicgraph;
 

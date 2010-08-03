@@ -10,7 +10,6 @@
  * For license see license.txt
  *
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
 
 #include <sot-dynamic/dynamic-hrp2_10_old.h>
 #include <sot-core/debug.h>

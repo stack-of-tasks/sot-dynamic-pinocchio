@@ -26,9 +26,9 @@
 /* --- INCLUDE --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
 /* Matrix */
 #include <MatrixAbstractLayer/boost.h>
+#include "MatrixAbstractLayer/MatrixAbstractLayer.h"
 namespace ml = maal::boost;
 
 /* JRL dynamic */
