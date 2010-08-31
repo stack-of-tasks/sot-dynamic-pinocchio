@@ -52,6 +52,7 @@ ENDIF(${DYNAMICSJRLJAPAN_FOUND})
 
 IF(${_hrp210optimized_FOUND})
   LIST(APPEND libs dynamic-hrp2_10)
+  SET (dynamic-hrp2_10_additional_libs ${_hrp210optimized_LIBRARIES})
   SET (dynamic-hrp2_10_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_plugins_compile_flags 
        ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
@@ -59,7 +60,8 @@ IF(${_hrp210optimized_FOUND})
        ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
 
   LIST(APPEND libs dynamic-hrp2_10_old)
-  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET (dynamic-hrp2_10_old_additional_libs ${_hrp210optimized_LIBRARIES})
+  SET (dynamic-hrp2_10_old_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_old_plugins_compile_flags 
        ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
   SET(dynamic-hrp2_10_old_plugins_link_flags 
@@ -87,11 +89,13 @@ FOREACH(lib ${libs})
 		TARGET_LINK_LIBRARIES(${lib} ${MATRIXABSTRACTLAYER_LIBRARIES})
 		TARGET_LINK_LIBRARIES(${lib} ${HRP2DYNAMICS_LIBRARIES})
 		TARGET_LINK_LIBRARIES(${lib} ${DYNAMICSJRLJAPAN_LIBRARIES})
+		TARGET_LINK_LIBRARIES(${lib} "${${lib}_additional_libs}")
 	ENDIF(UNIX)
 	
 	IF(WIN32)
 		SET(${lib}_plugins_link_flags "${${PROJECT_NAME}_src_LDFLAGS} ${${lib}_plugins_link_flags}")
 	ENDIF(WIN32)
+	
 	SET_TARGET_PROPERTIES(${lib}
 		PROPERTIES
 		COMPILE_FLAGS "${${lib}_plugins_compile_flags}"
