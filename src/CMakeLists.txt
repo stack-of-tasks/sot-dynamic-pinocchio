@@ -107,7 +107,7 @@ FOREACH(lib ${libs})
 	ENDIF(${lib}_plugins_dependencies)
 	
 	INSTALL(TARGETS ${lib}
-  	DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/plugin)
+  	DESTINATION lib/plugin)
 ENDFOREACH(lib)
 
   
