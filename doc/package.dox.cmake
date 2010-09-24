@@ -209,7 +209,7 @@ SHOW_DIRECTORIES       = NO
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-FILE_PATTERNS          = *.hh *.idl
+FILE_PATTERNS          = *.h *.hh *.idl
 EXCLUDE_PATTERNS       = 
 INPUT                  = ${${PROJECT_NAME}_SOURCE_DIR}/include \
                          ${CMAKE_CURRENT_SOURCE_DIR}/additionalDoc

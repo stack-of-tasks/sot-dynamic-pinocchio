@@ -25,6 +25,21 @@ IF(UNIX)
   SET(LIB_EXT "")
 ENDIF(UNIX)
 
+# -------------------------------------------------------------------
+# --- UTILS ---------------------------------------------------------
+# -------------------------------------------------------------------
+MACRO(LIST2STRING _VAR_ARG _LIST_ARG)
+  SET(${_VAR_ARG})
+  SET(_FIRST_STEP 1)
+  FOREACH(_ITEM ${ARGV})
+     IF(_FIRST_STEP)
+	SET(_FIRST_STEP 0)
+     ELSE(_FIRST_STEP)
+           SET (${_VAR_ARG} "${${_VAR_ARG}} ${_ITEM}")
+     ENDIF(_FIRST_STEP)
+  ENDFOREACH(_ITEM)
+ENDMACRO(LIST2STRING)
+
 #
 # Look for dependencies
 #
@@ -58,12 +73,13 @@ ENDIF(PACKAGE_REQUIREMENTS STREQUAL "")
 # --- HRP2DYNAMICS ---------------------------------------
 SET(HRP2DYNAMICS_FOUND 0)
 SET(HRP2DYNAMICS_REQUIRED "hrp2Dynamics >= 1.3.0")
-#PKG_CHECK_MODULES(HRP2DYNAMICS REQUIRED ${HRP2DYNAMICS_REQUIRED})
-PKG_CHECK_MODULES(HRP2DYNAMICS ${HRP2DYNAMICS_REQUIRED})
+PKG_CHECK_MODULES(HRP2DYNAMICS REQUIRED ${HRP2DYNAMICS_REQUIRED})
 
 IF(${HRP2DYNAMICS_FOUND})
 SET(PACKAGE_REQUIREMENTS "${PACKAGE_REQUIREMENTS}, ${HRP2DYNAMICS_REQUIRED}")
 #  MESSAGE(FATAL_ERROR "Check that package hrp2Dynamics is installed in a directory pointed out by PKG_CONFIG_PATH.")
+LIST2STRING(temp ${HRP2DYNAMICS_LIBRARIES})
+#SET(HRP2DYNAMICS_LIBRARIES ${temp})
 MESSAGE(STATUS "h2D libs are '${HRP2DYNAMICS_LIBRARIES}'")
 ENDIF(${HRP2DYNAMICS_FOUND})
 
