@@ -56,18 +56,19 @@ IF(${_hrp210optimized_FOUND})
   SET (dynamic-hrp2_10_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_plugins_compile_flags 
        ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
-  SET(dynamic-hrp2_10_plugins_link_flags 
-       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
 
   LIST(APPEND libs dynamic-hrp2_10_old)
   SET (dynamic-hrp2_10_old_additional_libs ${_hrp210optimized_LIBRARIES})
   SET (dynamic-hrp2_10_old_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_old_plugins_compile_flags 
        ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
-  SET(dynamic-hrp2_10_old_plugins_link_flags 
-       ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
 
 ENDIF(${_hrp210optimized_FOUND})
+
+IF(NOT UNIX)
+	SET(dynamic-hrp2_10_plugins_link_flags ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+	SET(dynamic-hrp2_10_old_plugins_link_flags ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+ENDIF(NOT UNIX)
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
