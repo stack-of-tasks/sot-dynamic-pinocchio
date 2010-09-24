@@ -17,10 +17,12 @@ LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
 # Add MatrixAbstractLayer compilation flags and link to library libMatrixAbstractLayer.so
 ADD_DEFINITIONS(${MATRIXABSTRACTLAYER_CFLAGS})
 
+IF(NOT UNIX)
 foreach(dlink ${MATRIXABSTRACTLAYER_LDFLAGS} ${DYNAMICSJRLJAPAN_LDFLAGS} 
 			  ${HRP2DYNAMICS_LDFLAGS} ${DYNAMIC_GRAPH_LDFLAGS}  ${SOT_CORE_LDFLAGS})
 	SET ( ${PROJECT_NAME}_src_LDFLAGS "${${PROJECT_NAME}_src_LDFLAGS}  ${dlink}")
 endforeach(dlink)
+ENDIF(NOT UNIX)
 
 SET(tests
 	dummy
