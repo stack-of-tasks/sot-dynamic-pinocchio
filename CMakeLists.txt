@@ -102,7 +102,7 @@ PKG_CHECK_MODULES(_hrp2_10_small ${_hrp2_10_small_package})
 IF(NOT ${_hrp2_10_small_FOUND})
   MESSAGE(STATUS "hrp2_10_small not found.")
 ELSE(NOT ${_hrp2_10_small_FOUND})
-  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10-small --variable=datadir
+  EXEC_PROGRAM(${PKG_CONFIG_EXECUTABLE} ARGS hrp2_10-small --variable=datadir
     OUTPUT_VARIABLE HRP2_10-SMALL_DIRECTORY )  
   MESSAGE(STATUS "HRP2_10-SMALL_DIRECTORY: ${HRP2_10-SMALL_DIRECTORY}") 
 ENDIF(NOT ${_hrp2_10_small_FOUND})
@@ -113,7 +113,7 @@ PKG_CHECK_MODULES(_hrp2_10_small_old ${_hrp2_10_small_old_package})
 IF(NOT ${_hrp2_10_small_old_FOUND})
   MESSAGE(STATUS "hrp2_10_small_old not found.")
 ELSE(NOT ${_hrp2_10_small_old_FOUND})
-  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10-small-old --variable=datadir
+  EXEC_PROGRAM(${PKG_CONFIG_EXECUTABLE} ARGS hrp2_10-small-old --variable=datadir
     OUTPUT_VARIABLE HRP2_10-SMALL-OLD_DIRECTORY )  
   MESSAGE(STATUS "HRP2_10-SMALL-OLD_DIRECTORY: ${HRP2_10-SMALL-OLD_DIRECTORY}") 
 ENDIF(NOT ${_hrp2_10_small_old_FOUND})
@@ -125,7 +125,7 @@ PKG_CHECK_MODULES(_hrp2_10 ${_hrp2_10_package})
 IF(NOT ${_hrp2_10_FOUND})
   MESSAGE(STATUS "hrp2_10 not found.")
 ELSE(NOT ${_hrp2_10_FOUND})
-  EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS hrp2_10 --variable=datadir
+  EXEC_PROGRAM(${PKG_CONFIG_EXECUTABLE} ARGS hrp2_10 --variable=datadir
     OUTPUT_VARIABLE HRP2_10_DIRECTORY )  
   MESSAGE(STATUS "HRP2_10_DIRECTORY: ${HRP2_10_DIRECTORY}") 
 ENDIF(NOT ${_hrp2_10_FOUND})
