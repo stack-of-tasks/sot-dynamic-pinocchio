@@ -10,7 +10,6 @@ Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6),
 #FIXME: missing libjrl-dynamics
 #FIXME: missing hrp2Dynamics
 #FIXME: missing hrp2-10-optimized
-
 Standards-Version: 3.8.4
 #Vcs-Git:
 #Vcs-browser:
@@ -29,11 +28,9 @@ Description: dynamic computation plug-in for dynamic graph
  .
  This package contains development files (headers and pkg-config file).
 
-
 Package: libsot-dynamic1.0.0.99
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: the hierarchichal task solver plug-in
 Description: dynamic computation plug-in for dynamic graph
  This package provides dynamic computation plug-in for dynamic-graph.
  It provides support for jrl-dynamics and abstract-robot-dynamics algorithms
