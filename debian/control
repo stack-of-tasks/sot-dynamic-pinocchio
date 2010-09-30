@@ -5,7 +5,7 @@ Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6),
 	       doxygen (>= 1.6.3),
 	       pkg-config (>= 0.22),
 	       libjrl-mal-dev (>= 1.9.0.99),
-	       libjrl-dynamics-dev (>= 1.19.1.99),
+	       libjrl-dynamics-dev (>= 1.19.1),
 	       libdynamic-graph-dev (>= 1.0.0.99),
 	       libsot-core-dev (>= 1.0.0.99)
 #FIXME: missing libjrl-dynamics
