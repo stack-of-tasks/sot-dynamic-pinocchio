@@ -1,0 +1,54 @@
+Source: sot-dynamic
+Priority: extra
+Maintainer: Thomas Moulard <thomas.moulard@gmail.com>
+Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6),
+	       doxygen (>= 1.6.3),
+	       pkg-config (>= 0.22),
+	       libjrl-mal-dev (>= 1.9.0.99),
+	       libjrl-dynamics-dev (>= 1.19.1),
+	       libdynamic-graph-dev (>= 1.0.0.99),
+	       libsot-core-dev (>= 1.0.0.99),
+	       libjrl-dynamics-dev (>= 1.19.1.99),
+	       libhrp2-dynamics-dev (>= 1.5.1.99)
+#FIXME: missing hrp2-10-optimized
+Standards-Version: 3.8.4
+#Vcs-Git:
+#Vcs-browser:
+Section: libs
+#Homepage:
+
+Package: libsot-dynamic-dev
+Section: libdevel
+Architecture: any
+Depends: libjrl-mal-dev (>= 1.9.0.99), libdynamic-graph-dev (>= 1.0.0.99), libsot-core-dev (>= 1.0.0.99), libjrl-dynamics-dev (>= 1.19.1.99), libhrp2-dynamics-dev (>= 1.5.1.99), libsot-dynamic1.0.0.99 (= ${binary:Version}), ${misc:Depends}
+Suggests: libsot-dynamic-doc
+Description: dynamic computation plug-in for dynamic graph
+ This package provides dynamic computation plug-in for dynamic-graph.
+ It provides support for jrl-dynamics and abstract-robot-dynamics algorithms
+ into the dynamic-graph data-flow.
+ .
+ This package contains development files (headers and pkg-config file).
+
+Package: libsot-dynamic1.0.0.99
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: dynamic computation plug-in for dynamic graph
+ This package provides dynamic computation plug-in for dynamic-graph.
+ It provides support for jrl-dynamics and abstract-robot-dynamics algorithms
+ into the dynamic-graph data-flow.
+ .
+ This package contains the dynamic graph plug-ins and versioned shared
+ libraries.
+
+
+Package: libsot-dynamic-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: libdynamic-graph-doc
+Description: documentation for the dynamic computation plug-in for dynamic graph
+ This package provides dynamic computation plug-in for dynamic-graph.
+ It provides support for jrl-dynamics and abstract-robot-dynamics algorithms
+ into the dynamic-graph data-flow.
+ .
+ This package contains the Doxygen documentation.

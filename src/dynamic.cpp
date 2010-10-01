@@ -1,19 +1,23 @@
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- * Copyright Projet JRL-Japan, 2007-2009
- *+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+ * Copyright 2010,
+ * François Bleibel,
+ * Olivier Stasse,
  *
- * File:      Dynamic.h
- * Project:   SOT
- * Author:    Nicolas Mansard, Olivier Stasse
+ * CNRS/AIST
  *
- * Description
- * ============
- * 
- * \file This object provides geometric, kinematic and dynamic
- *  information on a robot described through the dynamicsJRLJapan library.
- *
- *
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+ * This file is part of sot-dynamic.
+ * sot-dynamic is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ * sot-dynamic is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.  You should
+ * have received a copy of the GNU Lesser General Public License along
+ * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <MatrixAbstractLayer/MatrixAbstractLayer.h>
 
 #include <sot-dynamic/dynamic.h>

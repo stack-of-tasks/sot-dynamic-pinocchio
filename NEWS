@@ -44,4 +44,3 @@ New in version 1.1 - 2010/09/30
       SET_TARGET_PROPERTIES are not cumulative
       Add missing inclusion, mandatory for Win32.
       Correct a typo preventing the good use of pkg-config
-
