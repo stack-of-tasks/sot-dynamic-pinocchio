@@ -10,10 +10,10 @@ Build-Depends: debhelper (>= 7.0.50~), cmake (>= 2.6),
 	       libsot-core-dev (>= 1.0.0.99),
 	       libjrl-dynamics-dev (>= 1.19.1.99),
 	       libhrp2-dynamics-dev (>= 1.5.1.99),
-	       libhrp2-10-optimized (>= 1.0.0.99),
+	       libhrp2-10-optimized1.0.0.99 (>= 1.0.0.99),
 	       hrp2-10-data (>= 1.0.0.99),
-	       hrp2-14-data (>= 1.0.0.99),
-	       hrp2-14-smalldata (>= 1.0.0.99),
+	       hrp2-14-data (>= 1.7.5),
+	       hrp2-14-small-data (>= 1.0.0.99),
 #FIXME: missing hrp2-10-optimized
 Standards-Version: 3.8.4
 #Vcs-Git:
@@ -24,7 +24,7 @@ Section: libs
 Package: libsot-dynamic-dev
 Section: libdevel
 Architecture: any
-Depends: libjrl-mal-dev (>= 1.9.0.99), libdynamic-graph-dev (>= 1.0.0.99), libsot-core-dev (>= 1.0.0.99), libjrl-dynamics-dev (>= 1.19.1.99), libhrp2-dynamics-dev (>= 1.5.1.99), hrp2-10-data (>= 1.0.0.99), hrp2-14-data (>= 1.0.0.99), hrp2-14-small-data (>= 1.0.0.99),libhrp2-10-optimized (>= 1.0.0.99), libsot-dynamic1.0.0.99 (= ${binary:Version}), ${misc:Depends}
+Depends: libjrl-mal-dev (>= 1.9.0.99), libdynamic-graph-dev (>= 1.0.0.99), libsot-core-dev (>= 1.0.0.99), libjrl-dynamics-dev (>= 1.19.1.99), libhrp2-dynamics-dev (>= 1.5.1.99), hrp2-10-data (>= 1.0.0.99), hrp2-14-data (>= 1.7.5), hrp2-14-small-data (>= 1.0.0.99),libhrp2-10-optimized1.0.0.99 (>= 1.0.0.99), libsot-dynamic1.0.0.99 (= ${binary:Version}), ${misc:Depends}
 Suggests: libsot-dynamic-doc
 Description: dynamic computation plug-in for dynamic graph
  This package provides dynamic computation plug-in for dynamic-graph.
