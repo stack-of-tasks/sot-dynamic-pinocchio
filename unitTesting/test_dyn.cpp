@@ -31,13 +31,25 @@ using namespace sot;
 int main( void )
 {
 
+
   Dynamic * dyn = new Dynamic("tot");
-  dyn->setVrmlDirectory("/home/nmansard/src/OpenHRP/etc/HRP2JRL/");
-  dyn->setXmlSpecificityFile("/home/nmansard/src/PatternGeneratorJRL/src/data/HRP2Specificities.xml");
-  dyn->setXmlRankFile("/home/nmansard/src/PatternGeneratorJRL/src/data/HRP2LinkJointRank.xml");
+  try {
+  dyn->setVrmlDirectory("~/src/OpenHRP/etc/HRP2JRL/");
+  dyn->setXmlSpecificityFile("~/src/PatternGeneratorJRL/src/data/HRP2Specificities.xml");
+  dyn->setXmlRankFile("~/src/PatternGeneratorJRL/src/data/HRP2LinkJointRank.xml");
   dyn->setVrmlMainFile("HRP2JRLmain.wrl");
 
   dyn->parseConfigFiles();
+  } catch (sot::ExceptionDynamic& e)
+  {
+	  if ( !strcmp(e.what(), "Error while parsing." )) {
+		  cout << "Could not locate the necessary files for this test" << endl;
+		  return 77;
+	  }
+	  else
+		  // rethrow
+		  throw e;
+  }
   
   istringstream iss;
   string help("help");
