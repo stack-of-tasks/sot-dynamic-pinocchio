@@ -1,6 +1,17 @@
-# 
-#  Copyright 
-# 
+# Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
+#
+# This file is part of sot-dynamic.
+# sot-dynamic is free software: you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+#
+# sot-dynamic is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Lesser Public License for more details.  You should have
+# received a copy of the GNU Lesser General Public License along with
+# sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
 ADD_DEFINITIONS(-DDEBUG=2)
 
@@ -15,10 +26,10 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
 
 # Add MatrixAbstractLayer compilation flags and link to library libMatrixAbstractLayer.so
-ADD_DEFINITIONS(${MATRIXABSTRACTLAYER_CFLAGS})
+ADD_DEFINITIONS(${JRL_MAL_CFLAGS})
 
 IF(WIN32)
-foreach(dlink ${MATRIXABSTRACTLAYER_LDFLAGS} ${DYNAMICSJRLJAPAN_LDFLAGS} 
+foreach(dlink ${JRL_MAL_LDFLAGS} ${DYNAMICSJRLJAPAN_LDFLAGS}
 			  ${HRP2DYNAMICS_LDFLAGS} ${DYNAMIC_GRAPH_LDFLAGS}  ${SOT_CORE_LDFLAGS})
 	SET ( ${PROJECT_NAME}_src_LDFLAGS "${${PROJECT_NAME}_src_LDFLAGS}  ${dlink}")
 endforeach(dlink)
@@ -34,7 +45,7 @@ FOREACH(test ${tests})
 	SET(EXECUTABLE_NAME "${test}_exe")
 	ADD_EXECUTABLE(${EXECUTABLE_NAME}
 	  ${test}.cpp)
-	
+
 	TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
 	  	zmpreffromcom
 		force-compensation
@@ -45,11 +56,11 @@ FOREACH(test ${tests})
 		angle-estimator
 		waist-attitude-from-sensor
 		)
-	  
-		IF (UNIX)  
+
+		IF (UNIX)
 			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})
 			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${SOT_CORE_LIBRARIES})
-			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${MATRIXABSTRACTLAYER_LIBRARIES})
+			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${JRL_MAL_LIBRARIES})
 			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${HRP2DYNAMICS_LIBRARIES})
 			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMICSJRLJAPAN_LIBRARIES})
 		ENDIF(UNIX)
@@ -60,13 +71,13 @@ FOREACH(test ${tests})
 				TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} dynamic-hrp2)
 			ENDIF(${_hrp2Dynamics_FOUND})
 		ENDIF(${DYNAMICSJRLJAPAN_FOUND})
-		
+
 		IF(WIN32)
 		SET_TARGET_PROPERTIES(${EXECUTABLE_NAME}
 		 PROPERTIES
 		  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
 		)
 		ENDIF(WIN32)
-	
+
 	ADD_TEST(${test} ${EXECUTABLE_NAME})
 ENDFOREACH(test)
