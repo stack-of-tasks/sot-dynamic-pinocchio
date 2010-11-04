@@ -66,8 +66,10 @@ IF(${_hrp210optimized_FOUND})
 ENDIF(${_hrp210optimized_FOUND})
 
 IF(NOT UNIX)
-	SET(dynamic-hrp2_10_plugins_link_flags ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
-	SET(dynamic-hrp2_10_old_plugins_link_flags ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
+	foreach(dlink ${_hrp210optimized_LDFLAGS})
+		SET ( dynamic-hrp2_10_plugins_link_flags "${dynamic-hrp2_10_plugins_link_flags}  ${dlink}")
+		SET ( dynamic-hrp2_10_old_plugins_link_flags "${dynamic-hrp2_10_old_plugins_link_flags}  ${dlink}")
+	endforeach(dlink)
 ENDIF(NOT UNIX)
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
