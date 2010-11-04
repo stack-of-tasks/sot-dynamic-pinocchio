@@ -5,6 +5,6 @@ IMAGE_PATH             = @CMAKE_SOURCE_DIR@/doc/pictures
 FILE_PATTERNS          = *.cc *.cpp *.h *.hh *.hxx
 
 TAGFILES               = \
-"@JRL_MAL_DOXYGENDOCDIR@/jrl-mal.doxytag = @JRL_MAL_DOXYGENDOCDIR@/jrl-mal.doxytag" \
-"@DYNAMIC_GRAPH_DOXYGENDOCDIR@/dynamic-graph.doxytag = @DYNAMIC_GRAPH_DOXYGENDOCDIR@/dynamic-graph.doxytag" \
-"@SOT_CORE_DOXYGENDOCDIR@/sot-core.doxytag = @SOT_CORE_DOXYGENDOCDIR@/sot-core.doxytag"
+"@JRL_MAL_DOXYGENDOCDIR@/jrl-mal.doxytag = @JRL_MAL_DOXYGENDOCDIR@" \
+"@DYNAMIC_GRAPH_DOXYGENDOCDIR@/dynamic-graph.doxytag = @DYNAMIC_GRAPH_DOXYGENDOCDIR@" \
+"@SOT_CORE_DOXYGENDOCDIR@/sot-core.doxytag = @SOT_CORE_DOXYGENDOCDIR@"
