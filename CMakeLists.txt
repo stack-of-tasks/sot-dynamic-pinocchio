@@ -22,7 +22,7 @@ INCLUDE(cmake/lapack.cmake)
 SET(PROJECT_NAME sot-dynamic)
 SET(PROJECT_VERSION 1.0.0.99)
 SET(PROJECT_DESCRIPTION "jrl-dynamics bindings for dynamic-graph.")
-SET(PROJECT_URL "")
+SET(PROJECT_URL "http://github.com/jrl-umi3218/sot-dynamic")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
