@@ -23,8 +23,8 @@
 
 #include <ostream>
 
-#include "MatrixAbstractLayer/boost.h"
-#include "MatrixAbstractLayer/MatrixAbstractLayer.h"
+#include "jrl/mal/boost.hh"
+#include "jrl/mal/matrixabstractlayer.hh"
 
 #include <sot-core/matrix-twist.h>
 #include <sot-core/matrix-force.h>

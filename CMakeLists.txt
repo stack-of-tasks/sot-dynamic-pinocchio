@@ -41,7 +41,7 @@ SETUP_PROJECT()
 ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.8.0")
 
 ADD_REQUIRED_DEPENDENCY("dynamicsJRLJapan >= 1.16.1")
-ADD_REQUIRED_DEPENDENCY("hrp2Dynamics >= 1.3.0")
+ADD_REQUIRED_DEPENDENCY("hrp2-dynamics >= 1.3.0")
 ADD_REQUIRED_DEPENDENCY("hrp2-10-optimized >= 1.0")
 
 ADD_REQUIRED_DEPENDENCY("hrp2_10")
@@ -70,18 +70,9 @@ SET (dynamic-hrp2_plugins_dependencies dynamic)
 # hrp2-10 dependencies.
 LIST(APPEND libs dynamic-hrp2_10)
 SET (dynamic-hrp2_10_plugins_dependencies dynamic)
-SET(dynamic-hrp2_10_plugins_compile_flags
-  ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
-SET(dynamic-hrp2_10_plugins_link_flags
-  ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
 
 LIST(APPEND libs dynamic-hrp2_10_old)
 SET (dynamic-hrp2_10_plugins_dependencies dynamic)
-SET(dynamic-hrp2_10_old_plugins_compile_flags
-  ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
-SET(dynamic-hrp2_10_old_plugins_link_flags
-  ${_dynamicsJRLJapan_LDFLAGS} ${_hrp210optimized_LDFLAGS})
-
 
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)

@@ -20,8 +20,8 @@
 
 #include <string>
 #include <cstdio>
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
-#include "dynamicsJRLJapan/dynamicsJRLJapanFactory.h"
+#include <jrl/mal/matrixabstractlayer.hh>
+#include "jrl/dynamics/dynamicsfactory.hh"
 using namespace std;
 using namespace dynamicsJRLJapan;
 

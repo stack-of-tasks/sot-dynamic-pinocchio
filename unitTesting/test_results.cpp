@@ -26,16 +26,16 @@
 #include <fstream>
 
 /* JRL dynamic */
-#include <MatrixAbstractLayer/boost.h>
+#include <jrl/mal/boost.hh>
 namespace ml = maal::boost;
 
 /* JRL dynamic */
 
-#include <dynamicsJRLJapan/dynamicsJRLJapanFactory.h>
+#include <jrl/dynamics/dynamicsfactory.hh>
 namespace djj = dynamicsJRLJapan;
 
-#include <robotDynamics/jrlHumanoidDynamicRobot.h>
-#include <robotDynamics/jrlRobotDynamicsObjectConstructor.h>
+#include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
+#include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 using namespace std;
 
