@@ -18,12 +18,12 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
+#include <jrl/mal/matrixabstractlayer.hh>
 
 #include <sot-dynamic/dynamic-hrp2.h>
 #include <sot-core/debug.h>
 
-#include <robotDynamics/jrlRobotDynamicsObjectConstructor.h>
+#include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 #include <dynamic-graph/factory.h>
 

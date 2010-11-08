@@ -20,8 +20,8 @@
 
 #include <string>
 #include <cstdio>
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
-#include "dynamicsJRLJapan/dynamicsJRLJapanFactory.h"
+#include <jrl/mal/matrixabstractlayer.hh>
+#include "jrl/dynamics/dynamicsfactory.hh"
 using namespace std;
 using namespace dynamicsJRLJapan;
 
@@ -45,9 +45,9 @@ void DisplayDynamicRobotInformation(CjrlDynamicRobot *aDynamicRobot)
   for(int i=0;i<r;i++)
     {
       cout << aVec[i]->rankInConfiguration()<< endl;
-    }	
+    }
 
-  
+
 }
 
 void DisplayMatrix(MAL_MATRIX(,double) &aJ)
@@ -69,15 +69,15 @@ void DisplayMatrix(MAL_MATRIX(,double) &aJ)
 /* --- DISPLAY MASS PROPERTIES OF A CHAIN --- */
 void GoDownTree(const CjrlJoint * startJoint)
 {
-  cout << "Mass-inertie property of joint ranked :" 
+  cout << "Mass-inertie property of joint ranked :"
        << startJoint->rankInConfiguration() << endl;
-  cout << "Mass of the body: " 
+  cout << "Mass of the body: "
        << startJoint->linkedBody()->mass() << endl;
-  cout << "llimit: " 
+  cout << "llimit: "
        << startJoint->lowerBound(0)*180/M_PI
        << " ulimit: " << startJoint->upperBound(0)*180/M_PI << endl;
   cout << startJoint->currentTransformation() << endl;
-  
+
   if (startJoint->countChildJoints()!=0)
     {
       const CjrlJoint * childJoint = startJoint->childJoint(0);
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
       cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE "
 	   << "VRML_FILE_NAME PATH_TO_SPECIFICITIES_XML" << endl;
       exit(0);
-    }	
+    }
 
   string aPath=argv[1];
   string aName=argv[2];
@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
 //   DynamicMultiBody * aDMB
 //     = new DynamicMultiBody();
 //   aDMB->parserVRML(aPath,aName,"");
-//   HumanoidDynamicMultiBody *aHDMB 
+//   HumanoidDynamicMultiBody *aHDMB
 //     = new HumanoidDynamicMultiBody(aDMB,aSpecificitiesFileName);
 
   /* ------------------------------------------------------------------------ */
   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
   CjrlHumanoidDynamicRobot * aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
-  
+
 
   // DynamicMultiBody * aDMB
 //     = (DynamicMultiBody *) aHDMB->getDynamicMultiBody();
@@ -122,19 +122,19 @@ int main(int argc, char *argv[])
 
   cout << "-> Finished the initialization"<< endl;
   /* ------------------------------------------------------------------------ */
-  
+
   // Display tree of the joints.
-  CjrlJoint* rootJoint = aHDR->rootJoint();  
+  CjrlJoint* rootJoint = aHDR->rootJoint();
   RecursiveDisplayOfJoints(rootJoint);
 
   // Test the computation of the jacobian.
-  double dInitPos[40] = { 
+  double dInitPos[40] = {
     0.0, 0.0, -26.0, 50.0, -24.0, 0.0, 0.0, 0.0, -26.0, 50.0, -24.0, 0.0,  // legs
 
     0.0, 0.0, 0.0, 0.0, // chest and head
 
     15.0, -10.0, 0.0, -30.0, 0.0, 0.0, 10.0, // right arm
-    15.0,  10.0, 0.0, -30.0, 0.0, 0.0, 10.0, // left arm 
+    15.0,  10.0, 0.0, -30.0, 0.0, 0.0, 10.0, // left arm
 
     -20.0, 20.0, -20.0, 20.0, -20.0, // right hand
     -10.0, 10.0, -10.0, 10.0, -10.0  // left hand
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
   aHDR->currentConfiguration(aCurrentConf);
 
   /* Set current velocity to 0. */
-  MAL_VECTOR_DIM(aCurrentVel,double,NbOfDofs); 
+  MAL_VECTOR_DIM(aCurrentVel,double,NbOfDofs);
   for(int i=0;i<NbOfDofs;i++) aCurrentVel[i] = 0.0;
   aHDR->currentVelocity(aCurrentVel);
 
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
   aHDR->computeForwardKinematics();
   ZMPval = aHDR->zeroMomentumPoint();
   cout << "First value of ZMP : " << ZMPval <<endl;
-  cout << "Should be equal to the CoM (on x-y): " 
+  cout << "Should be equal to the CoM (on x-y): "
        << aHDR->positionCenterOfMass() << endl;
 
   /* Get Rhand joint. */
@@ -177,19 +177,20 @@ int main(int argc, char *argv[])
   aJoint->computeJacobianJointWrtConfig();
   MAL_MATRIX(,double) aJ = aJoint->jacobianJointWrtConfig();
   DisplayMatrix(aJ);
-  
+
   /* Get Waist joint. */
   cout << "****************************" << endl;
   rootJoint->computeJacobianJointWrtConfig();
-  aJ = rootJoint->jacobianJointWrtConfig();  
+  aJ = rootJoint->jacobianJointWrtConfig();
   cout << "Rank of Root: " << rootJoint->rankInConfiguration() << endl;
   aJoint = aHDR->waist();
 
   /* Get CoM jacobian. */
   cout << "****************************" << endl;
-  aHDR->computeJacobianCenterOfMass();
+  matrixNxP jacobian;
+  aHDR->getJacobianCenterOfMass(*aHDR->rootJoint(), jacobian);
   cout << "Value of the CoM's Jacobian:" << endl
-       << aHDR->jacobianCenterOfMass() << endl;
+       << jacobian << endl;
 
   /* Display the mass property of the leg. */
   cout << "****************************" << endl;
@@ -223,5 +224,5 @@ int main(int argc, char *argv[])
 
   // The End!
   delete aHDR;
-  
+
 }

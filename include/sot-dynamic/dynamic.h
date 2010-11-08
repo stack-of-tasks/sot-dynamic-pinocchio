@@ -26,13 +26,13 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <MatrixAbstractLayer/boost.h>
-#include "MatrixAbstractLayer/MatrixAbstractLayer.h"
+#include <jrl/mal/boost.hh>
+#include "jrl/mal/matrixabstractlayer.hh"
 namespace ml = maal::boost;
 
 /* JRL dynamic */
-#include <robotDynamics/jrlHumanoidDynamicRobot.h>
-#include <dynamicsJRLJapan/dynamicsJRLJapanFactory.h>
+#include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
+#include <jrl/dynamics/dynamicsfactory.hh>
 namespace djj = dynamicsJRLJapan;
 
 /* SOT */

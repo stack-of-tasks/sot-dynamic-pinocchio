@@ -30,7 +30,7 @@
 #include <sot-dynamic/dynamic.h>
 
 /* JRL dynamic */
-#include <hrp2Dynamics/hrp2OptHumanoidDynamicRobot.h>
+#include <hrp2-dynamics/hrp2OptHumanoidDynamicRobot.h>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */

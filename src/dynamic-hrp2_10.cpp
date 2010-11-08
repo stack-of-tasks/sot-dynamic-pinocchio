@@ -21,7 +21,7 @@
 #include <sot-dynamic/dynamic-hrp2_10.h>
 #include <sot-core/debug.h>
 
-#include <robotDynamics/jrlRobotDynamicsObjectConstructor.h>
+#include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 #include <dynamic-graph/factory.h>
 using namespace dynamicgraph;

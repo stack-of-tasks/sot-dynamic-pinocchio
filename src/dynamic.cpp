@@ -18,13 +18,13 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <MatrixAbstractLayer/MatrixAbstractLayer.h>
+#include <jrl/mal/matrixabstractlayer.hh>
 
 #include <sot-dynamic/dynamic.h>
 #include <sot-core/debug.h>
 
-#include <robotDynamics/jrlHumanoidDynamicRobot.h>
-#include <robotDynamics/jrlRobotDynamicsObjectConstructor.h>
+#include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
+#include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 #include <dynamic-graph/factory.h>
 
@@ -36,7 +36,7 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(Dynamic,"Dynamic");
 using namespace std;
 
 Dynamic::
-Dynamic( const std::string & name, bool build ) 
+Dynamic( const std::string & name, bool build )
   :Entity(name)
   ,m_HDR(NULL)
 
@@ -55,48 +55,48 @@ Dynamic( const std::string & name, bool build )
   ,freeFlyerAccelerationSIN(NULL,"sotDynamic("+name+")::input(vector)::ffacceleration")
 
   ,firstSINTERN( boost::bind(&Dynamic::initNewtonEuler,this,_1,_2),
-		 sotNOSIGNAL,"sotDynamic("+name+")::intern(dummy)::init" ) 
+		 sotNOSIGNAL,"sotDynamic("+name+")::intern(dummy)::init" )
   ,newtonEulerSINTERN( boost::bind(&Dynamic::computeNewtonEuler,this,_1,_2),
 		       firstSINTERN<<jointPositionSIN<<freeFlyerPositionSIN
 		       <<jointVelocitySIN<<freeFlyerVelocitySIN
 		       <<jointAccelerationSIN<<freeFlyerAccelerationSIN,
-		       "sotDynamic("+name+")::intern(dummy)::newtoneuleur" ) 
+		       "sotDynamic("+name+")::intern(dummy)::newtoneuleur" )
 
   ,zmpSOUT( boost::bind(&Dynamic::computeZmp,this,_1,_2),
 	    newtonEulerSINTERN,
-	    "sotDynamic("+name+")::output(vector)::zmp" ) 
+	    "sotDynamic("+name+")::output(vector)::zmp" )
   ,JcomSOUT( boost::bind(&Dynamic::computeJcom,this,_1,_2),
 	     newtonEulerSINTERN,
-	     "sotDynamic("+name+")::output(matrix)::Jcom" ) 
+	     "sotDynamic("+name+")::output(matrix)::Jcom" )
   ,comSOUT( boost::bind(&Dynamic::computeCom,this,_1,_2),
 	    newtonEulerSINTERN,
-	    "sotDynamic("+name+")::output(vector)::com" ) 
+	    "sotDynamic("+name+")::output(vector)::com" )
   ,inertiaSOUT( boost::bind(&Dynamic::computeInertia,this,_1,_2),
 		newtonEulerSINTERN,
-		"sotDynamic("+name+")::output(matrix)::inertia" ) 
+		"sotDynamic("+name+")::output(matrix)::inertia" )
   ,footHeightSOUT( boost::bind(&Dynamic::computeFootHeight,this,_1,_2),
 		   newtonEulerSINTERN,
-		   "sotDynamic("+name+")::output(double)::footHeight" ) 
+		   "sotDynamic("+name+")::output(double)::footHeight" )
 
   ,upperJlSOUT( boost::bind(&Dynamic::getUpperJointLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::upperJl" ) 
+		"sotDynamic("+name+")::output(vector)::upperJl" )
 
   ,lowerJlSOUT( boost::bind(&Dynamic::getLowerJointLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::lowerJl" ) 
+		"sotDynamic("+name+")::output(vector)::lowerJl" )
 
   ,inertiaRotorSOUT( "sotDynamic("+name+")::output(matrix)::inertiaRotor" )
   ,gearRatioSOUT( "sotDynamic("+name+")::output(matrix)::gearRatio" )
   ,inertiaRealSOUT( boost::bind(&Dynamic::computeInertiaReal,this,_1,_2),
 		    inertiaSOUT << gearRatioSOUT << inertiaRotorSOUT,
-		    "sotDynamic("+name+")::output(matrix)::inertiaReal" ) 
+		    "sotDynamic("+name+")::output(matrix)::inertiaReal" )
   ,MomentaSOUT( boost::bind(&Dynamic::computeMomenta,this,_1,_2),
 		newtonEulerSINTERN,
-		"sotDynamic("+name+")::output(vector)::momenta" ) 
+		"sotDynamic("+name+")::output(vector)::momenta" )
   ,AngularMomentumSOUT( boost::bind(&Dynamic::computeAngularMomentum,this,_1,_2),
 			newtonEulerSINTERN,
-			"sotDynamic("+name+")::output(vector)::angularmomentum" ) 
+			"sotDynamic("+name+")::output(vector)::angularmomentum" )
 {
   sotDEBUGIN(5);
 
@@ -208,10 +208,10 @@ createJacobianSignal( const std::string& signame,const unsigned int& bodyRank )
 				     "(rank=%d, while creating J signal).",
 				     bodyRank );
     }
-  CjrlJoint * aJoint = aVec[bodyRank]; 
+  CjrlJoint * aJoint = aVec[bodyRank];
 
 
-  dg::SignalTimeDependent< ml::Matrix,int > * sig 
+  dg::SignalTimeDependent< ml::Matrix,int > * sig
     = new dg::SignalTimeDependent< ml::Matrix,int >
     ( boost::bind(&Dynamic::computeGenericJacobian,this,aJoint,_1,_2),
       newtonEulerSINTERN,
@@ -235,10 +235,10 @@ createEndeffJacobianSignal( const std::string& signame,const unsigned int& bodyR
 				     "(rank=%d, while creating J signal).",
 				     bodyRank );
     }
-  CjrlJoint * aJoint = aVec[bodyRank]; 
+  CjrlJoint * aJoint = aVec[bodyRank];
 
 
-  dg::SignalTimeDependent< ml::Matrix,int > * sig 
+  dg::SignalTimeDependent< ml::Matrix,int > * sig
     = new dg::SignalTimeDependent< ml::Matrix,int >
     ( boost::bind(&Dynamic::computeGenericEndeffJacobian,this,aJoint,_1,_2),
       newtonEulerSINTERN,
@@ -264,7 +264,7 @@ destroyJacobianSignal( const std::string& signame )
     }
 
   if(! deletable )
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
 				     "Cannot destroy signal",
 				     " (while trying to remove generic jac. signal <%s>).",
@@ -294,9 +294,9 @@ createPositionSignal( const std::string& signame,const unsigned int& bodyRank )
 				     "(rank=%d, while creating position signal).",
 				     bodyRank );
     }
-  CjrlJoint * aJoint = aVec[bodyRank]; 
+  CjrlJoint * aJoint = aVec[bodyRank];
 
-  dg::SignalTimeDependent< MatrixHomogeneous,int > * sig 
+  dg::SignalTimeDependent< MatrixHomogeneous,int > * sig
     = new dg::SignalTimeDependent< MatrixHomogeneous,int >
     ( boost::bind(&Dynamic::computeGenericPosition,this,aJoint,_1,_2),
       newtonEulerSINTERN,
@@ -323,7 +323,7 @@ destroyPositionSignal( const std::string& signame )
     }
 
   if(! deletable )
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
 				     "Cannot destroy signal",
 				     " (while trying to remove generic pos. signal <%s>).",
@@ -411,9 +411,9 @@ createAccelerationSignal( const std::string& signame,const unsigned int& bodyRan
 				     "(rank=%d, while creating acceleration signal).",
 				     bodyRank );
     }
-  CjrlJoint * aJoint = aVec[bodyRank]; 
+  CjrlJoint * aJoint = aVec[bodyRank];
 
-  dg::SignalTimeDependent< ml::Vector,int > * sig 
+  dg::SignalTimeDependent< ml::Vector,int > * sig
     = new dg::SignalTimeDependent< ml::Vector,int >
     ( boost::bind(&Dynamic::computeGenericAcceleration,this,aJoint,_1,_2),
       newtonEulerSINTERN,
@@ -440,7 +440,7 @@ destroyAccelerationSignal( const std::string& signame )
     }
 
   if(! deletable )
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
 				     "Cannot destroy signal",
 				     " (while trying to remove generic acc signal <%s>).",
@@ -455,15 +455,15 @@ destroyAccelerationSignal( const std::string& signame )
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
 
-#include <MatrixAbstractLayer/boostspecific.h>
+#include <jrl/mal/boostspecific.hh>
 
 static void MAAL1_V3d_to_MAAL2( const vector3d& source,
 				ml::Vector & res )
-{ 
+{
   sotDEBUG(5) << source <<endl;
-  res(0) = source[0]; 
-  res(1) = source[1]; 
-  res(2) = source[2]; 
+  res(0) = source[0];
+  res(1) = source[1];
+  res(2) = source[2];
 }
 
 ml::Matrix& Dynamic::
@@ -521,7 +521,7 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
 
   res.resize(4,4);
   for( int i=0;i<4;++i )
-    for( int j=0;j<4;++j ) 
+    for( int j=0;j<4;++j )
       res(i,j) = MAL_S4x4_MATRIX_ACCESS_I_J(m4,i,j);
 
   //  aJoint->computeJacobianJointWrtConfig();
@@ -552,7 +552,7 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
   	MAL_S4x4_MATRIX_ACCESS_I_J(invrot,i,j);
     //end of the adaptation
 
-	  
+
   sotDEBUGOUT(25);
   return res;
 }
@@ -662,8 +662,11 @@ computeJcom( ml::Matrix& Jcom,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  m_HDR->computeJacobianCenterOfMass();
-  Jcom.initFromMotherLib(m_HDR->jacobianCenterOfMass());
+
+  matrixNxP jacobian;
+  m_HDR->getJacobianCenterOfMass(*m_HDR->rootJoint(), jacobian);
+
+  Jcom.initFromMotherLib(jacobian);
   sotDEBUGOUT(25);
   return Jcom;
 }
@@ -692,34 +695,34 @@ computeInertia( ml::Matrix& A,int time )
     {
       for( unsigned int i=0;i<18;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
       for( unsigned int i=20;i<22;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
       for( unsigned int i=28;i<36;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
     }
   else if( 2==debugInertia )
     {
       for( unsigned int i=0;i<18;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
       for( unsigned int i=20;i<22;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
       for( unsigned int i=28;i<29;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
       for( unsigned int i=35;i<36;++i )
 	for( unsigned int j=0;j<36;++j )
-	  if( i==j ) A(i,i)=1; 
+	  if( i==j ) A(i,i)=1;
 	  else {  A(i,j)=A(j,i)=0; }
     }
 
@@ -738,7 +741,7 @@ computeInertiaReal( ml::Matrix& res,int time )
 
   res = A;
   for( unsigned int i=0;i<gearRatio.size();++i )
-    res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i)); 
+    res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i));
 
   sotDEBUGOUT(25);
   return res;
@@ -749,14 +752,11 @@ computeFootHeight( double& foot,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  //foot=m_HDR->footHeight();
-  CjrlFoot *RightFoot = m_HDR->rightFoot();
-  vector3d AnkleInLocalRefFrame,SoleCenterInLocalRefFrame;
+  CjrlFoot* RightFoot = m_HDR->rightFoot();
+  vector3d AnkleInLocalRefFrame;
   RightFoot->getAnklePositionInLocalFrame(AnkleInLocalRefFrame);
-  RightFoot->getSoleCenterInLocalFrame(SoleCenterInLocalRefFrame);
-  foot = fabs(AnkleInLocalRefFrame[2]-SoleCenterInLocalRefFrame[2]);
   sotDEBUGOUT(25);
-  return foot;
+  return AnkleInLocalRefFrame[2];
 }
 
 
@@ -769,15 +769,15 @@ jacobiansSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
 
-  try { 
-    dg::SignalTimeDependent<ml::Matrix,int>& res 
+  try {
+    dg::SignalTimeDependent<ml::Matrix,int>& res
       = dynamic_cast< dg::SignalTimeDependent<ml::Matrix,int>& >( sigabs );
     return res;
   } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
 				  "Impossible cast.",
 				  " (while getting signal <%s> of type matrix.",
-				  name.c_str()); 
+				  name.c_str());
   }
 }
 dg::SignalTimeDependent<MatrixHomogeneous,int>& Dynamic::
@@ -785,15 +785,15 @@ positionsSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
 
-  try { 
-    dg::SignalTimeDependent<MatrixHomogeneous,int>& res 
+  try {
+    dg::SignalTimeDependent<MatrixHomogeneous,int>& res
       = dynamic_cast< dg::SignalTimeDependent<MatrixHomogeneous,int>& >( sigabs );
     return res;
   } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
 				  "Impossible cast.",
 				  " (while getting signal <%s> of type matrixHomo.",
-				  name.c_str()); 
+				  name.c_str());
   }
 }
 
@@ -818,15 +818,15 @@ accelerationsSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
 
-  try { 
-    dg::SignalTimeDependent<ml::Vector,int>& res 
+  try {
+    dg::SignalTimeDependent<ml::Vector,int>& res
       = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
     return res;
   } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
 				  "Impossible cast.",
 				  " (while getting signal <%s> of type Vector.",
-				  name.c_str()); 
+				  name.c_str());
   }
 }
 
@@ -852,15 +852,15 @@ computeNewtonEuler( int& dummy,int time )
   if( freeFlyerVelocitySIN )
     {
       const ml::Vector& ffvel = freeFlyerVelocitySIN(time);
-      for( int i=0;i<6;++i ) vel(i) = ffvel(i); 
+      for( int i=0;i<6;++i ) vel(i) = ffvel(i);
     }
   if( freeFlyerAccelerationSIN )
     {
       const ml::Vector& ffacc = freeFlyerAccelerationSIN(time);
-      for( int i=0;i<6;++i ) acc(i) = ffacc(i); 
+      for( int i=0;i<6;++i ) acc(i) = ffacc(i);
     }
   if(! m_HDR->currentConfiguration(pos.accessToMotherLib()))
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				     "Position vector size uncorrect",
 				     " (Vector size is %d, should be %d).",
@@ -869,7 +869,7 @@ computeNewtonEuler( int& dummy,int time )
 
 
   if(! m_HDR->currentVelocity(vel.accessToMotherLib()) )
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				     "Velocity vector size uncorrect",
 				     " (Vector size is %d, should be %d).",
@@ -877,7 +877,7 @@ computeNewtonEuler( int& dummy,int time )
     }
 
   if(! m_HDR->currentAcceleration(acc.accessToMotherLib()) )
-    { 
+    {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				     "Acceleration vector size uncorrect",
 				     " (Vector size is %d, should be %d).",
@@ -885,7 +885,7 @@ computeNewtonEuler( int& dummy,int time )
     }
 
   m_HDR->computeForwardKinematics();
-  
+
   sotDEBUG(1)<< "pos = " <<pos <<endl;
   sotDEBUG(1)<< "vel = " <<vel <<endl;
   sotDEBUG(1)<< "acc = " <<acc <<endl;
@@ -949,10 +949,10 @@ commandLine( const std::string& cmdLine,
   sotDEBUG(25) << "# In { Cmd " << cmdLine <<endl;
   std::string filename;
   if( cmdLine == "debugInertia" )
-    {  
-      cmdArgs>>ws; if(cmdArgs.good()) 
-		     { 
-		       std::string arg; cmdArgs >> arg; 
+    {
+      cmdArgs>>ws; if(cmdArgs.good())
+		     {
+		       std::string arg; cmdArgs >> arg;
 		       if( (arg=="true")||(arg=="1") )
 			 { debugInertia = 1; }
 		       else if( (arg=="2")||(arg=="grip") )
@@ -972,17 +972,17 @@ commandLine( const std::string& cmdLine,
     {  cmdArgs>>filename; setXmlRankFile( filename );  }
   else if( cmdLine == "setFiles" )
     {
-      cmdArgs>>filename; setVrmlDirectory( filename ); 
-      cmdArgs>>filename; setVrmlMainFile( filename );  
-      cmdArgs>>filename; setXmlSpecificityFile( filename );  
-      cmdArgs>>filename; setXmlRankFile( filename );  
+      cmdArgs>>filename; setVrmlDirectory( filename );
+      cmdArgs>>filename; setVrmlMainFile( filename );
+      cmdArgs>>filename; setXmlSpecificityFile( filename );
+      cmdArgs>>filename; setXmlRankFile( filename );
     }
   else if( cmdLine == "displayFiles" )
     {
-      cmdArgs >> ws; bool filespecified = false; 
+      cmdArgs >> ws; bool filespecified = false;
       if( cmdArgs.good() )
 	{
-	  filespecified = true; 
+	  filespecified = true;
 	  std::string filetype; cmdArgs >> filetype;
 	  sotDEBUG(15) << " Request: " << filetype << std::endl;
 	  if( "vrmldir" == filetype ) { os << vrmlDirectory << std::endl; }
@@ -991,7 +991,7 @@ commandLine( const std::string& cmdLine,
 	  else if( "vrmlmain" == filetype ) { os << vrmlMainFile << std::endl; }
 	  else filespecified = false;
 	}
-      if( ! filespecified ) 
+      if( ! filespecified )
 	{
 	  os << "  - VRML Directory:\t\t\t" << vrmlDirectory <<endl
 	     << "  - XML Specificity File:\t\t" << xmlSpecificityFile <<endl
@@ -1080,13 +1080,13 @@ commandLine( const std::string& cmdLine,
     }
   else if( cmdLine == "setProperty" )
     {
-      string prop,val; cmdArgs >> prop; 
+      string prop,val; cmdArgs >> prop;
       if( cmdArgs.good() ) cmdArgs >> val; else val="true";
       m_HDR->setProperty( prop,val );
     }
   else if( cmdLine == "getProperty" )
     {
-      string prop,val; cmdArgs >> prop; 
+      string prop,val; cmdArgs >> prop;
       m_HDR->getProperty( prop,val );
       os<<val<<endl;
     }
@@ -1101,7 +1101,7 @@ commandLine( const std::string& cmdLine,
 	  os<<prop;
 	  for( unsigned int i=prop.length();i<STR_SIZE;++i ) os<<" ";
 	  os<<" -> "<<val <<endl;
-	} 
+	}
     }
   else if( cmdLine == "help" )
     {
@@ -1121,7 +1121,7 @@ commandLine( const std::string& cmdLine,
 	 << "  - {get|set}Property <name> [<val>]: set/get the property." <<endl
 	 << "  - displayProperties: print the prop-val couples list." <<endl
 	 << "  - ndof\t\t\t: display the number of DOF of the robot."<< endl;
-      
+
       Entity::commandLine(cmdLine,cmdArgs,os);
     }
   else { Entity::commandLine( cmdLine,cmdArgs,os); }
