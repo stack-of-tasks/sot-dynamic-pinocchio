@@ -662,7 +662,11 @@ computeJcom( ml::Matrix& Jcom,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  Jcom.initFromMotherLib(m_HDR->jacobianCenterOfMass());
+
+  matrixNxP jacobian;
+  m_HDR->getJacobianCenterOfMass(*m_HDR->rootJoint(), jacobian);
+
+  Jcom.initFromMotherLib(jacobian);
   sotDEBUGOUT(25);
   return Jcom;
 }
@@ -748,14 +752,11 @@ computeFootHeight( double& foot,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  //foot=m_HDR->footHeight();
-  CjrlFoot *RightFoot = m_HDR->rightFoot();
-  vector3d AnkleInLocalRefFrame,SoleCenterInLocalRefFrame;
+  CjrlFoot* RightFoot = m_HDR->rightFoot();
+  vector3d AnkleInLocalRefFrame;
   RightFoot->getAnklePositionInLocalFrame(AnkleInLocalRefFrame);
-  RightFoot->getSoleCenterInLocalFrame(SoleCenterInLocalRefFrame);
-  foot = fabs(AnkleInLocalRefFrame[2]-SoleCenterInLocalRefFrame[2]);
   sotDEBUGOUT(25);
-  return foot;
+  return AnkleInLocalRefFrame[2];
 }
 
 
