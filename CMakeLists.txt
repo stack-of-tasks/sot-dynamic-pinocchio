@@ -40,7 +40,7 @@ SETUP_PROJECT()
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.8.0")
 
-ADD_REQUIRED_DEPENDENCY("dynamicsJRLJapan >= 1.16.1")
+ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.16.1")
 ADD_REQUIRED_DEPENDENCY("hrp2-dynamics >= 1.3.0")
 ADD_REQUIRED_DEPENDENCY("hrp2-10-optimized >= 1.0")
 
@@ -50,29 +50,6 @@ ADD_REQUIRED_DEPENDENCY("hrp2_10-small")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 1.0.0")
 
-
-SET(libs
-	zmpreffromcom
-	force-compensation
-	integrator-force-exact
-	mass-apparent
-	integrator-force-rk4
-	integrator-force
-	angle-estimator
-	waist-attitude-from-sensor
-)
-
-# hrp2-14 dependencies.
-LIST(APPEND libs dynamic)
-LIST(APPEND libs dynamic-hrp2)
-SET (dynamic-hrp2_plugins_dependencies dynamic)
-
-# hrp2-10 dependencies.
-LIST(APPEND libs dynamic-hrp2_10)
-SET (dynamic-hrp2_10_plugins_dependencies dynamic)
-
-LIST(APPEND libs dynamic-hrp2_10_old)
-SET (dynamic-hrp2_10_plugins_dependencies dynamic)
 
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)

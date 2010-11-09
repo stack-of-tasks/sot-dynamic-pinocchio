@@ -20,21 +20,18 @@ IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
 # provide path to libraries
-LINK_DIRECTORIES(${DYNAMICSJRLJAPAN_LIBRARY_DIRS})
 LINK_DIRECTORIES(${HRP2_DYNAMICS_LIBRARY_DIRS})
 LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
 LINK_DIRECTORIES(${SOT_CORE_LIBRARY_DIRS})
 LINK_DIRECTORIES(${JRL_MAL_LIBRARY_DIRS})
 
 # Add compilation flags
-ADD_DEFINITIONS(${DYNAMICSJRLJAPAN_CFLAGS})
 ADD_DEFINITIONS(${HRP2_DYNAMICS_CFLAGS})
 ADD_DEFINITIONS(${DYNAMIC_GRAPH_CFLAGS})
 ADD_DEFINITIONS(${SOT_CORE_CFLAGS})
 ADD_DEFINITIONS(${JRL_MAL_CFLAGS})
 
-foreach(dlink 	${DYNAMICSJRLJAPAN_LDFLAGS}
-    ${HRP2_DYNAMICS_LDFLAGS}
+foreach(dlink 	${HRP2_DYNAMICS_LDFLAGS}
     ${DYNAMIC_GRAPH_LDFLAGS}
     ${SOT_CORE_LDFLAGS}
     ${JRL_MAL_LDFLAGS}
@@ -53,26 +50,24 @@ SET(libs
   waist-attitude-from-sensor
   )
 
-IF(${DYNAMICSJRLJAPAN_FOUND})
-  LIST(APPEND libs dynamic)
-  IF(${HRP2_DYNAMICS_FOUND})
-    LIST(APPEND libs dynamic-hrp2)
-    SET (dynamic-hrp2_plugins_dependencies dynamic)
-  ENDIF(${HRP2_DYNAMICS_FOUND})
-ENDIF(${DYNAMICSJRLJAPAN_FOUND})
+# hrp2-14 dependencies.
+LIST(APPEND libs dynamic)
+LIST(APPEND libs dynamic-hrp2)
+SET (dynamic-hrp2_plugins_dependencies dynamic)
+
 
 IF(${_hrp210optimized_FOUND})
   LIST(APPEND libs dynamic-hrp2_10)
   SET (dynamic-hrp2_10_additional_libs ${_hrp210optimized_LIBRARIES})
   SET (dynamic-hrp2_10_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_plugins_compile_flags
-    ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+    ${_hrp210optimized_CFLAGS})
 
   LIST(APPEND libs dynamic-hrp2_10_old)
   SET (dynamic-hrp2_10_old_additional_libs ${_hrp210optimized_LIBRARIES})
-  SET (dynamic-hrp2_10_old_plugins_dependencies dynamic)
+  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
   SET(dynamic-hrp2_10_old_plugins_compile_flags
-    ${_dynamicsJRLJapan_CFLAGS} ${_hrp210optimized_CFLAGS})
+    ${_hrp210optimized_CFLAGS})
 
 ENDIF(${_hrp210optimized_FOUND})
 
@@ -105,7 +100,6 @@ FOREACH(lib ${libs})
     TARGET_LINK_LIBRARIES(${lib} ${SOT_CORE_LIBRARIES})
     TARGET_LINK_LIBRARIES(${lib} ${JRL_MAL_LIBRARIES})
     TARGET_LINK_LIBRARIES(${lib} ${HRP2_DYNAMICS_LIBRARIES})
-    TARGET_LINK_LIBRARIES(${lib} ${DYNAMICSJRLJAPAN_LIBRARIES})
     TARGET_LINK_LIBRARIES(${lib} "${${lib}_additional_libs}")
   ENDIF(UNIX)
 
@@ -122,6 +116,8 @@ FOREACH(lib ${libs})
     ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
     TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
+
+  PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
 
   INSTALL(TARGETS ${lib}
     DESTINATION lib/plugin)
