@@ -15,26 +15,6 @@
 
 ADD_DEFINITIONS(-DDEBUG=2)
 
-# provide path to library libdynamic-graph.so
-LINK_DIRECTORIES(${DYNAMIC_GRAPH_LIBRARY_DIRS})
-
-# provide path to library libsot-core.so
-LINK_DIRECTORIES(${SOT_CORE_LIBRARY_DIRS})
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-
-LINK_DIRECTORIES(${${PROJECT_NAME}_BINARY_DIR}/src)
-
-# Add MatrixAbstractLayer compilation flags and link to library libMatrixAbstractLayer.so
-ADD_DEFINITIONS(${JRL_MAL_CFLAGS})
-
-IF(WIN32)
-foreach(dlink ${JRL_MAL_LDFLAGS} 
-			  ${DYNAMIC_GRAPH_LDFLAGS}  ${SOT_CORE_LDFLAGS})
-	SET ( ${PROJECT_NAME}_src_LDFLAGS "${${PROJECT_NAME}_src_LDFLAGS}  ${dlink}")
-endforeach(dlink)
-ENDIF(WIN32)
-
 SET(tests
 	dummy
 	test_djj
@@ -59,21 +39,11 @@ FOREACH(test ${tests})
 		waist-attitude-from-sensor
 		)
 
-		IF (UNIX)
-			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${DYNAMIC_GRAPH_LIBRARIES})
-			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${SOT_CORE_LIBRARIES})
-			TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${JRL_MAL_LIBRARIES})
-		ENDIF(UNIX)
-
-        PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
-        PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} hrp2-dynamics)
-
-		IF(WIN32)
-		SET_TARGET_PROPERTIES(${EXECUTABLE_NAME}
-		 PROPERTIES
-		  LINK_FLAGS "${${PROJECT_NAME}_src_LDFLAGS}"
-		)
-	 	ENDIF(WIN32)
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} hrp2-dynamics)
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-mal)
 
     IF(${test}_plugins_dependencies)
         ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
