@@ -20,6 +20,10 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
+SET(dynamic-hrp2_plugins_dependencies dynamic)
+SET(dynamic-hrp2_10_plugins_dependencies dynamic)
+SET(dynamic-hrp2_10_old_plugins_dependencies dynamic)
+
 FOREACH(lib ${libs})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
 
