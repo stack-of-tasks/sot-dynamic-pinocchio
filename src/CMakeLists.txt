@@ -13,79 +13,19 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-
 IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   ADD_DEFINITIONS(-DDEBUG=2)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-
-SET(libs
-  zmpreffromcom
-  force-compensation
-  integrator-force-exact
-  mass-apparent
-  integrator-force-rk4
-  integrator-force
-  angle-estimator
-  waist-attitude-from-sensor
-  )
-
-# hrp2-14 dependencies.
-LIST(APPEND libs dynamic)
-LIST(APPEND libs dynamic-hrp2)
-SET (dynamic-hrp2_plugins_dependencies dynamic)
-
-
-IF(${_hrp210optimized_FOUND})
-  LIST(APPEND libs dynamic-hrp2_10)
-  SET (dynamic-hrp2_10_additional_libs ${_hrp210optimized_LIBRARIES})
-  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
-  SET(dynamic-hrp2_10_plugins_compile_flags
-    ${_hrp210optimized_CFLAGS})
-
-  LIST(APPEND libs dynamic-hrp2_10_old)
-  SET (dynamic-hrp2_10_old_additional_libs ${_hrp210optimized_LIBRARIES})
-  SET (dynamic-hrp2_10_plugins_dependencies dynamic)
-  SET(dynamic-hrp2_10_old_plugins_compile_flags
-    ${_hrp210optimized_CFLAGS})
-
-ENDIF(${_hrp210optimized_FOUND})
-
-IF(NOT UNIX)
-  FOREACH(dlink ${_hrp210optimized_LDFLAGS})
-    SET(dynamic-hrp2_10_plugins_link_flags
-      "${dynamic-hrp2_10_plugins_link_flags} ${dlink}")
-    SET(dynamic-hrp2_10_old_plugins_link_flags
-      "${dynamic-hrp2_10_old_plugins_link_flags} ${dlink}")
-  ENDFOREACH(dlink)
-ENDIF(NOT UNIX)
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
 FOREACH(lib ${libs})
-  ADD_LIBRARY(${lib}
-    SHARED
-    ${lib}.cpp)
+  ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
 
-  SET_TARGET_PROPERTIES(${lib}
-    PROPERTIES
-    SOVERSION ${PROJECT_VERSION}
+  SET_TARGET_PROPERTIES(${lib} PROPERTIES
     PREFIX ""
-    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib/plugin)
-
-  IF (UNIX)
-    TARGET_LINK_LIBRARIES(${lib} "${${lib}_additional_libs}")
-  ENDIF(UNIX)
-
-  IF(WIN32)
-    SET(${lib}_plugins_link_flags "${${PROJECT_NAME}_src_LDFLAGS} ${${lib}_plugins_link_flags}")
-  ENDIF(WIN32)
-
-  SET_TARGET_PROPERTIES(${lib}
-    PROPERTIES
-    COMPILE_FLAGS "${${lib}_plugins_compile_flags}"
-    LINK_FLAGS "${${lib}_plugins_link_flags}")
+    SOVERSION ${PROJECT_VERSION})
 
   IF(${lib}_plugins_dependencies)
     ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
@@ -97,8 +37,13 @@ FOREACH(lib ${libs})
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
-  
 
-  INSTALL(TARGETS ${lib}
-    DESTINATION lib/plugin)
+  INSTALL(TARGETS ${lib} DESTINATION lib/plugin)
 ENDFOREACH(lib)
+
+PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
+
+IF(${HRP2_10_OPTIMIZED_FOUND})
+  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2_10 hrp2-10-optimized)
+  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2_10_old hrp2-10-optimized)
+ENDIF()

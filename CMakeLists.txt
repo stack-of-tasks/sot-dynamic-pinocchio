@@ -50,7 +50,31 @@ ADD_REQUIRED_DEPENDENCY("hrp2_10-small")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 1.0.0")
 
+# List plug-ins that will be compiled.
+SET(libs
+  zmpreffromcom
+  force-compensation
+  integrator-force-exact
+  mass-apparent
+  integrator-force-rk4
+  integrator-force
+  angle-estimator
+  waist-attitude-from-sensor
+  )
 
+LIST(APPEND libs dynamic)
+IF(HRP2_DYNAMICS_FOUND)
+  LIST(APPEND libs dynamic-hrp2)
+ENDIF()
+
+IF(HRP2_10_OPTIMIZED_FOUND)
+  LIST(APPEND libs dynamic-hrp2_10)
+  LIST(APPEND libs dynamic-hrp2_10_old)
+ENDIF()
+
+LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
+
+# Add subdirectories.
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(unitTesting)
