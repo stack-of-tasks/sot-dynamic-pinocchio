@@ -664,6 +664,7 @@ computeJcom( ml::Matrix& Jcom,int time )
   newtonEulerSINTERN(time);
 
   matrixNxP jacobian;
+  jacobian.resize(3, m_HDR->numberDof());
   m_HDR->getJacobianCenterOfMass(*m_HDR->rootJoint(), jacobian);
 
   Jcom.initFromMotherLib(jacobian);
