@@ -41,11 +41,11 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-  if (argc!=5)
+  if (argc!=6)
     {
       cerr << " This program takes 4 arguments: " << endl;
       cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE VRML_FILE_NAME "<< endl;
-      cerr << " PATH_TO_SPECIFICITIES_XML PATH PATH_TO_MAP_JOINT_2_RANK" << endl;
+      cerr << " PATH_TO_SPECIFICITIES_XML PATH PATH_TO_MAP_JOINT_2_RANK INITIAL_CONFIGURATION_FILE" << endl;
       exit(0);
     }	
 

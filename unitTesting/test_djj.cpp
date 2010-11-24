@@ -225,4 +225,5 @@ int main(int argc, char *argv[])
   // The End!
   delete aHDR;
 
+  return true;
 }

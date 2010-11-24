@@ -16,40 +16,61 @@
 ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
-	dummy
-	test_djj
-    test_dyn
-	test_results)
+  dummy
+  test_djj
+  test_dyn
+  test_results)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
+# getting the information for the robot.
+SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/)
+SET(samplespec
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleSpecificities.xml
+  )
+SET(sampleljr
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleLinkJointRank.xml
+  )
+SET(sampleinitconfig
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleInitConfig.dat)
+
+LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
+
 FOREACH(test ${tests})
-	SET(EXECUTABLE_NAME "${test}_exe")
-	ADD_EXECUTABLE(${EXECUTABLE_NAME}
-	  ${test}.cpp)
+  SET(EXECUTABLE_NAME "${test}_exe")
+  ADD_EXECUTABLE(${EXECUTABLE_NAME}
+    ${test}.cpp)
 
-	TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
-	  	zmpreffromcom
-		force-compensation
-		integrator-force-exact
-		mass-apparent
-		integrator-force-rk4
-		integrator-force
-		angle-estimator
-		waist-attitude-from-sensor
-		)
+  TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
+    zmpreffromcom
+    force-compensation
+    integrator-force-exact
+    mass-apparent
+    integrator-force-rk4
+    integrator-force
+    angle-estimator
+    waist-attitude-from-sensor
+    )
 
-    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
-    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} hrp2-dynamics)
-    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
-    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
-    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-mal)
-
-    IF(${test}_plugins_dependencies)
-        ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
-        TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
-    ENDIF(${test}_plugins_dependencies)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} hrp2-dynamics)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-mal)
 
 
-	ADD_TEST(${test} ${EXECUTABLE_NAME})
+  IF(${test}_plugins_dependencies)
+    ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
+    TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
+  ENDIF(${test}_plugins_dependencies)
+
+
+  ADD_TEST(${test} ${EXECUTABLE_NAME}
+    ${samplemodelpath} sample.wrl ${samplespec} ${sampleljr} )
+
+  IF (UNIX)
+    SET_PROPERTY(TEST ${test} PROPERTY 
+      ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_BINARY_DIR}/src")
+  ENDIF(UNIX)
+
 ENDFOREACH(test)
