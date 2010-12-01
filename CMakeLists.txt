@@ -45,7 +45,6 @@ ADD_REQUIRED_DEPENDENCY("hrp2-dynamics >= 1.3.0")
 ADD_REQUIRED_DEPENDENCY("hrp2-10-optimized >= 1.0")
 
 ADD_REQUIRED_DEPENDENCY("hrp2_10 >= 1.0.0")
-ADD_REQUIRED_DEPENDENCY("hrp2_10-small >= 1.0.0")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 1.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 1.0.0")
@@ -69,7 +68,6 @@ ENDIF()
 
 IF(HRP2_10_OPTIMIZED_FOUND)
   LIST(APPEND libs dynamic-hrp2_10)
-  LIST(APPEND libs dynamic-hrp2_10_old)
 ENDIF()
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
