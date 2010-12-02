@@ -68,6 +68,7 @@ ENDIF()
 
 IF(HRP2_10_OPTIMIZED_FOUND)
   LIST(APPEND libs dynamic-hrp2_10)
+  LIST(APPEND libs dynamic-hrp2_10_old)
 ENDIF()
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
