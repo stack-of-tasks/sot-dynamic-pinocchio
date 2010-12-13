@@ -73,6 +73,11 @@ ENDIF()
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
 
+# Search for dependencies.
+# Boost
+SET(BOOST_COMPONENTS filesystem)
+SEARCH_FOR_BOOST()
+
 # Add subdirectories.
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
