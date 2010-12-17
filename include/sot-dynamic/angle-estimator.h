@@ -103,7 +103,14 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
 					const int& time );
   
  public: /* --- PARAMS --- */
-  bool fromSensor;
+  void fromSensor(const bool& inFromSensor) {
+    fromSensor_ = fromSensor;
+  }
+  bool fromSensor() const {
+    return fromSensor_;
+  }
+ private:
+  bool fromSensor_;
 
   virtual void commandLine( const std::string& cmdLine,
 			    std::istringstream& cmdArgs,

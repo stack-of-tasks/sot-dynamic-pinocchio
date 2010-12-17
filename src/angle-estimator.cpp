@@ -73,7 +73,7 @@ AngleEstimator( const std::string & name )
 			    "sotAngleEstimator("+name
 			    +")::output(vectorRollPitchYaw)::waistWorldPoseRPY" )
 
-   ,fromSensor(true)
+   ,fromSensor_(true)
 {
   sotDEBUGIN(5);
   
@@ -267,7 +267,7 @@ computeWaistWorldPosition( MatrixHomogeneous& res,
   const MatrixHomogeneous & waistMleg = contactEmbeddedPositionSIN( time );
   MatrixHomogeneous legMwaist; waistMleg.inverse( legMwaist );
 
-  if( fromSensor )
+  if( fromSensor_ )
     { 
       const MatrixRotation & Rflex = flexibilitySOUT( time ); // footRleg
       ml::Vector zero(3); zero.fill(0.);
@@ -316,9 +316,9 @@ commandLine( const std::string& cmdLine,
       std::string val; cmdArgs>>val; 
       if( ("true"==val)||("false"==val) )
 	{
-	  fromSensor = ( val=="true" ); 
+	  fromSensor_ = ( val=="true" );
 	} else {
-	  os << "fromSensor = " << (fromSensor?"true":"false") << std::endl;
+	  os << "fromSensor = " << (fromSensor_?"true":"false") << std::endl;
 	}
     }
   else { Entity::commandLine( cmdLine,cmdArgs,os); }
