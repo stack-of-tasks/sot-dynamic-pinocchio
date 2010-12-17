@@ -197,20 +197,8 @@ parseConfigFiles( void )
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
-createJacobianSignal( const std::string& signame,const unsigned int& bodyRank )
+createJacobianSignal( const std::string& signame, CjrlJoint* aJoint )
 {
-
-  vector<CjrlJoint *> aVec = m_HDR->jointVector();
-  if( bodyRank>=aVec.size() )
-    {
-      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
-				     "Joint rank is too high.",
-				     "(rank=%d, while creating J signal).",
-				     bodyRank );
-    }
-  CjrlJoint * aJoint = aVec[bodyRank];
-
-
   dg::SignalTimeDependent< ml::Matrix,int > * sig
     = new dg::SignalTimeDependent< ml::Matrix,int >
     ( boost::bind(&Dynamic::computeGenericJacobian,this,aJoint,_1,_2),
@@ -223,20 +211,9 @@ createJacobianSignal( const std::string& signame,const unsigned int& bodyRank )
 }
 
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
-createEndeffJacobianSignal( const std::string& signame,const unsigned int& bodyRank )
+createEndeffJacobianSignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
-
-  vector<CjrlJoint *> aVec = m_HDR->jointVector();
-  if( bodyRank>=aVec.size() )
-    {
-      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
-				     "Joint rank is too high.",
-				     "(rank=%d, while creating J signal).",
-				     bodyRank );
-    }
-  CjrlJoint * aJoint = aVec[bodyRank];
-
 
   dg::SignalTimeDependent< ml::Matrix,int > * sig
     = new dg::SignalTimeDependent< ml::Matrix,int >
@@ -281,20 +258,9 @@ destroyJacobianSignal( const std::string& signame )
 /* --- POINT --- */
 
 dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
-createPositionSignal( const std::string& signame,const unsigned int& bodyRank )
+createPositionSignal( const std::string& signame, CjrlJoint* aJoint)
 {
   sotDEBUGIN(15);
-
-  vector<CjrlJoint *> aVec = m_HDR->jointVector();
-
-  if( bodyRank>=aVec.size() )
-    {
-      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
-				     "Joint rank is too high.",
-				     "(rank=%d, while creating position signal).",
-				     bodyRank );
-    }
-  CjrlJoint * aJoint = aVec[bodyRank];
 
   dg::SignalTimeDependent< MatrixHomogeneous,int > * sig
     = new dg::SignalTimeDependent< MatrixHomogeneous,int >
@@ -340,21 +306,9 @@ destroyPositionSignal( const std::string& signame )
 /* --- VELOCITY --- */
 
 SignalTimeDependent< ml::Vector,int >& Dynamic::
-createVelocitySignal( const std::string& signame,const unsigned int& bodyRank )
+createVelocitySignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
-
-  vector<CjrlJoint *> aVec = m_HDR->jointVector();
-
-  if( bodyRank>=aVec.size() )
-    {
-      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
-				     "Joint rank is too high.",
-				     "(rank=%d, while creating velocity signal).",
-				     bodyRank );
-    }
-  CjrlJoint * aJoint = aVec[bodyRank];
-
   SignalTimeDependent< ml::Vector,int > * sig
     = new SignalTimeDependent< ml::Vector,int >
     ( boost::bind(&Dynamic::computeGenericVelocity,this,aJoint,_1,_2),
@@ -398,21 +352,9 @@ destroyVelocitySignal( const std::string& signame )
 /* --- ACCELERATION --- */
 
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
-createAccelerationSignal( const std::string& signame,const unsigned int& bodyRank )
+createAccelerationSignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
-
-  vector<CjrlJoint *> aVec = m_HDR->jointVector();
-
-  if( bodyRank>=aVec.size() )
-    {
-      SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_RANK,
-				     "Joint rank is too high.",
-				     "(rank=%d, while creating acceleration signal).",
-				     bodyRank );
-    }
-  CjrlJoint * aJoint = aVec[bodyRank];
-
   dg::SignalTimeDependent< ml::Vector,int > * sig
     = new dg::SignalTimeDependent< ml::Vector,int >
     ( boost::bind(&Dynamic::computeGenericAcceleration,this,aJoint,_1,_2),
@@ -1008,7 +950,7 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createJacobianSignal(Jname,rank);
+      //createJacobianSignal(Jname,rank);
     }
   else if( cmdLine == "destroyJacobian" )
     {
@@ -1019,7 +961,7 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createPositionSignal(Jname,rank);
+      //createPositionSignal(Jname,rank);
     }
   else if( cmdLine == "destroyPosition" )
     {
@@ -1030,7 +972,7 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createVelocitySignal(Jname,rank);
+      //createVelocitySignal(Jname,rank);
     }
   else if( cmdLine == "destroyVelocity" )
     {
@@ -1041,7 +983,7 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createAccelerationSignal(Jname,rank);
+      //createAccelerationSignal(Jname,rank);
     }
   else if( cmdLine == "destroyAcceleration" )
     {
@@ -1052,14 +994,14 @@ commandLine( const std::string& cmdLine,
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createEndeffJacobianSignal(Jname,rank);
+      //createEndeffJacobianSignal(Jname,rank);
     }
   else if( cmdLine == "createOpPoint" )
     {
       std::string Jname; cmdArgs >> Jname;
       unsigned int rank; cmdArgs >> rank;
-      createEndeffJacobianSignal(string("J")+Jname,rank);
-      createPositionSignal(Jname,rank);
+      //createEndeffJacobianSignal(string("J")+Jname,rank);
+      //createPositionSignal(Jname,rank);
       sotDEBUG(15)<<endl;
     }
   else if( cmdLine == "destroyOpPoint" )

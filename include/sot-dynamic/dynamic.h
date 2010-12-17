@@ -135,22 +135,22 @@ class SOTDYNAMIC_EXPORT Dynamic
  public: /* --- SIGNAL ACTIVATION --- */
   dg::SignalTimeDependent< ml::Matrix,int > &
     createEndeffJacobianSignal( const std::string& signame,
-				   const unsigned int & bodyRank );
+				CjrlJoint* inJoint );
   dg::SignalTimeDependent< ml::Matrix,int > &
     createJacobianSignal( const std::string& signame,
-			  const unsigned int & bodyRank );
+			  CjrlJoint* inJoint );
   void destroyJacobianSignal( const std::string& signame );
   dg::SignalTimeDependent< MatrixHomogeneous,int >&
     createPositionSignal( const std::string& signame,
-			  const unsigned int & bodyRank );
+			  CjrlJoint* inJoint );
   void destroyPositionSignal( const std::string& signame );
   dg::SignalTimeDependent< ml::Vector,int >&
       createVelocitySignal( const std::string& signame,
-  			     const unsigned int & bodyRank );
+  			     CjrlJoint* inJoint );
     void destroyVelocitySignal( const std::string& signame );
   dg::SignalTimeDependent< ml::Vector,int >&
     createAccelerationSignal( const std::string& signame,
-			     const unsigned int & bodyRank );
+			     CjrlJoint* inJoint );
   void destroyAccelerationSignal( const std::string& signame );
 
   bool zmpActivation( void ) { std::string Property("ComputeZMP");
