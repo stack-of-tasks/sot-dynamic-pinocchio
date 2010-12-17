@@ -65,6 +65,11 @@ namespace djj = dynamicsJRLJapan;
 namespace sot {
 namespace dg = dynamicgraph;
 
+  namespace command {
+    class SetFiles;
+    class Parse;
+    class CreateOpPoint;
+  }
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
@@ -79,6 +84,9 @@ namespace dg = dynamicgraph;
 class SOTDYNAMIC_EXPORT Dynamic
 :public dg::Entity
 {
+  friend class sot::command::SetFiles;
+  friend class sot::command::Parse;
+  friend class sot::command::CreateOpPoint;
  public:
   static const std::string CLASS_NAME;
 

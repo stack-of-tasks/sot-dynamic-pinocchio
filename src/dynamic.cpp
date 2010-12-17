@@ -28,6 +28,8 @@
 
 #include <dynamic-graph/factory.h>
 
+#include "../src/dynamic-command.h"
+
 using namespace sot;
 using namespace dynamicgraph;
 
@@ -113,6 +115,56 @@ Dynamic( const std::string & name, bool build )
 			 <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
   signalRegistration( MomentaSOUT << AngularMomentumSOUT );
 
+  //
+  // Commands
+  //
+  std::string docstring;
+  // setFiles
+  docstring =
+    "\n"
+    "    Define files to parse in order to build the robot.\n"
+    "\n"
+    "      Takes as input 4 string:\n"
+    "        - Directory containing main wrl file,\n"
+    "        - name of wrl file,\n"
+    "        - xml file containing humanoid specificities,\n"
+    "        - xml file defining order of joints in configuration vector.\n"
+    "\n";
+  addCommand("setFiles",
+	     new command::SetFiles(*this, docstring));
+  // parse
+  docstring =
+    "\n"
+    "    Parse files to build an instance ot robot.\n"
+    "\n"
+    "      Takes no argument.\n"
+    "      Files are defined by command setFiles \n"
+    "\n";
+    addCommand("parse",
+	       new command::Parse(*this, docstring));
+
+    // CreateOpPoint
+    docstring = "    \n"
+      "    Create an operational point attached to a robot joint local frame.\n"
+      "    \n"
+      "      Takes 2 arguments: \n"
+      "        - a string: name of the operational point,\n"
+      "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
+      "          , left-wrist, right-wrist, waist, chest).\n"
+      "\n";
+    addCommand("createOpPoint",
+	       new command::CreateOpPoint(*this, docstring));
+
+    // SetProperty
+    docstring = "    \n"
+      "    Set a property.\n"
+      "    \n"
+      "      Takes 2 arguments:\n"
+      "        - a string: name of the property,\n"
+      "        - a string: value of the property.\n"
+      "    \n";
+      addCommand("setProperty",
+		 new command::SetProperty(*this, docstring));
   sotDEBUGOUT(5);
 }
 

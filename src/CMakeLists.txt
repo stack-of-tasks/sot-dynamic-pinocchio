@@ -1,4 +1,5 @@
-# Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
+# Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST,
+#                 Florent Lamiraux (CNRS/LAAS)
 #
 # This file is part of sot-dynamic.
 # sot-dynamic is free software: you can redistribute it and/or
@@ -12,6 +13,8 @@
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
+
+INCLUDE(../cmake/python.cmake)
 
 IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   ADD_DEFINITIONS(-DDEBUG=2)
@@ -43,7 +46,26 @@ FOREACH(lib ${libs})
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
 
   INSTALL(TARGETS ${lib} DESTINATION lib/plugin)
+  # build python submodule
+  STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
+  ADD_DEPENDENCIES(${lib} MKDIR_${PYTHON_LIBRARY_NAME})
+  ADD_CUSTOM_TARGET(MKDIR_${PYTHON_LIBRARY_NAME}
+    mkdir -p dynamic_graph/sot/dynamics/${PYTHON_LIBRARY_NAME}
+    )
+  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
+    ${lib}
+    sot/dynamics/${PYTHON_LIBRARY_NAME}/wrap
+    )
 ENDFOREACH(lib)
+
+EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS "-c \"from distutils import sysconfig; print sysconfig.get_python_lib(0,0,prefix='')\""
+  OUTPUT_VARIABLE PYTHON_SITELIB
+  )
+
+# Install empty __init__.py files in intermediate directories.
+INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/__init__.py
+  DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
+  )
 
 PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
 
