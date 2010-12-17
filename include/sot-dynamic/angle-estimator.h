@@ -104,7 +104,7 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
   
  public: /* --- PARAMS --- */
   void fromSensor(const bool& inFromSensor) {
-    fromSensor_ = fromSensor;
+    fromSensor_ = inFromSensor;
   }
   bool fromSensor() const {
     return fromSensor_;

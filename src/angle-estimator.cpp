@@ -21,6 +21,9 @@
 #include <sot-dynamic/angle-estimator.h>
 #include <sot-core/debug.h>
 #include <dynamic-graph/factory.h>
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command-getter.h>
 
 #include <jrl/mal/matrixabstractlayer.hh>
 
@@ -84,6 +87,27 @@ AngleEstimator( const std::string & name )
 		      << driftSOUT               << sensorWorldRotationSOUT 
 		      << waistWorldRotationSOUT  
 		      << waistWorldPositionSOUT  << waistWorldPoseRPYSOUT  );
+
+  // Commands
+  std::string docstring;
+  docstring = "    \n"
+    "    Set flag specifying whether angle is measured from sensors or simulated.\n"
+    "    \n"
+    "      Input:\n"
+    "        - a boolean value.\n"
+    "    \n";
+  addCommand("setFromSensor",
+	     new ::dynamicgraph::command::Setter<AngleEstimator, bool>
+	     (*this, &AngleEstimator::fromSensor, docstring));
+
+    "    Get flag specifying whether angle is measured from sensors or simulated.\n"
+    "    \n"
+    "      No input,\n"
+    "      return a boolean value.\n"
+    "    \n";
+  addCommand("getFromSensor",
+	     new ::dynamicgraph::command::Getter<AngleEstimator, bool>
+	     (*this, &AngleEstimator::fromSensor, docstring));
 
   sotDEBUGOUT(5);
 }
