@@ -98,7 +98,14 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
   static const std::string CLASS_NAME;
 
  protected:
-  bool fromSensor;
+  void fromSensor(const bool& inFromSensor) {
+    fromSensor_ = inFromSensor;
+  }
+  bool fromSensor() const {
+    return fromSensor_;
+  }
+ private:
+  bool fromSensor_;
 
  public: /* --- CONSTRUCTION --- */
 

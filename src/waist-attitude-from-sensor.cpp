@@ -22,6 +22,10 @@
 #include <sot-core/debug.h>
 #include <dynamic-graph/factory.h>
 
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command-getter.h>
+
 using namespace sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistAttitudeFromSensor,"WaistAttitudeFromSensor");
@@ -105,7 +109,7 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistPoseFromSensorAndContact,
 WaistPoseFromSensorAndContact::
 WaistPoseFromSensorAndContact( const std::string & name ) 
   :WaistAttitudeFromSensor(name)
-   ,fromSensor(false)
+   ,fromSensor_(false)
    ,positionContactSIN(NULL,"sotWaistPoseFromSensorAndContact("+name+")::input(matrixHomo)::contact")
    ,positionWaistSOUT( boost::bind(&WaistPoseFromSensorAndContact::computePositionWaist,this,_1,_2),
 		       attitudeWaistSOUT<<positionContactSIN,
@@ -114,6 +118,29 @@ WaistPoseFromSensorAndContact( const std::string & name )
   sotDEBUGIN(5);
 
   signalRegistration( positionContactSIN<<positionWaistSOUT );
+
+  // Commands
+  std::string docstring;
+  docstring = "    \n"
+    "    Set flag specifying whether angles are measured from sensors or simulated.\n"
+    "    \n"
+    "      Input:\n"
+    "        - a boolean value.\n"
+    "    \n";
+  addCommand("setFromSensor",
+	     new ::dynamicgraph::command::Setter
+	     <WaistPoseFromSensorAndContact, bool>
+	     (*this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
+
+    "    Get flag specifying whether angles are measured from sensors or simulated.\n"
+    "    \n"
+    "      No input,\n"
+    "      return a boolean value.\n"
+    "    \n";
+  addCommand("getFromSensor",
+	     new ::dynamicgraph::command::Getter
+	     <WaistPoseFromSensorAndContact, bool>
+	     (*this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
 
   sotDEBUGOUT(5);
 }
@@ -144,7 +171,7 @@ computePositionWaist( ml::Vector& res,
   for( unsigned int i=0;i<3;++i ) 
     { res(i)=contactMwaist(i,3); }
 
-  if(fromSensor)
+  if(fromSensor_)
     {
       const VectorRollPitchYaw & worldrwaist = attitudeWaistSOUT( time );
       for( unsigned int i=0;i<3;++i ) 
@@ -191,9 +218,9 @@ commandLine( const std::string& cmdLine,
       std::string val; cmdArgs>>val; 
       if( ("true"==val)||("false"==val) )
 	{
-	  fromSensor = ( val=="true" ); 
+	  fromSensor_ = ( val=="true" ); 
 	} else {
-	  os << "fromSensor = " << (fromSensor?"true":"false") << std::endl;
+	  os << "fromSensor = " << (fromSensor_?"true":"false") << std::endl;
 	}
     }
   else { WaistAttitudeFromSensor::commandLine( cmdLine,cmdArgs,os); }
