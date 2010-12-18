@@ -102,8 +102,6 @@ namespace sot {
 	std::vector<Value> values = getParameterValues();
 	std::string opPointName = values[0].value();
 	std::string jointName = values[1].value();
-	std::cout << "opPointName = " << opPointName << std::endl;
-	std::cout << "jointName = " << jointName << std::endl;
 	CjrlJoint* joint = NULL;
 	if (jointName ==  "gaze") {
 	  joint = robot.m_HDR->gazeJoint();
