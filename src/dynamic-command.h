@@ -40,8 +40,8 @@ namespace sot {
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
       SetFiles(Dynamic& entity, const std::string& docstring) :
-      Command(entity, boost::assign::list_of(Value::STRING)
-	      (Value::STRING)(Value::STRING)(Value::STRING), docstring)
+	Command(entity, boost::assign::list_of(Value::STRING)
+		(Value::STRING)(Value::STRING)(Value::STRING), docstring)
       {
       }
       virtual Value doExecute()
@@ -70,7 +70,7 @@ namespace sot {
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
       Parse(Dynamic& entity, const std::string& docstring) :
-      Command(entity, std::vector<Value::Type>(), docstring)
+	Command(entity, std::vector<Value::Type>(), docstring)
       {
       }
       virtual Value doExecute()
@@ -92,8 +92,8 @@ namespace sot {
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
       CreateOpPoint(Dynamic& entity, const std::string& docstring) :
-      Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
-	      docstring)
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
+		docstring)
       {
       }
       virtual Value doExecute()
@@ -139,8 +139,8 @@ namespace sot {
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
       SetProperty(Dynamic& entity, const std::string& docstring) :
-      Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
-	      docstring)
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
+		docstring)
       {
       }
       virtual Value doExecute()
@@ -164,8 +164,8 @@ namespace sot {
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
       GetProperty(Dynamic& entity, const std::string& docstring) :
-      Command(entity, boost::assign::list_of(Value::STRING),
-	      docstring)
+	Command(entity, boost::assign::list_of(Value::STRING),
+		docstring)
       {
       }
       virtual Value doExecute()

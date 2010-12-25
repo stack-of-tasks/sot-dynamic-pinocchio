@@ -152,8 +152,7 @@ Dynamic( const std::string & name, bool build )
       "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
       "          , left-wrist, right-wrist, waist, chest).\n"
       "\n";
-    addCommand("createOpPoint",
-	       new command::CreateOpPoint(*this, docstring));
+    addCommand("createOpPoint", new command::CreateOpPoint(*this, docstring));
 
     // SetProperty
     docstring = "    \n"
