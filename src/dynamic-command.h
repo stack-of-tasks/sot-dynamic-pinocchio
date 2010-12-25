@@ -117,6 +117,8 @@ namespace sot {
 	  joint = robot.m_HDR->waist();
 	} else if (jointName == "chest") {
 	  joint = robot.m_HDR->chest();
+	} else if (jointName == "gaze") {
+	  joint = robot.m_HDR->gazeJoint();
 	} else {
 	  throw ExceptionDynamic(ExceptionDynamic::GENERIC,
 				 jointName + " is not a valid name."
