@@ -53,12 +53,12 @@ namespace djj = dynamicsJRLJapan;
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (dynamic_EXPORTS)
 #    define SOTDYNAMIC_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTDYNAMIC_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTDYNAMIC_EXPORT
 #endif
@@ -82,7 +82,7 @@ namespace dg = dynamicgraph;
   by the dynamicsJRLJapan library to make it accessible in the stack of tasks.
   The robot is described by a VRML file.
 */
-  
+
 class SOTDYNAMIC_EXPORT Dynamic
 :public dg::Entity
 {
@@ -95,7 +95,7 @@ class SOTDYNAMIC_EXPORT Dynamic
  protected:
  public:
 
-  /*! \name Fields to access dynamicsJRLJapan Library 
+  /*! \name Fields to access dynamicsJRLJapan Library
     @{
    */
 
@@ -108,7 +108,7 @@ class SOTDYNAMIC_EXPORT Dynamic
 
   int debugInertia;
 
-  /*! \brief Fields to access the humanoid model 
+  /*! \brief Fields to access the humanoid model
    @{ */
 
   /*! \brief Directory where the VRML humanoid model is stored */
@@ -133,7 +133,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   virtual ~Dynamic( void );
 
  public: /* --- MODEL CREATION --- */
- 
+
   virtual void buildModel( void );
 
   void setVrmlDirectory( const std::string& filename );
@@ -170,7 +170,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   bool comActivation( void ) { std::string Property("ComputeCoM");
     std::string Value; m_HDR->getProperty(Property,Value); return (Value=="true"); }
   void comActivation( const bool& b ) { std::string Property("ComputeCoM");
-    std::string Value; if (b) Value="true"; else Value="false"; m_HDR->setProperty(Property,Value); } 
+    std::string Value; if (b) Value="true"; else Value="false"; m_HDR->setProperty(Property,Value); }
 
  public: /* --- SIGNAL --- */
 
@@ -220,7 +220,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   ml::Matrix& computeInertia( ml::Matrix& res,int time );
   ml::Matrix& computeInertiaReal( ml::Matrix& res,int time );
   double& computeFootHeight( double& res,int time );
-  
+
   ml::Matrix& computeGenericJacobian( CjrlJoint* j,ml::Matrix& res,int time );
   ml::Matrix& computeGenericEndeffJacobian( CjrlJoint* j,ml::Matrix& res,int time );
   MatrixHomogeneous& computeGenericPosition( CjrlJoint* j,MatrixHomogeneous& res,int time );
@@ -235,7 +235,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   virtual void commandLine( const std::string& cmdLine,
 			    std::istringstream& cmdArgs,
 			    std::ostream& os );
-    
+
  public:
   /// \name Construction of a robot by commands
   ///@{
@@ -248,7 +248,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \param inJointName name of the joint,
   /// \param inJointType type of joint in ["freeflyer","rotation","translation","anchor"],
   /// \param inPosition position of the joint (4x4 homogeneous matrix).
-  /// 
+  ///
   /// \note joints are stored in a map with names as keys for retrieval by other
   /// commands. An empty CjrlBody is also created and attached to the joint.
   void createJoint(const std::string& inJointName,

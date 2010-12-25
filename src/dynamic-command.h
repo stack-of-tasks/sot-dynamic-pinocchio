@@ -30,7 +30,7 @@ namespace sot {
   namespace command {
     using ::dynamicgraph::command::Command;
     using ::dynamicgraph::command::Value;
-  
+
     // Command SetFiles
     class SetFiles : public Command
     {
@@ -151,7 +151,7 @@ namespace sot {
 	std::vector<Value> values = getParameterValues();
 	std::string property = values[0].value();
 	std::string value = values[1].value();
-	
+
 	robot.m_HDR->setProperty(property, value);
 	return Value();
       }
@@ -447,7 +447,7 @@ namespace sot {
 	robot.setFootParameters(right, soleLength, soleWidth, anklePosition);
 	return Value();
       }
-    }; // class Setfootparameters      
+    }; // class Setfootparameters
 
     // Command SetGazeParameters
     class SetGazeParameters : public Command

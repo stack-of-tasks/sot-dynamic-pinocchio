@@ -194,7 +194,7 @@ Dynamic( const std::string & name, bool build )
       "        - a string: value of the property.\n"
       "    \n";
     addCommand("setProperty", new command::SetProperty(*this, docstring));
-    
+
     docstring = "    \n"
       "    Get a property\n"
       "    \n"
@@ -1323,7 +1323,7 @@ void Dynamic::createJoint(const std::string& inJointName,
 
 void Dynamic::setRootJoint(const std::string& inJointName)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1338,7 +1338,7 @@ void Dynamic::setRootJoint(const std::string& inJointName)
 void Dynamic::addJoint(const std::string& inParentName,
 		       const std::string& inChildName)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1359,7 +1359,7 @@ void Dynamic::setDofBounds(const std::string& inJointName,
 			   unsigned int inDofId,
 			   double inMinValue, double inMaxValue)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1374,7 +1374,7 @@ void Dynamic::setDofBounds(const std::string& inJointName,
 
 void Dynamic::setMass(const std::string& inJointName, double inMass)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1394,7 +1394,7 @@ void Dynamic::setMass(const std::string& inJointName, double inMass)
 void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
 				   ml::Vector inCom)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1414,7 +1414,7 @@ void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
 void Dynamic::setInertiaMatrix(const std::string& inJointName,
 			       ml::Matrix inMatrix)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1434,7 +1434,7 @@ void Dynamic::setInertiaMatrix(const std::string& inJointName,
 void Dynamic::setSpecificJoint(const std::string& inJointName,
 			       const std::string& inJointType)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1483,7 +1483,7 @@ void Dynamic::setHandParameters(bool inRight, const ml::Vector& inCenter,
 				const ml::Vector& inForefingerAxis,
 				const ml::Vector& inPalmNormal)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1507,7 +1507,7 @@ void Dynamic::setFootParameters(bool inRight, const double& inSoleLength,
 				const double& inSoleWidth,
 				const ml::Vector& inAnklePosition)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
@@ -1528,7 +1528,7 @@ void Dynamic::setFootParameters(bool inRight, const double& inSoleLength,
 void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,
 				const ml::Vector& inGazeDirection)
 {
-  if (!m_HDR) { 
+  if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
