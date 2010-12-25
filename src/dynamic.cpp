@@ -37,6 +37,37 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(Dynamic,"Dynamic");
 
 using namespace std;
 
+static matrix4d maalToMatrix4d(const ml::Matrix& inMatrix)
+{
+  matrix4d homogeneous;
+  for (unsigned int r=0; r<4; r++) {
+    for (unsigned int c=0; c<4; c++) {
+      homogeneous(r,c) = inMatrix(r,c);
+    }
+  }
+  return homogeneous;
+}
+
+static vector3d maalToVector3d(const ml::Vector& inVector)
+{
+  vector3d vector;
+  vector(0) = inVector(0);
+  vector(1) = inVector(1);
+  vector(2) = inVector(2);
+  return vector;
+}
+
+static matrix3d maalToMatrix3d(const ml::Matrix& inMatrix)
+{
+  matrix3d matrix;
+  for (unsigned int r=0; r<3; r++) {
+    for (unsigned int c=0; c<3; c++) {
+      matrix(r,c) = inMatrix(r,c);
+    }
+  }
+  return matrix;
+}
+
 Dynamic::
 Dynamic( const std::string & name, bool build )
   :Entity(name)
@@ -162,8 +193,139 @@ Dynamic( const std::string & name, bool build )
       "        - a string: name of the property,\n"
       "        - a string: value of the property.\n"
       "    \n";
-      addCommand("setProperty",
-		 new command::SetProperty(*this, docstring));
+    addCommand("setProperty", new command::SetProperty(*this, docstring));
+    
+    docstring = "    \n"
+      "    Get a property\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the property,\n"
+      "      Return:\n"
+      "        - a string: value of the property\n";
+    addCommand("getProperty", new command::GetProperty(*this, docstring));
+
+    docstring = "    \n"
+      "    Create an empty robot\n"
+      "    \n";
+    addCommand("createRobot", new command::CreateRobot(*this, docstring));
+
+    docstring = "    \n"
+      "    Create a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a string: type of the joint in ['freeflyer', 'rotation',\n"
+      "'                   translation', 'anchor'],\n"
+      "        - a matrix: (homogeneous) position of the joint.\n"
+      "    \n";
+    addCommand("createJoint", new command::CreateJoint(*this, docstring));
+
+    docstring = "    \n"
+      "    Set the root joint of the robot\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint.\n"
+      "    \n";
+    addCommand("setRootJoint", new command::SetRootJoint(*this, docstring));
+
+    docstring = "    \n"
+      "    Add a child joint to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the parent joint,\n"
+      "        - a string: name of the child joint.\n"
+      "    \n";
+    addCommand("addJoint", new command::AddJoint(*this, docstring));
+
+    docstring = "    \n"
+      "    Set the bounds of a joint degree of freedom\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: the name of the joint,\n"
+      "        - a non-negative integer: the dof id in the joint\n"
+      "        - a floating point number: the minimal value,\n"
+      "        - a floating point number: the maximal value.\n"
+      "    \n";
+    addCommand("setDofBounds", new command::SetDofBounds(*this, docstring));
+
+    docstring = "    \n"
+      "    Set the mass of the body attached to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a floating point number: the mass of the body.\n"
+      "    \n";
+    addCommand("setMass", new command::SetMass(*this, docstring));
+
+    docstring = "    \n"
+      "    Set the position of the center of mass of a body\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a vector: the coordinate of the center of mass in the local\n"
+      "                    frame of the joint.\n"
+      "    \n";
+    addCommand("setLocalCenterOfMass",
+	       new command::SetLocalCenterOfMass(*this, docstring));
+
+    docstring = "    \n"
+      "    Set inertia matrix of a body attached to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a matrix: inertia matrix.\n"
+      "    \n";
+    addCommand("setInertiaMatrix",
+	       new command::SetInertiaMatrix(*this, docstring));
+
+    docstring = "    \n"
+      "    Set specific joints of humanoid robot\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a string: type of the joint in ['waist', 'chest',"
+      " 'left-wrist',\n"
+      "                    'right-wrist', 'left-ankle', 'right-ankle',"
+      " 'gaze']\n"
+      "    \n";
+    addCommand("setSpecificJoint",
+	       new command::SetSpecificJoint(*this, docstring));
+
+    docstring = "    \n"
+      "    Set hand parameters\n"
+      "    \n"
+      "      Input:\n"
+      "        - a boolean: whether right hand or not,\n"
+      "        - a vector: the center of the hand in the wrist local frame,\n"
+      "        - a vector: the thumb axis in the wrist local frame,\n"
+      "        - a vector: the forefinger axis in the wrist local frame,\n"
+      "        - a vector: the palm normal in the wrist local frame.\n"
+      "    \n";
+    addCommand("setHandParameters",
+	       new command::SetHandParameters(*this, docstring));
+
+    docstring = "    \n"
+      "    Set foot parameters\n"
+      "    \n"
+      "      Input:\n"
+      "        - a boolean: whether right hand or not,\n"
+      "        - a floating point number: the sole length,\n"
+      "        - a floating point number: the sole width,\n"
+      "        - a vector: the position of the ankle in the foot local frame.\n"
+      "    \n";
+    addCommand("setFootParameters",
+	       new command::SetFootParameters(*this, docstring));
+
+    docstring = "    \n"
+      "    Set parameters of the gaze\n"
+      "    \n"
+      "      Input:\n"
+      "        - a vector: the gaze origin,\n"
+      "        - a vector: the gaze direction.\n"
+      "    \n";
+    addCommand("setGazeParameters",
+	       new command::SetGazeParameters(*this, docstring));
+
   sotDEBUGOUT(5);
 }
 
@@ -1124,5 +1286,252 @@ commandLine( const std::string& cmdLine,
 
 }
 
+void Dynamic::createRobot()
+{
+  if (m_HDR)
+    delete m_HDR;
+  m_HDR = factory_.createHumanoidDynamicRobot();
+}
 
+void Dynamic::createJoint(const std::string& inJointName,
+			  const std::string& inJointType,
+			   const ml::Matrix& inPosition)
+{
+  if (jointMap_.count(inJointName) == 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "a joint with name " + inJointName +
+			       " has already been created.");
+  }
+  matrix4d position = maalToMatrix4d(inPosition);
+  CjrlJoint* joint=NULL;
 
+  if (inJointType == "freeflyer") {
+    joint = factory_.createJointFreeflyer(position);
+  } else if (inJointType == "rotation") {
+    joint = factory_.createJointRotation(position);
+  } else if (inJointType == "translation") {
+    joint = factory_.createJointTranslation(position);
+  } else if (inJointType == "anchor") {
+    joint = factory_.createJointAnchor(position);
+  } else {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       inJointType + " is not a valid type.\n"
+			       "Valid types are 'freeflyer', 'rotation', 'translation', 'anchor'.");
+  }
+  jointMap_[inJointName] = joint;
+}
+
+void Dynamic::setRootJoint(const std::string& inJointName)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  m_HDR->rootJoint(*jointMap_[inJointName]);
+}
+
+void Dynamic::addJoint(const std::string& inParentName,
+		       const std::string& inChildName)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inParentName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inParentName +
+			       " has been created.");
+  }
+  if (jointMap_.count(inChildName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inChildName +
+			       " has been created.");
+  }
+  jointMap_[inParentName]->addChildJoint(*(jointMap_[inChildName]));
+}
+
+void Dynamic::setDofBounds(const std::string& inJointName,
+			   unsigned int inDofId,
+			   double inMinValue, double inMaxValue)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  jointMap_[inJointName]->lowerBound(inDofId, inMinValue);
+  jointMap_[inJointName]->upperBound(inDofId, inMaxValue);
+}
+
+void Dynamic::setMass(const std::string& inJointName, double inMass)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  CjrlJoint* joint = jointMap_[inJointName];
+  if (!joint->linkedBody()) {
+    joint->setLinkedBody(*(factory_.createBody()));
+  }
+  CjrlBody& body = *(joint->linkedBody());
+  body.mass(inMass);
+}
+
+void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
+				   ml::Vector inCom)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  CjrlJoint* joint = jointMap_[inJointName];
+  if (!joint->linkedBody()) {
+    joint->setLinkedBody(*(factory_.createBody()));
+  }
+  CjrlBody& body = *(joint->linkedBody());
+  body.localCenterOfMass(maalToVector3d(inCom));
+}
+
+void Dynamic::setInertiaMatrix(const std::string& inJointName,
+			       ml::Matrix inMatrix)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  CjrlJoint* joint = jointMap_[inJointName];
+  if (!joint->linkedBody()) {
+    joint->setLinkedBody(*(factory_.createBody()));
+  }
+  CjrlBody& body = *(joint->linkedBody());
+  body.inertiaMatrix(maalToMatrix3d(inMatrix));
+}
+
+void Dynamic::setSpecificJoint(const std::string& inJointName,
+			       const std::string& inJointType)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "No joint with name " + inJointName +
+			       " has been created.");
+  }
+  CjrlJoint* joint = jointMap_[inJointName];
+  if (inJointType == "chest") {
+  } else if (inJointType == "waist") {
+    m_HDR->waist(joint);
+  } else if (inJointType == "chest") {
+    m_HDR->chest(joint);
+  } else if (inJointType == "left-wrist") {
+    m_HDR->leftWrist(joint);
+    // Create hand
+    CjrlHand* hand = factory_.createHand(joint);
+    m_HDR->leftHand(hand);
+  } else if (inJointType == "right-wrist") {
+    m_HDR->rightWrist(joint);
+    // Create hand
+    CjrlHand* hand = factory_.createHand(joint);
+    m_HDR->rightHand(hand);
+  } else if (inJointType == "left-ankle") {
+    m_HDR->leftAnkle(joint);
+    // Create foot
+    CjrlFoot* foot = factory_.createFoot(joint);
+    m_HDR->leftFoot(foot);
+  } else if (inJointType == "right-ankle") {
+    m_HDR->rightAnkle(joint);
+    // Create foot
+    CjrlFoot* foot = factory_.createFoot(joint);
+    m_HDR->rightFoot(foot);
+  } else if (inJointType == "gaze") {
+    m_HDR->gazeJoint(joint);
+  } else {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       inJointType + " is not a valid type.\n"
+			       "Valid types are 'waist', 'chest', 'left-wrist',\n'right-wrist', 'left-ankle', 'right-ankle', 'gaze'.");
+  }
+}
+
+void Dynamic::setHandParameters(bool inRight, const ml::Vector& inCenter,
+				const ml::Vector& inThumbAxis,
+				const ml::Vector& inForefingerAxis,
+				const ml::Vector& inPalmNormal)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  CjrlHand *hand = NULL;
+  if (inRight) {
+    hand = m_HDR->rightHand();
+  } else {
+    hand = m_HDR->leftHand();
+  }
+  if (!hand) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "hand has not been defined yet");
+  }
+  hand->setCenter(maalToVector3d(inCenter));
+  hand->setThumbAxis(maalToVector3d(inThumbAxis));
+  hand->setForeFingerAxis(maalToVector3d(inForefingerAxis));
+  hand->setPalmNormal(maalToVector3d(inPalmNormal));
+}
+
+void Dynamic::setFootParameters(bool inRight, const double& inSoleLength,
+				const double& inSoleWidth,
+				const ml::Vector& inAnklePosition)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  CjrlFoot *foot = NULL;
+  if (inRight) {
+    foot = m_HDR->rightFoot();
+  } else {
+    foot = m_HDR->leftFoot();
+  }
+  if (!foot) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "foot has not been defined yet");
+  }
+  foot->setSoleSize(inSoleLength, inSoleWidth);
+  foot->setAnklePositionInLocalFrame(maalToVector3d(inAnklePosition));
+}
+
+void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,
+				const ml::Vector& inGazeDirection)
+{
+  if (!m_HDR) { 
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  m_HDR->gaze(maalToVector3d(inGazeOrigin),
+	      maalToVector3d(inGazeDirection));
+}

@@ -182,6 +182,296 @@ namespace sot {
       }
     }; // class GetProperty
 
+    // Command CreateRobot
+    class CreateRobot : public Command
+    {
+    public:
+      virtual ~CreateRobot() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      CreateRobot(Dynamic& entity, const std::string& docstring) :
+	Command(entity, std::vector<Value::Type>(),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	robot.createRobot();
+	return Value();
+      }
+    }; // class CreateRobot
+
+    // Command CreateJoint
+    class CreateJoint : public Command
+    {
+    public:
+      virtual ~CreateJoint() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      CreateJoint(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING)
+		(Value::MATRIX), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	std::string jointType = values[1].value();
+	maal::boost::Matrix position = values[2].value();
+	robot.createJoint(jointName, jointType, position);
+	return Value();
+      }
+    }; // class CreateJoint
+
+    // Command SetRootJoint
+    class SetRootJoint : public Command
+    {
+    public:
+      virtual ~SetRootJoint() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetRootJoint(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	robot.setRootJoint(jointName);
+	return Value();
+      }
+    }; // class SetRootJoint
+
+    // Command AddJoint
+    class AddJoint : public Command
+    {
+    public:
+      virtual ~AddJoint() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      AddJoint(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string parentName = values[0].value();
+	std::string childName = values[1].value();
+	robot.addJoint(parentName, childName);
+	return Value();
+      }
+    }; // class AddJoint
+
+    // Command SetDofBounds
+    class SetDofBounds : public Command
+    {
+    public:
+      virtual ~SetDofBounds() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetDofBounds(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::UNSIGNED)
+		(Value::DOUBLE)(Value::DOUBLE), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	unsigned int dofId = values[1].value();
+	double minValue = values[2].value();
+	double maxValue = values[3].value();
+	robot.setDofBounds(jointName, dofId, minValue, maxValue);
+	return Value();
+      }
+    }; // class SetDofBounds
+
+    // Command SetMass
+    class SetMass : public Command
+    {
+    public:
+      virtual ~SetMass() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetMass(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::DOUBLE),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	double mass = values[1].value();
+	robot.setMass(jointName, mass);
+	return Value();
+      }
+    }; // class SetMass
+
+    // Command SetLocalCenterOfMass
+    class SetLocalCenterOfMass : public Command
+    {
+    public:
+      virtual ~SetLocalCenterOfMass() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetLocalCenterOfMass(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::VECTOR),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	ml::Vector com = values[1].value();
+	robot.setLocalCenterOfMass(jointName, com);
+	return Value();
+      }
+    }; // class SetLocalCenterOfMass
+
+    // Command SetInertiaMatrix
+    class SetInertiaMatrix : public Command
+    {
+    public:
+      virtual ~SetInertiaMatrix() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetInertiaMatrix(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::MATRIX),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	ml::Matrix inertiaMatrix = values[1].value();
+	robot.setInertiaMatrix(jointName, inertiaMatrix);
+	return Value();
+      }
+    }; // class SetInertiaMatrix
+
+    // Command SetSpecificJoint
+    class SetSpecificJoint : public Command
+    {
+    public:
+      virtual ~SetSpecificJoint() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetSpecificJoint(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	std::string jointType = values[1].value();
+	robot.setSpecificJoint(jointName, jointType);
+	return Value();
+      }
+    }; // class SetSpecificJoint
+
+    // Command SetHandParameters
+    class SetHandParameters : public Command
+    {
+    public:
+      virtual ~SetHandParameters() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetHandParameters(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::BOOL)(Value::VECTOR)
+		(Value::VECTOR)(Value::VECTOR)(Value::VECTOR), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	bool right = values[0].value();
+	ml::Vector center = values[1].value();
+	ml::Vector thumbAxis = values[2].value();
+	ml::Vector forefingerAxis = values[3].value();
+	ml::Vector palmNormalAxis = values[4].value();
+	robot.setHandParameters(right, center, thumbAxis, forefingerAxis,
+				palmNormalAxis);
+	return Value();
+      }
+    }; // class SetHandParameters
+    // Command SetFootParameters
+    class SetFootParameters : public Command
+    {
+    public:
+      virtual ~SetFootParameters() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetFootParameters(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::BOOL)(Value::DOUBLE)
+		(Value::DOUBLE)(Value::VECTOR), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	bool right = values[0].value();
+	double soleLength = values[1].value();
+	double soleWidth = values[2].value();
+	ml::Vector anklePosition = values[3].value();
+	robot.setFootParameters(right, soleLength, soleWidth, anklePosition);
+	return Value();
+      }
+    }; // class Setfootparameters      
+
+    // Command SetGazeParameters
+    class SetGazeParameters : public Command
+    {
+    public:
+      virtual ~SetGazeParameters() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetGazeParameters(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::VECTOR)(Value::VECTOR),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	ml::Vector gazeOrigin  = values[0].value();
+	ml::Vector gazeDirection = values[1].value();
+	robot.setGazeParameters(gazeOrigin, gazeDirection);
+	return Value();
+      }
+    }; // class SetGazeParameters
   } // namespace command
 } //namespace sot
 

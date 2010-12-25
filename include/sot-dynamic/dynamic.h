@@ -25,6 +25,10 @@
 /* --- INCLUDE --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
+/* STD */
+#include <string>
+#include <map>
+
 /* Matrix */
 #include <jrl/mal/boost.hh>
 #include "jrl/mal/matrixabstractlayer.hh"
@@ -33,6 +37,7 @@ namespace ml = maal::boost;
 /* JRL dynamic */
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
 #include <jrl/dynamics/dynamicsfactory.hh>
+
 namespace djj = dynamicsJRLJapan;
 
 /* SOT */
@@ -43,9 +48,6 @@ namespace djj = dynamicsJRLJapan;
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot-core/exception-dynamic.h>
 #include <sot-core/matrix-homogeneous.h>
-
-/* STD */
-#include <string>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -234,6 +236,103 @@ class SOTDYNAMIC_EXPORT Dynamic
 			    std::istringstream& cmdArgs,
 			    std::ostream& os );
     
+ public:
+  /// \name Construction of a robot by commands
+  ///@{
+  ///
+
+  /// \brief Create an empty device
+  void createRobot();
+
+  /// \brief create a joint
+  /// \param inJointName name of the joint,
+  /// \param inJointType type of joint in ["freeflyer","rotation","translation","anchor"],
+  /// \param inPosition position of the joint (4x4 homogeneous matrix).
+  /// 
+  /// \note joints are stored in a map with names as keys for retrieval by other
+  /// commands. An empty CjrlBody is also created and attached to the joint.
+  void createJoint(const std::string& inJointName,
+		   const std::string& inJointType,
+		   const ml::Matrix& inPosition);
+
+  /// \brief Set a joint as root joint of the robot.
+  void setRootJoint(const std::string& inJointName);
+
+  /// \brief Add a child joint to a joint.
+  /// \param inParentName name of the joint to which a child is added.
+  /// \param inChildName name of the child joint added.
+  void addJoint(const std::string& inParentName,
+		const std::string& inChildName);
+
+  /// \brief Set bound of degree of freedom
+  ///
+  /// \param inJointName name of the joint,
+  /// \param inDofId id of the degree of freedom in the joint,
+  /// \param inMinValue, inMaxValue values of degree of freedom bounds
+
+  void setDofBounds(const std::string& inJointName, unsigned int inDofId,
+		    double inMinValue, double inMaxValue);
+
+  /// \brief Set mass of a body
+  ///
+  /// \param inJointName name of the joint to which the body is attached,
+  /// \param inMass mass of the body
+  void setMass(const std::string& inJointName, double inMass);
+
+  /// \brief Set local center of mass of a body
+  ///
+  /// \param inJointName name of the joint to which the body is attached,
+  /// \param inCom local center of mass.
+  void setLocalCenterOfMass(const std::string& inJointName, ml::Vector inCom);
+
+  /// \brief Set inertia matrix of a body
+  ///
+  /// \param inJointName name of the joint to which the body is attached,
+  /// \param inMatrix inertia matrix.
+  void setInertiaMatrix(const std::string& inJointName,
+			ml::Matrix inMatrix);
+
+  /// \brief Set specific joints
+  ///
+  /// \param inJointName name of the joint,
+  /// \param inJointType type of joint in ['chest','waist','left-wrist','right-wrist','left-ankle','right-ankle','gaze'].
+  void setSpecificJoint(const std::string& inJointName,
+			const std::string& inJointType);
+
+  /// \brief Set hand parameters
+  ///
+  /// \param inRight true if right hand, false if left hand,
+  /// \param inCenter center of the hand in wrist local frame,
+  /// \param inThumbAxis thumb axis in wrist local frame,
+  /// \param inForefingerAxis forefinger axis in wrist local frame,
+  /// \param inPalmNormalAxis palm normal in wrist local frame,
+  void setHandParameters(bool inRight, const ml::Vector& inCenter,
+			 const ml::Vector& inThumbAxis,
+			 const ml::Vector& inForefingerAxis,
+			 const ml::Vector& inPalmNormal);
+
+  /// \brief Set foot parameters
+  ///
+  /// \param inRight true if right foot, false if left foot,
+  /// \param inSoleLength sole length,
+  /// \param inSoleWidth sole width,
+  /// \param inAnklePosition ankle position in foot local frame,
+  void setFootParameters(bool inRight, const double& inSoleLength,
+			 const double& inSoleWidth,
+			 const ml::Vector& inAnklePosition);
+
+  /// \brief Set gaze parameters
+  ///
+  /// \param inGazeOrigin origin of the gaze in gaze joint local frame,
+  /// \param inGazeDirection direction of the gase in gaze joint local frame.
+  void setGazeParameters(const ml::Vector& inGazeOrigin,
+			 const ml::Vector& inGazeDirection);
+  /// @}
+  ///
+ private:
+  /// \brief map of joints in construction.
+  std::map<std::string, CjrlJoint*> jointMap_;
+  djj::ObjectFactory factory_;
 
 };
 
@@ -243,4 +342,3 @@ class SOTDYNAMIC_EXPORT Dynamic
 
 
 #endif // #ifndef __SOT_DYNAMIC_H__
-
