@@ -1,0 +1,3 @@
+import dynamic
+
+dynamic.Dynamic('')
