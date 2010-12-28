@@ -71,6 +71,7 @@ namespace dg = dynamicgraph;
     class SetFiles;
     class Parse;
     class CreateOpPoint;
+    class InitializeRobot;
   }
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
@@ -89,6 +90,8 @@ class SOTDYNAMIC_EXPORT Dynamic
   friend class sot::command::SetFiles;
   friend class sot::command::Parse;
   friend class sot::command::CreateOpPoint;
+  friend class sot::command::InitializeRobot;
+
  public:
   static const std::string CLASS_NAME;
 

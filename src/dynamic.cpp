@@ -326,6 +326,12 @@ Dynamic( const std::string & name, bool build )
     addCommand("setGazeParameters",
 	       new command::SetGazeParameters(*this, docstring));
 
+    docstring = "    \n"
+      "    Initialize kinematic chain of robot\n"
+      "    \n";
+    addCommand("initializeRobot",
+	       new command::InitializeRobot(*this, docstring));
+
   sotDEBUGOUT(5);
 }
 

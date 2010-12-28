@@ -472,6 +472,27 @@ namespace sot {
 	return Value();
       }
     }; // class SetGazeParameters
+
+    // Command InitializeRobot
+    class InitializeRobot : public Command
+    {
+    public:
+      virtual ~InitializeRobot() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      InitializeRobot(Dynamic& entity, const std::string& docstring) :
+	Command(entity, std::vector<Value::Type>(),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	robot.m_HDR->initialize();
+	return Value();
+      }
+    }; // class InitializeRobot
   } // namespace command
 } //namespace sot
 

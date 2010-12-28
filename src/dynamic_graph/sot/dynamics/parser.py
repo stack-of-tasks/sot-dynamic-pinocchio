@@ -114,6 +114,7 @@ class Parser (object):
                          self.GAZEDIRECTIONZ)
 
         self.entity.setGazeParameters(gazeOrigin, gazeDirection)
+        self.entity.initializeRobot()
         return self.entity
 
     def createJoint (self, node, parentName):
