@@ -308,7 +308,7 @@ Dynamic( const std::string & name, bool build )
       "    Set foot parameters\n"
       "    \n"
       "      Input:\n"
-      "        - a boolean: whether right hand or not,\n"
+      "        - a boolean: whether right foot or not,\n"
       "        - a floating point number: the sole length,\n"
       "        - a floating point number: the sole width,\n"
       "        - a vector: the position of the ankle in the foot local frame.\n"
