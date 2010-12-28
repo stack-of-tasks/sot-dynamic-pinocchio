@@ -155,11 +155,12 @@ Dynamic( const std::string & name, bool build )
     "\n"
     "    Define files to parse in order to build the robot.\n"
     "\n"
-    "      Takes as input 4 string:\n"
-    "        - Directory containing main wrl file,\n"
-    "        - name of wrl file,\n"
-    "        - xml file containing humanoid specificities,\n"
-    "        - xml file defining order of joints in configuration vector.\n"
+    "      Input:\n"
+    "        - a string: directory containing main wrl file,\n"
+    "        - a string: name of wrl file,\n"
+    "        - a string: xml file containing humanoid specificities,\n"
+    "        - a string: xml file defining order of joints in configuration"
+    " vector.\n"
     "\n";
   addCommand("setFiles",
 	     new command::SetFiles(*this, docstring));
@@ -168,7 +169,7 @@ Dynamic( const std::string & name, bool build )
     "\n"
     "    Parse files to build an instance ot robot.\n"
     "\n"
-    "      Takes no argument.\n"
+    "      No input.\n"
     "      Files are defined by command setFiles \n"
     "\n";
     addCommand("parse",
@@ -178,7 +179,7 @@ Dynamic( const std::string & name, bool build )
     docstring = "    \n"
       "    Create an operational point attached to a robot joint local frame.\n"
       "    \n"
-      "      Takes 2 arguments: \n"
+      "      Input: \n"
       "        - a string: name of the operational point,\n"
       "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
       "          , left-wrist, right-wrist, waist, chest).\n"
@@ -189,7 +190,7 @@ Dynamic( const std::string & name, bool build )
     docstring = "    \n"
       "    Set a property.\n"
       "    \n"
-      "      Takes 2 arguments:\n"
+      "      Input:\n"
       "        - a string: name of the property,\n"
       "        - a string: value of the property.\n"
       "    \n";
@@ -215,7 +216,7 @@ Dynamic( const std::string & name, bool build )
       "      Input:\n"
       "        - a string: name of the joint,\n"
       "        - a string: type of the joint in ['freeflyer', 'rotation',\n"
-      "'                   translation', 'anchor'],\n"
+      "                    'translation', 'anchor'],\n"
       "        - a matrix: (homogeneous) position of the joint.\n"
       "    \n";
     addCommand("createJoint", new command::CreateJoint(*this, docstring));
