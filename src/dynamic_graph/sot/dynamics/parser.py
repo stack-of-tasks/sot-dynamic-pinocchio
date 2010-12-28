@@ -95,6 +95,11 @@ class Parser (object):
 
         self.entity.setHandParameters(False, handCenter, thumbAxis,
                                       forefingerAxis, palmNormal)
+        # Compute values for right hand
+        handCenter = self.handSymmetry(handCenter)
+        thumbAxis = self.handSymmetry(thumbAxis)
+        forefingerAxis = self.handSymmetry(forefingerAxis)
+        palmNormal = self.handSymmetry(palmNormal)
         self.entity.setHandParameters(True, handCenter, thumbAxis,
                                       forefingerAxis, palmNormal)
 
@@ -104,10 +109,10 @@ class Parser (object):
         anklePosition = (self.ANKLEPOSINLEFTFOOTFRAMEX,
                          self.ANKLEPOSINLEFTFOOTFRAMEY,
                          self.ANKLEPOSINLEFTFOOTFRAMEZ)
-        
+
         self.entity.setFootParameters(False, soleLength, soleWidth,
                                       anklePosition)
-        
+
         # Gaze parameters.
         gazeOrigin = (self.GAZEORIGINX, self.GAZEORIGINY, self.GAZEORIGINZ)
         gazeDirection = (self.GAZEDIRECTIONX, self.GAZEDIRECTIONY,
@@ -120,7 +125,6 @@ class Parser (object):
     def createJoint (self, node, parentName):
         sotJointType = self.jointType[node.nodeName]
         jointName = self.findStringProperty(node, 'NAME')
-        print ('jointName = %s' % repr(jointName))
         properties = {}
         for p in self.jointFloatProperties:
             try:
@@ -131,6 +135,12 @@ class Parser (object):
                 properties[p] = 0.
 
         position = self.findJointPosition(node)
+        # Remember position of wrists.
+        if jointName == self.LEFTWRIST:
+            self.leftWristPosition = position[:]
+        if jointName == self.RIGHTWRIST:
+            self.rightWristPosition = position[:]
+        # Find dof bounds.
         bounds = self.findJointBounds(node, jointName)
 
         self.entity.createJoint(jointName, sotJointType, position)
@@ -211,8 +221,6 @@ class Parser (object):
         properties = filter(lambda n: n.nodeName == 'PROPERTY', node.childNodes)
         theProperty = filter (lambda p: p._attrs['stringId'].nodeValue == prop,
                         properties)
-        #print ('THE PROPERTY: %s' % prop)
-        #print (theProperty)
         if len(theProperty) != 1:
             raise RuntimeError(prop +
                                ' should be specified once and only once.')
@@ -223,8 +231,6 @@ class Parser (object):
             raise RuntimeError('One and only one name should be specified for '
                                + prop)
         value = value[0]
-        #print ('VALUE: %s' % value.data)
-        #print ('cast(VALUE): %s' % cast(value.data))
         return cast(value.data)
 
     def findJointPosition(self, node):
@@ -256,3 +262,49 @@ class Parser (object):
         # transform list into tuple
         return tuple (map (tuple, matrix))
 
+    def handSymmetry(self, vector):
+        """
+        Conversion of local coordinates from left hand to right hand
+
+          Input:
+            - a vector: locally expressed in the local frame of left wrist,
+          Return:
+            - a vector: locally expressed in the local frame of the right wrist.
+
+          The conversion is done in such a way that input and output are
+          symmetric with respect to plane (xz) in global frame.
+        """
+        # input vector expressed in global frame
+        vector = vector + (1.,)
+        globalLeftVector = mv_mul(self.leftWristPosition, vector)
+        globalRightVector = list(globalLeftVector[:])
+        globalRightVector[1] *= -1.
+        output = mv_mul(inverseHomogeneous(self.rightWristPosition),
+                        globalRightVector)
+        return output[:3]
+
+def mv_mul(matrix, vector):
+    """
+    Matrix vector multiplication
+    """
+    return tuple(map(lambda l: inner_prod(l,vector), matrix))
+
+def inner_prod(v1, v2):
+    """
+    Compute the inner product of two vectors
+    """
+    return reduce(lambda x, y: x + y[0]*y[1], zip(v1,v2),0)
+
+def inverseHomogeneous(matrix):
+    """
+    Compute the inverse of an homogeneous matrix
+    """
+    rotation = map(lambda l:l[:3], matrix[:3])
+    # transpose
+    invRot = tuple(zip(*rotation))
+    # translation part
+    t = map (lambda l:l[3], matrix[:3])
+    invRot_by_t = mv_mul(invRot, t)
+    inverse = map(lambda x : list(x[0])+[-x[1]], zip(invRot, invRot_by_t))
+    inverse.append((0.,0.,0.,1.))
+    return tuple(map(tuple, inverse))
