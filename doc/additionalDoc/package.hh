@@ -19,7 +19,7 @@
  */
 
 /** \mainpage
-\section sec_intro Introduction
+\section sot_dynamic_section_introduction Introduction
 
 The sot-dynamic package is a bridge between the stack of tasks framework and the dynamicsJRLJapan library.
 It provides an inverse dynamic model of the robot through dynamic-graph entities.
@@ -31,6 +31,7 @@ This package depends on the following packages:
 \li dynamicsJRLJapan
 \li sot-core
 \li dynamic-graph
+\li dynamic-graph-python
 Optional packages (for specific support of the hrp2-N robots)
 \li hrp210optimized
 \li hrp2-dynamics
@@ -38,10 +39,10 @@ Optional packages (for specific support of the hrp2-N robots)
 See the JRL umi3218's page on github for instructions on how to download and
 install these packages at https://github.com/jrl-umi3218.
 
-\section overview API overview
+\section python_bindings Python bindings
+
 As most packages based on the dynamic-graph framework (see https://github.com/jrl-umi3218/dynamic-graph),
-the functionnality is exposed through entities. Hence .so or .dll (dynamic-link) libraries are
-generated in the dynamic-graph plugins directory.
+the functionnality is exposed through entities. Hence python sub-modules of dynamic_graph  are generated. See <a href="../sphinx-html/index.html">sphinx documentation</a> for more details.
 
 The following entities are created by this package:\n
 (all entites are placed in the namespace sot::)
