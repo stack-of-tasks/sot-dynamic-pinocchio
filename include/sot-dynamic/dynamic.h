@@ -339,7 +339,8 @@ class SOTDYNAMIC_EXPORT Dynamic
 
 };
 
-
+  std::ostream& operator<<(std::ostream& os, const CjrlHumanoidDynamicRobot& r);
+  std::ostream& operator<<(std::ostream& os, const CjrlJoint& r);
 } // namespace sot
 
 

@@ -333,6 +333,24 @@ Dynamic( const std::string & name, bool build )
     addCommand("initializeRobot",
 	       new command::InitializeRobot(*this, docstring));
 
+    docstring = "    \n"
+      "    Get the dimension of the robot configuration.\n"
+      "    \n";
+      "      Return:\n";
+      "        an unsigned int: the dimension.\n";
+      "    \n";
+    addCommand("getDimension",
+	       new command::GetDimension(*this, docstring));
+
+    docstring = "    \n"
+      "    Write the robot kinematic chain in a file.\n"
+      "    \n";
+      "      Input:\n";
+      "        a string: a filename.\n";
+      "    \n";
+    addCommand("write",
+	       new command::Write(*this, docstring));
+
   sotDEBUGOUT(5);
 }
 
@@ -1539,6 +1557,115 @@ void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "you must create a robot first.");
   }
-  m_HDR->gaze(maalToVector3d(inGazeOrigin),
-	      maalToVector3d(inGazeDirection));
+  m_HDR->gaze(maalToVector3d(inGazeDirection),
+	      maalToVector3d(inGazeOrigin));
+}
+
+std::ostream& sot::operator<<(std::ostream& os,
+			      const CjrlHumanoidDynamicRobot& robot)
+{
+  os << "Device: " << &robot << std::endl;
+  os << std::endl;
+  os << "  gaze: " << robot.gazeJoint() << std::endl;
+  os << "  waist: " << robot.waist() << std::endl;
+  os << "  chest: " << robot.waist() << std::endl;
+  os << "  left wrist: " << robot.leftWrist() << std::endl;
+  os << "  right wrist: " << robot.rightWrist() << std::endl;
+  os << "  left ankle: " << robot.leftAnkle() << std::endl;
+  os << "  right ankle: " << robot.rightAnkle() << std::endl;
+  os << std::endl;
+  os << "  gaze origin: " << robot.gazeOrigin() << std::endl;
+  os << "  gaze direction: " << robot.gazeDirection() << std::endl;
+  os << std::endl;
+  os << "  left hand" << std::endl;
+  CjrlHand* hand = robot.leftHand();
+  vector3d v;
+  hand-> getCenter(v);
+  os << "    center: " << v << std::endl;
+  hand-> getThumbAxis(v);
+  os << "    thumb axis: " << v << std::endl;
+  hand-> getForeFingerAxis(v);
+  os << "    forefinger axis: " << v << std::endl;
+  hand-> getPalmNormal(v);
+  os << "    palm normal: " << v << std::endl;
+  os << "  right hand" << std::endl;
+  hand = robot.rightHand();
+  hand-> getCenter(v);
+  os << "    center: " << v << std::endl;
+  hand-> getThumbAxis(v);
+  os << "    thumb axis: " << v << std::endl;
+  hand-> getForeFingerAxis(v);
+  os << "    forefinger axis: " << v << std::endl;
+  hand-> getPalmNormal(v);
+  os << "    palm normal: " << v << std::endl;
+  os << "  left foot" << std::endl;
+  CjrlFoot* foot = robot.leftFoot();
+  double length, width;
+  foot->getSoleSize(length, width);
+  foot->getAnklePositionInLocalFrame(v);
+  os << "    sole length: " << length << std::endl;
+  os << "    sole width: " << width << std::endl;
+  os << "    ankle position in foot frame: " << v << std::endl;
+  os << "  right foot" << std::endl;
+  foot = robot.rightFoot();
+  foot->getSoleSize(length, width);
+  foot->getAnklePositionInLocalFrame(v);
+  os << "    sole length: " << length << std::endl;
+  os << "    sole width: " << width << std::endl;
+  os << "    ankle position in foot frame: " << v << std::endl;
+  os << std::endl;
+  os << "  Current configuration: " << robot.currentConfiguration()
+     << std::endl;
+  os << std::endl;
+  os << std::endl;
+  os << "  Writing kinematic chain" << std::endl;
+
+  //
+  // Go through joints and output each joint
+  //
+  CjrlJoint* joint = robot.rootJoint();
+
+  if (joint) {
+    os << *joint << std::endl;
+  }
+  // Get position of center of mass
+  MAL_S3_VECTOR(com, double);
+  com = robot.positionCenterOfMass();
+
+  //debug
+  os <<"total mass "<<robot.mass() <<", COM: "
+      << MAL_S3_VECTOR_ACCESS(com, 0)
+      <<", "<< MAL_S3_VECTOR_ACCESS(com, 1)
+      <<", "<< MAL_S3_VECTOR_ACCESS(com, 2)
+      <<std::endl;
+  return os;
+}
+
+std::ostream& sot::operator<<(std::ostream& os, const CjrlJoint& joint)
+{
+  os << "CjrlJoint:" << &joint << std::endl;
+  os << "Rank in configuration "
+     << joint.rankInConfiguration() << std::endl;
+  os << "Current transformation:" << std::endl;
+  os << joint.currentTransformation() << std:: endl;
+  os << std::endl;
+
+  CjrlBody* body = joint.linkedBody();
+  if (body) {
+    os << "Attached body:" << std::endl;
+    os << "Mass of the attached body: " << body->mass() << std::endl;
+    os << "Local center of mass:" << body->localCenterOfMass() << std::endl;
+    os << "Inertia matrix:" << std::endl;
+    os << body->inertiaMatrix() << std::endl;
+  } else {
+    os << "No attached body" << std::endl;
+  }
+
+  for (unsigned int iChild=0; iChild < joint.countChildJoints();
+       iChild++) {
+    os << *(joint.childJoint(iChild)) << std::endl;
+    os <<std::endl;
+  }
+
+  return os;
 }

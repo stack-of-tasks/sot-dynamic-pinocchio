@@ -20,6 +20,7 @@
 #ifndef DYNAMIC_COMMAND_H
  #define DYNAMIC_COMMAND_H
 
+ #include <fstream>
  #include <boost/assign/list_of.hpp>
 
  #include <dynamic-graph/command.h>
@@ -493,6 +494,52 @@ namespace sot {
 	return Value();
       }
     }; // class InitializeRobot
+
+    // Command GetDimension
+    class GetDimension : public Command
+    {
+    public:
+      virtual ~GetDimension() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      GetDimension(Dynamic& entity, const std::string& docstring) :
+	Command(entity, std::vector<Value::Type>(),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	unsigned int dimension = robot.m_HDR->numberDof();
+	return Value(dimension);
+      }
+    }; // class GetDimension
+
+    // Command Write
+    class Write : public Command
+    {
+    public:
+      virtual ~Write() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      Write(Dynamic& entity, const std::string& docstring) :
+      Command(entity, boost::assign::list_of(Value::STRING),
+	      docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string filename = values[0].value();
+	std::ofstream file(filename.c_str(), std::ios_base::out);
+	file << *(robot.m_HDR);
+	file.close();
+	return Value();
+      }
+    }; // class Write
   } // namespace command
 } //namespace sot
 
