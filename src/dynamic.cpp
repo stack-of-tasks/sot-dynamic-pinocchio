@@ -622,9 +622,10 @@ destroyAccelerationSignal( const std::string& signame )
   if(! deletable )
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
-				     "Cannot destroy signal",
-				     " (while trying to remove generic acc signal <%s>).",
-				     signame.c_str() );
+				  getName() + ":cannot destroy signal",
+				  " (while trying to remove generic acc "
+				  "signal <%s>).",
+				  signame.c_str() );
     }
 
   signalDeregistration( signame );
@@ -1043,26 +1044,32 @@ computeNewtonEuler( int& dummy,int time )
   if(! m_HDR->currentConfiguration(pos.accessToMotherLib()))
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
-				     "Position vector size uncorrect",
-				     " (Vector size is %d, should be %d).",
-				     pos.size(),m_HDR->currentConfiguration().size() );
+				  getName() +
+				  ": position vector size incorrect",
+				  " (Vector size is %d, should be %d).",
+				  pos.size(),
+				  m_HDR->currentConfiguration().size() );
     }
 
 
   if(! m_HDR->currentVelocity(vel.accessToMotherLib()) )
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
-				     "Velocity vector size uncorrect",
-				     " (Vector size is %d, should be %d).",
-				     vel.size(),m_HDR->currentVelocity().size() );
+				  getName() +
+				  ": velocity vector size incorrect",
+				  " (Vector size is %d, should be %d).",
+				  vel.size(),
+				  m_HDR->currentVelocity().size() );
     }
 
   if(! m_HDR->currentAcceleration(acc.accessToMotherLib()) )
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
-				     "Acceleration vector size uncorrect",
-				     " (Vector size is %d, should be %d).",
-				     acc.size(),m_HDR->currentAcceleration().size() );
+				  getName() +
+				  ": acceleration vector size incorrect",
+				  " (Vector size is %d, should be %d).",
+				  acc.size(),
+				  m_HDR->currentAcceleration().size() );
     }
 
   m_HDR->computeForwardKinematics();
