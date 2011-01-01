@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from dynamic_graph import plug
+from dynamic_graph import plug, enableTrace
 import dynamic_graph.sot.core as sotcore
 from dynamic_graph.sot.core.robot_simu import RobotSimu
 from dynamic_graph.sot.core.vector_constant import VectorConstant
@@ -21,10 +21,14 @@ from dynamic_graph.sot.core.constraint import Constraint
 from dynamic_graph.sot.core.gain_adaptive import GainAdaptive
 from dynamic_graph.sot.core.sot import SOT
 
-print "Creating the small dynamic"
+# hrp2-10
+dimension = 38
+joints = {'RLEG_JOINT0':0, 'RLEG_JOINT1':1, 'RLEG_JOINT2':2, 'RLEG_JOINT3':3, 'RLEG_JOINT4':4, 'RLEG_JOINT5':5, 'LLEG_JOINT0':6, 'LLEG_JOINT1':7, 'LLEG_JOINT2':8, 'LLEG_JOINT3':9, 'LLEG_JOINT4':10, 'LLEG_JOINT5':11, 'CHEST_JOINT0':12, 'CHEST_JOINT1':13, 'HEAD_JOINT0':14, 'HEAD_JOINT1':15, 'RARM_JOINT0':16, 'RARM_JOINT1':17, 'RARM_JOINT2':18, 'RARM_JOINT3':19, 'RARM_JOINT4':20, 'RARM_JOINT5':21, 'RARM_JOINT6':22, 'RARM_JOINT7':23, 'LARM_JOINT0':24, 'LARM_JOINT1':25, 'LARM_JOINT2':26, 'LARM_JOINT3':27, 'LARM_JOINT4':28, 'LARM_JOINT5':29, 'LARM_JOINT6':30, 'LARM_JOINT7':31}
 
 dyn = DynamicHrp2('dyn')
 dyn2 = DynamicHrp2('dyn2')
+
+enableTrace(True, '/home/florent/tmp/sot.out')
 
 #import dynfilessmall
 dyn2.setFiles('/home/florent/devel/sot/unstable/share/hrp2_10-small/',
@@ -43,7 +47,7 @@ dyn.setFiles('/home/florent/devel/sot/unstable/share/hrp2_10-small/',
 
 dyn2.parse()
 zero = VectorConstant('zero')
-zero.resize(36)
+zero.resize(dimension)
 
 plug(zero.signal('out'), dyn2.signal('position'))
 plug(zero.signal('out'), dyn2.signal('velocity'))
@@ -68,8 +72,8 @@ dyn2.setProperty('ComputeMomentum', 'false')
 dyn2.setProperty('ComputeZMP', 'false')
 dyn2.setProperty('ComputeBackwardDynamics', 'false')
 
-dyn.signal('gearRatio').value = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,207.69,381.54,0.,0.,219.23,231.25,266.67,250.0,145.45,350.0,0.,0.,0.,0.,0.,0.,0.,0.)
-dyn.signal('inertiaRotor').value = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,69.6e-7,69.6e-7,0.,0.,69.6e-7,66.0e-7,10.0e-7,66.0e-7,11.0e-7,10.0e-7,0.,0.,0.,0.,0.,0.,0.,0.)
+#dyn.signal('gearRatio').value = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,207.69,381.54,0.,0.,219.23,231.25,266.67,250.0,145.45,350.0,0.,0.,0.,0.,0.,0.,0.,0.)
+#dyn.signal('inertiaRotor').value = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,69.6e-7,69.6e-7,0.,0.,69.6e-7,66.0e-7,10.0e-7,66.0e-7,11.0e-7,10.0e-7,0.,0.,0.,0.,0.,0.,0.,0.)
 
 # ----------------------------------------------------
 # --- FLEX -------------------------------------------
@@ -174,21 +178,16 @@ taskCom.signal('controlGain').value = .3
 # set taskCom.controlGain 1
 
 # --- CHEST
-featureChest = FeatureGeneric('featureChest')
-featureChest.signal('jacobianIN').value = ((0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.),(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.))
-
-featureChest.signal('errorIN').value =(0.,0.)
-taskChest = Task('taskChest')
-taskChest.add('featureChest')
-taskChest.signal('controlGain').value = 1.
-
 # --- Task Chest for blocking the chest joints
-# new FeatureGeneric featureChest
-# set featureChest.jacobianIN [2,36]((0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
-# set featureChest.errorIN [2](0,0)
-# new Task taskChest
-# taskChest.add featureChest
-# set taskChest.controlGain 1
+# featureChest = FeatureGeneric('featureChest')
+# featureChest.signal('jacobianIN').value = ((0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.),(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.))
+
+# featureChest.signal('errorIN').value =(0.,0.)
+# taskChest = Task('taskChest')
+# taskChest.add('featureChest')
+# taskChest.signal('controlGain').value = 1.
+
+
 
 # --- Task RightArm for blocking the right arm
 featureRightArm = FeatureGeneric('featureRightArm')
@@ -219,7 +218,7 @@ taskJl.signal('controlGain').value = .1
 # --- LEGS
 featureLegs = FeatureGeneric('featureLegs')
 jacobianLegs = MatrixConstant('jacobianLegs')
-jac = 12*[36*[0.]]
+jac = 12*[dimension*[0.]]
 jac[0][6] = 1.
 jac[1][7] = 1.
 jac[2][8] = 1.
@@ -233,6 +232,7 @@ jac[9][15] = 1.
 jac[10][16] = 1.
 jac[11][17] = 1.
 jac = tuple(map(tuple, jac))
+jacobianLegs.set(jac)
 plug(jacobianLegs.signal('out'), featureLegs.signal('jacobianIN'))
 
 vectorLegs = VectorConstant('vectorLegs')
@@ -262,12 +262,12 @@ legs.addJacobian('dyn.Jlleg')
 sot = SOT('sot')
 sot.signal('damping').value = 1e-6
 sot.addConstraint('legs')
-sot.setNumberDofs(36)
+sot.setNumberDofs(dimension)
 
 # plug dyn.inertia sot.weight
 # sot.push taskTwofeet
 # sot.push taskLegs
-# sot.push task
+sot.push('task')
 # sot.push taskCom
 # sot.push taskChest
 # sot.gradient taskJl
@@ -275,16 +275,17 @@ sot.setNumberDofs(36)
 featureComDes.signal('errorIN').value = (0.004,-0.09,.6)
 
 zeroCom = VectorConstant('zeroCom')
-zeroCom.set(36*(0.,))
+zeroCom.set(dimension*(0.,))
 
 
 dyn.createOpPoint('Waist', 'waist')
 
 OpenHRP = RobotSimu('OpenHRP')
-OpenHRP.set((0.,0.,0.,0.,0.,0.,0.,0.,-1.04720,2.09440,-1.04720,0.,0.,0.,-1.04720,2.09440,-1.04720,0.,0.0000,0.,-0.,-0.,0.17453,-0.17453,-0.17453,-0.87266,0.,-0.,0.1,0.17453,-0.17453,-0.17453,-0.87266,0.,-0.,0.1))
+OpenHRP.set((0.,0.,0.,0.,0.,0.,0.,0.,-1.04720,2.09440,-1.04720,0.,0.,0.,-1.04720,2.09440,-1.04720,0.,0.0000,0.,-0.,-0.,0.17453,-0.17453,-0.17453,-0.87266,0.,-0.,0.1,0.,0.17453,-0.17453,-0.17453,-0.87266,0.,-0.,0.1,0.))
 
 plug(sot.signal('control'), OpenHRP.signal('control'))
 plug(OpenHRP.signal('state'), dyn.signal('position'))
 plug(OpenHRP.signal('state'), dyn2.signal('position'))
 plug(OpenHRP.signal('attitude'), posKF.signal('attitudeIN'))
 plug(OpenHRP.signal('attitude'), flex.signal('sensorWorldRotation'))
+
