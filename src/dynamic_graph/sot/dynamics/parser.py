@@ -121,6 +121,10 @@ class Parser (object):
         self.entity.setFootParameters(False, soleLength, soleWidth,
                                       anklePosition)
 
+        anklePosition = (anklePosition[0], -anklePosition[1], anklePosition[2])
+        self.entity.setFootParameters(True, soleLength, soleWidth,
+                                      anklePosition)
+
         # Gaze parameters.
         gazeOrigin = (self.GAZEORIGINX, self.GAZEORIGINY, self.GAZEORIGINZ)
         gazeDirection = (self.GAZEDIRECTIONX, self.GAZEDIRECTIONY,
