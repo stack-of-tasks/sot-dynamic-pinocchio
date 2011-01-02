@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+
+# Copyright 2010 CNRS
+# Author: Florent Lamiraux
+#
+# Release under LGPL license: see COPYING.LESSER at root of the project.
+#
+
 import xml.dom.minidom as dom
 from dynamic_graph.sot.dynamics.dynamic import Dynamic
 
