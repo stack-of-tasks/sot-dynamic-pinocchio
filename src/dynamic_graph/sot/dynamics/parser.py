@@ -8,6 +8,7 @@
 
 import xml.dom.minidom as dom
 from dynamic_graph.sot.dynamics.dynamic import Dynamic
+from dynamic_graph.sot import SE3, R3, SO3
 
 class Parser (object):
     """
@@ -282,36 +283,16 @@ class Parser (object):
           symmetric with respect to plane (xz) in global frame.
         """
         # input vector expressed in global frame
-        vector = vector + (1.,)
-        globalLeftVector = mv_mul(self.leftWristPosition, vector)
-        globalRightVector = list(globalLeftVector[:])
-        globalRightVector[1] *= -1.
-        output = mv_mul(inverseHomogeneous(self.rightWristPosition),
-                        globalRightVector)
-        return output[:3]
+        vector = R3(vector)
+        globalLeftVector = SE3(self.leftWristPosition) * vector
+        globalRightVector = R3(globalLeftVector)
+        globalRightVector = R3(globalRightVector[0],
+                               -globalRightVector[1],
+                               globalRightVector[2])
+        output = SE3(self.rightWristPosition).inverse()*globalRightVector
+        return tuple(output)
 
-def mv_mul(matrix, vector):
-    """
-    Matrix vector multiplication
-    """
-    return tuple(map(lambda l: inner_prod(l,vector), matrix))
-
-def inner_prod(v1, v2):
-    """
-    Compute the inner product of two vectors
-    """
-    return reduce(lambda x, y: x + y[0]*y[1], zip(v1,v2),0)
-
-def inverseHomogeneous(matrix):
-    """
-    Compute the inverse of an homogeneous matrix
-    """
-    rotation = map(lambda l:l[:3], matrix[:3])
-    # transpose
-    invRot = tuple(zip(*rotation))
-    # translation part
-    t = map (lambda l:l[3], matrix[:3])
-    invRot_by_t = mv_mul(invRot, t)
-    inverse = map(lambda x : list(x[0])+[-x[1]], zip(invRot, invRot_by_t))
-    inverse.append((0.,0.,0.,1.))
-    return tuple(map(tuple, inverse))
+if __name__ == '__main__':
+    p = Parser('dynNao', '/home/florent/devel/nao/model/nao-hpp.kxml')
+    dynNao = p.parse()
+    dynNao.write('/home/florent/tmp/nao2.out')
