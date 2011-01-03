@@ -36,7 +36,7 @@ AngleEstimator::
 AngleEstimator( const std::string & name ) 
   :Entity(name)
   ,sensorWorldRotationSIN(NULL,"sotAngleEstimator("+name
-			  +")::input(MatrixHomo)::sensorWorldRotation")
+			  +")::input(MatrixRotation)::sensorWorldRotation")
   ,sensorEmbeddedPositionSIN(NULL,"sotAngleEstimator("+name
 			     +")::input(MatrixHomo)::sensorEmbeddedPosition")
   ,contactWorldPositionSIN(NULL,"sotAngleEstimator("+name
