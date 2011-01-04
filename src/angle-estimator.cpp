@@ -289,18 +289,20 @@ computeWaistWorldPosition( MatrixHomogeneous& res,
   sotDEBUGIN(15);
   
   const MatrixHomogeneous & waistMleg = contactEmbeddedPositionSIN( time );
+  const MatrixHomogeneous& contactPos = contactWorldPositionSIN( time );
   MatrixHomogeneous legMwaist; waistMleg.inverse( legMwaist );
-
+  MatrixHomogeneous tmpRes;
   if( fromSensor_ )
     { 
       const MatrixRotation & Rflex = flexibilitySOUT( time ); // footRleg
       ml::Vector zero(3); zero.fill(0.);
       MatrixHomogeneous footMleg; footMleg.buildFrom( Rflex,zero );
 				    
-      footMleg.multiply( legMwaist,res );
+      footMleg.multiply( legMwaist,tmpRes );
     }
-  else { res = legMwaist; }
+  else { tmpRes = legMwaist; }
 
+  contactPos.multiply( tmpRes, res );
   sotDEBUGOUT(15);
   return res;
 }
