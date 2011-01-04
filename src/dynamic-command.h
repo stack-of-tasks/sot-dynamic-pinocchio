@@ -124,7 +124,7 @@ namespace sot {
 	  throw ExceptionDynamic(ExceptionDynamic::GENERIC,
 				 jointName + " is not a valid name."
 				 " Valid names are \n"
-				 "gaze, left-ankle, right ankle, left-wrist,"
+				 "gaze, left-ankle, right-ankle, left-wrist,"
 				 " right-wrist, waist, chest.");
 	}
 	robot.createEndeffJacobianSignal(std::string("J")+opPointName, joint);
