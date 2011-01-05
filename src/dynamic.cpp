@@ -335,18 +335,18 @@ Dynamic( const std::string & name, bool build )
 
     docstring = "    \n"
       "    Get the dimension of the robot configuration.\n"
-      "    \n";
-      "      Return:\n";
-      "        an unsigned int: the dimension.\n";
+      "    \n"
+      "      Return:\n"
+      "        an unsigned int: the dimension.\n"
       "    \n";
     addCommand("getDimension",
 	       new command::GetDimension(*this, docstring));
 
     docstring = "    \n"
       "    Write the robot kinematic chain in a file.\n"
-      "    \n";
-      "      Input:\n";
-      "        a string: a filename.\n";
+      "    \n"
+      "      Input:\n"
+      "        a string: a filename.\n"
       "    \n";
     addCommand("write",
 	       new command::Write(*this, docstring));
