@@ -930,7 +930,7 @@ computeInertiaReal( ml::Matrix& res,int time )
 }
 
 double& Dynamic::
-computeFootHeight( double& foot,int time )
+computeFootHeight (double&, int time)
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
@@ -1095,7 +1095,7 @@ initNewtonEuler( int& dummy,int time )
 }
 
 ml::Vector& Dynamic::
-getUpperJointLimits( ml::Vector& res,const int& time )
+getUpperJointLimits(ml::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1110,7 +1110,7 @@ getUpperJointLimits( ml::Vector& res,const int& time )
 }
 
 ml::Vector& Dynamic::
-getLowerJointLimits( ml::Vector& res,const int& time )
+getLowerJointLimits(ml::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
