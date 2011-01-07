@@ -65,6 +65,8 @@ EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS "-c \"from distutils import sysconfig; pr
 # Install empty __init__.py files in intermediate directories.
 INSTALL(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/__init__.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/hrp2.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/humanoid_robot.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/parser.py
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
   )
