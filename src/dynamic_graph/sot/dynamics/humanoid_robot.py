@@ -221,11 +221,12 @@ class AbstractHumanoidRobot (object):
         self.features = dict()
         self.tasks = dict()
         for op in self.OperationalPoints:
+            self.dynamicRobot.signal(op).recompute(0)
             self.features[op] = \
                 FeaturePosition(self.name + '.feature.' + op,
                                 self.dynamicRobot.signal(op),
                                 self.dynamicRobot.signal('J' + op),
-                                SE3())
+                                self.dynamicRobot.signal(op).value)
             self.tasks[op] = Task(self.name + '.task.' + op)
             self.tasks[op].add(self.name + '.feature.' + op)
             self.tasks[op].signal('controlGain').value = .2
