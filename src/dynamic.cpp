@@ -1569,8 +1569,9 @@ void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,
 }
 
 std::ostream& sot::operator<<(std::ostream& os,
-			      const CjrlHumanoidDynamicRobot& robot)
+			      const CjrlHumanoidDynamicRobot&)
 {
+  /*
   os << "Device: " << &robot << std::endl;
   os << std::endl;
   os << "  gaze: " << robot.gazeJoint() << std::endl;
@@ -1645,6 +1646,7 @@ std::ostream& sot::operator<<(std::ostream& os,
       <<", "<< MAL_S3_VECTOR_ACCESS(com, 1)
       <<", "<< MAL_S3_VECTOR_ACCESS(com, 2)
       <<std::endl;
+  */
   return os;
 }
 
