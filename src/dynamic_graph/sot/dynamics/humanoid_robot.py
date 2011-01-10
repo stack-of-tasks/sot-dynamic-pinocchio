@@ -32,8 +32,7 @@ class AbstractHumanoidRobot (object):
     This class instantiates all the entities required to get a consistent
     representation of a humanoid robot:
 
-    - robot models (dynamic model and the separate forward kinematics
-      only model used to compute the freeflyer position)
+    - robot model
 
     - angleEstimator used to link the two robot models
 
@@ -73,24 +72,8 @@ class AbstractHumanoidRobot (object):
     """
     The robot dynamic model.
     """
-    forwardKinematics = None
-    """
-    The forward kinematics model.
-
-    This alternative representation of the robot is required to compute
-    the freeflyer (i.e. waist) position in the global frame.
-
-    In the dynamic robot model, the freeflyer is not actuated. Hence, the
-    freeflyer value remains zero all the time.
-
-    FIXME: describe the algorithm used to deduce the freeflyer position
-    and the role of the angle estimator (ankle flexibility?).
-
-    """
     dimension = None
     """The configuration size."""
-
-    angleEstimator = None
 
     featureCom = None
     """
@@ -161,19 +144,15 @@ class AbstractHumanoidRobot (object):
 
     def initializeRobot(self):
         """
-        If the two robots models are correctly loaded (respectively in
-        attributes robotDynamics and forwardKinematics), this method
-        will then initialize the operational points, set the position
-        to half-sitting with null velocity/acceleration.
-
-        It also initializes the angle estimator which makes the link
-        between the dynamics model and the forward kinematics one.
+        If the robot model is correctly loaded, this method will then
+        initialize the operational points, set the position to
+        half-sitting with null velocity/acceleration.
 
         To finish, different tasks are initialized:
         - the center of mass task used to keep the robot stability
         - one task per operational point to ease robot control
         """
-        if not self.dynamicRobot or not self.forwardKinematics:
+        if not self.dynamicRobot:
             raise "robots models have to be initialized first"
 
         if self.simu:
@@ -187,22 +166,8 @@ class AbstractHumanoidRobot (object):
         self.dynamicRobot.signal('velocity').value = self.dimension*(0.,)
         self.dynamicRobot.signal('acceleration').value = self.dimension*(0.,)
 
-        self.forwardKinematics.signal('position').value = self.halfSitting
-        self.forwardKinematics.signal('velocity').value = self.dimension*(0.,)
-        self.forwardKinematics.signal('acceleration').value = \
-            self.dimension*(0.,)
-
-
         self.initializeOpPoints(self.dynamicRobot,
                                 self.name + '.dynamics')
-        self.initializeOpPoints(self.forwardKinematics,
-                                self.name + '.forwardKinematics')
-
-        # --- freeflyer pose ------------
-        self.angleEstimator = AngleEstimator('angleEstimator')
-        self.angleEstimator.setFromSensor(False)
-        self.angleEstimator.signal('sensorWorldRotation').value = I3
-        self.angleEstimator.signal('sensorEmbeddedPosition').value = I4
 
         # --- center of mass ------------
         self.featureCom = FeatureGeneric(self.name + '.feature.com')
@@ -247,16 +212,8 @@ class HumanoidRobot(AbstractHumanoidRobot):
     def __init__(self, name, filename, simu):
         AbstractHumanoidRobot.__init__(self, name, simu)
         self.filename = filename
-
         self.dynamicRobot = \
             self.loadModelFromKxml (self.name + '.dynamics', self.filename)
-
         self.dimension = self.dynamicRobot.getDimension()
         self.halfSitting = self.dimension*(0.,)
-
-        # Create entity to compute position of contact foot in root
-        # joint frame.
-        self.forwardKinematics = \
-            self.loadModelFromKxml (self.name + '.forwardKinematics',
-                                    self.filename)
         self.initializeRobot()

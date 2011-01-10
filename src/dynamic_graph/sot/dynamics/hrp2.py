@@ -67,10 +67,4 @@ class Hrp2(AbstractHumanoidRobot):
         self.dimension = self.dynamicRobot.getDimension()
         if self.dimension != len(self.halfSitting):
             raise "invalid half-sitting pose"
-
-        self.forwardKinematics = DynamicHrp2(self.name + '.forwardKinematics')
-        self.forwardKinematics.setFiles(modelDir, modelName,
-                                        specificitiesPath, jointRankPath)
-        self.forwardKinematics.parse()
-
         self.initializeRobot()
