@@ -18,6 +18,9 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+
 #include <jrl/mal/matrixabstractlayer.hh>
 
 #include <sot-dynamic/dynamic.h>
@@ -413,23 +416,66 @@ setXmlRankFile( const std::string& filename )
 {
   xmlRankFile = filename;
 }
-void Dynamic::
-parseConfigFiles( void )
+
+
+// Helper macro for Dynamic::parseConfigFiles().
+// Check that all required files exist or throw an exception
+// otherwise.
+#define CHECK_FILE(PATH, FILE_DESCRIPTION)				\
+  do									\
+    {									\
+      if (!boost::filesystem::exists (PATH)				\
+	  || boost::filesystem::is_directory (PATH))			\
+	{								\
+	  boost::format fmt ("Failed to open the %s (%s).");		\
+	  fmt % (FILE_DESCRIPTION) % robotModelPath.file_string ();	\
+	  								\
+	  SOT_THROW ExceptionDynamic					\
+	    (ExceptionDynamic::DYNAMIC_JRL,				\
+	     fmt.str ());						\
+	}								\
+    }									\
+  while (0)
+
+void Dynamic::parseConfigFiles()
 {
   sotDEBUGIN(15);
+
+  // Construct the full path to the robot model.
+  boost::filesystem::path robotModelPath (vrmlDirectory);
+  robotModelPath /= vrmlMainFile;
+
+  boost::filesystem::path xmlRankPath (xmlRankFile);
+  boost::filesystem::path xmlSpecificityPath (xmlSpecificityFile);
+
+  CHECK_FILE (robotModelPath, "HRP-2 model");
+  CHECK_FILE (xmlRankPath, "XML rank file");
+  CHECK_FILE (xmlSpecificityFile, "XML specificity file");
+
   try
     {
       sotDEBUG(35) << "Parse the vrml."<<endl;
-      string RobotFileName = vrmlDirectory+vrmlMainFile;
-      djj::parseOpenHRPVRMLFile(*m_HDR,RobotFileName,xmlRankFile,xmlSpecificityFile);
+
+      std::string robotModelPathStr (robotModelPath.file_string());
+      std::string xmlRankPathStr (xmlRankPath.file_string());
+      std::string xmlSpecificityPathStr (xmlSpecificityPath.file_string());
+
+      djj::parseOpenHRPVRMLFile (*m_HDR,
+				 robotModelPathStr,
+				 xmlRankPathStr,
+				 xmlSpecificityPathStr);
     }
-  catch( ... )
-    { SOT_THROW ExceptionDynamic( ExceptionDynamic::DYNAMIC_JRL,
-				     "Error while parsing." ); }
-  //inertia.init( aHDMB );
+  catch (...)
+    {
+      SOT_THROW ExceptionDynamic( ExceptionDynamic::DYNAMIC_JRL,
+				  "Error while parsing." );
+    }
+
   init = true;
   sotDEBUGOUT(15);
 }
+
+#undef CHECK_FILE
 
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
