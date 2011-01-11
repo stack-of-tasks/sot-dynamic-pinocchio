@@ -24,7 +24,8 @@ class HumanoidRobotTest(unittest.TestCase):
         pass
 
     def test_model_not_exist(self):
-        self.assertRaises(IOError, HumanoidRobot, "robot", "IDONOTEXIST", True)
+        self.assertRaises(IOError, HumanoidRobot, "robot", True, "IDONOTEXIST")
+
 
 
 if __name__ == '__main__':

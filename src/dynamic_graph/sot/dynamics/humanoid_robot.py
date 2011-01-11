@@ -209,7 +209,11 @@ class HumanoidRobot(AbstractHumanoidRobot):
 
     halfSitting = [] #FIXME
 
-    def __init__(self, name, filename, simu):
+    name = None
+    simu = None
+    filename = None
+
+    def __init__(self, name, simu, filename):
         AbstractHumanoidRobot.__init__(self, name, simu)
         self.filename = filename
         self.dynamicRobot = \

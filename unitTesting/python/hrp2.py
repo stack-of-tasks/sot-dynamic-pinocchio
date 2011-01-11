@@ -26,8 +26,11 @@ class Hrp2Test(unittest.TestCase):
 
     def test_model_not_exist(self):
         #FIXME: search what is the real returned type.
-        self.assertRaises(Exception, Hrp2, "robot",
-                          "IDONOTEXIST", "IDONOTEXIST", True)
+        self.assertRaises(Exception, Hrp2, "robot", True,
+                          "IDONOTEXIST", "IDONOTEXIST")
+
+    def test_model_default_location(self):
+        hrp2 = Hrp2("robot", True)
 
 
 if __name__ == '__main__':
