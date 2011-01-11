@@ -82,6 +82,16 @@ def initRobotViewer():
             print "failed to connect to robotviewer"
     return clt
 
+def reach(robot, op, tx, ty, tz):
+    sdes = toList(robot.dynamicRobot.signal(op).value)
+    sdes[0][3] += tx
+    sdes[1][3] += ty
+    sdes[2][3] += tz
+    robot.features[op].reference.signal('position').value = toTuple(sdes)
+    # Select translation only.
+    robot.features[op].feature.signal('selec').value = '000111'
+    robot.tasks[op].signal('controlGain').value = 1.
+
 
 ##################
 # Helper classes #

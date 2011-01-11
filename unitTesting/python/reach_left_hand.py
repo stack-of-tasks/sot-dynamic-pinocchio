@@ -17,8 +17,8 @@
 
 from tools import *
 
-# Move right wrist
-reach(robot, 'right-wrist', 0.25, 0, 0.1)
+# Move left wrist
+reach(robot, 'left-wrist', 0.25, 0, 0.1)
 
 # Push tasks
 #  Operational points tasks
