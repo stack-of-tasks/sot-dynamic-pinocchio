@@ -57,6 +57,9 @@ class Hrp2(AbstractHumanoidRobot):
         0.261799, 0.17453,  0., -0.523599, 0., 0., 0.1,
         )
 
+    def smallToFull(self, config):
+        res = (config + 10*(0.,))
+        return res
 
     def __init__(self, name,
                  simu,

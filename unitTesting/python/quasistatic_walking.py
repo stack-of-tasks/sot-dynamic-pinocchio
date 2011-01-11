@@ -21,56 +21,8 @@ from dynamic_graph.sot.dynamics.hrp2 import Hrp2
 
 from dynamic_graph import enableTrace, plug
 
-# Robotviewer is optional
-enableRobotViewer = True
-try:
-    import robotviewer
-except ImportError:
-    enableRobotViewer = False
+from tools import *
 
-
-
-def displayHomogeneousMatrix(matrix):
-    """
-    Display nicely a 4x4 matrix (usually homogeneous matrix).
-    """
-    import itertools
-
-    matrix_tuple = tuple(itertools.chain.from_iterable(matrix))
-
-    formatStr = ''
-    for i in xrange(4*4):
-        formatStr += '{0[' + str(i) + ']: <10} '
-        if i != 0 and (i + 1) % 4 == 0:
-            formatStr += '\n'
-    print formatStr.format(matrix_tuple)
-
-def toList(tupleOfTuple):
-    result = [[0, 0, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0]]
-    for i in xrange(4):
-        for j in xrange(4):
-            result[i][j] = tupleOfTuple[i][j]
-    return result
-
-def toTuple(listOfList):
-    return ((listOfList[0][0], listOfList[0][1],
-             listOfList[0][2], listOfList[0][3]),
-
-            (listOfList[1][0], listOfList[1][1],
-             listOfList[1][2], listOfList[1][3]),
-
-            (listOfList[2][0], listOfList[2][1],
-             listOfList[2][2], listOfList[2][3]),
-
-            (listOfList[3][0], listOfList[3][1],
-             listOfList[3][2], listOfList[3][3]))
-
-def smallToFull(config):
-    res = (config + 10*(0.,))
-    return res
 
 class QuasiStaticWalking:
     leftFoot = 0
@@ -200,34 +152,6 @@ class QuasiStaticWalking:
             # Trigger actions to move to next state.
             self.do(self.state)
 
-robot = Hrp2("robot", True)
-
-# Initialize robotviewer is possible.
-clt = None
-if enableRobotViewer:
-    try:
-        clt = robotviewer.client()
-    except:
-        enableRobotViewer = False
-
-timeStep = .02
-
-class Solver:
-    robot = None
-    sot = None
-
-    def __init__(self, robot):
-        self.robot = robot
-        self.sot = SOT('solver')
-        self.sot.signal('damping').value = 1e-6
-        self.sot.setNumberDofs(self.robot.dimension)
-
-        if robot.robotSimu:
-            plug(self.sot.signal('control'), robot.robotSimu.signal('control'))
-            plug(self.robot.robotSimu.signal('state'),
-                 self.robot.dynamicRobot.signal('position'))
-
-solver = Solver (robot)
 
 # Push tasks
 #  Feet tasks.
@@ -262,7 +186,7 @@ for i in xrange(totalSteps + 1):
 
     if clt:
         clt.updateElementConfig(
-            'hrp', smallToFull(robot.robotSimu.signal('state').value))
+            'hrp', robot.smallToFull(robot.robotSimu.signal('state').value))
 
 #  Security: switch back to double support.
 quasiStaticWalking.moveCoM('origin')
@@ -274,7 +198,7 @@ for i in xrange(int(duration / timeStep)):
 
     if clt:
         clt.updateElementConfig(
-            'hrp', smallToFull(robot.robotSimu.signal('state').value))
+            'hrp', robot.smallToFull(robot.robotSimu.signal('state').value))
 
 
 print "FINISHED"
