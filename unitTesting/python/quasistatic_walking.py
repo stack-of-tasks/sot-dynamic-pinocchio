@@ -15,12 +15,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-from dynamic_graph.sot.core import RobotSimu, VectorConstant, \
-    MatrixConstant, RPYToMatrix, Derivator_of_Vector, FeaturePoint6d, \
-    FeaturePoint6dRelative, FeatureGeneric, FeatureJointLimits, \
-    Compose_R_and_T, Task, Constraint, GainAdaptive, SOT, \
-    MatrixHomoToPoseRollPitchYaw
-
+from dynamic_graph.sot.core import FeaturePoint6d, FeatureGeneric, SOT
 from dynamic_graph.sot.dynamics.humanoid_robot import HumanoidRobot
 from dynamic_graph.sot.dynamics.hrp2 import Hrp2
 
