@@ -354,6 +354,26 @@ Dynamic( const std::string & name, bool build )
     addCommand("write",
 	       new command::Write(*this, docstring));
 
+    docstring = "    \n"
+      "    Get left foot sole length.\n"
+      "    \n";
+    addCommand("getSoleLength",
+	       new dynamicgraph::command::Getter<Dynamic, double>
+	       (*this, &Dynamic::getSoleLength, docstring));
+    docstring = "    \n"
+      "    Get left foot sole width.\n"
+      "    \n";
+    addCommand("getSoleWidth",
+	       new dynamicgraph::command::Getter<Dynamic, double>
+	       (*this, &Dynamic::getSoleWidth, docstring));
+
+    docstring = "    \n"
+      "    Get ankle position in left foot frame.\n"
+      "    \n";
+    addCommand("getAnklePositionInFootFrame",
+	       new dynamicgraph::command::Getter<Dynamic, ml::Vector>
+	       (*this, &Dynamic::getAnklePositionInFootFrame, docstring));
+
   sotDEBUGOUT(5);
 }
 
@@ -1601,6 +1621,58 @@ void Dynamic::setFootParameters(bool inRight, const double& inSoleLength,
   }
   foot->setSoleSize(inSoleLength, inSoleWidth);
   foot->setAnklePositionInLocalFrame(maalToVector3d(inAnklePosition));
+}
+
+double Dynamic::getSoleLength() const
+{
+  if (!m_HDR) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  CjrlFoot *foot = m_HDR->leftFoot();
+  if (!foot) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "left foot has not been defined yet");
+  }
+  double length, width;
+  foot->getSoleSize(length, width);
+  return length;
+}
+
+double Dynamic::getSoleWidth() const
+{
+  if (!m_HDR) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  CjrlFoot *foot = m_HDR->leftFoot();
+  if (!foot) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "left foot has not been defined yet");
+  }
+  double length, width;
+  foot->getSoleSize(length, width);
+  return width;
+}
+
+ml::Vector Dynamic::getAnklePositionInFootFrame() const
+{
+  if (!m_HDR) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "you must create a robot first.");
+  }
+  CjrlFoot *foot = m_HDR->leftFoot();
+  if (!foot) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+			       "left foot has not been defined yet");
+  }
+  vector3d anklePosition;
+  foot->getAnklePositionInLocalFrame(anklePosition);
+  ml::Vector res(3);
+  res(0) = anklePosition[0];
+  res(1) = anklePosition[1];
+  res(2) = anklePosition[2];
+  return res;
 }
 
 void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,

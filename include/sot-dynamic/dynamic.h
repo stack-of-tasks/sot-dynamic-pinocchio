@@ -330,6 +330,22 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \param inGazeDirection direction of the gase in gaze joint local frame.
   void setGazeParameters(const ml::Vector& inGazeOrigin,
 			 const ml::Vector& inGazeDirection);
+
+  /// \brief Get length of left foot sole.
+  ///
+  /// The robot is assumed to be symmetric.
+  double getSoleLength() const;
+
+  /// \brief Get width of left foot sole.
+  ///
+  /// The robot is assumed to be symmetric.
+  double getSoleWidth() const;
+
+  /// \brief Get left ankle position in foot frame
+  ///
+  /// The robot is assumed to be symmetric.
+  ml::Vector getAnklePositionInFootFrame() const;
+
   /// @}
   ///
  private:
