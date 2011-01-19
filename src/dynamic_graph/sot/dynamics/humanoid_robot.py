@@ -59,7 +59,7 @@ class AbstractHumanoidRobot (object):
     """Entity name (internal use)"""
 
     #FIXME: it should be some kind of global flag instead.
-    simu = False
+    simulation = False
     """Are we in simulation or not?"""
 
     halfSitting = None
@@ -68,7 +68,7 @@ class AbstractHumanoidRobot (object):
     This attribute *must* be defined in subclasses.
     """
 
-    dynamicRobot = None
+    dynamic = None
     """
     The robot dynamic model.
     """
@@ -152,66 +152,72 @@ class AbstractHumanoidRobot (object):
         - the center of mass task used to keep the robot stability
         - one task per operational point to ease robot control
         """
-        if not self.dynamicRobot:
+        if not self.dynamic:
             raise "robots models have to be initialized first"
 
-        if self.simu:
-            self.robotSimu = RobotSimu(self.name + '.robotSimu')
+        if self.simulation:
+            self.simu = RobotSimu(self.name + '.simu')
             # Freeflyer reference frame should be the same as global
             # frame so that operational point positions correspond to
             # position in freeflyer frame.
-            self.robotSimu.set(self.halfSitting)
+            self.simu.set(self.halfSitting)
 
-        self.dynamicRobot.signal('position').value = self.halfSitting
-        self.dynamicRobot.signal('velocity').value = self.dimension*(0.,)
-        self.dynamicRobot.signal('acceleration').value = self.dimension*(0.,)
+        self.dynamic.position.value = self.halfSitting
+        self.dynamic.velocity.value = self.dimension*(0.,)
+        self.dynamic.acceleration.value = self.dimension*(0.,)
 
-        self.initializeOpPoints(self.dynamicRobot,
+        self.initializeOpPoints(self.dynamic,
                                 self.name + '.dynamics')
 
         # --- center of mass ------------
         self.featureCom = FeatureGeneric(self.name + '.feature.com')
-        plug(self.dynamicRobot.signal('com'), self.featureCom.signal('errorIN'))
-        plug(self.dynamicRobot.signal('Jcom'),
-             self.featureCom.signal('jacobianIN'))
-        self.featureCom.signal('selec').value = '011'
+        plug(self.dynamic.com, self.featureCom.errorIN)
+        plug(self.dynamic.Jcom,
+             self.featureCom.jacobianIN)
+        self.featureCom.selec.value = '011'
         self.featureComDes = FeatureGeneric(self.name + '.feature.ref.com')
-        self.featureComDes.signal('errorIN').value = (.0, .0, 0.)
-        self.featureCom.signal('sdes').value = self.featureComDes
+        self.featureComDes.errorIN.value = (.0, .0, 0.)
+        self.featureCom.sdes.value = self.featureComDes
         self.comTask = Task(self.name + '.task.com')
         self.comTask.add(self.name + '.feature.com')
-        self.comTask.signal('controlGain').value = 1.
+        self.comTask.controlGain.value = 1.
 
         # --- operational points tasks -----
         self.features = dict()
         self.tasks = dict()
         for op in self.OperationalPoints:
-            self.dynamicRobot.signal(op).recompute(0)
+            self.dynamic.signal(op).recompute(0)
             self.features[op] = \
                 FeaturePosition(self.name + '.feature.' + op,
-                                self.dynamicRobot.signal(op),
-                                self.dynamicRobot.signal('J' + op),
-                                self.dynamicRobot.signal(op).value)
+                                self.dynamic.signal(op),
+                                self.dynamic.signal('J' + op),
+                                self.dynamic.signal(op).value)
             self.tasks[op] = Task(self.name + '.task.' + op)
             self.tasks[op].add(self.name + '.feature.' + op)
-            self.tasks[op].signal('controlGain').value = .2
+            self.tasks[op].controlGain.value = .2
+            # define a member for each operational point
+            w = op.split('-')
+            memberName = w[0]
+            for i in w[1:]:
+                memberName += i.capitalize()
+            setattr(self, memberName, self.features[op])
 
 
-    def __init__(self, name, simu):
+    def __init__(self, name, simulation):
         self.name = name
-        if simu:
-            self.simu = True
+        if simulation:
+            self.simulation = True
         else:
-            self.simu = False
+            self.simulation = False
 
     def restart(self):
-        if self.robotSimu:
-            self.robotSimu.set(self.halfSitting)
-        self.dynamicRobot.signal('position').value = self.halfSitting
-        self.dynamicRobot.signal('velocity').value = self.dimension * (0.,)
-        self.dynamicRobot.signal('acceleration').value = self.dimension * (0.,)
-        if self.robotSimu:
-            self.robotSimu.increment(.001)
+        if self.simu:
+            self.simu.set(self.halfSitting)
+        self.dynamic.position.value = self.halfSitting
+        self.dynamic.velocity.value = self.dimension * (0.,)
+        self.dynamic.acceleration.value = self.dimension * (0.,)
+        if self.simu:
+            self.simu.increment(.001)
 
 
 
@@ -221,14 +227,14 @@ class HumanoidRobot(AbstractHumanoidRobot):
     halfSitting = [] #FIXME
 
     name = None
-    simu = None
+    simulation = None
     filename = None
 
-    def __init__(self, name, simu, filename):
-        AbstractHumanoidRobot.__init__(self, name, simu)
+    def __init__(self, name, simulation, filename):
+        AbstractHumanoidRobot.__init__(self, name, simulation)
         self.filename = filename
-        self.dynamicRobot = \
+        self.dynamic = \
             self.loadModelFromKxml (self.name + '.dynamics', self.filename)
-        self.dimension = self.dynamicRobot.getDimension()
+        self.dimension = self.dynamic.getDimension()
         self.halfSitting = self.dimension*(0.,)
         self.initializeRobot()

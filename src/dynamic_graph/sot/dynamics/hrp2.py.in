@@ -62,20 +62,20 @@ class Hrp2(AbstractHumanoidRobot):
         return res
 
     def __init__(self, name,
-                 simu,
+                 simulation,
                  modelDir = hrp2_14_pkgdatarootdir,
                  xmlDir = hrp2_14_pkgdatarootdir):
-        AbstractHumanoidRobot.__init__ (self, name, simu)
+        AbstractHumanoidRobot.__init__ (self, name, simulation)
 
         modelName = 'HRP2JRLmainsmall.wrl'
         specificitiesPath = xmlDir + '/HRP2SpecificitiesSmall.xml'
         jointRankPath = xmlDir + '/HRP2LinkJointRankSmall.xml'
 
-        self.dynamicRobot = DynamicHrp2(self.name + '.dynamics')
-        self.dynamicRobot.setFiles(modelDir, modelName,
+        self.dynamic = DynamicHrp2(self.name + '.dynamics')
+        self.dynamic.setFiles(modelDir, modelName,
                                    specificitiesPath, jointRankPath)
-        self.dynamicRobot.parse()
-        self.dimension = self.dynamicRobot.getDimension()
+        self.dynamic.parse()
+        self.dimension = self.dynamic.getDimension()
         if self.dimension != len(self.halfSitting):
             raise "invalid half-sitting pose"
         self.initializeRobot()
