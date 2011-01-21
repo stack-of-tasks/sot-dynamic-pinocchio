@@ -114,11 +114,11 @@ def initRobotViewer():
     return clt
 
 def reach(robot, op, tx, ty, tz):
-    sdes = toList(robot.dynamicRobot.signal(op).value)
+    sdes = toList(robot.dynamic.signal(op).value)
     sdes[0][3] += tx
     sdes[1][3] += ty
     sdes[2][3] += tz
-    robot.features[op].reference.signal('position').value = toTuple(sdes)
+    robot.features[op].reference.value = toTuple(sdes)
     # Select translation only.
     robot.features[op].feature.signal('selec').value = '000111'
     robot.tasks[op].signal('controlGain').value = 1.
@@ -154,10 +154,10 @@ class Solver:
         self.sot.signal('damping').value = 1e-6
         self.sot.setNumberDofs(self.robot.dimension)
 
-        if robot.robotSimu:
-            plug(self.sot.signal('control'), robot.robotSimu.signal('control'))
-            plug(self.robot.robotSimu.signal('state'),
-                 self.robot.dynamicRobot.signal('position'))
+        if robot.simu:
+            plug(self.sot.signal('control'), robot.simu.signal('control'))
+            plug(self.robot.simu.state,
+                 self.robot.dynamic.position)
 
 
 ##################
@@ -182,5 +182,5 @@ if options.display:
 
 # Initialize the stack of tasks.
 robot = Hrp2("robot", True)
-timeStep = .02
+timeStep = .005
 solver = Solver(robot)

@@ -17,15 +17,26 @@
 
 from tools import *
 
-# Move right wrist
-reach(robot, 'right-wrist', 0.25, 0, 0.1)
+from dynamic_graph.sot.dynamics.feet_follower import FeetFollowerFromFile
+feetFollower = FeetFollowerFromFile('feet-follower')
+
+feetFollower.feetToAnkleLeft = robot.dynamic.getAnklePositionInFootFrame()
+feetFollower.feetToAnkleRight = robot.dynamic.getAnklePositionInFootFrame()
+
+plug(feetFollower.signal('com'), robot.featureComDes.signal('errorIN'))
+plug(feetFollower.signal('left-ankle'),
+     robot.features['left-ankle'].reference)
+plug(feetFollower.signal('right-ankle'),
+     robot.features['right-ankle'].reference)
+
+robot.comTask.signal('controlGain').value = 50.
+robot.tasks['left-ankle'].signal('controlGain').value = 50.
+robot.tasks['right-ankle'].signal('controlGain').value = 50.
 
 # Push tasks
 #  Operational points tasks
 solver.sot.push(robot.name + '.task.right-ankle')
 solver.sot.push(robot.name + '.task.left-ankle')
-solver.sot.push(robot.name + '.task.left-wrist')
-solver.sot.push(robot.name + '.task.right-wrist')
 
 #  Center of mass
 solver.sot.push(robot.name + '.task.com')

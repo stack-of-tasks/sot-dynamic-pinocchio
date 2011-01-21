@@ -57,14 +57,14 @@ class QuasiStaticWalking:
         self.nextStateSwitch = 0 # Next switch is now!
 
         self.initialFootPose['left-ankle'] = \
-            self.robot.dynamicRobot.signal('left-ankle').value
+            self.robot.dynamic.signal('left-ankle').value
         self.initialFootPose['right-ankle'] = \
-            self.robot.dynamicRobot.signal('right-ankle').value
+            self.robot.dynamic.signal('right-ankle').value
 
         self.t = None # Will be updated through the update method.
 
-        self.robot.tasks['left-ankle'].signal('controlGain').value = 1.
-        self.robot.tasks['right-ankle'].signal('controlGain').value = 1.
+        self.robot.tasks['left-ankle'].controlGain.value = 1.
+        self.robot.tasks['right-ankle'].controlGain.value = 1.
 
 
     # Move CoM to a particular operational point (usually left or right ankle).
@@ -77,19 +77,19 @@ class QuasiStaticWalking:
             x = 0.
             y = 0.
         else:
-            x = robot.dynamicRobot.signal(op).value[0][3]
-            y = robot.dynamicRobot.signal(op).value[1][3]
+            x = robot.dynamic.signal(op).value[0][3]
+            y = robot.dynamic.signal(op).value[1][3]
 
-        z = robot.featureComDes.signal('errorIN').value[2]
-        self.robot.featureComDes.signal('errorIN').value = (x, y, z)
+        z = robot.featureComDes.errorIN.value[2]
+        self.robot.featureComDes.errorIN.value = (x, y, z)
 
     def liftFoot(self, op):
-        sdes = toList(robot.dynamicRobot.signal(op).value)
+        sdes = toList(robot.dynamic.signal(op).value)
         sdes[2][3] += self.footAltitude # Increment altitude.
-        robot.features[op].reference.signal('position').value = toTuple(sdes)
+        robot.features[op].reference.value = toTuple(sdes)
 
     def landFoot(self, op):
-        robot.features[op].reference.signal('position').value = \
+        robot.features[op].reference.value = \
             self.initialFootPose[op]
 
     def supportFootStr(self):
@@ -180,13 +180,13 @@ totalSteps = int((stepTime / timeStep) * steps)
 t = 0
 for i in xrange(totalSteps + 1):
     t += timeStep
-    robot.robotSimu.increment(timeStep)
+    robot.simu.increment(timeStep)
 
     quasiStaticWalking.update(t)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.robotSimu.signal('state').value))
+            'hrp', robot.smallToFull(robot.simu.state.value))
 
 #  Security: switch back to double support.
 quasiStaticWalking.moveCoM('origin')
@@ -194,11 +194,11 @@ duration = quasiStaticWalking.time[quasiStaticWalking.stateCoM_singleToDouble]
 
 for i in xrange(int(duration / timeStep)):
     t += timeStep
-    robot.robotSimu.increment(timeStep)
+    robot.simu.increment(timeStep)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.robotSimu.signal('state').value))
+            'hrp', robot.smallToFull(robot.simu.state.value))
 
 finalPosition = (
     -0.0082169200000000008, -0.0126068, -0.00022860999999999999,
@@ -213,5 +213,5 @@ finalPosition = (
      0.26377400000000001, 0.171155, -0.00065098499999999998,
      -0.52324700000000002, -1.23291e-05, 6.0469500000000001e-05, 0.100009)
 
-checkFinalConfiguration(robot.robotSimu.signal('state').value, finalPosition)
+checkFinalConfiguration(robot.simu.state.value, finalPosition)
 print "Exiting."
