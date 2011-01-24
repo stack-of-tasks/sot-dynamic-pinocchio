@@ -24,12 +24,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (angle_estimator_EXPORTS)
 #    define SOTANGLEESTIMATOR_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTANGLEESTIMATOR_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTANGLEESTIMATOR_EXPORT
 #endif
@@ -94,28 +94,23 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
   MatrixRotation& computeDriftFromAngles( MatrixRotation& res,
 					     const int& time );
   MatrixRotation& computeSensorWorldRotation( MatrixRotation& res,
-						 const int& time ); 
+						 const int& time );
   MatrixRotation& computeWaistWorldRotation( MatrixRotation& res,
 						const int& time );
   MatrixHomogeneous& computeWaistWorldPosition( MatrixHomogeneous& res,
 						   const int& time );
   ml::Vector& computeWaistWorldPoseRPY( ml::Vector& res,
 					const int& time );
-  
- public: /* --- PARAMS --- */
-  void fromSensor(const bool& inFromSensor) {
-    fromSensor_ = inFromSensor;
-  }
-  bool fromSensor() const {
-    return fromSensor_;
-  }
- private:
-  bool fromSensor_;
 
+ public: /* --- PARAMS --- */
+  void fromSensor(const bool& fs) { fromSensor_ = fs; }
+  bool fromSensor() const {    return fromSensor_;  }
   virtual void commandLine( const std::string& cmdLine,
 			    std::istringstream& cmdArgs,
 			    std::ostream& os );
-    
+ private:
+  bool fromSensor_;
+
 
 };
 

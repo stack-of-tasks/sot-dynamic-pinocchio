@@ -33,7 +33,7 @@ using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(AngleEstimator,"AngleEstimator");
 
 AngleEstimator::
-AngleEstimator( const std::string & name ) 
+AngleEstimator( const std::string & name )
   :Entity(name)
   ,sensorWorldRotationSIN(NULL,"sotAngleEstimator("+name
 			  +")::input(MatrixRotation)::sensorWorldRotation")
@@ -43,7 +43,7 @@ AngleEstimator( const std::string & name )
 			   +")::input(MatrixHomo)::contactWorldPosition")
   ,contactEmbeddedPositionSIN(NULL,"sotAngleEstimator("+name
 			      +")::input(MatrixHomo)::contactEmbeddedPosition")
-  
+
   ,anglesSOUT( boost::bind(&AngleEstimator::computeAngles,this,_1,_2),
 	       sensorWorldRotationSIN<<sensorEmbeddedPositionSIN
 	       <<contactWorldPositionSIN<<contactEmbeddedPositionSIN,
@@ -79,35 +79,36 @@ AngleEstimator( const std::string & name )
    ,fromSensor_(true)
 {
   sotDEBUGIN(5);
-  
-  
-  signalRegistration( sensorWorldRotationSIN     << sensorEmbeddedPositionSIN 
-		      << contactWorldPositionSIN << contactEmbeddedPositionSIN 
-		      << anglesSOUT              << flexibilitySOUT 
-		      << driftSOUT               << sensorWorldRotationSOUT 
-		      << waistWorldRotationSOUT  
+
+  signalRegistration( sensorWorldRotationSIN     << sensorEmbeddedPositionSIN
+		      << contactWorldPositionSIN << contactEmbeddedPositionSIN
+		      << anglesSOUT              << flexibilitySOUT
+		      << driftSOUT               << sensorWorldRotationSOUT
+		      << waistWorldRotationSOUT
 		      << waistWorldPositionSOUT  << waistWorldPoseRPYSOUT  );
 
-  // Commands
-  std::string docstring;
-  docstring = "    \n"
-    "    Set flag specifying whether angle is measured from sensors or simulated.\n"
-    "    \n"
-    "      Input:\n"
-    "        - a boolean value.\n"
-    "    \n";
-  addCommand("setFromSensor",
-	     new ::dynamicgraph::command::Setter<AngleEstimator, bool>
-	     (*this, &AngleEstimator::fromSensor, docstring));
+  /* Commands. */
+  {
+    std::string docstring;
+    docstring = "    \n"
+      "    Set flag specifying whether angle is measured from sensors or simulated.\n"
+      "    \n"
+      "      Input:\n"
+      "        - a boolean value.\n"
+      "    \n";
+    addCommand("setFromSensor",
+	       new ::dynamicgraph::command::Setter<AngleEstimator, bool>
+	       (*this, &AngleEstimator::fromSensor, docstring));
 
     "    Get flag specifying whether angle is measured from sensors or simulated.\n"
-    "    \n"
-    "      No input,\n"
-    "      return a boolean value.\n"
-    "    \n";
-  addCommand("getFromSensor",
-	     new ::dynamicgraph::command::Getter<AngleEstimator, bool>
-	     (*this, &AngleEstimator::fromSensor, docstring));
+      "    \n"
+      "      No input,\n"
+      "      return a boolean value.\n"
+      "    \n";
+    addCommand("getFromSensor",
+	       new ::dynamicgraph::command::Getter<AngleEstimator, bool>
+	       (*this, &AngleEstimator::fromSensor, docstring));
+  }
 
   sotDEBUGOUT(5);
 }
@@ -150,10 +151,10 @@ computeAngles( ml::Vector& res,
   const double TOLERANCE_TH = 1e-6;
 
   const MatrixRotation &R = worldestRleg;
-  if( (fabs(R(0,1))<TOLERANCE_TH)&&(fabs(R(1,1))<TOLERANCE_TH) ) 
+  if( (fabs(R(0,1))<TOLERANCE_TH)&&(fabs(R(1,1))<TOLERANCE_TH) )
     {
       /* This means that cos(X) is very low, ie flex1 is close to 90deg.
-       * I take the case into account, but it is bloody never going 
+       * I take the case into account, but it is bloody never going
        * to happens. */
       if( R(2,1)>0 ) res(0)=M_PI/2; else res(0) = -M_PI/2;
       res(2) = atan2( -R(0,2),R(0,0) );
@@ -174,19 +175,18 @@ computeAngles( ml::Vector& res,
       Z = atan2( R(0,1),R(1,1) );
       if( fabs(R(2,0))>fabs(R(2,2)) )
 	{ X=atan2( R(2,1)*sin(Y),R(2,0) ); }
-      else 
+      else
 	{ X=atan2( R(2,1)*cos(Y),R(2,2) ); }
     }
-  
-  sotDEBUG(35) << "angles = " << res;
 
+  sotDEBUG(35) << "angles = " << res;
 
   sotDEBUGOUT(15);
   return res;
 }
 
 /* compute the transformation matrix of the flexibility, ie
- * feetRleg. 
+ * feetRleg.
  */
 MatrixRotation& AngleEstimator::
 computeFlexibilityFromAngles( MatrixRotation& res,
@@ -199,7 +199,7 @@ computeFlexibilityFromAngles( MatrixRotation& res,
   double sx= sin( angles(0) );
   double cy= cos( angles(1) );
   double sy= sin( angles(1) );
-  
+
   res(0,0) = cy;
   res(0,1) = 0;
   res(0,2) = -sy;
@@ -225,18 +225,18 @@ computeDriftFromAngles( MatrixRotation& res,
 			const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const ml::Vector & angles = anglesSOUT( time );
   double cz = cos( angles(2) );
   double sz = sin( angles(2) );
-  
+
   res(0,0) = cz;
   res(0,1) = -sz;
   res(0,2) = 0;
 
-  // z is the positive angle (R_{-z} has been computed
-  // in the <angles> function). Thus, the /-/sin(z) is in 0,1
-  res(1,0) = sz;  
+  /* z is the positive angle (R_{-z} has been computed
+   *in the <angles> function). Thus, the /-/sin(z) is in 0,1. */
+  res(1,0) = sz;
   res(1,1) = cz;
   res(1,2) = 0;
 
@@ -253,27 +253,27 @@ computeSensorWorldRotation( MatrixRotation& res,
 			    const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const MatrixRotation & worldRworldest = driftSOUT( time );
   const MatrixRotation & worldestRsensor = sensorWorldRotationSIN( time );
-  
+
   worldRworldest.multiply( worldestRsensor,res );
 
   sotDEBUGOUT(15);
   return res;
 }
- 
+
 MatrixRotation& AngleEstimator::
 computeWaistWorldRotation( MatrixRotation& res,
 			   const int& time )
 {
   sotDEBUGIN(15);
-  
+
   // chest = sensor
   const MatrixRotation & worldRsensor = sensorWorldRotationSOUT( time );
   const MatrixHomogeneous & waistMchest = sensorEmbeddedPositionSIN( time );
   MatrixRotation waistRchest; waistMchest.extract( waistRchest );
-  
+
   worldRsensor .multiply( waistRchest.transpose(),res );
 
   sotDEBUGOUT(15);
@@ -287,17 +287,17 @@ computeWaistWorldPosition( MatrixHomogeneous& res,
 			   const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const MatrixHomogeneous & waistMleg = contactEmbeddedPositionSIN( time );
   const MatrixHomogeneous& contactPos = contactWorldPositionSIN( time );
   MatrixHomogeneous legMwaist; waistMleg.inverse( legMwaist );
   MatrixHomogeneous tmpRes;
   if( fromSensor_ )
-    { 
+    {
       const MatrixRotation & Rflex = flexibilitySOUT( time ); // footRleg
       ml::Vector zero(3); zero.fill(0.);
       MatrixHomogeneous footMleg; footMleg.buildFrom( Rflex,zero );
-				    
+
       footMleg.multiply( legMwaist,tmpRes );
     }
   else { tmpRes = legMwaist; }
@@ -339,7 +339,7 @@ commandLine( const std::string& cmdLine,
     }
   else if( cmdLine == "fromSensor" )
     {
-      std::string val; cmdArgs>>val; 
+      std::string val; cmdArgs>>val;
       if( ("true"==val)||("false"==val) )
 	{
 	  fromSensor_ = ( val=="true" );
