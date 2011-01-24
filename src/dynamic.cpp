@@ -18,20 +18,21 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sot-core/debug.h>
+#include <sot-dynamic/dynamic.h>
+
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include <jrl/mal/matrixabstractlayer.hh>
-
-#include <sot-dynamic/dynamic.h>
-#include <sot-core/debug.h>
-
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 #include <dynamic-graph/factory.h>
+#include <dynamic-graph/all-commands.h>
 
 #include "../src/dynamic-command.h"
+
 
 using namespace sot;
 using namespace dynamicgraph;
@@ -178,16 +179,38 @@ Dynamic( const std::string & name, bool build )
     addCommand("parse",
 	       new command::Parse(*this, docstring));
 
-    // CreateOpPoint
-    docstring = "    \n"
-      "    Create an operational point attached to a robot joint local frame.\n"
-      "    \n"
-      "      Input: \n"
-      "        - a string: name of the operational point,\n"
-      "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
-      "          , left-wrist, right-wrist, waist, chest).\n"
-      "\n";
-    addCommand("createOpPoint", new command::CreateOpPoint(*this, docstring));
+    {
+      using namespace ::dynamicgraph::command;
+      // CreateOpPoint
+      docstring = "    \n"
+	"    Create an operational point attached to a robot joint local frame.\n"
+	"    \n"
+	"      Input: \n"
+	"        - a string: name of the operational point,\n"
+	"        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
+	"          , left-wrist, right-wrist, waist, chest).\n"
+	"\n";
+      addCommand("createOpPoint",
+		 makeCommandVoid2(*this,&Dynamic::cmd_createOpPointSignals,
+				  docstring));
+
+      docstring = docCommandVoid2("Create a jacobian (world frame) signal only for one joint.",
+				  "string (signal name)","string (joint name)");
+      addCommand("createJacobian",
+		 makeCommandVoid2(*this,&Dynamic::cmd_createJacobianWorldSignal,
+				  docstring));
+
+      docstring = docCommandVoid2("Create a jacobian (endeff frame) signal only for one joint.",
+				  "string (signal name)","string (joint name)");
+      addCommand("createJacobianEndEff",
+		 makeCommandVoid2(*this,&Dynamic::cmd_createJacobianEndEffectorSignal,
+				  docstring));
+
+      docstring = docCommandVoid2("Create a position (matrix homo) signal only for one joint.",
+				  "string (signal name)","string (joint name)");
+      addCommand("createPosition",
+		 makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
+    }
 
     // SetProperty
     docstring = "    \n"
@@ -1190,7 +1213,62 @@ getLowerJointLimits(ml::Vector& res, const int&)
   return res;
 }
 
+/* --- COMMANDS ------------------------------------------------------------- */
+/* --- COMMANDS ------------------------------------------------------------- */
+/* --- COMMANDS ------------------------------------------------------------- */
 
+CjrlJoint* Dynamic::getJointByName( const std::string& jointName )
+{
+  if (jointName ==  "gaze") {
+    return m_HDR->gazeJoint();
+  } else if (jointName == "left-ankle") {
+    return m_HDR->leftAnkle();
+  } else if (jointName == "right-ankle") {
+    return m_HDR->rightAnkle();
+  } else if (jointName == "left-wrist") {
+    return m_HDR->leftWrist();
+  } else if (jointName == "right-wrist") {
+    return m_HDR->rightWrist();
+  } else if (jointName == "waist") {
+    return m_HDR->waist();
+  } else if (jointName == "chest") {
+    return m_HDR->chest();
+  } else if (jointName == "gaze") {
+    return m_HDR->gazeJoint();
+  } else {
+    throw ExceptionDynamic(ExceptionDynamic::GENERIC,
+			   jointName + " is not a valid name."
+			   " Valid names are \n"
+			   "gaze, left-ankle, right-ankle, left-wrist,"
+			   " right-wrist, waist, chest.");
+  }
+}
+
+void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
+				 const std::string& jointName )
+{
+  CjrlJoint* joint = getJointByName(jointName);
+  createEndeffJacobianSignal(std::string("J")+opPointName, joint);
+  createPositionSignal(opPointName, joint);
+}
+void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
+				 const std::string& jointName )
+{
+  CjrlJoint* joint = getJointByName(jointName);
+  createJacobianSignal(signalName, joint);
+}
+void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
+					     const std::string& jointName )
+{
+  CjrlJoint* joint = getJointByName(jointName);
+  createEndeffJacobianSignal(signalName, joint);
+}
+void Dynamic::cmd_createPositionSignal( const std::string& signalName,
+					const std::string& jointName )
+{
+  CjrlJoint* joint = getJointByName(jointName);
+  createPositionSignal(signalName, joint);
+}
 
 /* --- PARAMS --------------------------------------------------------------- */
 /* --- PARAMS --------------------------------------------------------------- */

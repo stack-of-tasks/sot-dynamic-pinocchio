@@ -238,6 +238,10 @@ class SOTDYNAMIC_EXPORT Dynamic
   virtual void commandLine( const std::string& cmdLine,
 			    std::istringstream& cmdArgs,
 			    std::ostream& os );
+  void cmd_createOpPointSignals           ( const std::string& sig,const std::string& j );
+  void cmd_createJacobianWorldSignal      ( const std::string& sig,const std::string& j );
+  void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
+  void cmd_createPositionSignal           ( const std::string& sig,const std::string& j );
 
  public:
   /// \name Construction of a robot by commands
@@ -352,6 +356,8 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \brief map of joints in construction.
   std::map<std::string, CjrlJoint*> jointMap_;
   djj::ObjectFactory factory_;
+  /// Return a specific joint, being given a name by string inside a short list.
+  CjrlJoint* getJointByName( const std::string& jointName );
 
 };
 

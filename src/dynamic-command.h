@@ -84,55 +84,6 @@ namespace sot {
       }
     }; // class Parse
 
-    // Command CreateOpPoint
-    class CreateOpPoint : public Command
-    {
-    public:
-      virtual ~CreateOpPoint() {}
-      /// Create command and store it in Entity
-      /// \param entity instance of Entity owning this command
-      /// \param docstring documentation of the command
-      CreateOpPoint(Dynamic& entity, const std::string& docstring) :
-	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
-		docstring)
-      {
-      }
-      virtual Value doExecute()
-      {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string opPointName = values[0].value();
-	std::string jointName = values[1].value();
-	CjrlJoint* joint = NULL;
-	if (jointName ==  "gaze") {
-	  joint = robot.m_HDR->gazeJoint();
-	} else if (jointName == "left-ankle") {
-	  joint = robot.m_HDR->leftAnkle();
-	} else if (jointName == "right-ankle") {
-	  joint = robot.m_HDR->rightAnkle();
-	} else if (jointName == "left-wrist") {
-	  joint = robot.m_HDR->leftWrist();
-	} else if (jointName == "right-wrist") {
-	  joint = robot.m_HDR->rightWrist();
-	} else if (jointName == "waist") {
-	  joint = robot.m_HDR->waist();
-	} else if (jointName == "chest") {
-	  joint = robot.m_HDR->chest();
-	} else if (jointName == "gaze") {
-	  joint = robot.m_HDR->gazeJoint();
-	} else {
-	  throw ExceptionDynamic(ExceptionDynamic::GENERIC,
-				 jointName + " is not a valid name."
-				 " Valid names are \n"
-				 "gaze, left-ankle, right-ankle, left-wrist,"
-				 " right-wrist, waist, chest.");
-	}
-	robot.createEndeffJacobianSignal(std::string("J")+opPointName, joint);
-	robot.createPositionSignal(opPointName, joint);
-	return Value();
-      }
-    }; // class CreateOpPoint
-
     // Command SetProperty
     class SetProperty : public Command
     {
