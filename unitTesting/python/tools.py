@@ -120,7 +120,7 @@ def reach(robot, op, tx, ty, tz):
     sdes[2][3] += tz
     robot.features[op].reference.value = toTuple(sdes)
     # Select translation only.
-    robot.features[op].feature.signal('selec').value = '000111'
+    robot.features[op]._feature.signal('selec').value = '000111'
     robot.tasks[op].signal('controlGain').value = 1.
 
 def sqrDist(value, expectedValue):
