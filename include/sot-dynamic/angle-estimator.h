@@ -86,6 +86,11 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
   dg::SignalTimeDependent<MatrixHomogeneous,int> waistWorldPositionSOUT; // worldMwaist
   dg::SignalTimeDependent<ml::Vector,int> waistWorldPoseRPYSOUT; // worldMwaist
 
+  dg::SignalPtr<ml::Matrix,int> jacobianSIN;
+  dg::SignalPtr<ml::Vector,int> qdotSIN;
+  dg::SignalTimeDependent<ml::Vector,int> xff_dotSOUT;
+  dg::SignalTimeDependent<ml::Vector,int> qdotSOUT;
+
  public: /* --- FUNCTIONS --- */
   ml::Vector& computeAngles( ml::Vector& res,
 			     const int& time );
@@ -101,6 +106,10 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
 						   const int& time );
   ml::Vector& computeWaistWorldPoseRPY( ml::Vector& res,
 					const int& time );
+  ml::Vector& compute_xff_dotSOUT( ml::Vector& res,
+				   const int& time );
+  ml::Vector& compute_qdotSOUT( ml::Vector& res,
+				const int& time );
 
  public: /* --- PARAMS --- */
   void fromSensor(const bool& fs) { fromSensor_ = fs; }
@@ -110,7 +119,6 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
 			    std::ostream& os );
  private:
   bool fromSensor_;
-
 
 };
 

@@ -76,6 +76,17 @@ AngleEstimator( const std::string & name )
 			    "sotAngleEstimator("+name
 			    +")::output(vectorRollPitchYaw)::waistWorldPoseRPY" )
 
+  ,jacobianSIN(NULL,"sotAngleEstimator("+name
+			     +")::input()::jacobian")
+  ,qdotSIN(NULL,"sotAngleEstimator("+name
+			     +")::input()::qdot")
+  ,xff_dotSOUT( boost::bind(&AngleEstimator::compute_xff_dotSOUT,this,_1,_2)
+		,jacobianSIN<<qdotSIN
+		,"sotAngleEstimator("+name+")::output(vector)::xff_dot" )
+  ,qdotSOUT( boost::bind(&AngleEstimator::compute_qdotSOUT,this,_1,_2)
+	     ,xff_dotSOUT<<qdotSIN
+	     ,"sotAngleEstimator("+name+")::output(vector)::qdotOUT" )
+
    ,fromSensor_(true)
 {
   sotDEBUGIN(5);
@@ -85,7 +96,8 @@ AngleEstimator( const std::string & name )
 		      << anglesSOUT              << flexibilitySOUT
 		      << driftSOUT               << sensorWorldRotationSOUT
 		      << waistWorldRotationSOUT
-		      << waistWorldPositionSOUT  << waistWorldPoseRPYSOUT  );
+		      << waistWorldPositionSOUT  << waistWorldPoseRPYSOUT
+		      << jacobianSIN << qdotSIN << xff_dotSOUT << qdotSOUT );
 
   /* Commands. */
   {
@@ -100,7 +112,8 @@ AngleEstimator( const std::string & name )
 	       new ::dynamicgraph::command::Setter<AngleEstimator, bool>
 	       (*this, &AngleEstimator::fromSensor, docstring));
 
-    "    Get flag specifying whether angle is measured from sensors or simulated.\n"
+    docstring = "    \n"
+      "    Get flag specifying whether angle is measured from sensors or simulated.\n"
       "    \n"
       "      No input,\n"
       "      return a boolean value.\n"
@@ -319,6 +332,49 @@ computeWaistWorldPoseRPY( ml::Vector& res,
 
   res.resize(6);
   for( int i=0;i<3;++i ) { res(i)=t(i); res(i+3)=r(i); }
+
+  return res;
+}
+
+/* --- VELOCITY SIGS -------------------------------------------------------- */
+
+ml::Vector& AngleEstimator::
+compute_xff_dotSOUT( ml::Vector& res,
+		     const int& time )
+{
+  const ml::Matrix & J = jacobianSIN( time );
+  const ml::Vector & dq = qdotSIN( time );
+
+  const int nr=J.nbRows(), nc=J.nbCols()-6;
+  assert( nr==6 );
+  ml::Matrix Ja( nr,nc ); ml::Vector dqa(nc);
+  for( int j=0;j<nc;++j )
+    {
+      for( int i=0;i<nr;++i )
+	Ja(i,j) = J(i,j+6);
+      dqa(j) = dq(j+6);
+    }
+  ml::Matrix Jff( 6,6 );
+  for( int j=0;j<6;++j )
+    for( int i=0;i<6;++i )
+      Jff(i,j) = J(i,j);
+
+  res.resize(nr); res = -Jff.inverse()*Ja*dqa;
+  return res;
+}
+
+ml::Vector& AngleEstimator::
+compute_qdotSOUT( ml::Vector& res,
+		  const int& time )
+{
+  const ml::Vector & dq = qdotSIN( time );
+  const ml::Vector & dx = xff_dotSOUT( time );
+
+  assert( dx.size()==6 );
+
+  const int nr=dq.size();
+  res.resize( nr ); res=dq;
+  for( int i=0;i<6;++i ) res(i)=dx(i);
 
   return res;
 }
