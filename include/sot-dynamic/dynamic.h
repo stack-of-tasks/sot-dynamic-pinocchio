@@ -213,7 +213,6 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::SignalTimeDependent<ml::Matrix,int> inertiaRealSOUT;
   dg::SignalTimeDependent<ml::Vector,int> MomentaSOUT;
   dg::SignalTimeDependent<ml::Vector,int> AngularMomentumSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> dynamicDriftSOUT;
 
  protected:
   ml::Vector& computeZmp( ml::Vector& res,int time );
@@ -234,7 +233,6 @@ class SOTDYNAMIC_EXPORT Dynamic
   ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );
   ml::Vector& getLowerJointLimits( ml::Vector& res,const int& time );
 
-  ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
 
  public: /* --- PARAMS --- */
   virtual void commandLine( const std::string& cmdLine,
