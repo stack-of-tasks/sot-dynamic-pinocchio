@@ -134,6 +134,9 @@ Dynamic( const std::string & name, bool build )
   ,AngularMomentumSOUT( boost::bind(&Dynamic::computeAngularMomentum,this,_1,_2),
 			newtonEulerSINTERN,
 			"sotDynamic("+name+")::output(vector)::angularmomentum" )
+  ,dynamicDriftSOUT( boost::bind(&Dynamic::computeTorqueDrift,this,_1,_2),
+		     newtonEulerSINTERN,
+		     "sotDynamic("+name+")::output(vector)::dynamicDrift" )
 {
   sotDEBUGIN(5);
 
@@ -146,9 +149,9 @@ Dynamic( const std::string & name, bool build )
 		      <<jointVelocitySIN<<freeFlyerVelocitySIN
 		      <<jointAccelerationSIN<<freeFlyerAccelerationSIN);
   signalRegistration( zmpSOUT<<comSOUT<<JcomSOUT<<footHeightSOUT);
-	signalRegistration(upperJlSOUT<<lowerJlSOUT<<inertiaSOUT
-			 <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
-  signalRegistration( MomentaSOUT << AngularMomentumSOUT );
+  signalRegistration(upperJlSOUT<<lowerJlSOUT<<inertiaSOUT
+		     <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
+  signalRegistration( MomentaSOUT << AngularMomentumSOUT << dynamicDriftSOUT);
 
   //
   // Commands
@@ -1211,6 +1214,21 @@ getLowerJointLimits(ml::Vector& res, const int&)
   sotDEBUG(15) << "lowerLimit (" << NBJ << ")=" << res <<endl;
   sotDEBUGOUT(15);
   return res;
+}
+
+ml::Vector& Dynamic::
+computeTorqueDrift( ml::Vector& tauDrift,const int  & iter )
+{
+  sotDEBUGIN(25);
+  newtonEulerSINTERN(iter);
+  const unsigned int NB_JOINTS = jointPositionSIN.accessCopy().size();
+
+  tauDrift.resize(NB_JOINTS);
+  const vectorN& Torques = m_HDR->currentJointTorques();
+  for( unsigned int i=0;i<NB_JOINTS; ++i ) tauDrift(i) = Torques(i);
+
+  sotDEBUGOUT(25);
+  return tauDrift;
 }
 
 /* --- COMMANDS ------------------------------------------------------------- */
