@@ -37,22 +37,22 @@ ForceCompensation(void)
 
 
 ForceCompensationPlugin::
-ForceCompensationPlugin( const std::string & name ) 
+ForceCompensationPlugin( const std::string & name )
   :Entity(name)
   ,calibrationStarted(false)
-  
+
   ,torsorSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::torsorIN")
   ,worldRhandSIN(NULL,"sotForceCompensation("+name+")::input(MatrixRotation)::worldRhand")
-  
+
   ,handRsensorSIN(NULL,"sotForceCompensation("+name+")::input(MatrixRotation)::handRsensor")
   ,translationSensorComSIN(NULL,"sotForceCompensation("+name+")::input(vector3)::sensorCom")
   ,gravitySIN(NULL,"sotForceCompensation("+name+")::input(vector6)::gravity")
   ,precompensationSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::precompensation")
   ,gainSensorSIN(NULL,"sotForceCompensation("+name+")::input(matrix6)::gain")
   ,deadZoneLimitSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::deadZoneLimit")
-  ,transSensorJointSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::sensorJoint")  ,inertiaJointSIN(NULL,"sotForceCompensation("+name+")::input(matrix6)::inertiaJoint") 
-  ,velocitySIN(NULL,"sotForceCompensation("+name+")::input(vector6)::velocity")  
-  ,accelerationSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::acceleration")  
+  ,transSensorJointSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::sensorJoint")  ,inertiaJointSIN(NULL,"sotForceCompensation("+name+")::input(matrix6)::inertiaJoint")
+  ,velocitySIN(NULL,"sotForceCompensation("+name+")::input(vector6)::velocity")
+  ,accelerationSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::acceleration")
 
   ,handXworldSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeHandXworld,
 				      worldRhandSIN,MatrixRotation,
@@ -62,7 +62,7 @@ ForceCompensationPlugin( const std::string & name )
 					handRsensorSIN,MatrixRotation),
 		     "sotForceCompensation("+name+")::output(MatrixForce)::handVsensor" )
    ,torsorDeadZoneSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::torsorNullifiedIN")
-  
+
   ,sensorXhandSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeSensorXhand,
 				       handRsensorSIN,MatrixRotation,
 				       transSensorJointSIN,ml::Vector ),
@@ -76,9 +76,9 @@ ForceCompensationPlugin( const std::string & name )
 				    accelerationSIN,ml::Vector,
 				    sensorXhandSOUT,MatrixForce,
 				    inertiaJointSIN,ml::Matrix),
-		  "sotForceCompensation("+name+")::output(Vector6)::momentum" ) 
-  ,momentumSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::momentumIN")  
- 
+		  "sotForceCompensation("+name+")::output(Vector6)::momentum" )
+  ,momentumSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::momentumIN")
+
   ,torsorCompensatedSOUT( SOT_INIT_SIGNAL_7(ForceCompensation::computeTorsorCompensated,
 					    torsorSIN,ml::Vector,
 					    precompensationSIN,ml::Vector,
@@ -87,32 +87,32 @@ ForceCompensationPlugin( const std::string & name )
 					    handVsensorSOUT,MatrixForce,
 					    gainSensorSIN,ml::Matrix,
 					    momentumSIN,ml::Vector),
-			  "sotForceCompensation("+name+")::output(Vector6)::torsor" ) 
+			  "sotForceCompensation("+name+")::output(Vector6)::torsor" )
   ,torsorDeadZoneSOUT( SOT_INIT_SIGNAL_2(ForceCompensation::computeDeadZone,
 					 torsorDeadZoneSIN,ml::Vector,
 					 deadZoneLimitSIN,ml::Vector),
-		       "sotForceCompensation("+name+")::output(Vector6)::torsorNullified" ) 
+		       "sotForceCompensation("+name+")::output(Vector6)::torsorNullified" )
    ,calibrationTrigerSOUT( boost::bind(&ForceCompensationPlugin::calibrationTriger,
 				       this,_1,_2),
 			   torsorSIN << worldRhandSIN,
 			   "sotForceCompensation("+name+")::output(Dummy)::calibrationTriger")
 {
   sotDEBUGIN(5);
-  
-  signalRegistration( torsorSIN<< worldRhandSIN 
+
+  signalRegistration( torsorSIN<< worldRhandSIN
 		      << handRsensorSIN << translationSensorComSIN
 		      << gravitySIN << precompensationSIN << gainSensorSIN
-		      << deadZoneLimitSIN 
-		      << transSensorJointSIN << inertiaJointSIN 
+		      << deadZoneLimitSIN
+		      << transSensorJointSIN << inertiaJointSIN
 		      << velocitySIN << accelerationSIN
- 
+
 		      << handXworldSOUT << handVsensorSOUT << torsorDeadZoneSIN
-		      << sensorXhandSOUT //<< inertiaSensorSOUT 
+		      << sensorXhandSOUT //<< inertiaSensorSOUT
 		      << momentumSOUT << momentumSIN
 		      << torsorCompensatedSOUT << torsorDeadZoneSOUT
 		      << calibrationTrigerSOUT );
   torsorDeadZoneSIN.plug(&torsorCompensatedSOUT);
-  
+
   // By default, I choose: momentum is not compensated.
   //  momentumSIN.plug( &momentumSOUT );
   ml::Vector v(6); v.fill(0); momentumSIN = v;
@@ -142,8 +142,8 @@ clearCalibration( void )
 
 
 void ForceCompensation::
-addCalibrationValue( const ml::Vector& torsor,
-		     const MatrixRotation & worldRhand )
+addCalibrationValue( const ml::Vector& /*torsor*/,
+		     const MatrixRotation & /*worldRhand*/ )
 {
   sotDEBUGIN(45);
 
@@ -155,10 +155,10 @@ addCalibrationValue( const ml::Vector& torsor,
 
   sotDEBUGOUT(45);
 }
-  
+
 ml::Vector ForceCompensation::
 calibrateTransSensorCom( const ml::Vector& gravity,
-			 const MatrixRotation& handRsensor )
+			 const MatrixRotation& /*handRsensor*/ )
 {
   //   sotDEBUGIN(25);
 
@@ -167,18 +167,18 @@ calibrateTransSensorCom( const ml::Vector& gravity,
   //   for( unsigned int j=0;j<3;++j ) { grav3(j)=gravity(j); }
 
   //   std::list< ml::Vector >::iterator iterTorsor = torsorList.begin();
-  //   std::list< MatrixRotation >::const_iterator iterRotation 
+  //   std::list< MatrixRotation >::const_iterator iterRotation
   //     = rotationList.begin();
 
 
   //   const unsigned int NVAL = torsorList.size();
-  //   if( 0==NVAL ) 
+  //   if( 0==NVAL )
   //     {
   //       ml::Vector zero(3); zero.fill(0);
   //       return zero;
   //     }
 
-  //   if(NVAL!=rotationList.size() ) 
+  //   if(NVAL!=rotationList.size() )
   //     {
   // 	  // TODO: ERROR THROW
   //     }
@@ -222,12 +222,12 @@ calibrateTransSensorCom( const ml::Vector& gravity,
   //   ml::Matrix Skew(3,3);
   //   torsors.multiply( gravsInv,Skew );
   //   sotDEBUG(25) << "Skew = " << Skew << std::endl;
-  
+
   //   ml::Vector sc(3);
   //   sc(0)=(Skew(2,1)-Skew(1,2))*.5 ;
   //   sc(1)=(Skew(0,2)-Skew(2,0))*.5 ;
   //   sc(2)=(Skew(1,0)-Skew(0,1))*.5 ;
-  //   sotDEBUG(15) << "SC = " << sc << std::endl; 
+  //   sotDEBUG(15) << "SC = " << sc << std::endl;
   //   /* TAKE the antisym constraint into account inside the minimization pbm. */
 
   //   sotDEBUGOUT(25);
@@ -236,9 +236,9 @@ calibrateTransSensorCom( const ml::Vector& gravity,
 }
 
 ml::Vector ForceCompensation::
-calibrateGravity( const MatrixRotation& handRsensor,
-		  bool precompensationCalibration,
-		  const MatrixRotation& hand0RsensorArg )
+calibrateGravity( const MatrixRotation& /*handRsensor*/,
+		  bool /*precompensationCalibration*/,
+		  const MatrixRotation& /*hand0RsensorArg*/ )
 {
   sotDEBUGIN(25);
 
@@ -247,20 +247,20 @@ calibrateGravity( const MatrixRotation& handRsensor,
   //   else hand0Rsensor=hand0RsensorArg;
 
   //   std::list< ml::Vector >::const_iterator iterTorsor = torsorList.begin();
-  //   std::list< MatrixRotation >::const_iterator iterRotation 
+  //   std::list< MatrixRotation >::const_iterator iterRotation
   //     = rotationList.begin();
 
   //   const unsigned int NVAL = torsorList.size();
-  //   if(NVAL!=rotationList.size() ) 
+  //   if(NVAL!=rotationList.size() )
   //     {
   // 	  // TODO: ERROR THROW
   //     }
-  //   if( 0==NVAL ) 
+  //   if( 0==NVAL )
   //     {
   //       ml::Vector zero(6); zero.fill(0);
   //       return zero;
   //     }
-  
+
   //   ml::Vector force(3),forceHand(3),forceWorld(3);
   //   ml::Vector sumForce(3); sumForce.fill(0);
 
@@ -284,9 +284,9 @@ calibrateGravity( const MatrixRotation& handRsensor,
   // 	  R_I -= hand0Rsensor;
   // 	  R_I.pseudoInverse(.01).multiply( forceHand,forceWorld );
   // 	}
-  //       else 
+  //       else
   // 	{ R.multiply( forceHand,forceWorld ); }
-      
+
   //       sotDEBUG(35) << "R(" << i << "*3+1:" << i << "*3+3,:)  = " << R << "';";
   //       sotDEBUG(35) << "rhFs(" << i << "*3+1:" << i << "*3+3) = " << forceHand;
   //       sotDEBUG(45) << "fworld(" << i << "*3+1:" << i << "*3+3) = " << forceWorld;
@@ -325,10 +325,10 @@ computeHandXworld( const MatrixRotation & worldRhand,
   MatrixRotation R; worldRhand.transpose(R);
   MatrixHomogeneous scRw; scRw.buildFrom( R,transSensorCom);
   sotDEBUG(25) << "scMw = " << scRw <<std::endl;
-  
+
   res.buildFrom( scRw );
   sotDEBUG(15) << "scXw = " << res <<std::endl;
-  
+
   sotDEBUGOUT(35);
   return res;
 }
@@ -355,12 +355,12 @@ computeHandVsensor( const MatrixRotation & handRsensor,
 }
 
 MatrixForce& ForceCompensation::
-computeSensorXhand( const MatrixRotation & handRsensor,
+computeSensorXhand( const MatrixRotation & /*handRsensor*/,
 		    const ml::Vector & transJointSensor,
 		    MatrixForce& res )
 {
   sotDEBUGIN(35);
-  
+
   /* Force Matrix to pass from the joint frame (ie frame located
    * at the position of the motor, in which the acc is computed by Spong)
    * to the frame SensorHand where all the forces are expressed (ie
@@ -384,7 +384,7 @@ computeSensorXhand( const MatrixRotation & handRsensor,
 // 		      ml::Matrix& res )
 // {
 //   sotDEBUGIN(35);
-  
+
 //   /* Inertia felt at the sensor position, expressed in the orientation
 //    * of the hand. */
 
@@ -428,14 +428,14 @@ computeTorsorCompensated( const ml::Vector& torqueInput,
   handXworld.multiply(gravity,grh);
   grh *= -1;
   sotDEBUG(25) << "g_rh = " << grh;
-  
+
   res+=grh;
   sotDEBUG(25) << "fcomp = " << res;
-  
+
   res+=momentum;
   sotDEBUG(25) << "facc = " << res;
-  
-  
+
+
   /* TODO res += m xddot */
 
   sotDEBUGOUT(35);
@@ -459,7 +459,7 @@ crossProduct_V_F( const ml::Vector& velocity,
   v.crossProduct( f,res2a );
   w.crossProduct( tau,res2b );
   res2a+= res2b;
-  
+
   res.resize(6);
   for( unsigned int i=0;i<3;++i )
     {
@@ -467,7 +467,7 @@ crossProduct_V_F( const ml::Vector& velocity,
     }
   return res;
 }
-				      
+				
 
 ml::Vector& ForceCompensation::
 computeMomentum( const ml::Vector& velocity,
@@ -481,7 +481,7 @@ computeMomentum( const ml::Vector& velocity,
   /* Fs + Fext = I acc + V x Iv */
   ml::Vector Iacc(6); inertiaJoint.multiply( acceleration,Iacc );
   res.resize(6); sensorXhand.multiply( Iacc,res );
-  
+
   ml::Vector Iv(6); inertiaJoint.multiply( velocity,Iv);
   ml::Vector vIv(6); crossProduct_V_F( velocity,Iv,vIv );
   ml::Vector XvIv(6); sensorXhand.multiply( vIv,XvIv);
@@ -495,15 +495,14 @@ ml::Vector& ForceCompensation::
 computeDeadZone( const ml::Vector& torqueInput,
 		 const ml::Vector& deadZone,
 		 ml::Vector& res )
-
 {
   sotDEBUGIN(35);
-  
+
   if( torqueInput.size()>deadZone.size() ) return res;
   res.resize(torqueInput.size());
   for( unsigned int i=0;i<torqueInput.size();++i )
     {
-      const double th = fabsf(deadZone(i));
+      const double th = fabs(deadZone(i));
       if( (torqueInput(i)<th)&&(torqueInput(i)>-th) )
 	{ res(i)=0; }
       else if(torqueInput(i)<0) res(i)=torqueInput(i)+th;
@@ -516,11 +515,11 @@ computeDeadZone( const ml::Vector& torqueInput,
 
 
 ForceCompensationPlugin::sotDummyType& ForceCompensationPlugin::
-calibrationTriger( ForceCompensationPlugin::sotDummyType& dummy,int time )
-{ 
+calibrationTriger( ForceCompensationPlugin::sotDummyType& dummy,int /*time*/ )
+{
   //   sotDEBUGIN(45);
-  //   if(! calibrationStarted ) { sotDEBUGOUT(45); return dummy=0; } 
-  
+  //   if(! calibrationStarted ) { sotDEBUGOUT(45); return dummy=0; }
+
   //   addCalibrationValue( torsorSIN(time),worldRhandSIN(time) );
   //   sotDEBUGOUT(45);
   return dummy=1;
@@ -572,14 +571,14 @@ commandLine( const std::string& cmdLine,
   //     }
   //   else if( "calibrateGravity" == cmdLine )
   //     {
-  //       if( calibrationStarted ) 
+  //       if( calibrationStarted )
   // 	{
   // 	  os<< "Calibration phase is on, stop it first."<<std::endl;
   // 	  return;
   // 	}
   //       ml::Vector grav = calibrateGravity( handRsensorSIN.accessCopy(),
   // 					  usingPrecompensation );
- 
+
   //       cmdArgs >> std::ws;
   //       if( cmdArgs.good() )
   // 	{
@@ -603,33 +602,33 @@ commandLine( const std::string& cmdLine,
   //       	  os<< "Calibration phase is on, stop it first."<<std::endl;
   // 	}
   //       ml::Vector position(3);
-  //       position = calibrateTransSensorCom( gravitySIN.accessCopy(), 
+  //       position = calibrateTransSensorCom( gravitySIN.accessCopy(),
   // 					  handRsensorSIN.accessCopy() );
   //       transSensorComSIN = position;
   //     }
   else if( "precomp" == cmdLine )
     {
-      cmdArgs>>std::ws; 
+      cmdArgs>>std::ws;
       if( cmdArgs.good() )
-	{  cmdArgs >>  usingPrecompensation; } 
+	{  cmdArgs >>  usingPrecompensation; }
       else { os << "precompensation = " << usingPrecompensation <<std::endl; }
     }
   else if( "compensateMomentum" == cmdLine )
     {
-      cmdArgs>>std::ws; 
+      cmdArgs>>std::ws;
       if( cmdArgs.good() )
 	{
 	  bool use;  cmdArgs >> use;
 	  if( use ) momentumSIN.plug( &momentumSOUT );
 	  else
 	    {
-	      ml::Vector m(6); m.resize(0); momentumSIN = m; 
+	      ml::Vector m(6); m.resize(0); momentumSIN = m;
 	    }
-	} 
-      else 
-	{ 
+	}
+      else
+	{
 	  os << "compensateMomentum = " << (momentumSIN.getPtr()!=&momentumSIN)
-	     <<std::endl; 
+	     <<std::endl;
 	}
     }
   else{ Entity::commandLine( cmdLine,cmdArgs,os ); }
