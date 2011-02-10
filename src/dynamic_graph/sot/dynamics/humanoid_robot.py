@@ -201,21 +201,6 @@ class AbstractHumanoidRobot (object):
 
     def __init__(self, name):
         self.name = name
-        if simulation:
-            self.simulation = True
-        else:
-            self.simulation = False
-
-    def restart(self):
-        if self.simu:
-            self.simu.set(self.halfSitting)
-        self.dynamic.position.value = self.halfSitting
-        self.dynamic.velocity.value = self.dimension * (0.,)
-        self.dynamic.acceleration.value = self.dimension * (0.,)
-        if self.simu:
-            self.simu.increment(.001)
-
-
 
 
 class HumanoidRobot(AbstractHumanoidRobot):
