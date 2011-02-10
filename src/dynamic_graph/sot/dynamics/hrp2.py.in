@@ -32,40 +32,14 @@ hrp2_14_pkgdatarootdir = "@HRP2_14_PKGDATAROOTDIR@"
 
 class Hrp2(AbstractHumanoidRobot):
     """
-    This class instanciates a simple humanoid robot with
+    This class instanciates a Hrp2 robot
     """
-
-    halfSitting = (
-        # Free flyer
-        0., 0., 0., 0., 0. , 0.,
-
-        # Legs
-#        0., 0., -1.04720, 2.09440, -1.04720, 0.,
-#        0., 0., -1.04720, 2.09440, -1.04720, 0.,
-
-        0., 0., -0.453786, 0.872665, -0.418879, 0.,
-        0., 0., -0.453786, 0.872665, -0.418879, 0.,
-
-        # Chest and head
-        0., 0., 0., 0.,
-
-        # Arms
-#        0.17453, -0.17453, -0.17453, -0.87266, 0., 0., 0.1,
-#        0.17453,  0.17453,  0.17453, -0.87266, 0., 0., 0.1
-
-        0.261799, -0.17453, 0., -0.523599, 0., 0., 0.1,
-        0.261799, 0.17453,  0., -0.523599, 0., 0., 0.1,
-        )
-
     def smallToFull(self, config):
         res = (config + 10*(0.,))
         return res
 
-    def __init__(self, name,
-                 simulation,
-                 modelDir = hrp2_14_pkgdatarootdir,
-                 xmlDir = hrp2_14_pkgdatarootdir):
-        AbstractHumanoidRobot.__init__ (self, name, simulation)
+    def __init__(self, name, modelDir, xmlDir):
+        AbstractHumanoidRobot.__init__ (self, name)
 
         modelName = 'HRP2JRLmainsmall.wrl'
         specificitiesPath = xmlDir + '/HRP2SpecificitiesSmall.xml'
@@ -77,5 +51,55 @@ class Hrp2(AbstractHumanoidRobot):
         self.dynamic.parse()
         self.dimension = self.dynamic.getDimension()
         if self.dimension != len(self.halfSitting):
-            raise "invalid half-sitting pose"
+            raise RunTimeError("invalid half-sitting pose")
         self.initializeRobot()
+
+class Hrp2Jrl (Hrp2):
+    """
+    This class instanciates LAAS Hrp2 robot
+    """
+    halfSitting = (
+        # Free flyer
+        0., 0., 0., 0., 0. , 0.,
+
+        # Legs
+        0., 0., -0.453786, 0.872665, -0.418879, 0.,
+        0., 0., -0.453786, 0.872665, -0.418879, 0.,
+
+        # Chest and head
+        0., 0., 0., 0.,
+
+        # Arms
+        0.261799, -0.17453, 0., -0.523599, 0., 0., 0.1, 0.261799
+        0.261799, 0.17453,  0., -0.523599, 0., 0., 0.1, 0.261799
+        )
+
+    def __init__(self, name,
+                 modelDir = hrp2_10_pkgdatarootdir,
+                 xmlDir = hrp2_10_pkgdatarootdir):
+        Hrp2.__init__(self, modelDir, xmlDir)
+    
+class Hrp2Laas (Hrp2):
+    """
+    This class instanciates LAAS Hrp2 robot
+    """
+    halfSitting = (
+        # Free flyer
+        0., 0., 0., 0., 0. , 0.,
+
+        # Legs
+        0., 0., -0.453786, 0.872665, -0.418879, 0.,
+        0., 0., -0.453786, 0.872665, -0.418879, 0.,
+
+        # Chest and head
+        0., 0., 0., 0.,
+
+        # Arms
+        0.261799, -0.17453, 0., -0.523599, 0., 0., 0.1,
+        0.261799, 0.17453,  0., -0.523599, 0., 0., 0.1,
+        )
+
+    def __init__(self, name,
+                 modelDir = hrp2_14_pkgdatarootdir,
+                 xmlDir = hrp2_14_pkgdatarootdir):
+        Hrp2.__init__(self, modelDir, xmlDir)
