@@ -58,10 +58,6 @@ class AbstractHumanoidRobot (object):
     name = None
     """Entity name (internal use)"""
 
-    #FIXME: it should be some kind of global flag instead.
-    simulation = False
-    """Are we in simulation or not?"""
-
     halfSitting = None
     """
     The half-sitting position is the robot initial pose.
@@ -155,12 +151,12 @@ class AbstractHumanoidRobot (object):
         if not self.dynamic:
             raise "robots models have to be initialized first"
 
-        if self.simulation:
-            self.simu = RobotSimu(self.name + '.simu')
+        if not self.device:
+            self.device = RobotSimu(self.name + '.device')
             # Freeflyer reference frame should be the same as global
             # frame so that operational point positions correspond to
             # position in freeflyer frame.
-            self.simu.set(self.halfSitting)
+            self.device.set(self.halfSitting)
 
         self.dynamic.position.value = self.halfSitting
         self.dynamic.velocity.value = self.dimension*(0.,)
@@ -203,7 +199,7 @@ class AbstractHumanoidRobot (object):
             setattr(self, memberName, self.features[op])
 
 
-    def __init__(self, name, simulation):
+    def __init__(self, name):
         self.name = name
         if simulation:
             self.simulation = True
@@ -227,11 +223,10 @@ class HumanoidRobot(AbstractHumanoidRobot):
     halfSitting = [] #FIXME
 
     name = None
-    simulation = None
     filename = None
 
-    def __init__(self, name, simulation, filename):
-        AbstractHumanoidRobot.__init__(self, name, simulation)
+    def __init__(self, name, filename):
+        AbstractHumanoidRobot.__init__(self, name)
         self.filename = filename
         self.dynamic = \
             self.loadModelFromKxml (self.name + '.dynamics', self.filename)

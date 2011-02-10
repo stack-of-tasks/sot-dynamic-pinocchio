@@ -154,9 +154,9 @@ class Solver:
         self.sot.signal('damping').value = 1e-6
         self.sot.setNumberDofs(self.robot.dimension)
 
-        if robot.simu:
-            plug(self.sot.signal('control'), robot.simu.signal('control'))
-            plug(self.robot.simu.state,
+        if robot.device:
+            plug(self.sot.signal('control'), robot.device.signal('control'))
+            plug(self.robot.device.state,
                  self.robot.dynamic.position)
 
 

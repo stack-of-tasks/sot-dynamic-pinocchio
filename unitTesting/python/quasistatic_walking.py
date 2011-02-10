@@ -180,13 +180,13 @@ totalSteps = int((stepTime / timeStep) * steps)
 t = 0
 for i in xrange(totalSteps + 1):
     t += timeStep
-    robot.simu.increment(timeStep)
+    robot.device.increment(timeStep)
 
     quasiStaticWalking.update(t)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.simu.state.value))
+            'hrp', robot.smallToFull(robot.device.state.value))
 
 #  Security: switch back to double support.
 quasiStaticWalking.moveCoM('origin')
@@ -194,11 +194,11 @@ duration = quasiStaticWalking.time[quasiStaticWalking.stateCoM_singleToDouble]
 
 for i in xrange(int(duration / timeStep)):
     t += timeStep
-    robot.simu.increment(timeStep)
+    robot.device.increment(timeStep)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.simu.state.value))
+            'hrp', robot.smallToFull(robot.device.state.value))
 
 finalPosition = (
     -0.0082169200000000008, -0.0126068, -0.00022860999999999999,
@@ -213,5 +213,5 @@ finalPosition = (
      0.26377400000000001, 0.171155, -0.00065098499999999998,
      -0.52324700000000002, -1.23291e-05, 6.0469500000000001e-05, 0.100009)
 
-checkFinalConfiguration(robot.simu.state.value, finalPosition)
+checkFinalConfiguration(robot.device.state.value, finalPosition)
 print "Exiting."

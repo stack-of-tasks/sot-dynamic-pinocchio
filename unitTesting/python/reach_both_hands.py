@@ -35,11 +35,11 @@ solver.sot.push(robot.name + '.task.com')
 # Main.
 #  Main loop
 for i in xrange(500):
-    robot.simu.increment(timeStep)
+    robot.device.increment(timeStep)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.simu.state.value))
+            'hrp', robot.smallToFull(robot.device.state.value))
 
 finalPosition = (
     -0.0357296, -0.0024092699999999998, 0.033870600000000001,
@@ -55,5 +55,5 @@ finalPosition = (
      -0.109959, -0.60156299999999996, -0.082422700000000002,
      1.0207200000000001, 0.10037500000000001)
 
-checkFinalConfiguration(robot.simu.state.value, finalPosition)
+checkFinalConfiguration(robot.device.state.value, finalPosition)
 print "Exiting."

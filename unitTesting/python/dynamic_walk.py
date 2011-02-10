@@ -90,8 +90,8 @@ solver.sot.push(robot.name + '.task.com')
 dynamicWalking = DynamicWalking(robot)
 
 for i in xrange(100):
-    robot.simu.increment(timeStep)
+    robot.device.increment(timeStep)
 
     if clt:
         clt.updateElementConfig(
-            'hrp', robot.smallToFull(robot.simu.state.value))
+            'hrp', robot.smallToFull(robot.device.state.value))
