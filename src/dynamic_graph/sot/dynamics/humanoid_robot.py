@@ -149,7 +149,7 @@ class AbstractHumanoidRobot (object):
         - one task per operational point to ease robot control
         """
         if not self.dynamic:
-            raise "robots models have to be initialized first"
+            raise RunTimeError("robots models have to be initialized first")
 
         if not self.device:
             self.device = RobotSimu(self.name + '.device')
