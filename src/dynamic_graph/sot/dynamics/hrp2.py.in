@@ -38,16 +38,17 @@ class Hrp2(AbstractHumanoidRobot):
         res = (config + 10*(0.,))
         return res
 
-    def __init__(self, name, modelDir, xmlDir):
+    def __init__(self, name, modelDir, xmlDir, device):
         AbstractHumanoidRobot.__init__ (self, name)
 
+        self.device = device
         modelName = 'HRP2JRLmainsmall.wrl'
         specificitiesPath = xmlDir + '/HRP2SpecificitiesSmall.xml'
         jointRankPath = xmlDir + '/HRP2LinkJointRankSmall.xml'
 
         self.dynamic = DynamicHrp2(self.name + '.dynamics')
         self.dynamic.setFiles(modelDir, modelName,
-                                   specificitiesPath, jointRankPath)
+                                  specificitiesPath, jointRankPath)
         self.dynamic.parse()
         self.dimension = self.dynamic.getDimension()
         if self.dimension != len(self.halfSitting):
@@ -76,9 +77,10 @@ class Hrp2Jrl (Hrp2):
 
     def __init__(self, name,
                  modelDir = hrp2_10_pkgdatarootdir,
-                 xmlDir = hrp2_10_pkgdatarootdir):
-        Hrp2.__init__(self, modelDir, xmlDir)
-    
+                 xmlDir = hrp2_10_pkgdatarootdir,
+                 device = None):
+        Hrp2.__init__(self, name, modelDir, xmlDir, device)
+
 class Hrp2Laas (Hrp2):
     """
     This class instanciates LAAS Hrp2 robot
@@ -101,5 +103,6 @@ class Hrp2Laas (Hrp2):
 
     def __init__(self, name,
                  modelDir = hrp2_14_pkgdatarootdir,
-                 xmlDir = hrp2_14_pkgdatarootdir):
-        Hrp2.__init__(self, modelDir, xmlDir)
+                 xmlDir = hrp2_14_pkgdatarootdir,
+                 device = None):
+        Hrp2.__init__(self, name, modelDir, xmlDir, device)

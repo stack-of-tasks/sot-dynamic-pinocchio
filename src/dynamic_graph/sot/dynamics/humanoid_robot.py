@@ -68,6 +68,12 @@ class AbstractHumanoidRobot (object):
     """
     The robot dynamic model.
     """
+    device = None
+    """
+    The device that integrates the dynamic equation, namely
+      - the real robot or
+      - a simulator
+    """
     dimension = None
     """The configuration size."""
 
