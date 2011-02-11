@@ -16,6 +16,9 @@ Entities
 .. automodule:: dynamic_graph.sot.dynamics
    :members:
 
+.. automodule:: dynamic_graph.sot.dynamics.hrp2
+   :members:
+
 .. autoclass:: dynamic_graph.sot.dynamics.dynamic.Dynamic
    :members:
 
