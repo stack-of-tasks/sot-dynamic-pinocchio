@@ -20,7 +20,7 @@ from optparse import OptionParser
 
 from dynamic_graph import plug
 from dynamic_graph.sot.core import SOT
-from dynamic_graph.sot.dynamics.hrp2 import Hrp2
+from dynamic_graph.sot.dynamics.hrp2 import Hrp2Laas, Hrp2Jrl
 
 
 # Robotviewer is optional
@@ -181,6 +181,6 @@ if options.display:
 
 
 # Initialize the stack of tasks.
-robot = Hrp2("robot", True)
+robot = Hrp2Laas("robot")
 timeStep = .005
 solver = Solver(robot)
