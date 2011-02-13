@@ -159,11 +159,11 @@ class AbstractHumanoidRobot (object):
 
         if not self.device:
             self.device = RobotSimu(self.name + '.device')
-            # Freeflyer reference frame should be the same as global
-            # frame so that operational point positions correspond to
-            # position in freeflyer frame.
-            self.device.set(self.halfSitting)
 
+        # Freeflyer reference frame should be the same as global
+        # frame so that operational point positions correspond to
+        # position in freeflyer frame.
+        self.device.set(self.halfSitting)
         self.dynamic.position.value = self.halfSitting
         self.dynamic.velocity.value = self.dimension*(0.,)
         self.dynamic.acceleration.value = self.dimension*(0.,)
