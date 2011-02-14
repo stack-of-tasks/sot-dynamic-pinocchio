@@ -26,7 +26,7 @@
 #include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
 
-using namespace sot;
+using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistAttitudeFromSensor,"WaistAttitudeFromSensor");
 

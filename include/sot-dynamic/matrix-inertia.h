@@ -28,8 +28,8 @@
 
 #include <sot-core/matrix-twist.h>
 #include <sot-core/matrix-force.h>
-#include <sot-core/matrix-rotation.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-homogeneous.hh>
 
 namespace dynamicsJRLJapan
 {
@@ -54,7 +54,7 @@ class CjrlJoint;
 #endif
 
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
 /* -------------------------------------------------------------------------- */
@@ -99,6 +99,6 @@ private:
 
 };
 
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 #endif // __SOT_SOTMATRIXINERTIA_H__

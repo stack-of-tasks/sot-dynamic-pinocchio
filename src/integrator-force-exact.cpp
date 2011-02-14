@@ -23,7 +23,7 @@
 #include <dynamic-graph/factory.h>
 #include <sot-core/exception-dynamic.h>
 
-using namespace sot;
+using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceExact,"IntegratorForceExact");
 

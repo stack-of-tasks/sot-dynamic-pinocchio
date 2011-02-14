@@ -33,9 +33,9 @@ namespace ml = maal::boost;
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-homogeneous.hh>
 #include <sot-core/vector-roll-pitch-yaw.h>
-#include <sot-core/matrix-rotation.h>
+#include <sot/core/matrix-rotation.hh>
 
 /* STD */
 #include <string>
@@ -55,7 +55,7 @@ namespace ml = maal::boost;
 #endif
 
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
 /* --------------------------------------------------------------------- */
@@ -112,7 +112,7 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce
 };
 
 
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 
 

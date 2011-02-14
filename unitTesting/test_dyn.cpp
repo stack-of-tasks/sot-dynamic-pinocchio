@@ -26,7 +26,7 @@
 #include <sstream>
 
 using namespace std;
-using namespace sot;
+using namespace dynamicgraph::sot;
 
 int main(int argc, char * argv[])
 {
@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
       
       dyn->parseConfigFiles();
     } 
-  catch (sot::ExceptionDynamic& e)
+  catch (ExceptionDynamic& e)
     {
       if ( !strcmp(e.what(), "Error while parsing." )) {
 	cout << "Could not locate the necessary files for this test" << endl;

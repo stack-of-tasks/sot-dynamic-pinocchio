@@ -33,9 +33,9 @@ namespace ml = maal::boost;
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot-core/matrix-rotation.h>
+#include <sot/core/matrix-rotation.hh>
 #include <sot-core/matrix-force.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-homogeneous.hh>
 
 /* STD */
 #include <string>
@@ -55,148 +55,146 @@ namespace ml = maal::boost;
 #endif
 
 
-namespace sot {
-namespace dg = dynamicgraph;
+namespace dynamicgraph { namespace sot {
+    namespace dg = dynamicgraph;
 
-/* --------------------------------------------------------------------- */
-/* --- CLASS ----------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
+    /* --- CLASS ----------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
 
-class SOTFORCECOMPENSATION_EXPORT ForceCompensation
-{
- private:
-  static MatrixRotation I3;
- protected:
-  bool usingPrecompensation;
+    class SOTFORCECOMPENSATION_EXPORT ForceCompensation
+    {
+    private:
+      static MatrixRotation I3;
+    protected:
+      bool usingPrecompensation;
 
- public:
-  ForceCompensation( void );
-  static MatrixForce& computeHandXworld( 
-					   const MatrixRotation & worldRhand,
-					   const ml::Vector & transSensorCom,
-					   MatrixForce& res );
+    public:
+      ForceCompensation( void );
+      static MatrixForce& computeHandXworld( 
+					    const MatrixRotation & worldRhand,
+					    const ml::Vector & transSensorCom,
+					    MatrixForce& res );
 
   
-  static MatrixForce& computeHandVsensor( const MatrixRotation & sensorRhand,
-					     MatrixForce& res );
-  static MatrixForce& computeSensorXhand( const MatrixRotation & sensorRhand,
-					     const ml::Vector & transSensorCom,
-					     MatrixForce& res );
-/*   static ml::Matrix& computeInertiaSensor( const ml::Matrix& inertiaJoint, */
-/* 					   const MatrixForce& sensorXhand, */
-/* 					   ml::Matrix& res ); */
+      static MatrixForce& computeHandVsensor( const MatrixRotation & sensorRhand,
+					      MatrixForce& res );
+      static MatrixForce& computeSensorXhand( const MatrixRotation & sensorRhand,
+					      const ml::Vector & transSensorCom,
+					      MatrixForce& res );
+      /*   static ml::Matrix& computeInertiaSensor( const ml::Matrix& inertiaJoint, */
+      /* 					   const MatrixForce& sensorXhand, */
+      /* 					   ml::Matrix& res ); */
 
-  static ml::Vector& computeTorsorCompensated( const ml::Vector& torqueInput,
-					       const ml::Vector& torquePrecompensation,
-					       const ml::Vector& gravity,
-					       const MatrixForce& handXworld,
-					       const MatrixForce& handVsensor,
-					       const ml::Matrix& gainSensor,
-					       const ml::Vector& momentum,
-					       ml::Vector& res );
+      static ml::Vector& computeTorsorCompensated( const ml::Vector& torqueInput,
+						   const ml::Vector& torquePrecompensation,
+						   const ml::Vector& gravity,
+						   const MatrixForce& handXworld,
+						   const MatrixForce& handVsensor,
+						   const ml::Matrix& gainSensor,
+						   const ml::Vector& momentum,
+						   ml::Vector& res );
 
-  static ml::Vector& crossProduct_V_F( const ml::Vector& velocity,
-				       const ml::Vector& force,
-				       ml::Vector& res );
-  static ml::Vector& computeMomentum( const ml::Vector& velocity,
-				      const ml::Vector& acceleration,
-				      const MatrixForce& sensorXhand,
-				      const ml::Matrix& inertiaJoint,
-				      ml::Vector& res );
+      static ml::Vector& crossProduct_V_F( const ml::Vector& velocity,
+					   const ml::Vector& force,
+					   ml::Vector& res );
+      static ml::Vector& computeMomentum( const ml::Vector& velocity,
+					  const ml::Vector& acceleration,
+					  const MatrixForce& sensorXhand,
+					  const ml::Matrix& inertiaJoint,
+					  ml::Vector& res );
 
-  static ml::Vector& computeDeadZone( const ml::Vector& torqueInput,
-				      const ml::Vector& deadZoneLimit,
-				      ml::Vector& res );
+      static ml::Vector& computeDeadZone( const ml::Vector& torqueInput,
+					  const ml::Vector& deadZoneLimit,
+					  ml::Vector& res );
   
- public: // CALIBRATION
+    public: // CALIBRATION
 
-  std::list<ml::Vector> torsorList;
-  std::list<MatrixRotation> rotationList;
+      std::list<ml::Vector> torsorList;
+      std::list<MatrixRotation> rotationList;
 
-  void clearCalibration( void );
-  void addCalibrationValue( const ml::Vector& torsor,
-			    const MatrixRotation & worldRhand );
+      void clearCalibration( void );
+      void addCalibrationValue( const ml::Vector& torsor,
+				const MatrixRotation & worldRhand );
   
-  ml::Vector calibrateTransSensorCom( const ml::Vector& gravity,
-				      const MatrixRotation& handRsensor );
-  ml::Vector calibrateGravity( const MatrixRotation& handRsensor,
-			       bool precompensationCalibration = false,
-			       const MatrixRotation& hand0Rsensor = I3 );
+      ml::Vector calibrateTransSensorCom( const ml::Vector& gravity,
+					  const MatrixRotation& handRsensor );
+      ml::Vector calibrateGravity( const MatrixRotation& handRsensor,
+				   bool precompensationCalibration = false,
+				   const MatrixRotation& hand0Rsensor = I3 );
 
     
   
-};
+    };
 
-/* --------------------------------------------------------------------- */
-/* --- PLUGIN ---------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
+    /* --- PLUGIN ---------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
 
-class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin
-:public dg::Entity, public ForceCompensation
-{
- public:
-  static const std::string CLASS_NAME;
-  bool calibrationStarted;
-
-
- public: /* --- CONSTRUCTION --- */
-
-  ForceCompensationPlugin( const std::string& name );
-  virtual ~ForceCompensationPlugin( void );
-
- public: /* --- SIGNAL --- */
-
-  /* --- INPUTS --- */
-  dg::SignalPtr<ml::Vector,int> torsorSIN; 
-  dg::SignalPtr<MatrixRotation,int> worldRhandSIN; 
-
-  /* --- CONSTANTS --- */
-  dg::SignalPtr<MatrixRotation,int> handRsensorSIN; 
-  dg::SignalPtr<ml::Vector,int> translationSensorComSIN; 
-  dg::SignalPtr<ml::Vector,int> gravitySIN; 
-  dg::SignalPtr<ml::Vector,int> precompensationSIN; 
-  dg::SignalPtr<ml::Matrix,int> gainSensorSIN; 
-  dg::SignalPtr<ml::Vector,int> deadZoneLimitSIN; 
-  dg::SignalPtr<ml::Vector,int> transSensorJointSIN; 
-  dg::SignalPtr<ml::Matrix,int> inertiaJointSIN; 
-
-  dg::SignalPtr<ml::Vector,int> velocitySIN; 
-  dg::SignalPtr<ml::Vector,int> accelerationSIN; 
-
-  /* --- INTERMEDIATE OUTPUTS --- */
-  dg::SignalTimeDependent<MatrixForce,int> handXworldSOUT; 
-  dg::SignalTimeDependent<MatrixForce,int> handVsensorSOUT; 
-  dg::SignalPtr<ml::Vector,int> torsorDeadZoneSIN; 
-
-  dg::SignalTimeDependent<MatrixForce,int> sensorXhandSOUT;
-  //dg::SignalTimeDependent<ml::Matrix,int> inertiaSensorSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> momentumSOUT; 
-  dg::SignalPtr<ml::Vector,int> momentumSIN; 
-
-  /* --- OUTPUTS --- */
-  dg::SignalTimeDependent<ml::Vector,int> torsorCompensatedSOUT; 
-  dg::SignalTimeDependent<ml::Vector,int> torsorDeadZoneSOUT;
-
-  typedef int sotDummyType;
-  dg::SignalTimeDependent<sotDummyType,int> calibrationTrigerSOUT; 
-
- public: /* --- COMMANDLINE --- */
-
-  sotDummyType& calibrationTriger( sotDummyType& dummy,int time );
+    class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin
+      :public dg::Entity, public ForceCompensation
+    {
+    public:
+      static const std::string CLASS_NAME;
+      bool calibrationStarted;
 
 
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
+    public: /* --- CONSTRUCTION --- */
+
+      ForceCompensationPlugin( const std::string& name );
+      virtual ~ForceCompensationPlugin( void );
+
+    public: /* --- SIGNAL --- */
+
+      /* --- INPUTS --- */
+      dg::SignalPtr<ml::Vector,int> torsorSIN; 
+      dg::SignalPtr<MatrixRotation,int> worldRhandSIN; 
+
+      /* --- CONSTANTS --- */
+      dg::SignalPtr<MatrixRotation,int> handRsensorSIN; 
+      dg::SignalPtr<ml::Vector,int> translationSensorComSIN; 
+      dg::SignalPtr<ml::Vector,int> gravitySIN; 
+      dg::SignalPtr<ml::Vector,int> precompensationSIN; 
+      dg::SignalPtr<ml::Matrix,int> gainSensorSIN; 
+      dg::SignalPtr<ml::Vector,int> deadZoneLimitSIN; 
+      dg::SignalPtr<ml::Vector,int> transSensorJointSIN; 
+      dg::SignalPtr<ml::Matrix,int> inertiaJointSIN; 
+
+      dg::SignalPtr<ml::Vector,int> velocitySIN; 
+      dg::SignalPtr<ml::Vector,int> accelerationSIN; 
+
+      /* --- INTERMEDIATE OUTPUTS --- */
+      dg::SignalTimeDependent<MatrixForce,int> handXworldSOUT; 
+      dg::SignalTimeDependent<MatrixForce,int> handVsensorSOUT; 
+      dg::SignalPtr<ml::Vector,int> torsorDeadZoneSIN; 
+
+      dg::SignalTimeDependent<MatrixForce,int> sensorXhandSOUT;
+      //dg::SignalTimeDependent<ml::Matrix,int> inertiaSensorSOUT;
+      dg::SignalTimeDependent<ml::Vector,int> momentumSOUT; 
+      dg::SignalPtr<ml::Vector,int> momentumSIN; 
+
+      /* --- OUTPUTS --- */
+      dg::SignalTimeDependent<ml::Vector,int> torsorCompensatedSOUT; 
+      dg::SignalTimeDependent<ml::Vector,int> torsorDeadZoneSOUT;
+
+      typedef int sotDummyType;
+      dg::SignalTimeDependent<sotDummyType,int> calibrationTrigerSOUT; 
+
+    public: /* --- COMMANDLINE --- */
+
+      sotDummyType& calibrationTriger( sotDummyType& dummy,int time );
+
+
+      virtual void commandLine( const std::string& cmdLine,
+				std::istringstream& cmdArgs,
+				std::ostream& os );
 
 
 
-};
+    };
 
 
-} // namaspace sot
-
-
+  } // namaspace sot
+} // namespace dynamicgraph
 
 #endif // #ifndef __SOT_SOTFORCECOMPENSATION_H__
-

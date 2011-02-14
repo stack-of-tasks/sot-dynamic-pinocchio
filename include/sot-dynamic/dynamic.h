@@ -47,7 +47,7 @@ namespace djj = dynamicsJRLJapan;
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot-core/exception-dynamic.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-homogeneous.hh>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -64,7 +64,7 @@ namespace djj = dynamicsJRLJapan;
 #endif
 
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
   namespace command {
@@ -365,7 +365,7 @@ class SOTDYNAMIC_EXPORT Dynamic
 
   std::ostream& operator<<(std::ostream& os, const CjrlHumanoidDynamicRobot& r);
   std::ostream& operator<<(std::ostream& os, const CjrlJoint& r);
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 
 

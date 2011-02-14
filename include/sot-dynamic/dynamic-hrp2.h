@@ -48,7 +48,7 @@
 
 
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
 /* --------------------------------------------------------------------- */
@@ -80,7 +80,7 @@ class SOTDYNAMICHRP2_EXPORT DynamicHrp2
 };
 
 
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 
 

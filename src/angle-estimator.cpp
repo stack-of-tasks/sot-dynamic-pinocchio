@@ -27,7 +27,7 @@
 
 #include <jrl/mal/matrixabstractlayer.hh>
 
-using namespace sot;
+using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(AngleEstimator,"AngleEstimator");

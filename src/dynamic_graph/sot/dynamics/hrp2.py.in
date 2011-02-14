@@ -15,7 +15,7 @@
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 from dynamic_graph.sot import SE3, R3, SO3
-from dynamic_graph.sot.core import RobotSimu, FeaturePoint6dRelative, \
+from dynamic_graph.sot.core import FeaturePoint6dRelative, \
     FeatureGeneric, FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
 from dynamic_graph.sot.dynamics import AngleEstimator
 from dynamic_graph import enableTrace, plug

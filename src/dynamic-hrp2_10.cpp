@@ -25,7 +25,7 @@
 
 #include <dynamic-graph/factory.h>
 using namespace dynamicgraph;
-using namespace sot;
+using namespace dynamicgraph::sot;
 
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(DynamicHrp2_10,"DynamicHrp2_10");
 

@@ -30,7 +30,7 @@
 #include <sot-core/debug.h>
 
 using namespace dynamicsJRLJapan;
-using namespace sot;
+using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
 static matrix3d skewSymmetric(const vector3d& v)

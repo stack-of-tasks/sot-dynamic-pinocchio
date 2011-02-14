@@ -33,7 +33,7 @@ namespace ml = maal::boost;
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-homogeneous.hh>
 
 /* STD */
 #include <string>
@@ -52,7 +52,7 @@ namespace ml = maal::boost;
 #  define SOTZMPREFFROMCOM_EXPORT
 #endif
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
 /* --------------------------------------------------------------------- */
@@ -94,7 +94,7 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
 };
 
 
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 
 #endif // #ifndef __SOT_ZMPREFFROMCOM_H__

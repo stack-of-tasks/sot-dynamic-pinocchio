@@ -46,7 +46,7 @@
 #  define DYNAMICHRP2_10_EXPORT
 #endif
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
@@ -75,7 +75,7 @@ class DYNAMICHRP2_10_EXPORT DynamicHrp2_10
 
 };
 
-} // namespace sot
+} /* namespace sot */} /* namespace dynamicgraph */
 
 
 #endif // #ifndef __SOT_DYNAMIC_HRP2_H__

@@ -26,7 +26,7 @@
  #include <dynamic-graph/command-setter.h>
  #include <dynamic-graph/command-getter.h>
 
-namespace sot {
+namespace dynamicgraph { namespace sot {
   namespace command {
     using ::dynamicgraph::command::Command;
     using ::dynamicgraph::command::Value;
@@ -61,6 +61,7 @@ namespace sot {
       }
     }; // class FromSensor
   } // namespace command
-} //namespace sot
+  } // namespace sot
+} // namespace dynamicgraph
 
 #endif //ANGLE_ESTIMATOR_COMMAND_H

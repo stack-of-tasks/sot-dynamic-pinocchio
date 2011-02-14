@@ -33,9 +33,9 @@ namespace ml = maal::boost;
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot-core/matrix-homogeneous.h>
+#include <sot/core/matrix-homogeneous.hh>
 #include <sot-core/vector-roll-pitch-yaw.h>
-#include <sot-core/matrix-rotation.h>
+#include <sot/core/matrix-rotation.hh>
 
 /* STD */
 #include <string>
@@ -55,42 +55,42 @@ namespace ml = maal::boost;
 #endif
 
 
-namespace sot {
-namespace dg = dynamicgraph;
+namespace dynamicgraph { namespace sot {
+    namespace dg = dynamicgraph;
 
-/* --------------------------------------------------------------------- */
-/* --- CLASS ----------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
-class SOTMASSAPPARENT_EXPORT MassApparent
-:public dg::Entity
-{
- public:
-  static const std::string CLASS_NAME;
+    /* --------------------------------------------------------------------- */
+    /* --- CLASS ----------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
+    class SOTMASSAPPARENT_EXPORT MassApparent
+      :public dg::Entity
+      {
+      public:
+	static const std::string CLASS_NAME;
 
- public: /* --- CONSTRUCTION --- */
+      public: /* --- CONSTRUCTION --- */
 
-  MassApparent( const std::string& name );
-  virtual ~MassApparent( void );
+	MassApparent( const std::string& name );
+	virtual ~MassApparent( void );
 
- public: /* --- SIGNAL --- */
+      public: /* --- SIGNAL --- */
 
-  dg::SignalPtr<ml::Matrix,int> jacobianSIN; 
-  dg::SignalPtr<ml::Matrix,int> inertiaInverseSIN; 
-  dg::SignalTimeDependent<ml::Matrix,int> massInverseSOUT; 
-  dg::SignalTimeDependent<ml::Matrix,int> massSOUT; 
+	dg::SignalPtr<ml::Matrix,int> jacobianSIN; 
+	dg::SignalPtr<ml::Matrix,int> inertiaInverseSIN; 
+	dg::SignalTimeDependent<ml::Matrix,int> massInverseSOUT; 
+	dg::SignalTimeDependent<ml::Matrix,int> massSOUT; 
 
-  dg::SignalPtr<ml::Matrix,int> inertiaSIN; 
-  dg::SignalTimeDependent<ml::Matrix,int> inertiaInverseSOUT; 
+	dg::SignalPtr<ml::Matrix,int> inertiaSIN; 
+	dg::SignalTimeDependent<ml::Matrix,int> inertiaInverseSOUT; 
 
- public: /* --- FUNCTIONS --- */
-  ml::Matrix& computeMassInverse( ml::Matrix& res,const int& time );
-  ml::Matrix& computeMass( ml::Matrix& res,const int& time );
-  ml::Matrix& computeInertiaInverse( ml::Matrix& res,const int& time );
-};
+      public: /* --- FUNCTIONS --- */
+	ml::Matrix& computeMassInverse( ml::Matrix& res,const int& time );
+	ml::Matrix& computeMass( ml::Matrix& res,const int& time );
+	ml::Matrix& computeInertiaInverse( ml::Matrix& res,const int& time );
+      };
 
 
-}
-
+  } // namespace sot
+} // namespace dynamicgraph
 
 #endif // #ifndef __SOT_SOTMASSAPPARENT_H__
 
