@@ -19,7 +19,7 @@
  */
 
 #include <sot-dynamic/dynamic-hrp2_10.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 

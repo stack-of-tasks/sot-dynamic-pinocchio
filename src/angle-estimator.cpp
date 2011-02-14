@@ -19,7 +19,7 @@
  */
 
 #include <sot-dynamic/angle-estimator.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/command.h>
 #include <dynamic-graph/command-setter.h>

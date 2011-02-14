@@ -41,12 +41,12 @@ namespace ml = maal::boost;
 namespace djj = dynamicsJRLJapan;
 
 /* SOT */
-#include <sot-core/flags.h>
+#include <sot/core/flags.hh>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot-core/exception-dynamic.h>
+#include <sot/core/exception-dynamic.hh>
 #include <sot/core/matrix-homogeneous.hh>
 
 /* --------------------------------------------------------------------- */

@@ -19,7 +19,7 @@
  */
 
 #include <sot-dynamic/integrator-force-rk4.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 
 

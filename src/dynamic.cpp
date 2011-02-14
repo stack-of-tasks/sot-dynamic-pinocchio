@@ -18,7 +18,7 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <sot-dynamic/dynamic.h>
 
 #include <boost/filesystem.hpp>

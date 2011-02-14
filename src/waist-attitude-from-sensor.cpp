@@ -19,7 +19,7 @@
  */
 
 #include <sot-dynamic/waist-attitude-from-sensor.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 
 #include <dynamic-graph/command.h>

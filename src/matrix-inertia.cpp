@@ -27,7 +27,7 @@
 #include <jrl/dynamics/HumanoidDynamicMultiBody.h>
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 
 using namespace dynamicsJRLJapan;
 using namespace dynamicgraph::sot;

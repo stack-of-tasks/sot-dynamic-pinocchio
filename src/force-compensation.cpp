@@ -19,9 +19,9 @@
  */
 
 #include <sot-dynamic/force-compensation.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
-#include <sot-core/macros-signal.h>
+#include <sot/core/macros-signal.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;

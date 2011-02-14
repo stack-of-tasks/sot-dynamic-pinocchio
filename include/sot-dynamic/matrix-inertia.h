@@ -26,8 +26,8 @@
 #include "jrl/mal/boost.hh"
 #include "jrl/mal/matrixabstractlayer.hh"
 
-#include <sot-core/matrix-twist.h>
-#include <sot-core/matrix-force.h>
+#include <sot/core/matrix-twist.hh>
+#include <sot/core/matrix-force.hh>
 #include <sot/core/matrix-rotation.hh>
 #include <sot/core/matrix-homogeneous.hh>
 

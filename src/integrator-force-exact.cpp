@@ -19,9 +19,9 @@
  */
 
 #include <sot-dynamic/integrator-force-exact.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
-#include <sot-core/exception-dynamic.h>
+#include <sot/core/exception-dynamic.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;

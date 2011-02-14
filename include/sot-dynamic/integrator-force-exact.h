@@ -34,7 +34,7 @@ namespace ml = maal::boost;
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot/core/matrix-homogeneous.hh>
-#include <sot-core/vector-roll-pitch-yaw.h>
+#include <sot/core/vector-roll-pitch-yaw.hh>
 #include <sot/core/matrix-rotation.hh>
 #include <sot-dynamic/integrator-force.h>
 

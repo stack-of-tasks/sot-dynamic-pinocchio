@@ -19,7 +19,7 @@
  */
 
 #include <sot-dynamic/zmpreffromcom.h>
-#include <sot-core/debug.h>
+#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 
 using namespace dynamicgraph::sot;
