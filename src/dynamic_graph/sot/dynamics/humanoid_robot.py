@@ -16,7 +16,7 @@
 
 from dynamic_graph.sot import SE3, R3, SO3
 from dynamic_graph.sot.core.feature_position import FeaturePosition
-from dynamic_graph.sot.core import Device, FeaturePoint6dRelative, \
+from dynamic_graph.sot.core import RobotSimu, FeaturePoint6dRelative, \
     FeatureGeneric, FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
 
 from dynamic_graph.sot.dynamics.parser import Parser
@@ -158,7 +158,7 @@ class AbstractHumanoidRobot (object):
             raise RunTimeError("robots models have to be initialized first")
 
         if not self.device:
-            self.device = Device(self.name + '.device')
+            self.device = RobotSimu(self.name + '.device')
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
