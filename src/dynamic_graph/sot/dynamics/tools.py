@@ -21,6 +21,7 @@ from optparse import OptionParser
 from dynamic_graph import plug
 from dynamic_graph.sot.core import SOT
 from dynamic_graph.sot.dynamics.hrp2 import Hrp2Laas, Hrp2Jrl
+from dynamic_graph.sot.dynamics.solver import Solver
 
 
 # Robotviewer is optional
@@ -139,26 +140,6 @@ def checkFinalConfiguration(position, finalPosition):
         displayHrp2Configuration(map(lambda (x, y): x - y,
                                      zip(position, finalPosition)))
         sys.exit(1)
-
-##################
-# Helper classes #
-##################
-
-class Solver:
-    robot = None
-    sot = None
-
-    def __init__(self, robot):
-        self.robot = robot
-        self.sot = SOT('solver')
-        self.sot.signal('damping').value = 1e-6
-        self.sot.setNumberDofs(self.robot.dimension)
-
-        if robot.device:
-            plug(self.sot.signal('control'), robot.device.signal('control'))
-            plug(self.robot.device.state,
-                 self.robot.dynamic.position)
-
 
 ##################
 # Initialization #
