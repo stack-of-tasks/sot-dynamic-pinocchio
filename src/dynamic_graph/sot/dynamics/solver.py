@@ -32,3 +32,8 @@ class Solver:
             plug(self.sot.signal('control'), robot.device.signal('control'))
             plug(self.robot.device.state,
                  self.robot.dynamic.position)
+    def push(self, taskName):
+        """
+        Proxy method to push a task in the sot
+        """
+        self.sot.push(taskName)
