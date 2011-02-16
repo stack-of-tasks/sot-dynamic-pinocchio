@@ -15,14 +15,9 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-from optparse import OptionParser
-
 from dynamic_graph import plug
 from dynamic_graph.sot.core import SOT
 from dynamic_graph.sot.dynamics.hrp2 import Hrp2Laas, Hrp2Jrl
-from dynamic_graph.sot.dynamics.solver import Solver
-
 
 # Robotviewer is optional
 hasRobotViewer = True
@@ -145,23 +140,28 @@ def checkFinalConfiguration(position, finalPosition):
 # Initialization #
 ##################
 
-# Parse options and enable robotviewer client if wanted.
-clt = None
-parser = OptionParser()
-parser.add_option("-d", "--display",
-                  action="store_true", dest="display", default=False,
-                  help="enable display using robotviewer")
-(options, args) = parser.parse_args()
+if __name__ == '__main__':
+    import sys
+    from optparse import OptionParser
+    from dynamic_graph.sot.dynamics.solver import Solver
 
-if options.display:
-    if not hasRobotViewer:
-        print "Failed to import robotviewer client library."
-    clt = initRobotViewer()
-    if not clt:
-        print "Failed to initialize robotviewer client library."
+    # Parse options and enable robotviewer client if wanted.
+    clt = None
+    parser = OptionParser()
+    parser.add_option("-d", "--display",
+                      action="store_true", dest="display", default=False,
+                      help="enable display using robotviewer")
+    (options, args) = parser.parse_args()
+
+    if options.display:
+        if not hasRobotViewer:
+            print "Failed to import robotviewer client library."
+        clt = initRobotViewer()
+        if not clt:
+            print "Failed to initialize robotviewer client library."
 
 
-# Initialize the stack of tasks.
-robot = Hrp2Laas("robot")
-timeStep = .005
-solver = Solver(robot)
+    # Initialize the stack of tasks.
+    robot = Hrp2Laas("robot")
+    timeStep = .005
+    solver = Solver(robot)
