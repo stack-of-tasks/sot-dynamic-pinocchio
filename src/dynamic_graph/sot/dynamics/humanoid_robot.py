@@ -172,13 +172,14 @@ class AbstractHumanoidRobot (object):
                                 self.name + '.dynamics')
 
         # --- center of mass ------------
+        self.dynamic.com.recompute(0)
         self.featureCom = FeatureGeneric(self.name + '.feature.com')
         plug(self.dynamic.com, self.featureCom.errorIN)
         plug(self.dynamic.Jcom,
              self.featureCom.jacobianIN)
         self.featureCom.selec.value = '011'
         self.featureComDes = FeatureGeneric(self.name + '.feature.ref.com')
-        self.featureComDes.errorIN.value = (.0, .0, 0.)
+        self.featureComDes.errorIN.value = self.dynamic.com.value
         self.featureCom.sdes.value = self.featureComDes
         self.comTask = Task(self.name + '.task.com')
         self.comTask.add(self.name + '.feature.com')
