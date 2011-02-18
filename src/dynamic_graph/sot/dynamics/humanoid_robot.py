@@ -42,7 +42,8 @@ class AbstractHumanoidRobot (object):
     """
 
     OperationalPoints = ['left-wrist', 'right-wrist',
-                         'left-ankle', 'right-ankle']
+                         'left-ankle', 'right-ankle',
+                         'gaze']
     """
     Operational points are specific interesting points of the robot
     used to control it.
