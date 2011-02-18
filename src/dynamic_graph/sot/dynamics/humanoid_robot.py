@@ -173,6 +173,8 @@ class AbstractHumanoidRobot (object):
 
         # --- center of mass ------------
         self.dynamic.com.recompute(0)
+        self.dynamic.Jcom.recompute(0)
+
         self.featureCom = FeatureGeneric(self.name + '.feature.com')
         plug(self.dynamic.com, self.featureCom.errorIN)
         plug(self.dynamic.Jcom,
@@ -190,6 +192,7 @@ class AbstractHumanoidRobot (object):
         self.tasks = dict()
         for op in self.OperationalPoints:
             self.dynamic.signal(op).recompute(0)
+            self.dynamic.signal('J'+op).recompute(0)
             self.features[op] = \
                 FeaturePosition(self.name + '.feature.' + op,
                                 self.dynamic.signal(op),
