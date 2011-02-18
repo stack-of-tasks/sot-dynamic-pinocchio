@@ -159,7 +159,7 @@ class AbstractHumanoidRobot (object):
             raise RunTimeError("robots models have to be initialized first")
 
         if not self.device:
-            self.device = RobotSimu(self.name + '.device')
+            self.device = RobotSimu(self.name + '_device')
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
@@ -169,23 +169,22 @@ class AbstractHumanoidRobot (object):
         self.dynamic.velocity.value = self.dimension*(0.,)
         self.dynamic.acceleration.value = self.dimension*(0.,)
 
-        self.initializeOpPoints(self.dynamic,
-                                self.name + '.dynamics')
+        self.initializeOpPoints(self.dynamic)
 
         # --- center of mass ------------
         self.dynamic.com.recompute(0)
         self.dynamic.Jcom.recompute(0)
 
-        self.featureCom = FeatureGeneric(self.name + '.feature.com')
+        self.featureCom = FeatureGeneric(self.name + '_feature_com')
         plug(self.dynamic.com, self.featureCom.errorIN)
         plug(self.dynamic.Jcom,
              self.featureCom.jacobianIN)
         self.featureCom.selec.value = '011'
-        self.featureComDes = FeatureGeneric(self.name + '.feature.ref.com')
+        self.featureComDes = FeatureGeneric(self.name + '.feature_ref_com')
         self.featureComDes.errorIN.value = self.dynamic.com.value
         self.featureCom.sdes.value = self.featureComDes
-        self.comTask = Task(self.name + '.task.com')
-        self.comTask.add(self.name + '.feature.com')
+        self.comTask = Task(self.name + '_task_com')
+        self.comTask.add(self.name + '_feature_com')
         self.comTask.controlGain.value = 1.
 
         # --- operational points tasks -----
@@ -195,12 +194,12 @@ class AbstractHumanoidRobot (object):
             self.dynamic.signal(op).recompute(0)
             self.dynamic.signal('J'+op).recompute(0)
             self.features[op] = \
-                FeaturePosition(self.name + '.feature.' + op,
+                FeaturePosition(self.name + '_feature_' + op,
                                 self.dynamic.signal(op),
                                 self.dynamic.signal('J' + op),
                                 self.dynamic.signal(op).value)
-            self.tasks[op] = Task(self.name + '.task.' + op)
-            self.tasks[op].add(self.name + '.feature.' + op)
+            self.tasks[op] = Task(self.name + '_task_' + op)
+            self.tasks[op].add(self.name + '_feature_' + op)
             self.tasks[op].controlGain.value = .2
             # define a member for each operational point
             w = op.split('-')
@@ -225,7 +224,7 @@ class HumanoidRobot(AbstractHumanoidRobot):
         AbstractHumanoidRobot.__init__(self, name)
         self.filename = filename
         self.dynamic = \
-            self.loadModelFromKxml (self.name + '.dynamics', self.filename)
+            self.loadModelFromKxml (self.name + '_dynamics', self.filename)
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = self.dimension*(0.,)
         self.initializeRobot()
