@@ -141,7 +141,7 @@ class AbstractHumanoidRobot (object):
         model.parse()
         return
 
-    def initializeOpPoints(self, model, prefix):
+    def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
             model.createOpPoint(op, op)
 
