@@ -180,7 +180,7 @@ class AbstractHumanoidRobot (object):
         plug(self.dynamic.Jcom,
              self.featureCom.jacobianIN)
         self.featureCom.selec.value = '011'
-        self.featureComDes = FeatureGeneric(self.name + '.feature_ref_com')
+        self.featureComDes = FeatureGeneric(self.name + '_feature_ref_com')
         self.featureComDes.errorIN.value = self.dynamic.com.value
         self.featureCom.sdes.value = self.featureComDes
         self.comTask = Task(self.name + '_task_com')
