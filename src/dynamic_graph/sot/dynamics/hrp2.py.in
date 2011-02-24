@@ -47,7 +47,7 @@ class Hrp2(AbstractHumanoidRobot):
         specificitiesPath = xmlDir + '/HRP2SpecificitiesSmall.xml'
         jointRankPath = xmlDir + '/HRP2LinkJointRankSmall.xml'
 
-        self.dynamic = DynamicHrp2(self.name + '_dynamics')
+        self.dynamic = DynamicHrp2(self.name + '_dynamic')
         self.dynamic.setFiles(modelDir, modelName,
                                   specificitiesPath, jointRankPath)
         self.dynamic.parse()
