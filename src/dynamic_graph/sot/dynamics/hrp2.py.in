@@ -41,6 +41,7 @@ class Hrp2(AbstractHumanoidRobot):
     def __init__(self, name, modelDir, xmlDir, device):
         AbstractHumanoidRobot.__init__ (self, name)
 
+        self.OperationalPoints.append('waist')
         self.device = device
         modelName = 'HRP2JRLmainsmall.wrl'
         specificitiesPath = xmlDir + '/HRP2SpecificitiesSmall.xml'
