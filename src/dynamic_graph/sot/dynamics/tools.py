@@ -140,8 +140,8 @@ def checkFinalConfiguration(position, finalPosition):
 # Initialization #
 ##################
 
-if __name__ == '__main__':
-    import sys
+import sys
+if 'argv' in sys.__dict__:
     from optparse import OptionParser
     from dynamic_graph.sot.dynamics.solver import Solver
 
