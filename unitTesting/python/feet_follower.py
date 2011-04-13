@@ -15,7 +15,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-from tools import *
+from dynamic_graph.sot.dynamics.tools import *
 
 from dynamic_graph.sot.dynamics.feet_follower import FeetFollowerFromFile
 feetFollower = FeetFollowerFromFile('feet-follower')

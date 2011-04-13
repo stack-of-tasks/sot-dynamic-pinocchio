@@ -21,8 +21,7 @@ from dynamic_graph.sot.dynamics.hrp2 import Hrp2
 
 from dynamic_graph import enableTrace, plug
 
-from tools import *
-
+from dynamic_graph.sot.dynamics.tools import *
 
 class QuasiStaticWalking:
     leftFoot = 0
@@ -155,13 +154,12 @@ class QuasiStaticWalking:
 
 # Push tasks
 #  Feet tasks.
-solver.sot.push(robot.name + '.task.right-ankle')
-solver.sot.push(robot.name + '.task.left-ankle')
+solver.sot.push(robot.tasks['right-ankle'].name)
+solver.sot.push(robot.tasks['left-ankle'].name)
 
 #  Center of mass
 # FIXME: trigger segv at exit.
-solver.sot.push(robot.name + '.task.com')
-
+solver.sot.push(robot.comTask.name)
 
 # Main.
 

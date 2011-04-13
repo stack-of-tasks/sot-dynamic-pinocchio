@@ -15,20 +15,20 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
-from tools import *
+from dynamic_graph.sot.dynamics.tools import *
 
 # Move right wrist
 reach(robot, 'right-wrist', 0.25, 0, 0.1)
 
 # Push tasks
 #  Operational points tasks
-solver.sot.push(robot.name + '.task.right-ankle')
-solver.sot.push(robot.name + '.task.left-ankle')
-solver.sot.push(robot.name + '.task.left-wrist')
-solver.sot.push(robot.name + '.task.right-wrist')
+solver.sot.push(robot.tasks['right-ankle'].name)
+solver.sot.push(robot.tasks['left-ankle'].name)
+solver.sot.push(robot.tasks['right-wrist'].name)
+solver.sot.push(robot.tasks['left-wrist'].name)
 
 #  Center of mass
-solver.sot.push(robot.name + '.task.com')
+solver.sot.push(robot.comTask.name)
 
 # Main.
 #  Main loop

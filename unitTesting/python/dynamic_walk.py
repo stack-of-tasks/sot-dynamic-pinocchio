@@ -24,8 +24,7 @@ from dynamic_graph.sot.dynamics.hrp2 import Hrp2
 
 from dynamic_graph import enableTrace, plug
 
-from tools import *
-
+from dynamic_graph.sot.dynamics.tools import *
 
 class HalfStep:
     startX = 0.
