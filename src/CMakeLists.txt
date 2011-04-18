@@ -61,10 +61,6 @@ FOREACH(lib ${libs})
     )
 ENDFOREACH(lib)
 
-EXEC_PROGRAM(${PYTHON_EXECUTABLE} ARGS "-c \"from distutils import sysconfig; print sysconfig.get_python_lib(0,0,prefix='')\""
-  OUTPUT_VARIABLE PYTHON_SITELIB
-  )
-
 # Install empty __init__.py files in intermediate directories.
 CONFIG_FILES(dynamic_graph/sot/dynamics/hrp2.py)
 
