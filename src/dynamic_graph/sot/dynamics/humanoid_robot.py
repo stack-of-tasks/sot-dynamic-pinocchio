@@ -124,7 +124,8 @@ class AbstractHumanoidRobot (object):
         return model
 
     def loadModelFromJrlDynamics(self, name, modelDir, modelName,
-                                 specificitiesPath, jointRankPath):
+                                 specificitiesPath, jointRankPath,
+                                 dynamicType):
         """
         Load a model using the jrl-dynamics parser. This parser looks
         for VRML files in which kinematics and dynamics information
@@ -134,12 +135,11 @@ class AbstractHumanoidRobot (object):
 
         Additional information are located in two different XML files.
         """
-        #FIXME: add support for hrp2-10 here.
-        model = DynamicHrp2(name)
+        model = dynamicType(name)
         model.setFiles(modelDir, modelName,
                        specificitiesPath, jointRankPath)
         model.parse()
-        return
+        return model
 
     def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
