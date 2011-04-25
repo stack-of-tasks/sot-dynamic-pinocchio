@@ -212,6 +212,28 @@ class AbstractHumanoidRobot (object):
     def __init__(self, name):
         self.name = name
 
+    def reset(self, posture = None):
+        """
+        Restart the control from another position.
+
+        This method has not been extensively tested and
+        should be used carefully.
+
+        In particular, tasks should be removed from the
+        solver before attempting a reset.
+        """
+        if not posture:
+            posture = self.halfSitting
+        self.device.set(posture)
+
+        self.dynamic.com.recompute(self.device.state.time+1)
+        self.dynamic.Jcom.recompute(self.device.state.time+1)
+        self.featureComDes.errorIN.value = self.dynamic.com.value
+
+        for op in self.OperationalPoints:
+            self.dynamic.signal(op).recompute(self.device.state.time+1)
+            self.dynamic.signal('J'+op).recompute(self.device.state.time+1)
+            self.features[op].reference.value = self.dynamic.signal(op).value
 
 class HumanoidRobot(AbstractHumanoidRobot):
 
