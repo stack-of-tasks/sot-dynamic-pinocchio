@@ -15,6 +15,7 @@
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
 INCLUDE(../cmake/python.cmake)
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 # Verbosity level
 IF (NOT (\"${CMAKE_VERBOSITY_LEVEL}\" STREQUAL \"\"))
@@ -43,6 +44,10 @@ FOREACH(lib ${libs})
     ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
     TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
+
+  IF (APPLE)
+	TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES} boost_system)
+  ENDIF (APPLE)
 
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
   PKG_CONFIG_USE_DEPENDENCY(${lib} hrp2-dynamics)
