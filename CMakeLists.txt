@@ -76,7 +76,7 @@ LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
 
 # Search for dependencies.
 # Boost
-SET(BOOST_COMPONENTS filesystem)
+SET(BOOST_COMPONENTS filesystem system)
 SEARCH_FOR_BOOST()
 
 # Add subdirectories.
