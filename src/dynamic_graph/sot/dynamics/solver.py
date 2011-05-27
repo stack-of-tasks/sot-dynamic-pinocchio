@@ -43,11 +43,7 @@ class Solver:
         # and NOT 'sot.control'!
 
         if robot.device:
-            plug(self.sot.control, robot.device.control)
-
-            #FIXME: should be...
-            # plug(self.jointLimitator.control, robot.device.control)
-
+            plug(self.jointLimitator.control, robot.device.control)
             plug(self.robot.device.state, self.robot.dynamic.position)
 
     def push(self, taskName):
