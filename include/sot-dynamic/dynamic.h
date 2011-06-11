@@ -93,6 +93,10 @@ class SOTDYNAMIC_EXPORT Dynamic
   friend class sot::command::InitializeRobot;
 
  public:
+  virtual const std::string& getClassName () const
+  {
+    return CLASS_NAME;
+  }
   static const std::string CLASS_NAME;
 
  protected:
