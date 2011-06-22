@@ -67,6 +67,10 @@ class DYNAMICHRP2_10_EXPORT DynamicHrp2_10
 
   DynamicHrp2_10( const std::string& name );
   virtual ~DynamicHrp2_10( void );
+  virtual const std::string& getClassName () const
+  {
+    return CLASS_NAME;
+  }
 
  public: /* --- MODEL CREATION --- */
  
