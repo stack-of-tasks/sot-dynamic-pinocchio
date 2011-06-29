@@ -64,6 +64,8 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
 {
  public:
   static const std::string CLASS_NAME;
+  virtual const std::string& getClassName( void ) const { return CLASS_NAME; }
+ public:
   double dt;
   const static double DT_DEFAULT; // = 5e-3; // 5ms
   double footHeight;

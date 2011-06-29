@@ -16,7 +16,7 @@
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 from dynamic_graph import plug
-from dynamic_graph.sot.core import SOT
+from dynamic_graph.sot.core import JointLimitator, SOT
 
 class Solver:
     robot = None
@@ -24,14 +24,28 @@ class Solver:
 
     def __init__(self, robot):
         self.robot = robot
+
+        # Make sure control does not exceed joint limits.
+        self.jointLimitator = JointLimitator('joint_limitator')
+        plug(self.robot.dynamic.position, self.jointLimitator.joint)
+        plug(self.robot.dynamic.upperJl, self.jointLimitator.upperJl)
+        plug(self.robot.dynamic.lowerJl, self.jointLimitator.lowerJl)
+
+        # Create the solver.
         self.sot = SOT('solver')
         self.sot.signal('damping').value = 1e-6
         self.sot.setNumberDofs(self.robot.dimension)
 
+        # Plug the solver control into the filter.
+        plug(self.sot.control, self.jointLimitator.controlIN)
+
+        # Important: always use 'jointLimitator.control'
+        # and NOT 'sot.control'!
+
         if robot.device:
-            plug(self.sot.signal('control'), robot.device.signal('control'))
-            plug(self.robot.device.state,
-                 self.robot.dynamic.position)
+            plug(self.jointLimitator.control, robot.device.control)
+            plug(self.robot.device.state, self.robot.dynamic.position)
+
     def push(self, taskName):
         """
         Proxy method to push a task in the sot

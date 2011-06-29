@@ -151,6 +151,9 @@ if 'argv' in sys.__dict__:
     parser.add_option("-d", "--display",
                       action="store_true", dest="display", default=False,
                       help="enable display using robotviewer")
+    parser.add_option("-r", "--robot",
+                      action="store", dest="robot", default="Hrp2Laas",
+                      help="Specify which robot model to use")
     (options, args) = parser.parse_args()
 
     if options.display:
@@ -162,6 +165,13 @@ if 'argv' in sys.__dict__:
 
 
     # Initialize the stack of tasks.
-    robot = Hrp2Laas("robot")
+    robots = {
+        "Hrp2Laas" : Hrp2Laas,
+        "Hrp2Jrl"  : Hrp2Jrl
+        }
+    if not options.robot in robots:
+        raise RuntimeError (
+            "invalid robot name (should by Hrp2Laas or Hrp2Jrl)")
+    robot = robots[options.robot]("robot")
     timeStep = .005
     solver = Solver(robot)

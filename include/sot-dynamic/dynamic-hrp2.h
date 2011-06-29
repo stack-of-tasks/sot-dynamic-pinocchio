@@ -65,6 +65,10 @@ class SOTDYNAMICHRP2_EXPORT DynamicHrp2
 {
 
  public:
+  virtual const std::string& getClassName () const
+  {
+    return CLASS_NAME;
+  }
   static const std::string CLASS_NAME;
 
  public: /* --- CONSTRUCTION --- */

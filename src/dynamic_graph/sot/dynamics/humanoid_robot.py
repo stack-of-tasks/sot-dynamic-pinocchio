@@ -124,7 +124,8 @@ class AbstractHumanoidRobot (object):
         return model
 
     def loadModelFromJrlDynamics(self, name, modelDir, modelName,
-                                 specificitiesPath, jointRankPath):
+                                 specificitiesPath, jointRankPath,
+                                 dynamicType):
         """
         Load a model using the jrl-dynamics parser. This parser looks
         for VRML files in which kinematics and dynamics information
@@ -134,12 +135,11 @@ class AbstractHumanoidRobot (object):
 
         Additional information are located in two different XML files.
         """
-        #FIXME: add support for hrp2-10 here.
-        model = DynamicHrp2(name)
+        model = dynamicType(name)
         model.setFiles(modelDir, modelName,
                        specificitiesPath, jointRankPath)
         model.parse()
-        return
+        return model
 
     def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
@@ -212,6 +212,28 @@ class AbstractHumanoidRobot (object):
     def __init__(self, name):
         self.name = name
 
+    def reset(self, posture = None):
+        """
+        Restart the control from another position.
+
+        This method has not been extensively tested and
+        should be used carefully.
+
+        In particular, tasks should be removed from the
+        solver before attempting a reset.
+        """
+        if not posture:
+            posture = self.halfSitting
+        self.device.set(posture)
+
+        self.dynamic.com.recompute(self.device.state.time+1)
+        self.dynamic.Jcom.recompute(self.device.state.time+1)
+        self.featureComDes.errorIN.value = self.dynamic.com.value
+
+        for op in self.OperationalPoints:
+            self.dynamic.signal(op).recompute(self.device.state.time+1)
+            self.dynamic.signal('J'+op).recompute(self.device.state.time+1)
+            self.features[op].reference.value = self.dynamic.signal(op).value
 
 class HumanoidRobot(AbstractHumanoidRobot):
 
