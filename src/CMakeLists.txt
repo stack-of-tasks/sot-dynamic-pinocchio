@@ -46,7 +46,7 @@ FOREACH(lib ${libs})
   ENDIF(${lib}_plugins_dependencies)
 
   IF (APPLE)
-	TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
+	TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
   ENDIF (APPLE)
 
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
