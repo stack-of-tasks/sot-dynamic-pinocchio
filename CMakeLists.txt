@@ -38,16 +38,16 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 SETUP_PROJECT()
 
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.19")
+ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.9.0")
 
-ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19")
-ADD_REQUIRED_DEPENDENCY("hrp2-dynamics >= 1.5")
+ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
+ADD_REQUIRED_DEPENDENCY("hrp2-dynamics >= 1.5.0")
 ADD_REQUIRED_DEPENDENCY("hrp2-10-optimized >= 1.0.1")
 
-ADD_REQUIRED_DEPENDENCY("hrp2-10 >= 1.1")
+ADD_REQUIRED_DEPENDENCY("hrp2-10 >= 1.0.1")
 ADD_REQUIRED_DEPENDENCY("hrp2-14 >= 1.8")
 
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5")
+ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
 
 # List plug-ins that will be compiled.
