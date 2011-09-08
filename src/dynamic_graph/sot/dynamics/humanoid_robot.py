@@ -154,17 +154,27 @@ class AbstractHumanoidRobot (object):
         return model
 
     def setProperties(self, model):
-        model.setProperty('ComputeVelocity', 'true')
-        model.setProperty('ComputeCoM', 'true')
+        model.setProperty('TimeStep', '0.005')
+
+        model.setProperty('ComputeAcceleration', 'false')
         model.setProperty('ComputeAccelerationCoM', 'false')
-        model.setProperty('ComputeMomentum', 'false')
-        model.setProperty('ComputeZMP', 'true')
         model.setProperty('ComputeBackwardDynamics', 'false')
+        model.setProperty('ComputeCoM', 'false')
+        model.setProperty('ComputeMomentum', 'false')
+        model.setProperty('ComputeSkewCom', 'false')
+        model.setProperty('ComputeVelocity', 'false')
+        model.setProperty('ComputeZMP', 'false')
+
+        model.setProperty('ComputeAccelerationCoM', 'true')
+        model.setProperty('ComputeCoM', 'true')
+        model.setProperty('ComputeVelocity', 'true')
+        model.setProperty('ComputeZMP', 'true')
 
         if self.enableZmpComputation:
-            model.setProperty('ComputeAcceleration', 'true')
             model.setProperty('ComputeBackwardDynamics', 'true')
-            model.setProperty('ComputeZMP', 'true')
+            model.setProperty('ComputeAcceleration', 'true')
+            model.setProperty('ComputeMomentum', 'true')
+
 
     def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
@@ -194,8 +204,8 @@ class AbstractHumanoidRobot (object):
 
         if self.enableVelocityDerivator:
             self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
-            self.velocityDerivator.dt.value = 5e-3
-            plug(self.dynamic.position, self.velocityDerivator.sin)
+            self.velocityDerivator.dt.value = 0.005
+            plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
             self.dynamic.velocity.value = self.dimension*(0.,)
@@ -203,7 +213,7 @@ class AbstractHumanoidRobot (object):
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
-            self.accelerationDerivator.dt.value = 5e-3
+            self.accelerationDerivator.dt.value = 0.005
             plug(self.velocityDerivator.sout,
                  self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
