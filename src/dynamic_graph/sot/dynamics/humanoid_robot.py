@@ -15,6 +15,7 @@
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 from dynamic_graph.sot import SE3, R3, SO3
+from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.feature_position import FeaturePosition
 from dynamic_graph.sot.core import RobotSimu, FeaturePoint6dRelative, \
     FeatureGeneric, FeatureJointLimits, TaskPD, Constraint, GainAdaptive, SOT
@@ -101,6 +102,22 @@ class AbstractHumanoidRobot (object):
     corresponding to operational points.
     """
 
+    #FIXME: the following options are /not/ independent.
+    # zmp requires acceleration which requires velocity.
+    """
+    Enable velocity computation.
+    """
+    enableVelocityDerivator = False
+    """
+    Enable acceleration computation.
+    """
+    enableAccelerationDerivator = False
+    """
+    Enable ZMP computation
+    """
+    enableZmpComputation = False
+
+
     def loadModelFromKxml(self, name, filename):
         """
         Load a model from a kxml file and return the parsed model.
@@ -113,14 +130,8 @@ class AbstractHumanoidRobot (object):
         The parser also imports inertia matrices which is a
         non-standard property.
         """
-
         model = Parser(name, filename).parse()
-        model.setProperty('ComputeVelocity', 'true')
-        model.setProperty('ComputeCoM', 'true')
-        model.setProperty('ComputeAccelerationCoM', 'false')
-        model.setProperty('ComputeMomentum', 'false')
-        model.setProperty('ComputeZMP', 'true')
-        model.setProperty('ComputeBackwardDynamics', 'false')
+        self.setProperties(model)
         return model
 
     def loadModelFromJrlDynamics(self, name, modelDir, modelName,
@@ -139,7 +150,21 @@ class AbstractHumanoidRobot (object):
         model.setFiles(modelDir, modelName,
                        specificitiesPath, jointRankPath)
         model.parse()
+        self.setProperties(model)
         return model
+
+    def setProperties(self, model):
+        model.setProperty('ComputeVelocity', 'true')
+        model.setProperty('ComputeCoM', 'true')
+        model.setProperty('ComputeAccelerationCoM', 'false')
+        model.setProperty('ComputeMomentum', 'false')
+        model.setProperty('ComputeZMP', 'true')
+        model.setProperty('ComputeBackwardDynamics', 'false')
+
+        if self.enableZmpComputation:
+            model.setProperty('ComputeAcceleration', 'true')
+            model.setProperty('ComputeBackwardDynamics', 'true')
+            model.setProperty('ComputeZMP', 'true')
 
     def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
@@ -166,8 +191,24 @@ class AbstractHumanoidRobot (object):
         # position in freeflyer frame.
         self.device.set(self.halfSitting)
         self.dynamic.position.value = self.halfSitting
-        self.dynamic.velocity.value = self.dimension*(0.,)
-        self.dynamic.acceleration.value = self.dimension*(0.,)
+
+        if self.enableVelocityDerivator:
+            self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
+            self.velocityDerivator.dt.value = 5e-3
+            plug(self.dynamic.position, self.velocityDerivator.sin)
+            plug(self.velocityDerivator.sout, self.dynamic.velocity)
+        else:
+            self.dynamic.velocity.value = self.dimension*(0.,)
+
+        if self.enableAccelerationDerivator:
+            self.accelerationDerivator = \
+                Derivator_of_Vector('accelerationDerivator')
+            self.accelerationDerivator.dt.value = 5e-3
+            plug(self.velocityDerivator.sout,
+                 self.accelerationDerivator.sin)
+            plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
+        else:
+            self.dynamic.acceleration.value = self.dimension*(0.,)
 
         self.initializeOpPoints(self.dynamic)
 
