@@ -15,6 +15,7 @@
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
 from dynamic_graph.sot import SE3, R3, SO3
+from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.feature_position import FeaturePosition
 from dynamic_graph.sot.core import RobotSimu, FeaturePoint6dRelative, \
@@ -55,6 +56,19 @@ class AbstractHumanoidRobot (object):
     For instance if creating an operational point for the left-wrist,
     the associated signals will be called "left-wrist" and
     "Jleft-wrist" for respectively the position and the jacobian.
+    """
+
+    AdditionalFrames = []
+    """
+    Additional frames are frames which are defined w.r.t an operational point
+    and provides an interesting transformation.
+
+    It can be used, for instance, to store the sensor location.
+
+    The contained elements must be triplets matching:
+    - additional frame name,
+    - transformation w.r.t to the operational point,
+    - operational point file.
     """
 
     name = None
@@ -102,6 +116,11 @@ class AbstractHumanoidRobot (object):
     corresponding to operational points.
     """
 
+    frames = dict()
+    """
+    Additional frames defined by using OpPointModifier.
+    """
+
     #FIXME: the following options are /not/ independent.
     # zmp requires acceleration which requires velocity.
     """
@@ -147,10 +166,10 @@ class AbstractHumanoidRobot (object):
         Additional information are located in two different XML files.
         """
         model = dynamicType(name)
+        self.setProperties(model)
         model.setFiles(modelDir, modelName,
                        specificitiesPath, jointRankPath)
         model.parse()
-        self.setProperties(model)
         return model
 
     def setProperties(self, model):
@@ -258,6 +277,22 @@ class AbstractHumanoidRobot (object):
             for i in w[1:]:
                 memberName += i.capitalize()
             setattr(self, memberName, self.features[op])
+
+        # --- additional frames ---
+        self.frame = dict()
+        for (frameName, transformation, signalName) in self.AdditionalFrames:
+            self.frame[frameName] = OpPointModifier(
+                "{0}_{1}".format(self.name, frameName))
+            self.frame[frameName].setTransformation(transformation)
+            plug(self.dynamic.signal(signalName),
+                 self.frame[frameName].positionIN)
+            plug(self.dynamic.signal("J{0}".format(signalName)),
+                 self.frame[frameName].jacobianIN)
+
+            self.frame[frameName].position.recompute(
+                self.frame[frameName].position.time + 1)
+            self.frame[frameName].jacobian.recompute(
+                self.frame[frameName].jacobian.time + 1)
 
 
     def __init__(self, name):

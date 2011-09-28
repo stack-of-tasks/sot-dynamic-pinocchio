@@ -14,6 +14,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
+import numpy as np
 from dynamic_graph.sot import SE3, R3, SO3
 from dynamic_graph.sot.core import FeaturePoint6dRelative, \
     FeatureGeneric, FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
@@ -29,6 +30,14 @@ from dynamic_graph.sot.dynamics.humanoid_robot import AbstractHumanoidRobot
 
 hrp2_10_pkgdatarootdir = "@HRP2_10_PKGDATAROOTDIR@"
 hrp2_14_pkgdatarootdir = "@HRP2_14_PKGDATAROOTDIR@"
+
+# Internal helper tool.
+def matrixToTuple(M):
+    tmp = M.tolist()
+    res = []
+    for i in tmp:
+        res.append(tuple(i))
+    return tuple(res)
 
 
 class Hrp2(AbstractHumanoidRobot):
@@ -111,4 +120,56 @@ class Hrp2Laas (Hrp2):
                  modelDir = hrp2_14_pkgdatarootdir,
                  xmlDir = hrp2_14_pkgdatarootdir,
                  device = None):
+
+        # Define camera positions w.r.t gaze.
+        cameraBottomLeftPosition = np.matrix((
+                (1., 0., 0., 0.035),
+                (0., 1., 0., 0.072),
+                (0., 0., 1., 0.075),
+                (0., 0., 0., 1.),
+                ))
+        cameraBottomRightPosition = np.matrix((
+                (1., 0., 0.,  0.035),
+                (0., 1., 0., -0.072),
+                (0., 0., 1.,  0.075),
+                (0., 0., 0.,  1.),
+                ))
+        cameraTopLeftPosition = np.matrix((
+                (0.99920,  0.00120, 0.03997, 0.01),
+                (0.00000,  0.99955,-0.03000, 0.029),
+                (-0.03999, 0.02997, 0.99875, 0.145),
+                (0.,       0.,      0.,      1.),
+                ))
+        cameraTopRightPosition = np.matrix((
+                (0.99920,  0.00000, 0.03999,  0.01),
+                (0.00000,  1.00000, 0.00000, -0.029),
+                (-0.03999, 0.00000, 0.99920,  0.145),
+                (0.,       0.,      0.,       1.),
+                ))
+
+        # Frames re-orientation:
+        # Z = depth (increase from near to far)
+        # X = increase from left to right
+        # Y = increase from top to bottom
+        c1_M_c = np.matrix(
+            [[ 0.,  0.,  1., 0.],
+             [-1.,  0.,  0., 0.],
+             [ 0., -1.,  0., 0.],
+             [ 0.,  0.,  0., 1.]])
+
+        for camera in [cameraBottomLeftPosition, cameraBottomRightPosition,
+                       cameraTopLeftPosition, cameraTopRightPosition]:
+            camera = camera * c1_M_c
+
+        self.AdditionalFrames.append(
+                ("cameraBottomLeft", matrixToTuple(cameraBottomLeftPosition), "gaze"))
+        self.AdditionalFrames.append(
+                ("cameraBottomRight", matrixToTuple(cameraBottomRightPosition), "gaze"))
+        self.AdditionalFrames.append(
+                ("cameraTopLeft", matrixToTuple(cameraTopLeftPosition), "gaze"))
+        self.AdditionalFrames.append(
+                ("cameraTopRight", matrixToTuple(cameraTopRightPosition), "gaze"))
+
         Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2)
+
+__all__ = [Hrp2, Hrp2Jrl, Hrp2Laas]
