@@ -279,20 +279,20 @@ class AbstractHumanoidRobot (object):
             setattr(self, memberName, self.features[op])
 
         # --- additional frames ---
-        self.frame = dict()
+        self.frames = dict()
         for (frameName, transformation, signalName) in self.AdditionalFrames:
-            self.frame[frameName] = OpPointModifier(
+            self.frames[frameName] = OpPointModifier(
                 "{0}_{1}".format(self.name, frameName))
-            self.frame[frameName].setTransformation(transformation)
+            self.frames[frameName].setTransformation(transformation)
             plug(self.dynamic.signal(signalName),
-                 self.frame[frameName].positionIN)
+                 self.frames[frameName].positionIN)
             plug(self.dynamic.signal("J{0}".format(signalName)),
-                 self.frame[frameName].jacobianIN)
+                 self.frames[frameName].jacobianIN)
 
-            self.frame[frameName].position.recompute(
-                self.frame[frameName].position.time + 1)
-            self.frame[frameName].jacobian.recompute(
-                self.frame[frameName].jacobian.time + 1)
+            self.frames[frameName].position.recompute(
+                self.frames[frameName].position.time + 1)
+            self.frames[frameName].jacobian.recompute(
+                self.frames[frameName].jacobian.time + 1)
 
 
     def __init__(self, name):
