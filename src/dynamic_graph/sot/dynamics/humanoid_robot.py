@@ -234,6 +234,55 @@ class AbstractHumanoidRobot (object):
         for op in self.OperationalPoints:
             model.createOpPoint(op, op)
 
+    def createCenterOfMassFeatureAndTask(self,
+                                         featureName, featureDesName,
+                                         taskName,
+                                         selec = '011',
+                                         gain = 1.):
+        self.dynamic.com.recompute(0)
+        self.dynamic.Jcom.recompute(0)
+
+        featureCom = FeatureGeneric(featureName)
+        plug(self.dynamic.com, featureCom.errorIN)
+        plug(self.dynamic.Jcom, featureCom.jacobianIN)
+        featureCom.selec.value = selec
+        featureComDes = FeatureGeneric(featureDesName)
+        featureComDes.errorIN.value = self.dynamic.com.value
+        featureCom.sdes.value = featureComDes
+        comTask = TaskPD(taskName)
+        comTask.add(featureName)
+        comTask.controlGain.value = gain
+        return (featureCom, featureComDes, comTask)
+
+    def createOperationalPointFeatureAndTask(self,
+                                             operationalPointName,
+                                             featureName,
+                                             taskName,
+                                             gain = .2):
+        jacobianName = 'J{0}'.format(operationalPointName)
+        self.dynamic.signal(operationalPointName).recompute(0)
+        self.dynamic.signal(jacobianName).recompute(0)
+        feature = \
+            FeaturePosition(featureName,
+                            self.dynamic.signal(operationalPointName),
+                            self.dynamic.signal(jacobianName),
+                            self.dynamic.signal(operationalPointName).value)
+        task = TaskPD(taskName)
+        task.add(featureName)
+        task.controlGain.value = gain
+        return (feature, task)
+
+    def createFrame(self, frameName, transformation, operationalPoint):
+        frame = OpPointModifier(frameName)
+        frame.setTransformation(transformation)
+        plug(self.dynamic.signal(operationalPoint),
+             frame.positionIN)
+        plug(self.dynamic.signal("J{0}".format(operationalPoint)),
+             frame.jacobianIN)
+        frame.position.recompute(frame.position.time + 1)
+        frame.jacobian.recompute(frame.jacobian.time + 1)
+        return frame
+
     def initializeRobot(self):
         """
         If the robot model is correctly loaded, this method will then
@@ -277,35 +326,20 @@ class AbstractHumanoidRobot (object):
         self.initializeOpPoints(self.dynamic)
 
         # --- center of mass ------------
-        self.dynamic.com.recompute(0)
-        self.dynamic.Jcom.recompute(0)
-
-        self.featureCom = FeatureGeneric(self.name + '_feature_com')
-        plug(self.dynamic.com, self.featureCom.errorIN)
-        plug(self.dynamic.Jcom,
-             self.featureCom.jacobianIN)
-        self.featureCom.selec.value = '011'
-        self.featureComDes = FeatureGeneric(self.name + '_feature_ref_com')
-        self.featureComDes.errorIN.value = self.dynamic.com.value
-        self.featureCom.sdes.value = self.featureComDes
-        self.comTask = TaskPD(self.name + '_task_com')
-        self.comTask.add(self.name + '_feature_com')
-        self.comTask.controlGain.value = 1.
+        (self.featureCom, self.featureComDes, self.comTask) = \
+            self.createCenterOfMassFeatureAndTask(
+            '{0}_feature_com'.format(self.name),
+            '{0}_feature_ref_com'.format(self.name),
+            '{0}_task_com'.format(self.name))
 
         # --- operational points tasks -----
         self.features = dict()
         self.tasks = dict()
         for op in self.OperationalPoints:
-            self.dynamic.signal(op).recompute(0)
-            self.dynamic.signal('J'+op).recompute(0)
-            self.features[op] = \
-                FeaturePosition(self.name + '_feature_' + op,
-                                self.dynamic.signal(op),
-                                self.dynamic.signal('J' + op),
-                                self.dynamic.signal(op).value)
-            self.tasks[op] = TaskPD(self.name + '_task_' + op)
-            self.tasks[op].add(self.name + '_feature_' + op)
-            self.tasks[op].controlGain.value = .2
+            (self.features[op], self.tasks[op]) = \
+                self.createOperationalPointFeatureAndTask(
+                op, '{0}_feature_{1}'.format(self.name, op),
+                '{0}_task_{1}'.format(self.name, op))
             # define a member for each operational point
             w = op.split('-')
             memberName = w[0]
@@ -316,18 +350,10 @@ class AbstractHumanoidRobot (object):
         # --- additional frames ---
         self.frames = dict()
         for (frameName, transformation, signalName) in self.AdditionalFrames:
-            self.frames[frameName] = OpPointModifier(
-                "{0}_{1}".format(self.name, frameName))
-            self.frames[frameName].setTransformation(transformation)
-            plug(self.dynamic.signal(signalName),
-                 self.frames[frameName].positionIN)
-            plug(self.dynamic.signal("J{0}".format(signalName)),
-                 self.frames[frameName].jacobianIN)
-
-            self.frames[frameName].position.recompute(
-                self.frames[frameName].position.time + 1)
-            self.frames[frameName].jacobian.recompute(
-                self.frames[frameName].jacobian.time + 1)
+            self.frames[frameName] = self.createFrame(
+                "{0}_{1}".format(self.name, frameName),
+                transformation,
+                signalName)
 
         # Initialize tracer.
         self.initializeTracer()
