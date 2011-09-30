@@ -14,6 +14,10 @@
 # received a copy of the GNU Lesser General Public License along with
 # dynamic-graph. If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
+from dynamic_graph.tracer_real_time import TracerRealTime
+from dynamic_graph.tools import addTrace
 from dynamic_graph.sot import SE3, R3, SO3
 from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
@@ -136,6 +140,37 @@ class AbstractHumanoidRobot (object):
     """
     enableZmpComputation = False
 
+    """
+    Tracer used to log data.
+    """
+    tracer = None
+
+    """
+    How much data will be logged.
+    """
+    tracerSize = 2**20
+
+    """
+    Automatically recomputed signals through the use
+    of device.after.
+    This list is maintained in order to clean the
+    signal list device.after before exiting.
+    """
+    autoRecomputedSignals = []
+
+    """
+    Which signals should be traced.
+    """
+    tracedSignals = {
+        'dynamic': ["com", "zmp", "angularmomentum",
+                  "position", "velocity", "acceleration"],
+        'device': ['zmp', 'control', 'state']
+        }
+
+    """
+    Robot timestep
+    """
+    timeStep = 0.005
 
     def loadModelFromKxml(self, name, filename):
         """
@@ -173,7 +208,7 @@ class AbstractHumanoidRobot (object):
         return model
 
     def setProperties(self, model):
-        model.setProperty('TimeStep', '0.005')
+        model.setProperty('TimeStep', str(self.timeStep))
 
         model.setProperty('ComputeAcceleration', 'false')
         model.setProperty('ComputeAccelerationCoM', 'false')
@@ -223,7 +258,7 @@ class AbstractHumanoidRobot (object):
 
         if self.enableVelocityDerivator:
             self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
-            self.velocityDerivator.dt.value = 0.005
+            self.velocityDerivator.dt.value = self.timeStep
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
@@ -232,7 +267,7 @@ class AbstractHumanoidRobot (object):
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
-            self.accelerationDerivator.dt.value = 0.005
+            self.accelerationDerivator.dt.value = self.timeStep
             plug(self.velocityDerivator.sout,
                  self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
@@ -294,9 +329,82 @@ class AbstractHumanoidRobot (object):
             self.frames[frameName].jacobian.recompute(
                 self.frames[frameName].jacobian.time + 1)
 
+        # Initialize tracer.
+        self.initializeTracer()
 
-    def __init__(self, name):
+    def addTrace(self, entityName, signalName):
+        self.autoRecomputedSignals.append(
+            '{0}.{1}'.format(entityName, signalName))
+        addTrace(self, self.tracer, entityName, signalName)
+
+    def initializeTracer(self):
+        if not self.tracer:
+            self.tracer = TracerRealTime('trace')
+            self.tracer.setBufferSize(self.tracerSize)
+            self.tracer.open('/tmp/','dg_','.dat')
+            # Recompute trace.triger at each iteration to enable tracing.
+            self.device.after.addSignal('{0}.triger'.format(self.tracer.name))
+
+        # Geometry / operational points
+        for s in self.OperationalPoints + self.tracedSignals['dynamic']:
+            self.addTrace(self.dynamic.name, s)
+
+        # Geometry / frames
+        for (frameName, _, _) in self.AdditionalFrames:
+            for s in ['position', 'jacobian']:
+                self.addTrace(self.frames[frameName].name, s)
+
+        # Robot features
+        for s in self.OperationalPoints:
+            self.addTrace(self.features[s]._reference.name, 'position')
+            self.addTrace(self.tasks[s].name, 'error')
+
+        # Com
+        self.addTrace(self.featureComDes.name, 'errorIN')
+        self.addTrace(self.comTask.name, 'error')
+
+        # Device
+        for s in self.tracedSignals['device']:
+            self.addTrace(self.device.name, s)
+        if type(self.device) != RobotSimu:
+            self.addTrace(self.device.name, 'robotState')
+
+        # Misc
+        if self.enableVelocityDerivator:
+            self.addTrace(self.velocityDerivator.name, 'sout')
+        if self.enableAccelerationDerivator:
+            self.addTrace(self.accelerationDerivator.name, 'sout')
+
+
+    def __init__(self, name, tracer = None):
         self.name = name
+
+        # Initialize tracer if necessary.
+        if tracer:
+            self.tracer = tracer
+
+    def __del__(self):
+        if self.tracer:
+            self.stopTracer()
+
+    def startTracer(self):
+        """
+        Start the tracer if it does not already been stopped.
+        """
+        if self.tracer:
+            self.tracer.start()
+
+    def stopTracer(self):
+        """
+        Stop and destroy tracer.
+        """
+        self.tracer.dump()
+        self.tracer.stop()
+        self.tracer.close()
+        self.tracer.clear()
+        for s in self.autoRecomputedSignals:
+            self.device.after.rmSignal(s)
+        self.tracer = None
 
     def reset(self, posture = None):
         """
@@ -328,8 +436,8 @@ class HumanoidRobot(AbstractHumanoidRobot):
     name = None
     filename = None
 
-    def __init__(self, name, filename):
-        AbstractHumanoidRobot.__init__(self, name)
+    def __init__(self, name, filename, tracer = None):
+        AbstractHumanoidRobot.__init__(self, name, tracer)
         self.filename = filename
         self.dynamic = \
             self.loadModelFromKxml (self.name + '_dynamics', self.filename)

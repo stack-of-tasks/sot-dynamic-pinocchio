@@ -48,8 +48,9 @@ class Hrp2(AbstractHumanoidRobot):
         res = (config + 10*(0.,))
         return res
 
-    def __init__(self, name, modelDir, xmlDir, device, dynamicType):
-        AbstractHumanoidRobot.__init__ (self, name)
+    def __init__(self, name, modelDir, xmlDir, device, dynamicType,
+                 tracer = None):
+        AbstractHumanoidRobot.__init__ (self, name, tracer)
 
         self.OperationalPoints.append('waist')
         self.device = device
@@ -93,8 +94,10 @@ class Hrp2Jrl (Hrp2):
     def __init__(self, name,
                  modelDir = hrp2_10_pkgdatarootdir,
                  xmlDir = hrp2_10_pkgdatarootdir,
-                 device = None):
-        Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2_10)
+                 device = None,
+                 tracer = None):
+        Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2_10,
+                      tracer)
 
 class Hrp2Laas (Hrp2):
     """
@@ -119,7 +122,8 @@ class Hrp2Laas (Hrp2):
     def __init__(self, name,
                  modelDir = hrp2_14_pkgdatarootdir,
                  xmlDir = hrp2_14_pkgdatarootdir,
-                 device = None):
+                 device = None,
+                 tracer = None):
 
         # Define camera positions w.r.t gaze.
 
@@ -165,14 +169,18 @@ class Hrp2Laas (Hrp2):
             camera = camera * c1_M_c
 
         self.AdditionalFrames.append(
-                ("cameraBottomLeft", matrixToTuple(cameraBottomLeftPosition), "gaze"))
+                ("cameraBottomLeft",
+                 matrixToTuple(cameraBottomLeftPosition), "gaze"))
         self.AdditionalFrames.append(
-                ("cameraBottomRight", matrixToTuple(cameraBottomRightPosition), "gaze"))
+                ("cameraBottomRight",
+                 matrixToTuple(cameraBottomRightPosition), "gaze"))
         self.AdditionalFrames.append(
-                ("cameraTopLeft", matrixToTuple(cameraTopLeftPosition), "gaze"))
+                ("cameraTopLeft",
+                 matrixToTuple(cameraTopLeftPosition), "gaze"))
         self.AdditionalFrames.append(
-                ("cameraTopRight", matrixToTuple(cameraTopRightPosition), "gaze"))
+                ("cameraTopRight",
+                 matrixToTuple(cameraTopRightPosition), "gaze"))
 
-        Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2)
+        Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2, tracer)
 
 __all__ = [Hrp2, Hrp2Jrl, Hrp2Laas]
