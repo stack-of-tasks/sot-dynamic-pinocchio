@@ -1253,6 +1253,24 @@ CjrlJoint* Dynamic::getJointByName( const std::string& jointName )
     return m_HDR->chest();
   } else if (jointName == "gaze") {
     return m_HDR->gazeJoint();
+  } 
+  
+  // left toe
+  else if (jointName == "left-toe") 
+  {
+    if (m_HDR->leftAnkle()->countChildJoints () == 0)
+    	throw ExceptionDynamic(ExceptionDynamic::GENERIC," The robot has no toes");
+    else
+		return m_HDR->leftAnkle()->childJoint(0);
+  } 
+
+  // right toe
+  else if (jointName == "right-toe") {
+    if (m_HDR->rightAnkle()->countChildJoints () == 0)
+    	throw ExceptionDynamic(ExceptionDynamic::GENERIC," The robot has no toes");
+    else
+		return m_HDR->rightAnkle()->childJoint(0);
+
   } else {
     throw ExceptionDynamic(ExceptionDynamic::GENERIC,
 			   jointName + " is not a valid name."
