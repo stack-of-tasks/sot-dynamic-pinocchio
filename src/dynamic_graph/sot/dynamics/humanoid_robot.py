@@ -248,7 +248,7 @@ class AbstractHumanoidRobot (object):
         featureCom.selec.value = selec
         featureComDes = FeatureGeneric(featureDesName)
         featureComDes.errorIN.value = self.dynamic.com.value
-        featureCom.sdes.value = featureComDes
+        featureCom.setReference(featureComDes.name)
         comTask = TaskPD(taskName)
         comTask.add(featureName)
         comTask.controlGain.value = gain
