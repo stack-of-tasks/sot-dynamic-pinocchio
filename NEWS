@@ -1,3 +1,13 @@
+New in version 2.6.0, 2011-12-12:
+ * Add tracer support to HumanoidRobot,
+ * Add support for additional frames storing sensors position,
+   use it to compute HRP-2 camera positions,
+ * Switch to TaskPD and add entities to compute velocity and acceleration by
+   finite-difference,
+ * Add toes to the list of joints accessible with their names,
+ * comply with sot-core-2.6.0.
+New in version 2.5, 2011-07-08:
+ * Python has replaced ad-hoc scripting language.
 New in version 1.1, 2010-09-30:
  * Initialized sot-dynamic
  * Added code to sot-dynamic
