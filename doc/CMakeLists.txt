@@ -4,6 +4,3 @@
 #
 
 INCLUDE(../cmake/sphinx.cmake)
-
-SPHINX_SETUP()
-SPHINX_FINALIZE()
