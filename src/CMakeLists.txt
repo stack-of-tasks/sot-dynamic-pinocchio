@@ -58,13 +58,10 @@ FOREACH(lib ${libs})
   INSTALL(TARGETS ${lib} DESTINATION lib/plugin)
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
-  ADD_DEPENDENCIES(${lib} MKDIR_${PYTHON_LIBRARY_NAME})
-  ADD_CUSTOM_TARGET(MKDIR_${PYTHON_LIBRARY_NAME}
-    mkdir -p dynamic_graph/sot/dynamics/${PYTHON_LIBRARY_NAME}
-    )
+
   DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
     ${lib}
-    sot/dynamics/${PYTHON_LIBRARY_NAME}/wrap
+    sot-dynamics-${PYTHON_LIBRARY_NAME}-wrap
     )
 ENDFOREACH(lib)
 
