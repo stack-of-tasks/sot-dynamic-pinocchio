@@ -1271,13 +1271,21 @@ CjrlJoint* Dynamic::getJointByName( const std::string& jointName )
     else
 		return m_HDR->rightAnkle()->childJoint(0);
 
-  } else {
-    throw ExceptionDynamic(ExceptionDynamic::GENERIC,
-			   jointName + " is not a valid name."
-			   " Valid names are \n"
-			   "gaze, left-ankle, right-ankle, left-wrist,"
-			   " right-wrist, waist, chest.");
   }
+  else {
+    std::vector< CjrlJoint* > jv = m_HDR->jointVector ();
+    for (std::vector< CjrlJoint* >::const_iterator it = jv.begin();
+	 it != jv.end(); it++) {
+      if ((*it)->getName () == jointName) {
+	return *it;
+      }
+    }
+  }
+  throw ExceptionDynamic(ExceptionDynamic::GENERIC,
+			 jointName + " is not a valid name."
+			 " Valid names are \n"
+			 "gaze, left-ankle, right-ankle, left-wrist,"
+			 " right-wrist, waist, chest, or any joint name.");
 }
 
 void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
