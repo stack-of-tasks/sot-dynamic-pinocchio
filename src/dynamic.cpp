@@ -145,13 +145,25 @@ Dynamic( const std::string & name, bool build )
   firstSINTERN.setDependencyType(TimeDependency<int>::BOOL_DEPENDENT);
   //DEBUG: Why =0? should be function. firstSINTERN.setConstant(0);
 
-  signalRegistration( jointPositionSIN<<freeFlyerPositionSIN
-		      <<jointVelocitySIN<<freeFlyerVelocitySIN
-		      <<jointAccelerationSIN<<freeFlyerAccelerationSIN);
-  signalRegistration( zmpSOUT<<comSOUT<<JcomSOUT<<footHeightSOUT);
-  signalRegistration(upperJlSOUT<<lowerJlSOUT<<inertiaSOUT
-		     <<inertiaRealSOUT << inertiaRotorSOUT << gearRatioSOUT );
-  signalRegistration( MomentaSOUT << AngularMomentumSOUT << dynamicDriftSOUT);
+  signalRegistration(jointPositionSIN);
+  signalRegistration(freeFlyerPositionSIN);
+  signalRegistration(jointVelocitySIN);
+  signalRegistration(freeFlyerVelocitySIN);
+  signalRegistration(jointAccelerationSIN);
+  signalRegistration(freeFlyerAccelerationSIN);
+  signalRegistration(zmpSOUT);
+  signalRegistration(comSOUT);
+  signalRegistration(JcomSOUT);
+  signalRegistration(footHeightSOUT);
+  signalRegistration(upperJlSOUT);
+  signalRegistration(lowerJlSOUT);
+  signalRegistration(inertiaSOUT);
+  signalRegistration(inertiaRealSOUT);
+  signalRegistration(inertiaRotorSOUT);
+  signalRegistration(gearRatioSOUT);
+  signalRegistration( MomentaSOUT);
+  signalRegistration(AngularMomentumSOUT);
+  signalRegistration(dynamicDriftSOUT);
 
   //
   // Commands

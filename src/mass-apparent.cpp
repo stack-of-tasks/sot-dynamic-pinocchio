@@ -46,8 +46,12 @@ MassApparent( const std::string & name )
 {
   sotDEBUGIN(5);
   
-  signalRegistration( jacobianSIN << inertiaInverseSIN << massInverseSOUT << massSOUT 
-		      << inertiaSIN << inertiaInverseSOUT);
+  signalRegistration(jacobianSIN);
+  signalRegistration(inertiaInverseSIN);
+  signalRegistration(massInverseSOUT);
+  signalRegistration(massSOUT);
+  signalRegistration(inertiaSIN);
+  signalRegistration(inertiaInverseSOUT);
   inertiaInverseSIN.plug( &inertiaInverseSOUT );
 
   sotDEBUGOUT(5);

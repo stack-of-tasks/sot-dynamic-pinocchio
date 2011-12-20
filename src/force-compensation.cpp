@@ -99,18 +99,27 @@ ForceCompensationPlugin( const std::string & name )
 {
   sotDEBUGIN(5);
 
-  signalRegistration( torsorSIN<< worldRhandSIN
-		      << handRsensorSIN << translationSensorComSIN
-		      << gravitySIN << precompensationSIN << gainSensorSIN
-		      << deadZoneLimitSIN
-		      << transSensorJointSIN << inertiaJointSIN
-		      << velocitySIN << accelerationSIN
-
-		      << handXworldSOUT << handVsensorSOUT << torsorDeadZoneSIN
-		      << sensorXhandSOUT //<< inertiaSensorSOUT
-		      << momentumSOUT << momentumSIN
-		      << torsorCompensatedSOUT << torsorDeadZoneSOUT
-		      << calibrationTrigerSOUT );
+  signalRegistration(torsorSIN);
+  signalRegistration(worldRhandSIN);
+  signalRegistration(handRsensorSIN);
+  signalRegistration(translationSensorComSIN);
+  signalRegistration(gravitySIN);
+  signalRegistration(precompensationSIN);
+  signalRegistration(gainSensorSIN);
+  signalRegistration(deadZoneLimitSIN);
+  signalRegistration(transSensorJointSIN);
+  signalRegistration(inertiaJointSIN);
+  signalRegistration(velocitySIN );
+  signalRegistration(accelerationSIN);
+  signalRegistration(handXworldSOUT);
+  signalRegistration(handVsensorSOUT);
+  signalRegistration(torsorDeadZoneSIN);
+  signalRegistration(sensorXhandSOUT);
+  signalRegistration(momentumSOUT);
+  signalRegistration(momentumSIN);
+  signalRegistration(torsorCompensatedSOUT);
+  signalRegistration(torsorDeadZoneSOUT);
+  signalRegistration(calibrationTrigerSOUT);
   torsorDeadZoneSIN.plug(&torsorCompensatedSOUT);
 
   // By default, I choose: momentum is not compensated.

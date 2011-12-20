@@ -41,8 +41,9 @@ WaistAttitudeFromSensor( const std::string & name )
 {
   sotDEBUGIN(5);
 
-  signalRegistration( attitudeSensorSIN<<positionSensorSIN
-		      <<attitudeWaistSOUT );
+  signalRegistration(attitudeSensorSIN);
+  signalRegistration(positionSensorSIN);
+  signalRegistration(attitudeWaistSOUT);
 
   sotDEBUGOUT(5);
 }
@@ -117,7 +118,8 @@ WaistPoseFromSensorAndContact( const std::string & name )
 {
   sotDEBUGIN(5);
 
-  signalRegistration( positionContactSIN<<positionWaistSOUT );
+  signalRegistration( positionContactSIN);
+  signalRegistration(positionWaistSOUT );
 
   // Commands
   std::string docstring;

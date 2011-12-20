@@ -44,7 +44,10 @@ ZmprefFromCom( const std::string & name )
 {
   sotDEBUGIN(5);
 
-  signalRegistration(waistPositionSIN<<comPositionSIN<<dcomSIN<<zmprefSOUT );
+  signalRegistration(waistPositionSIN);
+  signalRegistration(comPositionSIN);
+  signalRegistration(dcomSIN);
+  signalRegistration(zmprefSOUT);
 
   sotDEBUGOUT(5);
 }

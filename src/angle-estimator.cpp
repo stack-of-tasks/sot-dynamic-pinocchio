@@ -91,13 +91,21 @@ AngleEstimator( const std::string & name )
 {
   sotDEBUGIN(5);
 
-  signalRegistration( sensorWorldRotationSIN     << sensorEmbeddedPositionSIN
-		      << contactWorldPositionSIN << contactEmbeddedPositionSIN
-		      << anglesSOUT              << flexibilitySOUT
-		      << driftSOUT               << sensorWorldRotationSOUT
-		      << waistWorldRotationSOUT
-		      << waistWorldPositionSOUT  << waistWorldPoseRPYSOUT
-		      << jacobianSIN << qdotSIN << xff_dotSOUT << qdotSOUT );
+  signalRegistration(sensorWorldRotationSIN);
+  signalRegistration(sensorEmbeddedPositionSIN);
+  signalRegistration(contactWorldPositionSIN);
+  signalRegistration(contactEmbeddedPositionSIN);
+  signalRegistration(anglesSOUT);
+  signalRegistration(flexibilitySOUT);
+  signalRegistration(driftSOUT);
+  signalRegistration(sensorWorldRotationSOUT);
+  signalRegistration(waistWorldRotationSOUT);
+  signalRegistration(waistWorldPositionSOUT);
+  signalRegistration(waistWorldPoseRPYSOUT);
+  signalRegistration(jacobianSIN);
+  signalRegistration(qdotSIN);
+  signalRegistration(xff_dotSOUT);
+  signalRegistration(qdotSOUT);
 
   /* Commands. */
   {

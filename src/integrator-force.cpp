@@ -52,10 +52,14 @@ IntegratorForce( const std::string & name )
 {
   sotDEBUGIN(5);
   
-  signalRegistration( forceSIN                   << massInverseSIN
-		      << frictionSIN             << velocityPrecSIN
-		      << velocityDerivativeSOUT  << velocitySOUT 
-		      << massInverseSOUT         << massSIN );
+  signalRegistration(forceSIN);
+  signalRegistration(massInverseSIN);
+  signalRegistration(frictionSIN);
+  signalRegistration(velocityPrecSIN);
+  signalRegistration(velocityDerivativeSOUT  );
+  signalRegistration(velocitySOUT );
+  signalRegistration(massInverseSOUT );
+  signalRegistration(massSIN );
 
   massInverseSIN.plug( &massInverseSOUT );
 
