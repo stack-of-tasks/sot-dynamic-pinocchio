@@ -164,22 +164,18 @@ class Hrp2Laas (Hrp2):
              [ 0., -1.,  0., 0.],
              [ 0.,  0.,  0., 1.]])
 
-        for camera in [cameraBottomLeftPosition, cameraBottomRightPosition,
-                       cameraTopLeftPosition, cameraTopRightPosition]:
-            camera = camera * c1_M_c
-
         self.AdditionalFrames.append(
                 ("cameraBottomLeft",
-                 matrixToTuple(cameraBottomLeftPosition), "gaze"))
+                 matrixToTuple(c1_M_c * cameraBottomLeftPosition), "gaze"))
         self.AdditionalFrames.append(
                 ("cameraBottomRight",
-                 matrixToTuple(cameraBottomRightPosition), "gaze"))
+                 matrixToTuple(c1_M_c * cameraBottomRightPosition), "gaze"))
         self.AdditionalFrames.append(
                 ("cameraTopLeft",
-                 matrixToTuple(cameraTopLeftPosition), "gaze"))
+                 matrixToTuple(c1_M_c * cameraTopLeftPosition), "gaze"))
         self.AdditionalFrames.append(
                 ("cameraTopRight",
-                 matrixToTuple(cameraTopRightPosition), "gaze"))
+                 matrixToTuple(c1_M_c * cameraTopRightPosition), "gaze"))
 
         Hrp2.__init__(self, name, modelDir, xmlDir, device, DynamicHrp2, tracer)
 
