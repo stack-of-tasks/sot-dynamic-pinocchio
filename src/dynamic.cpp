@@ -412,6 +412,21 @@ Dynamic( const std::string & name, bool build )
 	       new dynamicgraph::command::Getter<Dynamic, ml::Vector>
 	       (*this, &Dynamic::getAnklePositionInFootFrame, docstring));
 
+    docstring = "    \n"
+      "    Get geometric parameters of hand.\n"
+      "    \n"
+      "      Input\n"
+      "        - a boolean: whether right foot or not,\n"
+      "      Return\n"
+      "        - a matrix 4 by 4 the columns of which respectively represent\n"
+      "          - the thumb axis,\n"
+      "          - the forefinger axis,\n"
+      "          - the palm normal,\n"
+      "          - the hand center.\n"
+      "        Note that the last line is (0 0 0 1).\n"
+      "    \n";
+    addCommand ("getHandParameter",
+		new command::GetHandParameter (*this, docstring));
   sotDEBUGOUT(5);
 }
 

@@ -491,6 +491,41 @@ namespace dynamicgraph { namespace sot {
 	return Value();
       }
     }; // class Write
+
+    class GetHandParameter : public Command
+    {
+    public:
+      virtual ~GetHandParameter () {}
+      GetHandParameter (Dynamic& entity, const std::string& docstring) :
+      Command (entity, boost::assign::list_of(Value::BOOL), docstring)
+      {
+      }
+      virtual Value doExecute ()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	bool right = values [0].value ();
+	ml::Matrix handParameter (4,4);
+	handParameter.setIdentity ();
+	CjrlHand* hand;
+	if (right) hand = robot.m_HDR->rightHand ();
+	else hand = robot.m_HDR->leftHand ();
+	vector3d axis;
+	hand->getThumbAxis (axis);
+	for (unsigned int i=0; i<3; i++)
+	  handParameter (i,0) = axis (i);
+	hand->getForeFingerAxis (axis);
+	for (unsigned int i=0; i<3; i++)
+	  handParameter (i,1) = axis (i);
+	hand->getPalmNormal (axis);
+	for (unsigned int i=0; i<3; i++)
+	  handParameter (i,2) = axis (i);
+	hand->getCenter (axis);
+	for (unsigned int i=0; i<3; i++)
+	  handParameter (i,3) = axis (i);
+	return Value (handParameter);
+      }
+    }; // class GetHandParameter
   } // namespace command
 } /* namespace sot */} /* namespace dynamicgraph */
 
