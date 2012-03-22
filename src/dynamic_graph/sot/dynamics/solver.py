@@ -46,8 +46,14 @@ class Solver:
             plug(self.jointLimitator.control, robot.device.control)
             plug(self.robot.device.state, self.robot.dynamic.position)
 
-    def push(self, taskName):
+    def push (self, task):
         """
         Proxy method to push a task in the sot
         """
-        self.sot.push(taskName)
+        self.sot.push (task.name)
+
+    def remove (self, task):
+        """
+        Proxy method to remove a task from the sot
+        """
+        self.sot.remove (task.name)
