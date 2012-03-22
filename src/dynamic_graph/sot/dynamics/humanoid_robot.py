@@ -288,6 +288,14 @@ class AbstractHumanoidRobot (object):
         task.controlGain.value = gain
         return (feature, task)
 
+    def createBalanceTask (self, taskName, gain = 1.):
+        task = Task (taskName)
+        task.add (self.featureCom.name)
+        task.add (self.leftAnkle.name)
+        task.add (self.rightAnkle.name)
+        task.controlGain.value = gain
+        return task
+
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
         frame.setTransformation(transformation)
@@ -362,6 +370,10 @@ class AbstractHumanoidRobot (object):
             for i in w[1:]:
                 memberName += i.capitalize()
             setattr(self, memberName, self.features[op])
+
+        # --- balance task --- #
+        self.tasks ['balance'] =\
+            self.createBalanceTask ('{0}_task_balance'.format (self.name))
 
         # --- additional frames ---
         self.frames = dict()
