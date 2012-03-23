@@ -372,13 +372,11 @@ class AbstractHumanoidRobot (object):
                 transformation,
                 signalName)
 
-        # Initialize tracer.
-        self.initializeTracer()
-
     def addTrace(self, entityName, signalName):
-        self.autoRecomputedSignals.append(
-            '{0}.{1}'.format(entityName, signalName))
-        addTrace(self, self.tracer, entityName, signalName)
+        if self.tracer:
+            self.autoRecomputedSignals.append(
+                '{0}.{1}'.format(entityName, signalName))
+            addTrace(self, self.tracer, entityName, signalName)
 
     def initializeTracer(self):
         if not self.tracer:
@@ -441,13 +439,14 @@ class AbstractHumanoidRobot (object):
         """
         Stop and destroy tracer.
         """
-        self.tracer.dump()
-        self.tracer.stop()
-        self.tracer.close()
-        self.tracer.clear()
-        for s in self.autoRecomputedSignals:
-            self.device.after.rmSignal(s)
-        self.tracer = None
+        if self.tracer:
+            self.tracer.dump()
+            self.tracer.stop()
+            self.tracer.close()
+            self.tracer.clear()
+            for s in self.autoRecomputedSignals:
+                self.device.after.rmSignal(s)
+            self.tracer = None
 
     def reset(self, posture = None):
         """
