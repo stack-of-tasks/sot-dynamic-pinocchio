@@ -45,9 +45,7 @@ FOREACH(lib ${libs})
     TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
 
-  IF (APPLE)
-	TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
-  ENDIF (APPLE)
+  TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
   PKG_CONFIG_USE_DEPENDENCY(${lib} hrp2-dynamics)
