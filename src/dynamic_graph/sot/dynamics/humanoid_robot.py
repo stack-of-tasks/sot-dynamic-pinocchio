@@ -57,6 +57,7 @@ class AbstractHumanoidRobot (object):
       - comRef: input (vector).
       - com:    output (vector)
       - comSelec input (flag)
+      - comdot: input (vector) reference velocity of the center of mass
 
     """
 
@@ -307,6 +308,16 @@ class AbstractHumanoidRobot (object):
         frame.jacobian.recompute(frame.jacobian.time + 1)
         return frame
 
+    def initializeSignals (self):
+        """
+        For portability, make some signals accessible as attributes.
+        """
+        self.comRef = self.featureComDes.errorIN
+        self.zmpRef = self.device.zmp
+        self.com = self.dynamic.com
+        self.comSelec = self.featureCom.selec
+        self.comdot = self.featureComDes.errordotIN
+
     def initializeRobot(self):
         """
         If the robot model is correctly loaded, this method will then
@@ -399,6 +410,7 @@ class AbstractHumanoidRobot (object):
                 "{0}_{1}".format(self.name, frameName),
                 transformation,
                 signalName)
+        self.initializeSignals ()
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
