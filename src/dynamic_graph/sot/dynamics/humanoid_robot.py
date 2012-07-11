@@ -36,15 +36,28 @@ I4 = reduce(lambda m, i: m + (i*(0.,)+(1.,)+ (3-i)*(0.,),), range(4), ())
 class AbstractHumanoidRobot (object):
     """
     This class instantiates all the entities required to get a consistent
-    representation of a humanoid robot:
+    representation of a humanoid robot, mainly:
+      - device : to integrate velocities into angular control,
+      - dynamic: to compute forward geometry and kinematics,
+      - zmpFromForces: to compute ZMP force foot force sensors,
+      - stabilizer: to stabilize balanced motions
 
-    - robot model
+    Operational points are stored into 'OperationalPoints' list. Some of them
+    are also accessible directly as attributes:
+      - leftWrist,
+      - rightWrist,
+      - leftAnkle,
+      - rightAnkle,
+      - Gaze.
 
-    - angleEstimator used to link the two robot models
+    Tasks are stored into 'tasks' dictionary.
 
-    - usual features and tasks for a robot:
-     - center of mass
-     - one task per operational point
+    For portability, some signals are accessible as attributes:
+      - zmpRef: input (vector),
+      - comRef: input (vector).
+      - com:    output (vector)
+      - comSelec input (flag)
+
     """
 
     OperationalPoints = ['left-wrist', 'right-wrist',
@@ -171,6 +184,9 @@ class AbstractHumanoidRobot (object):
     Robot timestep
     """
     timeStep = 0.005
+
+    def help (self):
+        print (AbstractHumanoidRobot.__doc__)
 
     def loadModelFromKxml(self, name, filename):
         """
