@@ -29,9 +29,11 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
-SET(dynamic-hrp2_plugins_dependencies dynamic)
-SET(dynamic-hrp2_10_plugins_dependencies dynamic)
-SET(dynamic-hrp2_10_old_plugins_dependencies dynamic)
+IF(HRP2_DYNAMICS_FOUND)
+  SET(dynamic-hrp2_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_plugins_dependencies dynamic)
+  SET(dynamic-hrp2_10_old_plugins_dependencies dynamic)
+ENDIF(HRP2_DYNAMICS_FOUND)
 
 FOREACH(lib ${libs})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
@@ -48,10 +50,12 @@ FOREACH(lib ${libs})
   TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
-  PKG_CONFIG_USE_DEPENDENCY(${lib} hrp2-dynamics)
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
+  IF(HRP2_DYNAMICS_FOUND)
+    PKG_CONFIG_USE_DEPENDENCY(${lib} hrp2-dynamics)
+  ENDIF(HRP2_DYNAMICS_FOUND)
 
   INSTALL(TARGETS ${lib} DESTINATION lib/plugin)
   # build python submodule
@@ -64,10 +68,7 @@ FOREACH(lib ${libs})
 ENDFOREACH(lib)
 
 # Install empty __init__.py files in intermediate directories.
-CONFIG_FILES(dynamic_graph/sot/dynamics/hrp2.py)
-
 INSTALL(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/dynamic_graph/sot/dynamics/hrp2.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/humanoid_robot.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/parser.py
@@ -76,7 +77,15 @@ INSTALL(FILES
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
   )
 
-PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
+IF(HRP2_DYNAMICS_FOUND)
+  CONFIG_FILES(dynamic_graph/sot/dynamics/hrp2.py)
+  INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/dynamic_graph/sot/dynamics/hrp2.py
+    DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
+  )
+
+  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
+ENDIF(HRP2_DYNAMICS_FOUND)
 
 IF(${HRP2_10_OPTIMIZED_FOUND})
   PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2_10 hrp2-10-optimized)
