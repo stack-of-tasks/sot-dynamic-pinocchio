@@ -74,6 +74,10 @@ ENDIF()
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
 
+# Add dependency toward sot-dynamic library in pkg-config file.
+PKG_CONFIG_APPEND_LIBS_RAW(${CMAKE_INSTALL_PREFIX}/lib/plugin/dynamic.so)
+PKG_CONFIG_APPEND_LIBRARY_DIR(${CMAKE_INSTALL_PREFIX}/lib/plugin)
+
 # Search for dependencies.
 # Boost
 SET(BOOST_COMPONENTS filesystem system)
