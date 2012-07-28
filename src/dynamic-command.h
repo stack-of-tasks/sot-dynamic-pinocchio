@@ -129,7 +129,14 @@ namespace dynamicgraph { namespace sot {
 	std::string property = values[0].value();
 	std::string value;
 
-	robot.m_HDR->getProperty(property, value);
+	if(! robot.m_HDR->getProperty(property, value) )
+	  {
+	    if( property == "vrmlDirectory" ) value = robot.vrmlDirectory;
+	    else if( property == "xmlSpecificityFile" ) value = robot.xmlSpecificityFile;
+	    else if( property == "xmlRankFile" ) value = robot.xmlRankFile;
+	    else if( property == "vrmlMainFile" ) value = robot.vrmlMainFile;
+	  }
+
 	return Value(value);
       }
     }; // class GetProperty
