@@ -134,6 +134,7 @@ WaistPoseFromSensorAndContact( const std::string & name )
 	     <WaistPoseFromSensorAndContact, bool>
 	     (*this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
 
+  docstring = "    \n"
     "    Get flag specifying whether angles are measured from sensors or simulated.\n"
     "    \n"
     "      No input,\n"
