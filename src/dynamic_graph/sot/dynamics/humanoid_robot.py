@@ -23,7 +23,7 @@ from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.feature_position import FeaturePosition
 from dynamic_graph.sot.core import RobotSimu, FeatureGeneric, \
-    FeatureJointLimits, TaskPD, Constraint, GainAdaptive, SOT
+    FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
 
 from dynamic_graph.sot.dynamics.parser import Parser
 from dynamic_graph.sot.dynamics import AngleEstimator
@@ -249,7 +249,7 @@ class AbstractHumanoidRobot (object):
         featureComDes = FeatureGeneric(featureDesName)
         featureComDes.errorIN.value = self.dynamic.com.value
         featureCom.setReference(featureComDes.name)
-        comTask = TaskPD(taskName)
+        comTask = Task(taskName)
         comTask.add(featureName)
         comTask.controlGain.value = gain
         return (featureCom, featureComDes, comTask)
@@ -267,7 +267,7 @@ class AbstractHumanoidRobot (object):
                             self.dynamic.signal(operationalPointName),
                             self.dynamic.signal(jacobianName),
                             self.dynamic.signal(operationalPointName).value)
-        task = TaskPD(taskName)
+        task = Task(taskName)
         task.add(featureName)
         task.controlGain.value = gain
         return (feature, task)
