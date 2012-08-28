@@ -21,6 +21,7 @@
 #include <sot/core/debug.hh>
 #include <sot-dynamic/dynamic.h>
 
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
@@ -494,7 +495,9 @@ setXmlRankFile( const std::string& filename )
 // Helper macro for Dynamic::parseConfigFiles().
 // Check that all required files exist or throw an exception
 // otherwise.
-#define CHECK_FILE(PATH, FILE_DESCRIPTION)				\
+#if BOOST_VERSION < 104601
+
+# define CHECK_FILE(PATH, FILE_DESCRIPTION)				\
   do									\
     {									\
       if (!boost::filesystem::exists (PATH)				\
@@ -509,6 +512,26 @@ setXmlRankFile( const std::string& filename )
 	}								\
     }									\
   while (0)
+
+#else
+
+# define CHECK_FILE(PATH, FILE_DESCRIPTION)				\
+  do									\
+    {									\
+      if (!boost::filesystem::exists (PATH)				\
+	  || boost::filesystem::is_directory (PATH))			\
+	{								\
+	  boost::format fmt ("Failed to open the %s (%s).");		\
+	  fmt % (FILE_DESCRIPTION) % robotModelPath.string ();	\
+	  								\
+	  SOT_THROW ExceptionDynamic					\
+	    (ExceptionDynamic::DYNAMIC_JRL,				\
+	     fmt.str ());						\
+	}								\
+    }									\
+  while (0)
+
+#endif // BOOST_VERSION < 104600
 
 void Dynamic::parseConfigFiles()
 {
@@ -528,10 +551,15 @@ void Dynamic::parseConfigFiles()
   try
     {
       sotDEBUG(35) << "Parse the vrml."<<endl;
-
+#if BOOST_VERSION < 104600
       std::string robotModelPathStr (robotModelPath.file_string());
       std::string xmlRankPathStr (xmlRankPath.file_string());
       std::string xmlSpecificityPathStr (xmlSpecificityPath.file_string());
+#else
+      std::string robotModelPathStr (robotModelPath.string());
+      std::string xmlRankPathStr (xmlRankPath.string());
+      std::string xmlSpecificityPathStr (xmlSpecificityPath.string());
+#endif //BOOST_VERSION < 104600
 
       djj::parseOpenHRPVRMLFile (*m_HDR,
 				 robotModelPathStr,
