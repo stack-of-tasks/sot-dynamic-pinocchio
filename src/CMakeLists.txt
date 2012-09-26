@@ -78,12 +78,6 @@ INSTALL(FILES
   )
 
 IF(HRP2_DYNAMICS_FOUND)
-  CONFIG_FILES(dynamic_graph/sot/dynamics/hrp2.py)
-  INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/dynamic_graph/sot/dynamics/hrp2.py
-    DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
-  )
-
   PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
 ENDIF(HRP2_DYNAMICS_FOUND)
 
