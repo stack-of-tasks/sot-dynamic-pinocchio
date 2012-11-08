@@ -426,6 +426,7 @@ class AbstractHumanoidRobot (object):
             # Recompute trace.triger at each iteration to enable tracing.
             self.device.after.addSignal('{0}.triger'.format(self.tracer.name))
 
+    def traceDefaultSignals (self):
         # Geometry / operational points
         for s in self.OperationalPoints + self.tracedSignals['dynamic']:
             self.addTrace(self.dynamic.name, s)
