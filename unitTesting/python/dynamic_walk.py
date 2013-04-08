@@ -18,7 +18,7 @@
 from math import pi
 
 from dynamic_graph.sot.core import FeaturePoint6d, FeatureGeneric, SOT
-from dynamic_graph.sot.se3 import SE3
+from dynamic_graph.sot.tools.se3 import SE3
 from dynamic_graph.sot.dynamics.humanoid_robot import HumanoidRobot
 from dynamic_graph.sot.dynamics.hrp2 import Hrp2
 
