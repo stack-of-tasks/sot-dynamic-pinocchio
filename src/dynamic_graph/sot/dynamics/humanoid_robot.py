@@ -381,6 +381,7 @@ class AbstractHumanoidRobot (object):
             for i in w[1:]:
                 memberName += i.capitalize()
             setattr(self, memberName, self.features[op])
+        self.tasks ['com'] = self.comTask
 
         # --- balance task --- #
         self.tasks ['balance'] =\
