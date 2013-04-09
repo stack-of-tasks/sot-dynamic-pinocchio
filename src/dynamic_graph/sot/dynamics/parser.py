@@ -8,7 +8,7 @@
 
 import xml.dom.minidom as dom
 from dynamic_graph.sot.dynamics.dynamic import Dynamic
-from dynamic_graph.sot import SE3, R3, SO3
+from dynamic_graph.sot.tools.se3 import SE3, R3, SO3
 
 class Parser (object):
     """

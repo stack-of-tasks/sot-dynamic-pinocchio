@@ -18,7 +18,6 @@ from __future__ import print_function
 
 from dynamic_graph.tracer_real_time import TracerRealTime
 from dynamic_graph.tools import addTrace
-from dynamic_graph.sot import SE3, R3, SO3
 from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.feature_position import FeaturePosition
