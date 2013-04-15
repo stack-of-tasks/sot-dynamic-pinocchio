@@ -49,6 +49,7 @@ ADD_OPTIONAL_DEPENDENCY("hrp2-14 >= 1.8")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
+ADD_REQUIRED_DEPENDENCY("sot-tools")
 
 # List plug-ins that will be compiled.
 SET(libs
