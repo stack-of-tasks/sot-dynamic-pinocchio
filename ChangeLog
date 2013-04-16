@@ -1,1 +1,265 @@
-Write in this file the modifications you commit.
+CHANGELOG
+----------------------
+
+[Current]
+ * Add the dependency in sot-tools.
+ * Do not import useless symbols
+ * Add comTask into dictionary tasks of class HumanoidRobot for compatibility
+ * Import SE3 from sot.tools.se3 instead of sot.se3.
+ * Synchronize.
+ * Do not trace all signals by default
+ * Remove obsolete hrp2.py file
+ * Add some signals as attributes.
+ * Create a balance task in AbstractHumanoidRobot class.
+ * Add method help and update documentation.
+ * Add position of foot force sensors in Hrp2 python class.
+ * Do not initialize tracer, let user do it.
+ * Synchronize.
+ * Compatibility with boost>1.46.1
+ * The dependency in hrp2 is now optional.
+ * Use Task instead of TaskPD.
+ * Fix typo in documentation of command.
+ * Added the access to xml and vrml file names from the getProperty function.
+ * In class Solver, implement method remove and modify method push.
+ * Wrong compiler option set into sot-dynamic.pc file corrected.
+ * Synchronize
+ * Synchronize.
+ * Correct the link with boost on Ubuntu 11.04.
+ * Do not import useless symbols.
+ * Create frames for right and left hands.
+ * Add a command to get hand parameters.
+ * Fix camera frame orientation.
+ * Do not create entity at module importation.
+ * Synchronize cmake submodule.
+ * Register signal one by one.
+ * Allow access by joint name in entity Dynamic.
+ * Synchronize.
+ * Revert "Revert "Correct the Python_module handling""
+
+[v2.6.0]
+ * Do not generate sphinx documentation
+ * Fix dummy test.
+ * Update NEWS.
+ * Synchronize cmake submodule.
+ * Update to recent modification in Entity class.
+ * Add the toes to the list of joints accessible with their names.
+ * Clean HumanoidRobot implementation.
+ * Add tracer support to HumanoidRobot.
+ * Enhance camera position.
+ * Replace frame by frames in humanoid_robot.py.
+ * Add support for additional frames storing sensors position, use it to compute HRP-2 camera positions.
+ * Fix ZMP computation subgraph.
+ * Add support for velocity/acceleration/zmp computation in jrl-dynamics.
+ * Switch to TaskPD.
+ * Fix problem related to the release level of some mainstream repositories.
+ * Revert "Correct the Python_module handling"
+
+[v2.5]
+ * Update dependency version numbers.
+ * Remove deprecated tags in xml parser.
+ * Correct link for apple
+ * Correct the handling of python modules
+ * Use the helper to implement the entity.
+ * Fix some getClassName methods.
+ * Account for the Entity::getClassName becoming pure virtual.
+ * Reimplement getClassName method in Dynamic and DynamicHrp2.
+ * Enable JointLimitator.
+ * Create JointLimitator but do not filter control vector (JointLimitator produces wrong output).
+ * Correct the link with boost libraries
+ * Fix package name.
+ * Correct the link with boost for Mac systems
+ * Implement reset in humanoid_robot.py.
+ * Improve support for hrp2-10.
+ * Remove a command already defined in python.cmake
+ * Correct the Python_module handling
+ * Fix examples.
+ * Fix minor error in tools.py
+ * Change name of hrp2.dynamic: '_dynamics' -> 'dynamic'
+ * Add waist as an operational point in Hrp2 class.
+ * Replace . by _ in signal and entity names.
+ * Set height of freeflyer so that feet are on the ground.
+ * Replace . by _ in signal and entity names.
+ * Remove useless method parameters.
+ * Add gaze in the list of operational points.
+ * Compute Jacobian of operational points and of center of mass at initialization.
+ * Add support for debug output (sotDEBUG).
+ * Fix typo.
+ * Add a proxy method push in Solver -> Solver.sot.push.
+ * Compute initial value of COM and set desired value accordingly.
+ * Install tools.py.
+ * Install tools.py and move Solver class into a separate file.
+ * Include sot-core headers from include/sot/core instead of include/sot-core.
+ * Reintroduce RobotSimu.
+ * Move classes into dynamicgraph::sot namespace.
+ * Put robot in halsitting also in non-simulation mode.
+ * Upgrade tools.py to latest modifications in hrp2.py.
+ * Generate sphinx documentation for hrp2.py.
+ * If device is provided, do not create it in Hrp2 class.
+ * Raise Error instead of string.
+ * Fix syntax error.
+ * Split class Hrp2 into two classes Hrp2Laas and Hrp2Jrl.
+ * Remove restart method.
+ * Remove simulation member and replace simu by device in AbstractRobot class.
+ * Remove warnings.
+ * Revert "Revert "Added a signal for the dyn drift.""
+ * Added the build repertory in the ignore settings.
+ * Added a test on the inertia matrix values.
+ * Revert "Added a signal for the dyn drift."
+ * Revert "Set version number as 1.99."
+ * IVIGIT.
+ * Added a signal for the dyn drift.
+ * Set version number as 1.99.
+ * Added signals to estimate the ff velocity.
+ * Remove trailing white spaces, and make a few relook.
+ * Added three commands to create jacobian and position signals alone.
+ * Corrected a typo.
+ * Update to new API.
+ * Make python scripts more compact,
+ * Synchronize cmake submodule.
+ * Add commands to Dynamic entity to get foot parameters.
+ * Check final configurations in examples.
+ * Add .gitignore file.
+ * Add new tests.
+ * Factorize initialization in tools, make display optional.
+ * Remove unneeded import statements in Python example.
+ * Check properly that input files exist before parsing a model.
+ * Teach Python scripts to locate robot model automatically.
+ * Disable disallocation in Python for now.
+ * Remove forwardKinematics from Python files.
+ * Initialize desired positions of operational points tasks to initial position.
+ * Add robot related Python files.
+ * Synchronize.
+ * Remove unused parameter names to fix warning.
+ * Remove spurious semi-colon.
+ * Import AngleEstimator in module dynamic_graph.sot.dynamic python module.
+ * Typo in exception message.
+ * Fix computation of WaistWorldPositionSOUT.
+ * Fix typo in signal name.
+ * Set right foot parameters.
+ * Use se3.py for homogeneous matrix computations
+ * Notify license.
+ * Fix a few bugs in python script.
+ * Add entity name in exception messages.
+ * Add a command to write robot in a file (and one to get robot dimension).
+ * Update doxygen main page and reference sphinx-documentation.
+ * Fix generation of sphinx documentation.
+ * Set right hand parameters by symmetry in global reference frame.
+ * Add command to initialize the robot
+ * Add python file to parse kxml files.
+ * Fix docstring of command setFootParameters
+ * Tentative documentation of python bindings.
+ * Cosmetic change
+ * Add commands to build a robot
+ * Add gaze joint in createOpPoint command.
+ * Cosmetic changes
+ * Add python script
+ * Remove debug output.
+ * bind classes WaistPoseFromSensorAndContact and WaistAttitudeFromSensor.
+ * Bind AngleEstimator class.
+ * Make member fromSensor private and add setter and getter.
+ * Implement 3 commands and bind them in python.
+ * Modification of API in creation of operational point and jacobian signals.
+ * Synchronize cmake submodule.
+
+[v1.1.1]
+ * Force boost lookup.
+ * Add BOOST_LIB to LD_LIBRARY_PATH
+ * Fix cmake modules
+ * Change cmake url.
+ * Put back dynamic-hrp2_10_old in the list of targets.
+ * Remove dependency to fake packages.
+ * Correct version dependency to hrp2-10.
+ * Synchronize
+ * Add release version for package.
+ * Synchronize
+ * Synchronize
+ * Add package building steps for Ubuntu 8.04
+ * Correct tests to accept the sample humanoid robot specific case.
+ * Synchronize
+ * Synchronize
+ * Synchronize.
+ * Fix undefined references.
+ * Fix undefined references.
+ * Synchronize
+ * Resize target matrix before passing it to getJacobianCenterOfMass
+ * Use PKG_CONFIG_USE_DEPENDENCY for jrl-mal, hrp2-dynamics and sot-core
+ * * Move dynamicsJRLJapan to jrl-dynamics and hrp2Dynamics to hrp2-dynamics when needed * Use PKG_CONFIG_USE_DEPENDENCY for jrl-dynamics and hrp2-dynamics * Fix other minor dependency issues
+ * Update to new API.
+ * Created basic documentation/introduction to sot-dynamic
+ * Update to new APIs.
+ * Set PROJECT_URL in CMakeListst.txt.
+ * Fix TAGFILES in Doxyfile.extra.in.
+ * Reindent.
+ * Synchronize.
+ * Correct the link flags for not unix systems
+ * Switch to submodule.
+ * Fix dependency version number.
+ * Add dependency toward robot pakages.
+ * Fix NEWS file format.
+ * Modified test to return 77 instead of failing when it cannot be run.
+ * Add missing dependency.
+ * Add missing build requirements.
+ * Remove useless ldconfig call.
+ * Fix install files.
+ * Fix install filenames.
+ * Disable tests while building the Debian package for now.
+ * Fix version number dependency.
+ * Add missing dependency.
+ * Add missing dependencies.
+ * Add license header.
+ * Remove INSTALL file.
+ * Remove duplicated description line.
+ * Debianize package.
+ * Increment project version.
+ * Add mailmap file.
+ * Rewrite AUTHORS file.
+ * Switch to LGPL-3.
+ * Rewrite NEWS file.
+ * Enhance README file.
+
+[v1.1]
+
+[release.1.1]
+ * Release 1.1
+
+[release-1-1]
+ * Corrected linking multiple libraries with dynamicsJRLJapan.
+ * Corrected leftover code from a test. Kept LIST2STRING macro in the file just in case, will be removed if all link bugs are resolved.
+ * Removed unneeded LDFLAGS in unittesting.
+ * Changed link flags for hrp2Dynamics.
+ * Added documentation stubs. Made hrp2Dynamics required (for some reason this was commented out) again.
+ * Correct a typo preventing the good use of pkg-config
+ * Added documentation files.
+ * Added uninstall target.
+ * Removed last occurences of CMAKE_INSTALL_PREFIX
+ * Removed CMAKE_INSTALL_PREFIX in INSTALL directive.
+ * Corrected missing linked libraries.
+ * Add missing inclusion, mandatory for Win32.
+ * Removed duplicate MAL headers references.
+ * Changed the lib names listed in the .pc
+ * Removed default library for sot-dynamic (it's only made of entities)
+ * SET_TARGET_PROPERTIES are not cumulative
+ * Corrected wrong package requirements variable.
+ * Ported commit 592dc55268a40a from Olivier Stasse "Provide generic velocity signal"
+ * Added support for optimized models (cf StackOfTask)
+ * Lighten the cmake code
+ * Why _hrp2Dynamics? Prefer HRP2DYNAMICS
+ * Second correction to library name.
+ * Corrected target library name.
+ * Correct the link flags for the unit test.
+ * Added tests to sot-dynamic.
+ * Corrected library name in CMakeLists
+ * Corrected error in Cmakelists
+ * Applied StackOfTasks commit cbd5a1971d0ce88.
+ * Porting commit bd6445d0f from SOT.
+ * Remove warning for the conversion unsigned -> bool
+ * Add missing links between plugins
+ * Win32: add definitions to avoid too verbose warnings
+ * Add the dependency between dynamic-hrp2 and dynamic
+ * Correct macro name
+ * Correct macro name
+ * Correct CMakeLists
+ * Re-added plugins dynamic and dynamic-hrp2
+ * Added forgotten file CMakeLists
+ * Added code to sot-dynamic
+ * Initialized sot-dynamic
