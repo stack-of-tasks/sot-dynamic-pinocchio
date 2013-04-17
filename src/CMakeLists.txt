@@ -29,11 +29,6 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
-IF(HRP2_DYNAMICS_FOUND)
-  SET(dynamic-hrp2_plugins_dependencies dynamic)
-  SET(dynamic-hrp2_10_plugins_dependencies dynamic)
-  SET(dynamic-hrp2_10_old_plugins_dependencies dynamic)
-ENDIF(HRP2_DYNAMICS_FOUND)
 
 FOREACH(lib ${libs})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
@@ -53,9 +48,6 @@ FOREACH(lib ${libs})
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
-  IF(HRP2_DYNAMICS_FOUND)
-    PKG_CONFIG_USE_DEPENDENCY(${lib} hrp2-dynamics)
-  ENDIF(HRP2_DYNAMICS_FOUND)
 
   INSTALL(TARGETS ${lib} DESTINATION lib/plugin)
   # build python submodule
@@ -77,11 +69,3 @@ INSTALL(FILES
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
   )
 
-IF(HRP2_DYNAMICS_FOUND)
-  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2 hrp2-dynamics)
-ENDIF(HRP2_DYNAMICS_FOUND)
-
-IF(${HRP2_10_OPTIMIZED_FOUND})
-  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2_10 hrp2-10-optimized)
-  PKG_CONFIG_USE_DEPENDENCY(dynamic-hrp2_10_old hrp2-10-optimized)
-ENDIF()

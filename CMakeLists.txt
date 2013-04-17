@@ -41,11 +41,6 @@ SETUP_PROJECT()
 ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.9.0")
 
 ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
-ADD_OPTIONAL_DEPENDENCY("hrp2-dynamics >= 1.5.0")
-ADD_OPTIONAL_DEPENDENCY("hrp2-10-optimized >= 1.0.1")
-
-ADD_OPTIONAL_DEPENDENCY("hrp2-10 >= 1.0.1")
-ADD_OPTIONAL_DEPENDENCY("hrp2-14 >= 1.8")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
@@ -64,14 +59,7 @@ SET(libs
   )
 
 LIST(APPEND libs dynamic)
-IF(HRP2_DYNAMICS_FOUND)
-  LIST(APPEND libs dynamic-hrp2)
-ENDIF()
 
-IF(HRP2_10_OPTIMIZED_FOUND)
-  LIST(APPEND libs dynamic-hrp2_10)
-  LIST(APPEND libs dynamic-hrp2_10_old)
-ENDIF()
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
 
