@@ -133,7 +133,7 @@ static void eigenDecomp( const ml::Matrix& M,
     {
       for( unsigned int j=0;j<SIZE;++j ){ P(i,j)=vr(i,j); }
       eig(i)=evals(i).real();
-      if( fabsf(evals(i).imag())>1e-5 ) 
+      if( fabsf(static_cast<float>(evals(i).imag()))>1e-5 ) 
 	{ 
 	  SOT_THROW ExceptionDynamic( ExceptionDynamic::INTEGRATION,
 					 "Error imaginary part not null. ",

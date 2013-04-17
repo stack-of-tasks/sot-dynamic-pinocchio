@@ -50,7 +50,7 @@ void DisplayDynamicRobotInformation(CjrlDynamicRobot *aDynamicRobot)
 
 }
 
-void DisplayMatrix(MAL_MATRIX(,double) &aJ)
+void DisplayMatrix(MAL_MATRIX(&aJ,double))
 {
   for(unsigned int i=0;i<6;i++)
     {
@@ -175,7 +175,8 @@ int main(int argc, char *argv[])
   vector<CjrlJoint *> aVec = aHDR->jointVector();
   CjrlJoint * aJoint = aVec[22];
   aJoint->computeJacobianJointWrtConfig();
-  MAL_MATRIX(,double) aJ = aJoint->jacobianJointWrtConfig();
+  MAL_MATRIX(aJ,double);
+  aJ = aJoint->jacobianJointWrtConfig();
   DisplayMatrix(aJ);
 
   /* Get Waist joint. */

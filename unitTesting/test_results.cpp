@@ -126,8 +126,6 @@ int main(int argc, char * argv[])
   string aValue("true");
   aHDR->setProperty(aProperty,aValue);
   aHDR2->setProperty(aProperty,aValue);
-  int NbOfDofs = aHDR->numberDof();
-  //  cout << "NbOfDofs: " << NbOfDofs << endl;
   while(!ActualStateFile.eof())
     {
       for(unsigned int i=0;i<100;i++)
