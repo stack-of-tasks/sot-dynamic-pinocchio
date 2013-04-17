@@ -24,9 +24,6 @@ SET(${PROJECT_NAME}_HEADERS
 	matrix-inertia.h
 	integrator-force-rk4.h
 	angle-estimator.h
-	dynamic-hrp2.h
-	dynamic-hrp2_10_old.h
-	dynamic-hrp2_10.h
 )
 
 # Recreate correct path for the headers
