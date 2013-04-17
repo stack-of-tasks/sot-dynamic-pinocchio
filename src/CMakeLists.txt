@@ -63,7 +63,6 @@ ENDFOREACH(lib)
 INSTALL(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/humanoid_robot.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/parser.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/tools.py
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/solver.py
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
