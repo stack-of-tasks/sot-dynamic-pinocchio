@@ -124,6 +124,22 @@ Dynamic( const std::string & name, bool build )
 		sotNOSIGNAL,
 		"sotDynamic("+name+")::output(vector)::lowerJl" )
 
+  ,upperVlSOUT( boost::bind(&Dynamic::getUpperVelocityLimits,this,_1,_2),
+    sotNOSIGNAL,
+    "sotDynamic("+name+")::output(vector)::upperVl" )
+
+  ,lowerVlSOUT( boost::bind(&Dynamic::getLowerVelocityLimits,this,_1,_2),
+    sotNOSIGNAL,
+    "sotDynamic("+name+")::output(vector)::lowerVl" )
+
+  ,upperTlSOUT( boost::bind(&Dynamic::getUpperTorqueLimits,this,_1,_2),
+    sotNOSIGNAL,
+    "sotDynamic("+name+")::output(vector)::upperTl" )
+
+  ,lowerTlSOUT( boost::bind(&Dynamic::getLowerTorqueLimits,this,_1,_2),
+    sotNOSIGNAL,
+    "sotDynamic("+name+")::output(vector)::lowerTl" )
+
   ,inertiaRotorSOUT( "sotDynamic("+name+")::output(matrix)::inertiaRotor" )
   ,gearRatioSOUT( "sotDynamic("+name+")::output(matrix)::gearRatio" )
   ,inertiaRealSOUT( boost::bind(&Dynamic::computeInertiaReal,this,_1,_2),
@@ -158,6 +174,10 @@ Dynamic( const std::string & name, bool build )
   signalRegistration(footHeightSOUT);
   signalRegistration(upperJlSOUT);
   signalRegistration(lowerJlSOUT);
+  signalRegistration(upperVlSOUT);
+  signalRegistration(lowerVlSOUT);
+  signalRegistration(upperTlSOUT);
+  signalRegistration(lowerTlSOUT);
   signalRegistration(inertiaSOUT);
   signalRegistration(inertiaRealSOUT);
   signalRegistration(inertiaRotorSOUT);
@@ -1270,6 +1290,70 @@ getLowerJointLimits(ml::Vector& res, const int&)
   sotDEBUGOUT(15);
   return res;
 }
+
+ml::Vector& Dynamic::
+getUpperVelocityLimits(ml::Vector& res, const int&)
+{
+  sotDEBUGIN(15);
+  const unsigned int NBJ = m_HDR->numberDof();
+  res.resize( NBJ );
+  for( unsigned int i=0;i<NBJ;++i )
+    {
+      res(i)=m_HDR->upperVelocityBoundDof( i );
+    }
+  sotDEBUG(15) << "upperVelocityLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
+  return res;
+}
+
+ml::Vector& Dynamic::
+getLowerVelocityLimits(ml::Vector& res, const int&)
+{
+  sotDEBUGIN(15);
+  const unsigned int NBJ = m_HDR->numberDof();
+  res.resize( NBJ );
+  for( unsigned int i=0;i<NBJ;++i )
+    {
+      res(i)=m_HDR->lowerVelocityBoundDof( i );
+    }
+  sotDEBUG(15) << "lowerVelocityLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
+  return res;
+}
+
+
+ml::Vector& Dynamic::
+getUpperTorqueLimits(ml::Vector& res, const int&)
+{
+  sotDEBUGIN(15);
+  const unsigned int NBJ = m_HDR->numberDof();
+  res.resize( NBJ );
+  for( unsigned int i=0;i<NBJ;++i )
+    {
+      res(i)=m_HDR->upperTorqueBoundDof( i );
+    }
+  sotDEBUG(15) << "upperTorqueLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
+  return res;
+}
+
+ml::Vector& Dynamic::
+getLowerTorqueLimits(ml::Vector& res, const int&)
+{
+  sotDEBUGIN(15);
+  const unsigned int NBJ = m_HDR->numberDof();
+  res.resize( NBJ );
+  for( unsigned int i=0;i<NBJ;++i )
+    {
+      res(i)=m_HDR->lowerTorqueBoundDof( i );
+    }
+  sotDEBUG(15) << "lowerTorqueLimit (" << NBJ << ")=" << res <<endl;
+  sotDEBUGOUT(15);
+  return res;
+}
+
+
+
 
 ml::Vector& Dynamic::
 computeTorqueDrift( ml::Vector& tauDrift,const int  & iter )

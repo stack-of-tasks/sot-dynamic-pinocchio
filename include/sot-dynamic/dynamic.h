@@ -207,6 +207,10 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::SignalTimeDependent<double,int> footHeightSOUT;
   dg::SignalTimeDependent<ml::Vector,int> upperJlSOUT;
   dg::SignalTimeDependent<ml::Vector,int> lowerJlSOUT;
+  dg::SignalTimeDependent<ml::Vector,int> upperVlSOUT;
+  dg::SignalTimeDependent<ml::Vector,int> lowerVlSOUT;
+  dg::SignalTimeDependent<ml::Vector,int> upperTlSOUT;
+  dg::SignalTimeDependent<ml::Vector,int> lowerTlSOUT;
 
   dg::Signal<ml::Vector,int> inertiaRotorSOUT;
   dg::Signal<ml::Vector,int> gearRatioSOUT;
@@ -233,6 +237,12 @@ class SOTDYNAMIC_EXPORT Dynamic
 
   ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );
   ml::Vector& getLowerJointLimits( ml::Vector& res,const int& time );
+
+  ml::Vector& getUpperVelocityLimits( ml::Vector& res,const int& time );
+  ml::Vector& getLowerVelocityLimits( ml::Vector& res,const int& time );
+
+  ml::Vector& getUpperTorqueLimits( ml::Vector& res,const int& time );
+  ml::Vector& getLowerTorqueLimits( ml::Vector& res,const int& time );
 
   ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
 
