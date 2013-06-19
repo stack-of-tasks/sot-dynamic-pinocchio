@@ -20,9 +20,7 @@ from dynamic_graph.tracer_real_time import TracerRealTime
 from dynamic_graph.tools import addTrace
 from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
-from dynamic_graph.sot.core.feature_position import FeaturePosition
-from dynamic_graph.sot.core import RobotSimu, FeatureGeneric, \
-    FeatureJointLimits, Task, Constraint, GainAdaptive, SOT
+from dynamic_graph.sot.core import RobotSimu
 
 from dynamic_graph.sot.dynamics.parser import Parser
 from dynamic_graph.sot.dynamics import AngleEstimator
@@ -48,15 +46,6 @@ class AbstractHumanoidRobot (object):
       - leftAnkle,
       - rightAnkle,
       - Gaze.
-
-    Tasks are stored into 'tasks' dictionary.
-
-    For portability, some signals are accessible as attributes:
-      - zmpRef: input (vector),
-      - comRef: input (vector).
-      - com:    output (vector)
-      - comSelec input (flag)
-      - comdot: input (vector) reference velocity of the center of mass
 
     """
 
@@ -250,52 +239,6 @@ class AbstractHumanoidRobot (object):
         for op in self.OperationalPoints:
             model.createOpPoint(op, op)
 
-    def createCenterOfMassFeatureAndTask(self,
-                                         featureName, featureDesName,
-                                         taskName,
-                                         selec = '011',
-                                         gain = 1.):
-        self.dynamic.com.recompute(0)
-        self.dynamic.Jcom.recompute(0)
-
-        featureCom = FeatureGeneric(featureName)
-        plug(self.dynamic.com, featureCom.errorIN)
-        plug(self.dynamic.Jcom, featureCom.jacobianIN)
-        featureCom.selec.value = selec
-        featureComDes = FeatureGeneric(featureDesName)
-        featureComDes.errorIN.value = self.dynamic.com.value
-        featureCom.setReference(featureComDes.name)
-        comTask = Task(taskName)
-        comTask.add(featureName)
-        comTask.controlGain.value = gain
-        return (featureCom, featureComDes, comTask)
-
-    def createOperationalPointFeatureAndTask(self,
-                                             operationalPointName,
-                                             featureName,
-                                             taskName,
-                                             gain = .2):
-        jacobianName = 'J{0}'.format(operationalPointName)
-        self.dynamic.signal(operationalPointName).recompute(0)
-        self.dynamic.signal(jacobianName).recompute(0)
-        feature = \
-            FeaturePosition(featureName,
-                            self.dynamic.signal(operationalPointName),
-                            self.dynamic.signal(jacobianName),
-                            self.dynamic.signal(operationalPointName).value)
-        task = Task(taskName)
-        task.add(featureName)
-        task.controlGain.value = gain
-        return (feature, task)
-
-    def createBalanceTask (self, taskName, gain = 1.):
-        task = Task (taskName)
-        task.add (self.featureCom.name)
-        task.add (self.leftAnkle.name)
-        task.add (self.rightAnkle.name)
-        task.controlGain.value = gain
-        return task
-
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
         frame.setTransformation(transformation)
@@ -306,16 +249,6 @@ class AbstractHumanoidRobot (object):
         frame.position.recompute(frame.position.time + 1)
         frame.jacobian.recompute(frame.jacobian.time + 1)
         return frame
-
-    def initializeSignals (self):
-        """
-        For portability, make some signals accessible as attributes.
-        """
-        self.comRef = self.featureComDes.errorIN
-        self.zmpRef = self.device.zmp
-        self.com = self.dynamic.com
-        self.comSelec = self.featureCom.selec
-        self.comdot = self.featureComDes.errordotIN
 
     def initializeRobot(self):
         """
@@ -333,11 +266,12 @@ class AbstractHumanoidRobot (object):
         if not self.device:
             self.device = RobotSimu(self.name + '_device')
 
+
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
         # position in freeflyer frame.
         self.device.set(self.halfSitting)
-        self.dynamic.position.value = self.halfSitting
+        plug(self.device.state, self.dynamic.position)
 
         if self.enableVelocityDerivator:
             self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
@@ -358,33 +292,6 @@ class AbstractHumanoidRobot (object):
             self.dynamic.acceleration.value = self.dimension*(0.,)
 
         self.initializeOpPoints(self.dynamic)
-
-        # --- center of mass ------------
-        (self.featureCom, self.featureComDes, self.comTask) = \
-            self.createCenterOfMassFeatureAndTask(
-            '{0}_feature_com'.format(self.name),
-            '{0}_feature_ref_com'.format(self.name),
-            '{0}_task_com'.format(self.name))
-
-        # --- operational points tasks -----
-        self.features = dict()
-        self.tasks = dict()
-        for op in self.OperationalPoints:
-            (self.features[op], self.tasks[op]) = \
-                self.createOperationalPointFeatureAndTask(
-                op, '{0}_feature_{1}'.format(self.name, op),
-                '{0}_task_{1}'.format(self.name, op))
-            # define a member for each operational point
-            w = op.split('-')
-            memberName = w[0]
-            for i in w[1:]:
-                memberName += i.capitalize()
-            setattr(self, memberName, self.features[op])
-        self.tasks ['com'] = self.comTask
-
-        # --- balance task --- #
-        self.tasks ['balance'] =\
-            self.createBalanceTask ('{0}_task_balance'.format (self.name))
 
         # --- additional frames ---
         self.frames = dict()
@@ -410,7 +317,6 @@ class AbstractHumanoidRobot (object):
                 "{0}_{1}".format(self.name, frameName),
                 transformation,
                 signalName)
-        self.initializeSignals ()
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
@@ -435,15 +341,6 @@ class AbstractHumanoidRobot (object):
         for (frameName, _, _) in self.AdditionalFrames:
             for s in ['position', 'jacobian']:
                 self.addTrace(self.frames[frameName].name, s)
-
-        # Robot features
-        for s in self.OperationalPoints:
-            self.addTrace(self.features[s]._reference.name, 'position')
-            self.addTrace(self.tasks[s].name, 'error')
-
-        # Com
-        self.addTrace(self.featureComDes.name, 'errorIN')
-        self.addTrace(self.comTask.name, 'error')
 
         # Device
         for s in self.tracedSignals['device']:
@@ -505,12 +402,10 @@ class AbstractHumanoidRobot (object):
 
         self.dynamic.com.recompute(self.device.state.time+1)
         self.dynamic.Jcom.recompute(self.device.state.time+1)
-        self.featureComDes.errorIN.value = self.dynamic.com.value
 
         for op in self.OperationalPoints:
             self.dynamic.signal(op).recompute(self.device.state.time+1)
             self.dynamic.signal('J'+op).recompute(self.device.state.time+1)
-            self.features[op].reference.value = self.dynamic.signal(op).value
 
 class HumanoidRobot(AbstractHumanoidRobot):
 
