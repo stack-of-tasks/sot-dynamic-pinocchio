@@ -29,8 +29,7 @@ from dynamic_graph.ros import *
 ros = Ros(robot)
 
 # Create a simple kinematic solver.
-from dynamic_graph.sot.dynamics.solver import Solver
-solver = Solver(robot)
+from dynamic_graph.sot.application.velocity.precomputed_tasks import initialize
 
 # Alternate visualization tool
 from dynamic_graph.sot.core.utils.viewer_helper import addRobotViewer
@@ -63,11 +62,10 @@ taskRH.feature.frame('desired')
 # robot.tasks['right-wrist'].add(taskRH.feature.name)
 
 # --- STATIC COM (if not walking)
-robot.createCenterOfMassFeatureAndTask(
-    'featureCom', 'featureComDef', 'comTask',
-    selec = '011',
-    gain = 10)
-
+# create the com task and feature tasks.
+solver = initialize(robot)
+# remove the tasks from the sot (they've been automatically added by previous method).
+solver.sot.clear()
 
 # --- CONTACTS
 # define contactLF and contactRF
@@ -91,7 +89,8 @@ gotoNd(taskRH,target,'111',(4.9,0.9,0.01,0.9))
 # Fill the stack with some tasks.
 solver.push(contactRF.task)
 solver.push(contactLF.task)
-solver.push(robot.comTask)
+solver.push (robot.tasks ['com'])
+
 solver.push(taskRH.task)
 
 # type inc to run one iteration, or go to run indefinitely.
