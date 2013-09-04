@@ -42,6 +42,6 @@ have to be available on your machine.
 
 
 [dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
-[jrl-dynamics]: http://github.com/jrl-umi3128/jrl-dynamics
-[jrl-mal]: http://github.com/jrl-umi3128/jrl-mal
+[jrl-dynamics]: http://github.com/jrl-umi3218/jrl-dynamics
+[jrl-mal]: http://github.com/jrl-umi3218/jrl-mal
 [sot-core]: http://github.com/stack-of-tasks/sot-core
