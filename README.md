@@ -1,6 +1,9 @@
 sot-dynamic
 ===========
 
+[![Build Status](https://travis-ci.org/stack-of-tasks/sot-dynamic.png?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic)
+[![Coverage Status](https://coveralls.io/repos/stack-of-tasks/sot-dynamic/badge.png)](https://coveralls.io/r/stack-of-tasks/sot-dynamic)
+
 This software provides robot dynamic computation for dynamic-graph
 by using jrl-dynamics.
 
