@@ -39,6 +39,7 @@ install_dependency laas/jrl-dynamics
 install_dependency stack-of-tasks/dynamic-graph
 install_dependency stack-of-tasks/dynamic-graph-python
 install_dependency stack-of-tasks/sot-core
+install_dependency stack-of-tasks/sot-tools
 
 # Compile and run tests
 cd "$build_dir"
