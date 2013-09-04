@@ -30,7 +30,7 @@ have to be available on your machine.
  - Libraries:
    - [jrl-dynamics][jrl-dynamics] (>= 1.16.1)
    - [dynamic-graph][dynamic-graph] (>= 1.0.0)
-   - sot-core (>= 1.0.0)
+   - [sot-core][sot-core] (>= 1.0.0)
    - [jrl-mal][jrl-mal] (>= 1.8.0)
  - Closed source libraries:
    - hrp2Dynamics (>= 1.3.0)
@@ -41,6 +41,7 @@ have to be available on your machine.
    - usual compilation tools (GCC/G++, make, etc.)
 
 
+[dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
 [jrl-dynamics]: http://github.com/jrl-umi3128/jrl-dynamics
-[dynamic-graph]: http://github.com/jrl-umi3128/dynamic-graph
 [jrl-mal]: http://github.com/jrl-umi3128/jrl-mal
+[sot-core]: http://github.com/stack-of-tasks/sot-core
