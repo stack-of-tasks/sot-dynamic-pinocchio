@@ -35,7 +35,7 @@ install_dependency()
 install_dependency jrl-umi3218/jrl-mathtools
 install_dependency jrl-umi3218/jrl-mal
 install_dependency laas/abstract-robot-dynamics
-install_dependency laas/jrl-dynamics
+install_dependency jrl-umi3218/jrl-dynamics
 install_dependency stack-of-tasks/dynamic-graph
 install_dependency stack-of-tasks/dynamic-graph-python
 install_dependency stack-of-tasks/sot-core
