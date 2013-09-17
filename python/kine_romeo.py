@@ -19,7 +19,7 @@ from dynamic_graph.sot.core.meta_tasks_kine import *
 from numpy import *
 
 # Create the robot romeo.
-from dynamic_graph.sot.romeo.romeo import *
+from dynamic_graph.sot.romeo.robot import *
 robot = Robot('romeo', device=RobotSimu('romeo'))
 
 plug(robot.device.state, robot.dynamic.position)
