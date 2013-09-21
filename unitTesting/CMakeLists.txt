@@ -24,15 +24,15 @@ SET(tests
 SET(test_dyn_plugins_dependencies dynamic)
 
 # getting the information for the robot.
-SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/)
+SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/)
 SET(samplespec
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleSpecificities.xml
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleSpecificities.xml
   )
 SET(sampleljr
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleLinkJointRank.xml
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleLinkJointRank.xml
   )
 SET(sampleinitconfig
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/examples/data/sampleInitConfig.dat)
+  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
