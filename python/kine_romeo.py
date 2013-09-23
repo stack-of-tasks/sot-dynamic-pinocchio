@@ -22,18 +22,13 @@ from numpy import *
 from dynamic_graph.sot.romeo.robot import *
 robot = Robot('romeo', device=RobotSimu('romeo'))
 
-plug(robot.device.state, robot.dynamic.position)
-
 # Binds with ROS. assert that roscore is running.
 from dynamic_graph.ros import *
 ros = Ros(robot)
 
 # Create a simple kinematic solver.
 from dynamic_graph.sot.application.velocity.precomputed_tasks import initialize
-
-# Alternate visualization tool
-from dynamic_graph.sot.core.utils.viewer_helper import addRobotViewer
-addRobotViewer(robot.device,small=True,small_extra=24,verbose=False)
+solver = initialize ( robot )
 
 #-------------------------------------------------------------------------------
 #----- MAIN LOOP ---------------------------------------------------------------
