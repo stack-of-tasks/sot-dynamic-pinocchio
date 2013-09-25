@@ -32,9 +32,6 @@ This package depends on the following packages:
 \li sot-core
 \li dynamic-graph
 \li dynamic-graph-python
-Optional packages (for specific support of the hrp2-N robots)
-\li hrp210optimized
-\li hrp2-dynamics
 
 See the JRL umi3218's page on github for instructions on how to download and
 install these packages at https://github.com/jrl-umi3218.
@@ -55,12 +52,6 @@ The following entities are created by this package:\n
 \li sot::AngleEstimator
 \li sot::WaistAttitudeFromSensor
 \li sot::Dynamic - provides the inverse dynamics computations for of a humanoid robot
-
-Optionally, if the packages in brackets are installed, the following entities
-are made available:
-\li sot::DynamicHrp2 - same as sot::Dynamic, but specialized for hrp2 robots [needs hrp2-dynamics]
-\li sot::DynamicHrp2_10 - same as previous, optimized for the hrp2-10 robot [needs hrp210optimized]
-\li sot::DynamicHrp2_10_old [needs hrp210optimized]
 
 See each entity's documentation page for more information (when available).
 
