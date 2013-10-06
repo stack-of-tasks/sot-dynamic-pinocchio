@@ -49,7 +49,8 @@ FOREACH(lib ${libs})
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
 
-  INSTALL(TARGETS ${lib} DESTINATION ${CMAKE_INSTALL_LIBDIR}/plugin)
+  INSTALL(TARGETS ${lib} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
+
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
