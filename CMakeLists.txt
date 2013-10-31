@@ -48,7 +48,7 @@ ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
 ADD_REQUIRED_DEPENDENCY("sot-tools")
 
 # List plug-ins that will be compiled.
-SET(libs
+SET(plugins
   zmpreffromcom
   force-compensation
   integrator-force-exact
@@ -60,14 +60,14 @@ SET(libs
   zmp-from-forces
   )
 
-LIST(APPEND libs dynamic_plugin)
+SET(LIBRARY_NAME ${PROJECT_NAME})
+LIST(APPEND plugins dynamic)
 
 
-LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})
+LIST(APPEND LOGGING_WATCHED_TARGETS ${plugins})
 
 # Add dependency toward sot-dynamic library in pkg-config file.
-PKG_CONFIG_APPEND_LIBS_RAW(${DYNAMIC_GRAPH_PLUGINDIR}/dynamic.so)
-PKG_CONFIG_APPEND_LIBRARY_DIR(${DYNAMIC_GRAPH_PLUGINDIR})
+PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
 # Search for dependencies.
 # Boost
