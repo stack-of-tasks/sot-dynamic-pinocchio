@@ -60,7 +60,7 @@ SET(libs
   zmp-from-forces
   )
 
-LIST(APPEND libs dynamic)
+LIST(APPEND libs dynamic_plugin)
 
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${libs})

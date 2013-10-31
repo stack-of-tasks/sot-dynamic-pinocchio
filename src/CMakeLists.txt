@@ -60,6 +60,18 @@ FOREACH(lib ${libs})
     )
 ENDFOREACH(lib)
 
+# Main Library
+ADD_LIBRARY(dynamic SHARED dynamic.cpp)
+TARGET_LINK_LIBRARIES(dynamic jrl-dynamics)
+TARGET_LINK_LIBRARIES(dynamic sot-core)
+TARGET_LINK_LIBRARIES(dynamic dynamic-graph)
+PKG_CONFIG_USE_DEPENDENCY(dynamic jrl-dynamics)
+PKG_CONFIG_USE_DEPENDENCY(dynamic sot-core)
+PKG_CONFIG_USE_DEPENDENCY(dynamic dynamic-graph)
+
+INSTALL(TARGETS dynamic DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+
 # Install empty __init__.py files in intermediate directories.
 INSTALL(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/__init__.py

@@ -29,7 +29,6 @@
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
-#include <dynamic-graph/factory.h>
 #include <dynamic-graph/all-commands.h>
 
 #include "../src/dynamic-command.h"
@@ -38,7 +37,7 @@
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(Dynamic,"Dynamic");
+const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "Dynamic";
 
 using namespace std;
 
