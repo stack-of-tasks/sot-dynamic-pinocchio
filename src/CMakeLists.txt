@@ -71,6 +71,7 @@ PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+TARGET_LINK_LIBRARIES(dynamic ${LIBRARY_NAME})
 
 # Install empty __init__.py files in intermediate directories.
 INSTALL(FILES

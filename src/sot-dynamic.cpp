@@ -37,7 +37,7 @@
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
-const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "Dynamic";
+const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
 using namespace std;
 
