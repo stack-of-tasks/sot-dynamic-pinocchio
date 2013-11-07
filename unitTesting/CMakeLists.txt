@@ -50,6 +50,7 @@ FOREACH(test ${tests})
     integrator-force
     angle-estimator
     waist-attitude-from-sensor
+    ${LIBRARY_NAME}
     )
 
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)

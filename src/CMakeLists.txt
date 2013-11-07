@@ -30,7 +30,7 @@ SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
 
-FOREACH(lib ${libs})
+FOREACH(lib ${plugins})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
 
   SET_TARGET_PROPERTIES(${lib} PROPERTIES
@@ -59,6 +59,19 @@ FOREACH(lib ${libs})
     sot-dynamics-${PYTHON_LIBRARY_NAME}-wrap
     )
 ENDFOREACH(lib)
+
+# Main Library
+ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic.cpp)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} jrl-dynamics)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} sot-core)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} jrl-dynamics)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} sot-core)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
+
+INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+TARGET_LINK_LIBRARIES(dynamic ${LIBRARY_NAME})
 
 # Install empty __init__.py files in intermediate directories.
 INSTALL(FILES
