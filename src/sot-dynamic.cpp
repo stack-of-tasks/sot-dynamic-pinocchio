@@ -1430,6 +1430,9 @@ void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
 				 const std::string& jointName )
 {
   CjrlJoint* joint = getJointByName(jointName);
+  if (!joint) {
+    throw runtime_error ("Robot has no joint corresponding to " + jointName);
+  }
   createEndeffJacobianSignal(std::string("J")+opPointName, joint);
   createPositionSignal(opPointName, joint);
 }
@@ -1437,18 +1440,27 @@ void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
 				 const std::string& jointName )
 {
   CjrlJoint* joint = getJointByName(jointName);
+  if (!joint) {
+    throw runtime_error ("Robot has no joint corresponding to " + jointName);
+  }
   createJacobianSignal(signalName, joint);
 }
 void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
 					     const std::string& jointName )
 {
   CjrlJoint* joint = getJointByName(jointName);
+  if (!joint) {
+    throw runtime_error ("Robot has no joint corresponding to " + jointName);
+  }
   createEndeffJacobianSignal(signalName, joint);
 }
 void Dynamic::cmd_createPositionSignal( const std::string& signalName,
 					const std::string& jointName )
 {
   CjrlJoint* joint = getJointByName(jointName);
+  if (!joint) {
+    throw runtime_error ("Robot has no joint corresponding to " + jointName);
+  }
   createPositionSignal(signalName, joint);
 }
 
