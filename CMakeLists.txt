@@ -23,7 +23,7 @@ INCLUDE(cmake/cpack.cmake)
 SET(PROJECT_NAME sot-dynamic)
 
 SET(PROJECT_DESCRIPTION "jrl-dynamics bindings for dynamic-graph.")
-SET(PROJECT_URL "http://github.com/jrl-umi3218/sot-dynamic")
+SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-dynamic")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
