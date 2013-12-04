@@ -1,7 +1,53 @@
 CHANGELOG
 ----------------------
 
-[Current]
+[v2.9.1]
+ * Correct PROJECT_URL from jrl-umi3218 to stack-of-tasks
+ * Check that joint exists when creating an operational point
+ * Merge pull request #4 from bcoudrin/master
+ * Change Dynamic::CLASS_NAME in the shared lib
+ * Change lib name to sot-dynamic and dynamic plugin name to dynamic
+ * Dissociates dynamic lib and dynamic plugin
+ * Normalize the use of plugin path.
+ * Remove hrp2 reference.
+ * Remove the references to hrp2 in the documentation.
+ * Clean romeo script.
+
+[v2.9.0]
+ * Correct the path for the unit test.
+ * Synchronize
+ * Correct romeo sample script.
+ * Synchronize
+ * Directly use the plugin directory in the pkg-config file.
+ * [travis] Add missing python-numpy dependency
+ * Update README.md
+ * Update README.md
+ * [travis] Fix dependencies
+ * Update README.md
+ * [travis] Add missing dependency
+ * Synchronize
+ * Remove unwanted files.
+ * [travis] Add Travis and coveralls.io support
+
+[v2.8.0]
+ * Update the kine_romeo sample.
+ * Add ZmpFromForces entity
+ * Move robot initialization parts to sot-application
+ * Add a simple kinematic test for the humanoid robot Romeo.
+ * Update lib installation path (multiarch portability).
+ * Synchronize
+ * Add signals for the maximal/minimal joint velocity/torques.
+ * Add parser class to create useful objects for humanoid robots.
+
+[v2.7.2]
+ * Remove headers from sot-dynamic.
+
+[v2.7.1]
+ * Remove parser.py install.
+ * Remove warnings
+ * Clean up references to hrp-2 and nao.
+
+[v2.7.0]
  * Add the dependency in sot-tools.
  * Do not import useless symbols
  * Add comTask into dictionary tasks of class HumanoidRobot for compatibility
