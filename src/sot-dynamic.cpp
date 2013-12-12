@@ -436,7 +436,7 @@ Dynamic( const std::string & name, bool build )
       "    Get geometric parameters of hand.\n"
       "    \n"
       "      Input\n"
-      "        - a boolean: whether right foot or not,\n"
+      "        - a boolean: whether right hand or not,\n"
       "      Return\n"
       "        - a matrix 4 by 4 the columns of which respectively represent\n"
       "          - the thumb axis,\n"
