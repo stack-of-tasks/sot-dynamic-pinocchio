@@ -299,11 +299,15 @@ class AbstractHumanoidRobot (object):
         self.frames [frameName] = self.createFrame (
             "{0}_{1}".format (self.name, frameName),
             self.dynamic.getHandParameter (True), "right-wrist")
+        # rightGripper is an alias for the rightHand:
+        self.frames ['rightGripper'] = self.frames [frameName]
 
         frameName = 'leftHand'
         self.frames [frameName] = self.createFrame (
             "{0}_{1}".format (self.name, frameName),
             self.dynamic.getHandParameter (False), "left-wrist")
+        # leftGripper is an alias for the leftHand:
+        self.frames ["leftGripper"] = self.frames [frameName]
 
         for (frameName, transformation, signalName) in self.AdditionalFrames:
             self.frames[frameName] = self.createFrame(
