@@ -296,18 +296,11 @@ class AbstractHumanoidRobot (object):
         # --- additional frames ---
         self.frames = dict()
         frameName = 'rightHand'
-        hp = self.dynamic.getHandParameter (True)
-        transformation = list (map (list, I4))
-        for i in range (3): transformation [i][3] = hp [i][3]
-        transformation = tuple (map (tuple, transformation))
         self.frames [frameName] = self.createFrame (
             "{0}_{1}".format (self.name, frameName),
-            transformation, "right-wrist")
+            self.dynamic.getHandParameter (True), "right-wrist")
+
         frameName = 'leftHand'
-        hp = self.dynamic.getHandParameter (False)
-        transformation = list (map (list, I4))
-        for i in range (3): transformation [i][3] = hp [i][3]
-        transformation = tuple (map (tuple, transformation))
         self.frames [frameName] = self.createFrame (
             "{0}_{1}".format (self.name, frameName),
             self.dynamic.getHandParameter (False), "left-wrist")
