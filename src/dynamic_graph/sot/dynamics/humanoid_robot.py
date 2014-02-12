@@ -47,7 +47,20 @@ class AbstractHumanoidRobot (object):
       - rightAnkle,
       - Gaze.
 
+    Other attributes require to be defined:
+        - halfSitting: half-sitting position is the robot initial pose.
+            This attribute *must* be defined in subclasses.
+    
+        - dynamic: The robot dynamic model.
+        
+        - device: The device that integrates the dynamic equation, namely
+            the real robot or
+            a simulator
+    
+        - dimension: The configuration size.
     """
+
+
 
     OperationalPoints = ['left-wrist', 'right-wrist',
                          'left-ankle', 'right-ankle',
@@ -77,50 +90,7 @@ class AbstractHumanoidRobot (object):
     - operational point file.
     """
 
-    name = None
-    """Entity name (internal use)"""
 
-    halfSitting = None
-    """
-    The half-sitting position is the robot initial pose.
-    This attribute *must* be defined in subclasses.
-    """
-
-    dynamic = None
-    """
-    The robot dynamic model.
-    """
-    device = None
-    """
-    The device that integrates the dynamic equation, namely
-      - the real robot or
-      - a simulator
-    """
-    dimension = None
-    """The configuration size."""
-
-    featureCom = None
-    """
-    This generic feature takes as input the robot center of mass
-    and as desired value the featureComDes feature of this class.
-    """
-    featureComDes = None
-    """
-    The feature associated to the robot center of mass desired
-    position.
-    """
-    comTask = None
-
-    features = dict()
-    """
-    Features associated to each operational point. Keys are
-    corresponding to operational points.
-    """
-    tasks = dict()
-    """
-    Features associated to each operational point. Keys are
-    corresponding to operational points.
-    """
 
     frames = dict()
     """
