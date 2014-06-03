@@ -97,10 +97,9 @@ namespace sot {
 	  const MatrixHomogeneous& M = sensorPositionsSIN_ [i]->access (time);
 	  fz [i] = M (2,0) * f (0) + M(2,1) * f (1) + M (2,2) * f (2);
 	  if (fz[i] > 0) {
-	    double Mx = M (0,0)*f(3) + M (0,1)*f(4) + M (0,2)*f(5) +
-	      M (1,3)*(M(2,0)*f(0)+M(2,1)*f(1)+M(2,2)*f(2));
-	    double My = M (1,0)*f(3) + M (1,1)*f(4) + M (1,2)*f(5) -
-	      M (1,3)*(M(1,0)*f(0)+M(1,1)*f(1)+M(1,2)*f(2));
+	    /// we assume M (2,3)==0 for moments computations
+	    double Mx = M (0,0)*f(3) + M (0,1)*f(4) + M (0,2)*f(5) + M (1,3)*(fz [i]);
+	    double My = M (1,0)*f(3) + M (1,1)*f(4) + M (1,2)*f(5) - M (0,3)*(fz [i]);
 	    fnormal += fz[i];
 	    sumZmpx -= My;
 	    sumZmpy += Mx;
