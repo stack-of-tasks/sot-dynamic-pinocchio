@@ -80,7 +80,6 @@ namespace sot {
     private:
       Vector& computeZmp (Vector& zmp, int time)
       {
-	double fz [footNumber];
 	double fnormal = 0;
 	double sumZmpx = 0;
 	double sumZmpy = 0;
@@ -95,15 +94,19 @@ namespace sot {
 	    return zmp;
 	  }
 	  const MatrixHomogeneous& M = sensorPositionsSIN_ [i]->access (time);
-	  fz [i] = M (2,0) * f (0) + M(2,1) * f (1) + M (2,2) * f (2);
-	  if (fz[i] > 0) {
-	    /// we assume M (2,3)==0 for moments computations
-	    double Mx = M (0,0)*f(3) + M (0,1)*f(4) + M (0,2)*f(5) + M (1,3)*(fz [i]);
-	    double My = M (1,0)*f(3) + M (1,1)*f(4) + M (1,2)*f(5) - M (0,3)*(fz [i]);
-	    fnormal += fz[i];
+      double fx = M (0,0) * f (0) + M(0,1) * f (1) + M (0,2) * f (2);
+	  double fy = M (1,0) * f (0) + M(1,1) * f (1) + M (1,2) * f (2);
+	  double fz = M (2,0) * f (0) + M(2,1) * f (1) + M (2,2) * f (2);
+
+	  if (fz > 0) {
+        double Mx = M (0,0)*f(3) + M (0,1)*f(4) + M (0,2)*f(5)
+                    + M (1,3)*fz - M (2,3)*fy;
+	    double My = M (1,0)*f(3) + M (1,1)*f(4) + M (1,2)*f(5)
+                    + M (2,3)*fx - M (0,3)*fz;
+	    fnormal += fz;
 	    sumZmpx -= My;
 	    sumZmpy += Mx;
-	    sumZmpz += fz [i] * M (2,3);
+	    sumZmpz += fz * M (2,3);
 	  }
 	}
 	if (fnormal != 0) {
