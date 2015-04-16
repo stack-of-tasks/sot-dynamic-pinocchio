@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 sot-dynamic
 ===========
 
@@ -45,3 +46,7 @@ have to be available on your machine.
 [jrl-dynamics]: http://github.com/jrl-umi3218/jrl-dynamics
 [jrl-mal]: http://github.com/jrl-umi3218/jrl-mal
 [sot-core]: http://github.com/stack-of-tasks/sot-core
+=======
+# sot-dynamic-pinocchio
+Encapsulate Pinocchio in SoT
+>>>>>>> 056cbb3c42519e754972c8faf0b9d5b54887dbae
