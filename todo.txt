@@ -1,0 +1,5 @@
+very short term
+	add sot-dynamic-pinocchio
+	add and update the Cmakelist (rem jrm)
+
+
