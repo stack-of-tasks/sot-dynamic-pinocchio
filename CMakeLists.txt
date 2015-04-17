@@ -41,11 +41,12 @@ SETUP_PROJECT()
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.9.0")
 
-#ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
+ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
 
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
 ADD_REQUIRED_DEPENDENCY("sot-tools")
+ADD_REQUIRED_DEPENDENCY("pinocchio")
 
 # List plug-ins that will be compiled.
 SET(plugins
