@@ -8,7 +8,7 @@ using namespace dynamicgraph::sot;
 int main(int argc, char * argv[])
 {
     cout<<"tests sot-dynamic-pinocchio"<<endl;
-    if (argc!=5)
+    if (argc!=2)
     {
         cerr << "Wrong argument number: expect 1 got " << argc-1 <<endl;
         cerr << "Usage:" << endl;
