@@ -5,6 +5,16 @@ sot-dynamic
 [![Build Status](https://travis-ci.org/stack-of-tasks/sot-dynamic.png?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic)
 [![Coverage Status](https://coveralls.io/repos/stack-of-tasks/sot-dynamic/badge.png)](https://coveralls.io/r/stack-of-tasks/sot-dynamic)
 
+#################################################################
+			UPDATE PINOCHIO
+
+After pull of project and before compilation :
+Go to top tree of project and make > git submodule init
+				   > git submodule update
+After that run cmake .. && make in build directorie without error 
+
+#################################################################
+
 This software provides robot dynamic computation for dynamic-graph
 by using jrl-dynamics.
 
