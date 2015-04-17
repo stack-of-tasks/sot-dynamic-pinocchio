@@ -17,9 +17,7 @@ ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
   dummy
-  test_djj
-  test_dyn
-  test_results)
+  dev_test)
 
 SET(test_dyn_plugins_dependencies dynamic)
 

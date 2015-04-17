@@ -14,5 +14,6 @@ int main(int argc, char * argv[])
         cerr << "Usage:" << endl;
         cerr << "./" << argv[0] << " PATH_TO_URDF_FILE" << endl;
         cerr << "\tPATH_TO_URDF_FILE : Path to the URDF model file describing the robot. "<< endl;
+        return 1;
     }
 }
