@@ -30,13 +30,14 @@
 #include <map>
 
 /* Matrix */
-/*#include <jrl/mal/boost.hh>
+#include <jrl/mal/boost.hh>
 #include "jrl/mal/matrixabstractlayer.hh"
 namespace ml = maal::boost;
-*/
+
 /* JRL dynamic */
 //#include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
 //#include <jrl/dynamics/dynamicsfactory.hh>
+#include <pinocchio/multibody/model.hpp>
 
 //namespace djj = dynamicsJRLJapan;
 
