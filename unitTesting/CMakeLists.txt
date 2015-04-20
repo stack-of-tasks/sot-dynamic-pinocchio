@@ -55,6 +55,7 @@ FOREACH(test ${tests})
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-mal)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} pinocchio)
 
   IF(${test}_plugins_dependencies)
     ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")

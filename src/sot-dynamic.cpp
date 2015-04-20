@@ -1,5 +1,5 @@
 #include <sot-dynamic/dynamic.h>
-void Dynamic::
+/*void Dynamic::
 buildModel( void )
 {
 
@@ -11,3 +11,4 @@ Dynamic::
 {
 
 }
+*/
