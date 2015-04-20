@@ -1,0 +1,60 @@
+New in version 2.6.0, 2011-12-12:
+ * Add tracer support to HumanoidRobot,
+ * Add support for additional frames storing sensors position,
+   use it to compute HRP-2 camera positions,
+ * Switch to TaskPD and add entities to compute velocity and acceleration by
+   finite-difference,
+ * Add toes to the list of joints accessible with their names,
+ * comply with sot-core-2.6.0.
+New in version 2.5, 2011-07-08:
+ * Python has replaced ad-hoc scripting language.
+New in version 1.1, 2010-09-30:
+ * Initialized sot-dynamic
+ * Added code to sot-dynamic
+ * Added forgotten file CMakeLists
+ * Re-added plugins dynamic and dynamic-hrp2
+ * Porting commit bd6445d0f from SOT.
+ * Merge branch 'master' of git+ssh://softs.laas.fr/git/jrl/sot/sot-dynamic
+ * Applied StackOfTasks commit cbd5a1971d0ce88.
+ * Corrected error in Cmakelists
+ * Corrected library name in CMakeLists
+ * Added tests to sot-dynamic.
+ * Corrected target library name.
+ * Second correction to library name.
+ * Added support for optimized models (cf StackOfTask)
+ * Ported commit 592dc55268a40a
+   from Olivier Stasse "Provide generic velocity signal"
+ * Corrected wrong package requirements variable.
+ * Removed default library for sot-dynamic (it's only made of entities)
+ * Changed the lib names listed in the .pc
+ * Merge branch 'master' of git+ssh://softs.laas.fr/git/jrl/sot/sot-dynamic
+ * Removed duplicate MAL headers references.
+ * Corrected missing linked libraries.
+ * Merge branch 'master' of git+ssh://softs.laas.fr/git/jrl/sot/sot-dynamic
+ * Removed CMAKE_INSTALL_PREFIX in INSTALL directive.
+ * Removed last occurences of CMAKE_INSTALL_PREFIX
+ * Added uninstall target.
+ * Added documentation files.
+ * Added documentation stubs. Made hrp2Dynamics
+   required (for some reason this was commented out) again.
+ * Merge branch 'master' of git+ssh://softs.laas.fr/git/jrl/sot/sot-dynamic
+ * Changed link flags for hrp2Dynamics.
+ * Removed unneeded LDFLAGS in unittesting.
+ * Corrected leftover code from a test.
+   Kept LIST2STRING macro in the file just in case, will be removed
+   if all link bugs are resolved.
+ * Corrected linking multiple libraries with dynamicsJRLJapan.
+ * Correct CMakeLists
+ * Merge branch 'master' of c:/tmp_BOOST/clone/sot-dynamic
+ * Correct macro name
+ * Correct macro name
+ * Add the dependency between dynamic-hrp2 and dynamic
+ * Win32: add definitions to avoid too verbose warnings
+ * Add missing links between plugins
+ * Remove warning for the conversion unsigned -> bool
+ * Correct the link flags for the unit test.
+ * Why _hrp2Dynamics? Prefer HRP2DYNAMICS
+ * Lighten the cmake code
+ * SET_TARGET_PROPERTIES are not cumulative
+ * Add missing inclusion, mandatory for Win32.
+ * Correct a typo preventing the good use of pkg-config
