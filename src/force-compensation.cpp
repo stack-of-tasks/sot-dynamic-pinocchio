@@ -18,7 +18,7 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-dynamic/force-compensation.h>
+#include <sot-dynamic-pinocchio/force-compensation.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <sot/core/macros-signal.hh>
