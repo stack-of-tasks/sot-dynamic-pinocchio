@@ -20,6 +20,8 @@
 #include <sot/core/exception-dynamic.hh>
 #include <sot/core/matrix-homogeneous.hh>
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/parser/urdf.hpp>
+
 using namespace std;
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -40,13 +42,13 @@ namespace dg = dynamicgraph;
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
 
-
 public: /* --- CONSTRUCTION --- */
     DYNAMIC_GRAPH_ENTITY_DECL();
     Dynamic( const std::string& name, bool build=true );
     virtual ~Dynamic( void );
     void setUrdfPath( const std::string& path );
     se3::Model m_model;
+
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */

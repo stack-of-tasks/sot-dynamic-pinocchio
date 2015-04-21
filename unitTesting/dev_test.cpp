@@ -17,10 +17,9 @@ int main(int argc, char * argv[])
         return 1;
     }
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
-
     Dynamic * dyn = new Dynamic("tot");
-    //todo : set URDF file in dyn
     dyn->setUrdfPath( argv[1]);
-   delete dyn;
+    cout<<dyn->m_model;
+    delete dyn;
     return 0;
 }
