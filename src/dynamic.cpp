@@ -18,7 +18,7 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-dynamic/dynamic.h>
+#include <sot-dynamic-pinocchio/dynamic.h>
 #include <dynamic-graph/factory.h>
 
 using namespace dynamicgraph::sot;

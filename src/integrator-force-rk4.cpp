@@ -18,7 +18,7 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-dynamic/integrator-force-rk4.h>
+#include <sot-dynamic-pinocchio/integrator-force-rk4.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 

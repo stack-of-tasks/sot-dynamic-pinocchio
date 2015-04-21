@@ -1,4 +1,4 @@
-#include <sot-dynamic/dynamic.h>
+#include <sot-dynamic-pinocchio/dynamic.h>
 #include <iostream>
 #include <sstream>
 
@@ -16,4 +16,11 @@ int main(int argc, char * argv[])
         cerr << "\tPATH_TO_URDF_FILE : Path to the URDF model file describing the robot. "<< endl;
         return 1;
     }
+    cout<< "Test parsing " << argv[1] << " ..."<<endl;
+
+    Dynamic * dyn = new Dynamic("tot");
+    //todo : set URDF file in dyn
+    dyn->setUrdfPath( argv[1]);
+   delete dyn;
+    return 0;
 }
