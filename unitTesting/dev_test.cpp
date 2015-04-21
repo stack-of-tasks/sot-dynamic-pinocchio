@@ -1,4 +1,9 @@
 #include <sot-dynamic-pinocchio/dynamic.h>
+
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/parser/urdf.hpp>
+
+
 #include <iostream>
 #include <sstream>
 
@@ -19,7 +24,8 @@ int main(int argc, char * argv[])
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
     Dynamic * dyn = new Dynamic("tot");
     dyn->setUrdfPath( argv[1]);
-    cout<<dyn->m_model;
+    cout<<dyn->m_model;         //display the model
+    cout<<dyn->m_data.oMi[0];   //display the first oMi (not relevent but for access test)
     delete dyn;
     return 0;
 }

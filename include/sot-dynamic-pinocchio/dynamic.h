@@ -46,10 +46,13 @@ public: /* --- CONSTRUCTION --- */
     DYNAMIC_GRAPH_ENTITY_DECL();
     Dynamic( const std::string& name, bool build=true );
     virtual ~Dynamic( void );
+
+public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
+
+public:/*  --- ATRIBUTES --- */
     se3::Model m_model;
-
-
+    se3::Data  m_data;
 };
 } /* namespace sot */} /* namespace dynamicgraph */
 #endif // #ifndef __SOT_DYNAMIC_H__
