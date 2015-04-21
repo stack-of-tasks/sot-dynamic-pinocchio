@@ -12,7 +12,7 @@ using namespace dynamicgraph;
 
 const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
-Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
+Dynamic::Dynamic( const std::string & name, bool build ):Entity(name),m_data(m_model)
 {
 
 }
@@ -25,5 +25,11 @@ Dynamic::~Dynamic( void )
 
 void Dynamic::setUrdfPath( const std::string& path )
 {
-
+    this->m_model = se3::urdf::buildModel(path);
+    /*
+    self.modelFileName = filename
+    self.model = se3.buildModelFromUrdf(filename,True)
+    self.data = self.model.createData()
+    self.v0 = utils.zero(self.nv)
+    self.q0 = utils.zero(self.nq)*/
 }
