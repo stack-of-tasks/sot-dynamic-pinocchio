@@ -94,7 +94,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   friend class sot::command::InitializeRobot;
 
  public:
-  DYNAMIC_GRAPH_ENTITY_DECL();
+    DYNAMIC_GRAPH_ENTITY_DECL();
 
  protected:
  public:

@@ -4,6 +4,7 @@
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
+
 /* STD */
 #include <string>
 #include <map>
@@ -37,16 +38,38 @@ using namespace std;
 namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
-class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
+
+/* --------------------------------------------------------------------- */
+/* --- CLASS ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+
+/*! @ingroup signals
+  \brief This class provides an inverse dynamic model of the robot.
+  More precisely it wraps the newton euler algorithm implemented
+  by the pinocchio library to make it accessible in the stack of tasks.
+  The robot is described by a URDF file.
+*/
+
+class SOTDYNAMIC_EXPORT Dynamic
+:public dg::Entity
 {
 
 
-public: /* --- CONSTRUCTION --- */
+public:
     DYNAMIC_GRAPH_ENTITY_DECL();
+
+public: /* --- CONSTRUCTION --- */
     Dynamic( const std::string& name, bool build=true );
     virtual ~Dynamic( void );
+public: /* --- MODEL CREATION --- */
     void setUrdfPath( const std::string& path );
     se3::Model m_model;
+public: /* --- SIGNAL ACTIVATION --- */
+
+public: /* --- SIGNAL --- */
+
+public: /* --- PARAMS --- */
+
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */
