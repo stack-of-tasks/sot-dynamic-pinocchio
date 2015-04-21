@@ -20,7 +20,7 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
 
-SET(PROJECT_NAME sot-dynamic)
+SET(PROJECT_NAME sot-dynamic-pinocchio)
 
 SET(PROJECT_DESCRIPTION "jrl-dynamics bindings for dynamic-graph.")
 SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-dynamic")
@@ -40,9 +40,6 @@ SETUP_PROJECT()
 
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.9.0")
-
-ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
-
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
 ADD_REQUIRED_DEPENDENCY("sot-tools")

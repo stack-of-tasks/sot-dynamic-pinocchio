@@ -13,6 +13,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
+
 ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
@@ -21,16 +22,6 @@ SET(tests
 
 SET(test_dyn_plugins_dependencies dynamic)
 
-# getting the information for the robot.
-SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/)
-SET(samplespec
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleSpecificities.xml
-  )
-SET(sampleljr
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleLinkJointRank.xml
-  )
-SET(sampleinitconfig
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
@@ -51,7 +42,7 @@ FOREACH(test ${tests})
     ${LIBRARY_NAME}
     )
 
-  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
+
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-mal)
