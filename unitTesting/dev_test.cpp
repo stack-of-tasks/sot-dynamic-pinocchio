@@ -26,6 +26,7 @@ int main(int argc, char * argv[])
     dyn->setUrdfPath( argv[1]);
     cout<<dyn->m_model;         //display the model
     cout<<dyn->m_data.oMi[0];   //display the first oMi (not relevent but for access test)
+    cout<<dyn->urdfPath<<endl;
     delete dyn;
     return 0;
 }

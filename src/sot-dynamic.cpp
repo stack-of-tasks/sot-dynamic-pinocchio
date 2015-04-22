@@ -26,6 +26,7 @@ Dynamic::~Dynamic( void )
 void Dynamic::setUrdfPath( const std::string& path )
 {
     this->m_model = se3::urdf::buildModel(path);
+    this->urdfPath = path;
     /*
     self.modelFileName = filename
     self.model = se3.buildModelFromUrdf(filename,True)
