@@ -47,7 +47,7 @@ static matrix3d maalToMatrix3d(const ml::Matrix& inMatrix)
   return matrix;
 }
 
-Dynamic::Dynamic( const std::string & name, bool build ):Entity(name),m_data(m_model)
+Dynamic::Dynamic( const std::string & name, bool build ):Entity(name),m_data(NULL)
 {
 
 }
@@ -55,12 +55,18 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name),m_data(m_m
 
 Dynamic::~Dynamic( void )
 {
+    if (this->m_data) delete this->m_data;
     return;
 }
 
 void Dynamic::setUrdfPath( const std::string& path )
 {
     this->m_model = se3::urdf::buildModel(path);
+    this->m_urdfPath = path;
+    if (this->m_data) delete this->m_data;
+    this->m_data = new se3::Data(m_model);
+
+
     /*
     self.modelFileName = filename
     self.model = se3.buildModelFromUrdf(filename,True)
