@@ -46,11 +46,11 @@ public: /* --- CONSTRUCTION --- */
 
 public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
-
 public:/*  --- ATRIBUTES --- */
-    se3::Model m_model;
-    se3::Data  m_data;
-    std::string urdfPath;
+    se3::Model  m_model;
+    se3::Data*   m_data;
+    std::string m_urdfPath;
+
 };
 } /* namespace sot */} /* namespace dynamicgraph */
 #endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H
