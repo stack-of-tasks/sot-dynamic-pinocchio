@@ -8,6 +8,12 @@
 #include <string>
 #include <map>
 
+/* Matrix */
+#include <jrl/mal/boost.hh>
+#include "jrl/mal/matrixabstractlayer.hh"
+namespace ml = maal::boost;
+
+
 /* SOT */
 #include <sot/core/flags.hh>
 #include <dynamic-graph/entity.h>
@@ -35,6 +41,10 @@ using namespace std;
 
 namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
+
+/* --------------------------------------------------------------------- */
+/* --- CLASS ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
 
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
