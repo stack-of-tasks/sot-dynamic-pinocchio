@@ -1,5 +1,5 @@
-#ifndef __SOT_DYNAMIC_H__
-#define __SOT_DYNAMIC_H__
+#ifndef __SOT_DYNAMIC_PINOCCHIO_H
+#define __SOT_DYNAMIC_PINOCCHIO_H
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -56,10 +56,11 @@ public: /* --- CONSTRUCTION --- */
 
 public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
-
 public:/*  --- ATRIBUTES --- */
-    se3::Model m_model;
-    se3::Data  m_data;
+    se3::Model  m_model;
+    se3::Data*   m_data;
+    std::string m_urdfPath;
+
 };
 } /* namespace sot */} /* namespace dynamicgraph */
-#endif // #ifndef __SOT_DYNAMIC_H__
+#endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H

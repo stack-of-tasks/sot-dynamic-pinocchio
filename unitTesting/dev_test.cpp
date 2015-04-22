@@ -23,9 +23,13 @@ int main(int argc, char * argv[])
     }
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
     Dynamic * dyn = new Dynamic("tot");
+
     dyn->setUrdfPath( argv[1]);
-    cout<<dyn->m_model;         //display the model
-    cout<<dyn->m_data.oMi[0];   //display the first oMi (not relevent but for access test)
+    cout<<dyn->m_model;          //display the model
+    cout<<dyn->m_data->oMi[0];   //display the first oMi (not relevent but for access test)
+    cout<<dyn->m_urdfPath<<endl;
+    cout<<"size of oMi : "<<dyn->m_data->oMi.size()<<endl;
+
     delete dyn;
     return 0;
 }
