@@ -16,35 +16,40 @@ using namespace dynamicgraph;
 
 const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
-static matrix4d maalToMatrix4d(const ml::Matrix& inMatrix)
+using namespace std;
+
+static Eigen::VectorXd maalToEigenVectorXd(const ml::Vector& inVector)
 {
-  matrix4d homogeneous;
-  for (unsigned int r=0; r<4; r++) {
-    for (unsigned int c=0; c<4; c++) {
-      homogeneous(r,c) = inMatrix(r,c);
-    }
-  }
-  return homogeneous;
+    Eigen::VectorXd vector(inVector.size());
+    for (unsigned int r=0; r<inVector.size(); r++)
+        vector(r) = inVector(r);
+    return vector;
 }
 
-static vector3d maalToVector3d(const ml::Vector& inVector)
+static Eigen::MatrixXd maalToEigenMatrixXd(const ml::Matrix& inMatrix)
 {
-  vector3d vector;
-  vector(0) = inVector(0);
-  vector(1) = inVector(1);
-  vector(2) = inVector(2);
-  return vector;
+    Eigen::MatrixXd matrix(inMatrix.nbRows(),inMatrix.nbCols());
+    for (unsigned int r=0; r<inMatrix.nbRows(); r++)
+        for (unsigned int c=0; c<inMatrix.nbCols(); c++)
+            matrix(r,c) = inMatrix(r,c);
+    return matrix;
 }
 
-static matrix3d maalToMatrix3d(const ml::Matrix& inMatrix)
+static ml::Vector eigenVectorXdToMaal(const Eigen::VectorXd& inVector)
 {
-  matrix3d matrix;
-  for (unsigned int r=0; r<3; r++) {
-    for (unsigned int c=0; c<3; c++) {
-      matrix(r,c) = inMatrix(r,c);
-    }
-  }
-  return matrix;
+    ml::Vector vector(inVector.size());
+    for (unsigned int r=0; r<inVector.size(); r++)
+        vector(r) = inVector(r);
+    return vector;
+}
+
+static ml::Matrix eigenMatrixXdToMaal(const Eigen::MatrixXd& inMatrix)
+{
+    ml::Matrix matrix(inMatrix.rows(),inMatrix.cols());
+    for (unsigned int r=0; r<inMatrix.rows(); r++)
+        for (unsigned int c=0; c<inMatrix.cols(); c++)
+            matrix(r,c) = inMatrix(r,c);
+    return matrix;
 }
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name),m_data(NULL)
@@ -66,11 +71,18 @@ void Dynamic::setUrdfPath( const std::string& path )
     if (this->m_data) delete this->m_data;
     this->m_data = new se3::Data(m_model);
 
-
     /*
     self.modelFileName = filename
     self.model = se3.buildModelFromUrdf(filename,True)
     self.data = self.model.createData()
     self.v0 = utils.zero(self.nv)
     self.q0 = utils.zero(self.nq)*/
+}
+
+ml::Vector Dynamic::testRNEA(const ml::Vector& maalQ,const ml::Vector& maalV,const ml::Vector& maalA)
+{
+    Eigen::VectorXd q=maalToEigenVectorXd(maalQ);
+    Eigen::VectorXd v=maalToEigenVectorXd(maalV);
+    Eigen::VectorXd a=maalToEigenVectorXd(maalA);
+    return eigenVectorXdToMaal(se3::rnea(m_model,*m_data,q,v,a));
 }
