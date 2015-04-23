@@ -30,6 +30,11 @@ int main(int argc, char * argv[])
     cout<<dyn->m_urdfPath<<endl;
     cout<<"size of oMi : "<<dyn->m_data->oMi.size()<<endl;
 
+    ml::Vector q(dyn->m_model.nq);
+    ml::Vector v(dyn->m_model.nv);
+    ml::Vector a(dyn->m_model.nv);
+    cout << dyn->testRNEA(q,v,a) << endl;
+
     delete dyn;
     return 0;
 }

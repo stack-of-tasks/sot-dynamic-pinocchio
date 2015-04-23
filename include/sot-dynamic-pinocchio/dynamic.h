@@ -12,6 +12,7 @@
 #include <jrl/mal/boost.hh>
 #include "jrl/mal/matrixabstractlayer.hh"
 namespace ml = maal::boost;
+#include <Eigen/Core>
 
 
 /* SOT */
@@ -24,6 +25,9 @@ namespace ml = maal::boost;
 #include <sot/core/matrix-homogeneous.hh>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/parser/urdf.hpp>
+#include <pinocchio/algorithm/rnea.hpp>
+
+
 
 using namespace std;
 /* --------------------------------------------------------------------- */
@@ -60,6 +64,8 @@ public:/*  --- ATRIBUTES --- */
     se3::Model  m_model;
     se3::Data*   m_data;
     std::string m_urdfPath;
+
+    ml::Vector testRNEA(const ml::Vector& maalQ,const ml::Vector& maalV,const ml::Vector& maalA);
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */
