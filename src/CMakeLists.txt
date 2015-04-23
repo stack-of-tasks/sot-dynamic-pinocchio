@@ -15,8 +15,6 @@
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
 INCLUDE(../cmake/python.cmake)
-INCLUDE_DIRECTORIES(${pinocchio_INCLUDE_DIR})
-MESSAGE(WARNING "pinnochio insllude dirs :" ${PINOCCHIO_SOURCE_DIR})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 # Verbosity level

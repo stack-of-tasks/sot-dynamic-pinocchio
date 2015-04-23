@@ -1,5 +1,5 @@
-#ifndef __SOT_DYNAMIC_H__
-#define __SOT_DYNAMIC_H__
+#ifndef __SOT_DYNAMIC_PINOCCHIO_H
+#define __SOT_DYNAMIC_PINOCCHIO_H
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -8,7 +8,10 @@
 #include <string>
 #include <map>
 
-
+/* Matrix */
+#include <jrl/mal/boost.hh>
+#include "jrl/mal/matrixabstractlayer.hh"
+namespace ml = maal::boost;
 
 
 /* SOT */
@@ -20,6 +23,8 @@
 #include <sot/core/exception-dynamic.hh>
 #include <sot/core/matrix-homogeneous.hh>
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/parser/urdf.hpp>
+
 using namespace std;
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -37,17 +42,25 @@ using namespace std;
 namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
+/* --------------------------------------------------------------------- */
+/* --- CLASS ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
-
 
 public: /* --- CONSTRUCTION --- */
     DYNAMIC_GRAPH_ENTITY_DECL();
     Dynamic( const std::string& name, bool build=true );
     virtual ~Dynamic( void );
+
+public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
-    se3::Model m_model;
+public:/*  --- ATRIBUTES --- */
+    se3::Model  m_model;
+    se3::Data*   m_data;
+    std::string m_urdfPath;
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */
-#endif // #ifndef __SOT_DYNAMIC_H__
+#endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H
