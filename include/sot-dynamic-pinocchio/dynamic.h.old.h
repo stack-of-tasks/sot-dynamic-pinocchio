@@ -147,7 +147,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   void parseConfigFiles( void );
 
  public: /* --- SIGNAL ACTIVATION --- */
-/*  
+
 dg::SignalTimeDependent< ml::Matrix,int > &
     createEndeffJacobianSignal( const std::string& signame,
 				CjrlJoint* inJoint );
@@ -166,10 +166,10 @@ dg::SignalTimeDependent< ml::Matrix,int > &
   dg::SignalTimeDependent< ml::Vector,int >&
     createAccelerationSignal( const std::string& signame,
 			     CjrlJoint* inJoint );
-*/  
+
 void destroyAccelerationSignal( const std::string& signame );
 
-  /*bool zmpActivation( void ) { std::string Property("ComputeZMP");
+  bool zmpActivation( void ) { std::string Property("ComputeZMP");
     std::string Value; m_HDR->getProperty(Property,Value); return (Value=="true");}
   void zmpActivation( const bool& b ) { std::string Property("ComputeZMP");
 
@@ -179,16 +179,16 @@ void destroyAccelerationSignal( const std::string& signame );
 
   void comActivation( const bool& b ) { std::string Property("ComputeCoM");
   std::string Value; if (b) Value="true"; else Value="false"; m_HDR->setProperty(Property,Value); }
-*/
+
  public: /* --- SIGNAL --- */
-/*
+
   dg::SignalPtr<ml::Vector,int> jointPositionSIN;
   dg::SignalPtr<ml::Vector,int> freeFlyerPositionSIN;
   dg::SignalPtr<ml::Vector,int> jointVelocitySIN;
   dg::SignalPtr<ml::Vector,int> freeFlyerVelocitySIN;
   dg::SignalPtr<ml::Vector,int> jointAccelerationSIN;
   dg::SignalPtr<ml::Vector,int> freeFlyerAccelerationSIN;
-*/
+
   // protected:
  public:
   typedef int Dummy;
@@ -199,7 +199,7 @@ void destroyAccelerationSignal( const std::string& signame );
   int& initNewtonEuler( int& dummy,int time );
 
  public:
-/*  
+
 dg::SignalTimeDependent<ml::Vector,int> zmpSOUT;
   dg::SignalTimeDependent<ml::Matrix,int> JcomSOUT;
   dg::SignalTimeDependent<ml::Vector,int> comSOUT;
@@ -224,10 +224,10 @@ dg::SignalTimeDependent<ml::Vector,int> zmpSOUT;
   dg::SignalTimeDependent<ml::Vector,int> MomentaSOUT;
   dg::SignalTimeDependent<ml::Vector,int> AngularMomentumSOUT;
   dg::SignalTimeDependent<ml::Vector,int> dynamicDriftSOUT;
-*/
+
  protected:
-/*  
-ml::Vector& computeZmp( ml::Vector& res,int time );
+
+  ml::Vector& computeZmp( ml::Vector& res,int time );
   ml::Vector& computeMomenta( ml::Vector &res, int time);
   ml::Vector& computeAngularMomentum( ml::Vector &res, int time);
   ml::Matrix& computeJcom( ml::Matrix& res,int time );
@@ -252,7 +252,7 @@ ml::Vector& computeZmp( ml::Vector& res,int time );
   ml::Vector& getLowerTorqueLimits( ml::Vector& res,const int& time );
 
   ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
-*/
+
  public: /* --- PARAMS --- */
   virtual void commandLine( const std::string& cmdLine,
 			    std::istringstream& cmdArgs,
