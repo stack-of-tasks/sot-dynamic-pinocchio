@@ -1,15 +1,13 @@
 #include <sot/core/debug.hh>
 #include <sot-dynamic-pinocchio/dynamic.h>
 
-//#include <boost/version.hpp>
+#include <boost/version.hpp>
 //#include <boost/filesystem.hpp>
-//#include <boost/format.hpp>
+#include <boost/format.hpp>
 
 #include <jrl/mal/matrixabstractlayer.hh>
 
 #include <dynamic-graph/all-commands.h>
-
-
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
