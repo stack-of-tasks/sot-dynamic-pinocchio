@@ -52,20 +52,52 @@ namespace dg = dynamicgraph;
 
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
-
-public: /* --- CONSTRUCTION --- */
     DYNAMIC_GRAPH_ENTITY_DECL();
+    std::list< dg::SignalBase<int>*  > genericSignalRefs;
+public: /* --- CONSTRUCTION --- */
+
     Dynamic( const std::string& name, bool build=true );
     virtual ~Dynamic( void );
 
 public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
+
 public:/*  --- ATRIBUTES --- */
     se3::Model  m_model;
     se3::Data*   m_data;
     std::string m_urdfPath;
 
     ml::Vector testRNEA(const ml::Vector& maalQ,const ml::Vector& maalV,const ml::Vector& maalA);
+
+public: /* --- SIGNAL --- */
+ dg::SignalPtr<ml::Vector,int> jointPositionSIN;
+ dg::SignalPtr<ml::Vector,int> freeFlyerPositionSIN;
+ dg::SignalPtr<ml::Vector,int> jointVelocitySIN;
+ dg::SignalPtr<ml::Vector,int> freeFlyerVelocitySIN;
+ dg::SignalPtr<ml::Vector,int> jointAccelerationSIN;
+ dg::SignalPtr<ml::Vector,int> freeFlyerAccelerationSIN;
+
+protected: /* --- METHODS --- */
+
+ ml::Vector& computeZmp( ml::Vector& res,int time );
+ ml::Vector& computeMomenta( ml::Vector &res, int time);
+ ml::Vector& computeAngularMomentum( ml::Vector &res, int time);
+ ml::Matrix& computeJcom( ml::Matrix& res,int time );
+ ml::Vector& computeCom( ml::Vector& res,int time );
+ ml::Matrix& computeInertia( ml::Matrix& res,int time );
+ ml::Matrix& computeInertiaReal( ml::Matrix& res,int time );
+ double& computeFootHeight( double& res,int time );
+
+ ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );
+ ml::Vector& getLowerJointLimits( ml::Vector& res,const int& time );
+
+ ml::Vector& getUpperVelocityLimits( ml::Vector& res,const int& time );
+ ml::Vector& getLowerVelocityLimits( ml::Vector& res,const int& time );
+
+ ml::Vector& getUpperTorqueLimits( ml::Vector& res,const int& time );
+ ml::Vector& getLowerTorqueLimits( ml::Vector& res,const int& time );
+
+ ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */
