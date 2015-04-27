@@ -45,6 +45,8 @@ ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
 ADD_REQUIRED_DEPENDENCY("sot-tools")
 ADD_REQUIRED_DEPENDENCY("pinocchio")
 
+
+
 # List plug-ins that will be compiled.
 SET(plugins
   zmpreffromcom
