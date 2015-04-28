@@ -30,6 +30,8 @@ public:
     {
         appel++;  timedata=t;
 
+        cout << "DUMMY : " << appel <<" " << timedata << endl;
+
         sotDEBUG(5) << "Inside " << typeid(Res).name() <<endl;
         for( list< SignalTimeDependent<double,int>* >::iterator it=inputsig.begin();
              it!=inputsig.end();++it )
@@ -77,8 +79,14 @@ VectorUTheta DummyClass<VectorUTheta>::operator() (void)
 }
 
 void funtest( ml::Vector& /*v*/ ){ }
+
 /* ----- END DUMMY CLASS -----*/
 
+ml::Vector& setVector(ml::Vector& vect){
+    vect.resize(3);
+    vect.fill(42);
+    return vect;
+}
 
 int main(int argc, char * argv[])
 {
@@ -93,26 +101,38 @@ int main(int argc, char * argv[])
     }
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
     Dynamic * dyn = new Dynamic("tot");
+    dyn->setUrdfPath( argv[1]);
+    DummyClass<ml::Vector> vect;
 
-    SignalTimeDependent<VectorUTheta, int> sig3(sotNOSIGNAL,"Sig3");
-    DummyClass<VectorUTheta> pro3;
-    ml::Vector v;
-    VectorUTheta v3;
-    funtest(v);
-    funtest(v3);
+    SignalTimeDependent<ml::Vector, int> sigPosOUT(sotNOSIGNAL,"sigPosOUT");
+    SignalTimeDependent<ml::Vector, int> sigVelOUT(sotNOSIGNAL,"sigVelOUT");
+    SignalTimeDependent<ml::Vector, int> sigAccOUT(sotNOSIGNAL,"sigAccOUT");
+    ml::Vector vectPos(6);
+    ml::Vector vectVel;
+    ml::Vector vectAcc;
 
-    sig3.setFunction(boost::bind(&DummyClass<VectorUTheta>::fun,pro3,_1,_2));
+
+    //cout << set;
+    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vect,_1,_2) );
     try{
-        dyn->jointPositionSIN.plug(&sig3);
+        dyn->jointPositionSIN.plug(&sigPosOUT);
     }
     catch(sot::ExceptionAbstract& e ) { cout << e << endl; exit(1); }
 
-    sig3.access(1); sig3.setReady();
+    sigPosOUT.access(1);
+    sigPosOUT.setReady();
+    cout << "time : " <<sigPosOUT.getTime()<< endl;
+    dyn->jointPositionSIN.access(2);
 
-    dyn->setUrdfPath( argv[1]);
-    cout << "Joint position : " << dyn->jointPositionSIN.access(1) << endl;
-    //cout << "Joint Velocity : " << dyn->jointVelocitySIN.access(1) << endl;
-    //cout << "Joint Acceleration : " << dyn->jointAccelerationSIN.access(1) << endl;
+    for(int i=1;i<10;++i){
+        cout << "Joint position : " << dyn->jointPositionSIN.access(i) << endl;
+        //sigPosOUT.access(i+1);
+        if (i%2==0)
+          sigPosOUT.setReady();
+       //DummyClass<ml::Vector>::fun(vectPos,i);
+        cout << "timeOUT: " <<sigPosOUT.getTime()<< endl;
+        cout << "timeIN : " <<dyn->jointPositionSIN.getTime()<< endl;
+    }
 
     delete dyn;
     return 0;
