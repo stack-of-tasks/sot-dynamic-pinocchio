@@ -26,7 +26,6 @@ namespace ml = maal::boost;
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/parser/urdf.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
-#include <pinocchio/algorithm/kinematics.hpp>
 
 
 
