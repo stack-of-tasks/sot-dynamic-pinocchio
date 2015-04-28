@@ -15,7 +15,7 @@ namespace ml = maal::boost;
 #include <Eigen/Core>
 
 
-/* SOT */
+/* SOT kinematics*/
 #include <sot/core/flags.hh>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/pool.h>
@@ -85,12 +85,12 @@ public: /* --- SIGNAL ACTIVATION --- */
 
 
 public: /* --- SIGNAL --- */
- dg::SignalPtr<ml::Vector,int> jointPositionSIN;
- dg::SignalPtr<ml::Vector,int> freeFlyerPositionSIN;
- dg::SignalPtr<ml::Vector,int> jointVelocitySIN;
- dg::SignalPtr<ml::Vector,int> freeFlyerVelocitySIN;
- dg::SignalPtr<ml::Vector,int> jointAccelerationSIN;
- dg::SignalPtr<ml::Vector,int> freeFlyerAccelerationSIN;
+    dg::SignalPtr<ml::Vector,int> jointPositionSIN;
+    dg::SignalPtr<ml::Vector,int> freeFlyerPositionSIN;
+    dg::SignalPtr<ml::Vector,int> jointVelocitySIN;
+    dg::SignalPtr<ml::Vector,int> freeFlyerVelocitySIN;
+    dg::SignalPtr<ml::Vector,int> jointAccelerationSIN;
+    dg::SignalPtr<ml::Vector,int> freeFlyerAccelerationSIN;
 
 
 
