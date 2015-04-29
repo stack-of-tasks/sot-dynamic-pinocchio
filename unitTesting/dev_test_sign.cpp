@@ -102,27 +102,47 @@ int main(int argc, char * argv[])
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
     Dynamic * dyn = new Dynamic("tot");
     dyn->setUrdfPath( argv[1]);
-    DummyClass<ml::Vector> vect;
+    DummyClass<ml::Vector> vectDummyPos;
+    DummyClass<ml::Vector> vectDummyVel;
+    DummyClass<ml::Vector> vectDummyAcc;
+    DummyClass<ml::Vector> vectDummyFreePos;
+    DummyClass<ml::Vector> vectDummyFreeVel;
+    DummyClass<ml::Vector> vectDummyFreeAcc;
 
     SignalTimeDependent<ml::Vector, int> sigPosOUT(sotNOSIGNAL,"sigPosOUT");
     SignalTimeDependent<ml::Vector, int> sigVelOUT(sotNOSIGNAL,"sigVelOUT");
     SignalTimeDependent<ml::Vector, int> sigAccOUT(sotNOSIGNAL,"sigAccOUT");
-    ml::Vector vectPos(6);
-    ml::Vector vectVel;
-    ml::Vector vectAcc;
+    SignalTimeDependent<ml::Vector, int> sigFreePosOUT(sotNOSIGNAL,"sigFreePosOUT");
+    SignalTimeDependent<ml::Vector, int> sigFreeVelOUT(sotNOSIGNAL,"sigFreeVelOUT");
+    SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
+
 
 
     //cout << set;
-    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vect,_1,_2) );
+    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) );
+    sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );
+    sigAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyAcc,_1,_2) );
+    sigFreePosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreePos,_1,_2) );
+    sigFreeVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreeVel,_1,_2) );
+    sigFreeAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreeAcc,_1,_2) );
     try{
         dyn->jointPositionSIN.plug(&sigPosOUT);
+        dyn->jointVelocitySIN.plug(&sigVelOUT);
+        dyn->jointAccelerationSIN.plug(&sigAccOUT);
+        dyn->freeFlyerPositionSIN.plug(&sigFreePosOUT);
+        dyn->freeFlyerVelocitySIN.plug(&sigFreeVelOUT);
+        dyn->freeFlyerAccelerationSIN.plug(&sigFreeAccOUT);
     }
     catch(sot::ExceptionAbstract& e ) { cout << e << endl; exit(1); }
 
-    sigPosOUT.access(1);
-    sigPosOUT.setReady();
-    cout << "time : " <<sigPosOUT.getTime()<< endl;
-    dyn->jointPositionSIN.access(2);
+    sigPosOUT.access(1); sigPosOUT.setReady();
+    sigVelOUT.access(2); sigVelOUT.setReady();
+    sigAccOUT.access(3); sigAccOUT.setReady();
+    sigFreePosOUT.access(4); sigFreePosOUT.setReady();
+    sigFreeVelOUT.access(5); sigFreeVelOUT.setReady();
+    sigFreeAccOUT.access(6); sigFreeAccOUT.setReady();
+
+    //cout << "time : " <<sigPosOUT.getTime()<< endl;
 
     for(int i=1;i<10;++i){
         cout << "Joint position : " << dyn->jointPositionSIN.access(i) << endl;
