@@ -70,9 +70,9 @@ template<>
 ml::Vector DummyClass<ml::Vector>::operator() (void)
 {
     if(timedata==1){
-        res.resize(8);
+        res.resize(35);
     }else{
-    res.resize(29);
+    res.resize(35);
     }
     res.fill(appel*timedata); return res;
 }
@@ -98,7 +98,7 @@ class Dummy2Class
 
 public:
   ml::Vector& fun( ml::Vector& res,double j )
-  { res.resize(29); res.fill(j); return res; }
+  { res.resize(6); res.fill(j); return res; }
 
 };
 
@@ -137,12 +137,12 @@ int main(int argc, char * argv[])
     SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
 
     //this is an example using DummyClass or Dummy2Class (with or without template)
-    sigPosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) ); //class without template
+    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) ); //class without template
     sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );//class with template
     sigAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyAcc,_1,_2) );
-    sigFreePosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreePos,_1,_2) );
-    sigFreeVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreeVel,_1,_2) );
-    sigFreeAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreeAcc,_1,_2) );
+    sigFreePosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
+    sigFreeVelOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
+    sigFreeAccOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
     try{
         dyn->jointPositionSIN.plug(&sigPosOUT);
         dyn->jointVelocitySIN.plug(&sigVelOUT);
@@ -163,6 +163,12 @@ int main(int argc, char * argv[])
 
     int dummy(0);
 
+    cout << "test Pinocchio sizes" << endl;
+    cout << dyn->getPinocchioPos().size()<<endl;
+    cout << dyn->getPinocchioVel().size()<<endl;
+    cout << dyn->getPinocchioAcc().size()<<endl;
+    cout << "end test \n\n\n" << endl;
+
     cout << "data nu[1] : " << dyn->m_data->v[1] << endl;
     cout << "data oMi[1] : " << dyn->m_data->oMi[1] << endl;
     cout << "data tau : " << dyn->m_data->tau << endl;
@@ -176,6 +182,9 @@ int main(int argc, char * argv[])
     cout << "data alpha[1] : " << dyn->m_data->a[1] << endl;
     cout << "data f[1`] : " << dyn->m_data->f[1] << endl;
 
+    cout << dyn->getPinocchioPos().size()<<endl;
+    cout << dyn->getPinocchioVel().size()<<endl;
+    cout << dyn->getPinocchioAcc().size()<<endl;
 
     delete dyn;
     return 0;
