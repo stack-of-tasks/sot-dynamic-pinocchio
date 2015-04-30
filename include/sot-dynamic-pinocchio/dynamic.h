@@ -62,7 +62,9 @@ public: /* --- CONSTRUCTION --- */
 public: /* --- ACCESSORS --- */
     void setUrdfPath( const std::string& path );
 public:/* --- CONVERTION --- */
-    Eigen::VectorXd getPinocchioPosition();//get q from JointPos and freeFlyerPos signals
+    Eigen::VectorXd getPinocchioPos();//get q from JointPos and freeFlyerPos signals
+    Eigen::VectorXd getPinocchioVel();
+    Eigen::VectorXd getPinocchioAcc();
 
 public:/*  --- ATRIBUTES --- */
     se3::Model  m_model;

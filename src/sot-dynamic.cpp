@@ -173,7 +173,7 @@ void Dynamic::setUrdfPath( const std::string& path )
     this->m_data = new se3::Data(m_model);
 }
 
-Eigen::VectorXd Dynamic::getPinocchioPosition()
+Eigen::VectorXd Dynamic::getPinocchioPos()
 {
     const Eigen::VectorXd qJoints=maalToEigenVectorXd(jointPositionSIN.access(1));
     const Eigen::VectorXd qFF=maalToEigenVectorXd(freeFlyerPositionSIN.access(1));
@@ -189,6 +189,26 @@ Eigen::VectorXd Dynamic::getPinocchioPosition()
 
     q << x,y,z,w,qFF(3),qFF(4),qFF(5),qJoints;// assert q.size()==m_model.nq?
     return q;
+}
+
+Eigen::VectorXd Dynamic::getPinocchioVel()
+{
+    const Eigen::VectorXd vJoints=maalToEigenVectorXd(jointVelocitySIN.access(1));
+    const Eigen::VectorXd vFF=maalToEigenVectorXd(freeFlyerVelocitySIN.access(1));
+    Eigen::VectorXd v(vJoints.size() + vFF.size());
+
+    v << vFF,vJoints;// assert q.size()==m_model.nq?
+    return v;
+}
+
+Eigen::VectorXd Dynamic::getPinocchioAcc()
+{
+    const Eigen::VectorXd aJoints=maalToEigenVectorXd(jointAccelerationSIN.access(1));
+    const Eigen::VectorXd aFF=maalToEigenVectorXd(freeFlyerAccelerationSIN.access(1));
+    Eigen::VectorXd a(aJoints.size() + aFF.size());
+
+    a << aFF,aJoints;// assert q.size()==m_model.nq?
+    return a;
 }
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
@@ -308,9 +328,12 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::accelerationsSOUT( const std::
 
 int& Dynamic::computeNewtonEuler( int& dummy,int time )
 {
-    const Eigen::VectorXd q=maalToEigenVectorXd(jointPositionSIN.access(1));
+    /*const Eigen::VectorXd q=maalToEigenVectorXd(jointPositionSIN.access(1));
     const Eigen::VectorXd v=maalToEigenVectorXd(jointVelocitySIN.access(1));
-    const Eigen::VectorXd a=maalToEigenVectorXd(jointAccelerationSIN.access(1));
+    const Eigen::VectorXd a=maalToEigenVectorXd(jointAccelerationSIN.access(1));*/
+    const Eigen::VectorXd q=getPinocchioPos();
+    const Eigen::VectorXd v=getPinocchioVel();
+    const Eigen::VectorXd a=getPinocchioAcc();
     se3::rnea(m_model,*m_data,q,v,a);
     return dummy;
 }
