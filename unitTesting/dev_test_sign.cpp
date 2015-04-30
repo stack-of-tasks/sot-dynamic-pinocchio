@@ -69,9 +69,14 @@ double DummyClass<double>::operator() (void)
 template<>
 ml::Vector DummyClass<ml::Vector>::operator() (void)
 {
-    res.resize(3);
+    if(timedata==1){
+        res.resize(8);
+    }else{
+    res.resize(29);
+    }
     res.fill(appel*timedata); return res;
 }
+
 template<>
 VectorUTheta DummyClass<VectorUTheta>::operator() (void)
 {
@@ -87,6 +92,21 @@ ml::Vector& setVector(ml::Vector& vect){
     vect.fill(42);
     return vect;
 }
+
+class Dummy2Class
+{
+
+public:
+  ml::Vector& fun( ml::Vector& res,double j )
+  { res.resize(29); res.fill(j); return res; }
+
+};
+
+ml::Vector data(6);
+Signal<ml::Vector,double> sig("sigtest");
+Dummy2Class dummy;
+
+ml::Vector& fun( ml::Vector& res,double /*j*/ ) { return res=data; }
 
 int main(int argc, char * argv[])
 {
@@ -116,11 +136,9 @@ int main(int argc, char * argv[])
     SignalTimeDependent<ml::Vector, int> sigFreeVelOUT(sotNOSIGNAL,"sigFreeVelOUT");
     SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
 
-
-
-    //cout << set;
-    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) );
-    sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );
+    //this is an example using DummyClass or Dummy2Class (with or without template)
+    sigPosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) ); //class without template
+    sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );//class with template
     sigAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyAcc,_1,_2) );
     sigFreePosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreePos,_1,_2) );
     sigFreeVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyFreeVel,_1,_2) );
@@ -138,21 +156,26 @@ int main(int argc, char * argv[])
     sigPosOUT.access(1); sigPosOUT.setReady();
     sigVelOUT.access(2); sigVelOUT.setReady();
     sigAccOUT.access(3); sigAccOUT.setReady();
-    sigFreePosOUT.access(4); sigFreePosOUT.setReady();
-    sigFreeVelOUT.access(5); sigFreeVelOUT.setReady();
-    sigFreeAccOUT.access(6); sigFreeAccOUT.setReady();
+    sigFreePosOUT.access(1); sigFreePosOUT.setReady();
+    sigFreeVelOUT.access(2); sigFreeVelOUT.setReady();
+    sigFreeAccOUT.access(3); sigFreeAccOUT.setReady();
 
-    //cout << "time : " <<sigPosOUT.getTime()<< endl;
 
-    for(int i=1;i<10;++i){
-        cout << "Joint position : " << dyn->jointPositionSIN.access(i) << endl;
-        //sigPosOUT.access(i+1);
-        if (i%2==0)
-          sigPosOUT.setReady();
-       //DummyClass<ml::Vector>::fun(vectPos,i);
-        cout << "timeOUT: " <<sigPosOUT.getTime()<< endl;
-        cout << "timeIN : " <<dyn->jointPositionSIN.getTime()<< endl;
-    }
+    int dummy(0);
+
+    cout << "data nu[1] : " << dyn->m_data->v[1] << endl;
+    cout << "data oMi[1] : " << dyn->m_data->oMi[1] << endl;
+    cout << "data tau : " << dyn->m_data->tau << endl;
+    cout << "data alpha[1] : " << dyn->m_data->a[1] << endl;
+    cout << "data f]1[] : " << dyn->m_data->f[1] << endl;
+    cout << "compute rnea : " << endl;
+    dyn->computeNewtonEuler(dummy,1);
+    cout << "data nu[1] : " << dyn->m_data->v[1] << endl;
+    cout << "data oMi[1] : " << dyn->m_data->oMi[1] << endl;
+    cout << "data tau : " << dyn->m_data->tau << endl;
+    cout << "data alpha[1] : " << dyn->m_data->a[1] << endl;
+    cout << "data f[1`] : " << dyn->m_data->f[1] << endl;
+
 
     delete dyn;
     return 0;
