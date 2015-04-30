@@ -137,10 +137,10 @@ int main(int argc, char * argv[])
     SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
 
     //this is an example using DummyClass or Dummy2Class (with or without template)
-    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) ); //class without template
+    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) );
     sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );//class with template
     sigAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyAcc,_1,_2) );
-    sigFreePosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
+    sigFreePosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );//class without template
     sigFreeVelOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
     sigFreeAccOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
     try{
