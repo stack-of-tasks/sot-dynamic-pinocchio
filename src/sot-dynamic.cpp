@@ -167,7 +167,7 @@ Dynamic::~Dynamic( void )
 
 void Dynamic::setUrdfPath( const std::string& path )
 {
-    this->m_model = se3::urdf::buildModel(path);
+    this->m_model = se3::urdf::buildModel(path, true);
     this->m_urdfPath = path;
     if (this->m_data) delete this->m_data;
     this->m_data = new se3::Data(m_model);
@@ -177,7 +177,7 @@ Eigen::VectorXd Dynamic::getPinocchioPosition()
 {
     const Eigen::VectorXd qJoints=maalToEigenVectorXd(jointPositionSIN.access(1));
     const Eigen::VectorXd qFF=maalToEigenVectorXd(freeFlyerPositionSIN.access(1));
-    Eigen::VectorXd q;
+    Eigen::VectorXd q(qJoints.size() + 7);// assert qFF.size() = 6?
     urdf::Rotation rot;
     rot.setFromRPY(qFF(0),qFF(1),qFF(2));
     double x,y,z,w;
@@ -187,7 +187,7 @@ Eigen::VectorXd Dynamic::getPinocchioPosition()
     double &refw = w;
     rot.getQuaternion(refx,refy,refz,refw);
 
-    q << x,y,z,w,qFF(4),qFF(5),qFF(6),qJoints;// assert q.size()==m_model.nq?
+    q << x,y,z,w,qFF(3),qFF(4),qFF(5),qJoints;// assert q.size()==m_model.nq?
     return q;
 }
 /* --- COMPUTE -------------------------------------------------------------- */
