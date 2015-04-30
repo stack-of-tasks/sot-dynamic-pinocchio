@@ -164,9 +164,9 @@ int main(int argc, char * argv[])
     int dummy(0);
 
     cout << "test Pinocchio sizes" << endl;
-    cout << dyn->getPinocchioPos().size()<<endl;
-    cout << dyn->getPinocchioVel().size()<<endl;
-    cout << dyn->getPinocchioAcc().size()<<endl;
+    cout << dyn->getPinocchioPos(1).size()<<endl;
+    cout << dyn->getPinocchioVel(1).size()<<endl;
+    cout << dyn->getPinocchioAcc(1).size()<<endl;
     cout << "end test \n\n\n" << endl;
 
     cout << "data nu[1] : " << dyn->m_data->v[1] << endl;
@@ -181,10 +181,6 @@ int main(int argc, char * argv[])
     cout << "data tau : " << dyn->m_data->tau << endl;
     cout << "data alpha[1] : " << dyn->m_data->a[1] << endl;
     cout << "data f[1`] : " << dyn->m_data->f[1] << endl;
-
-    cout << dyn->getPinocchioPos().size()<<endl;
-    cout << dyn->getPinocchioVel().size()<<endl;
-    cout << dyn->getPinocchioAcc().size()<<endl;
 
     delete dyn;
     return 0;
