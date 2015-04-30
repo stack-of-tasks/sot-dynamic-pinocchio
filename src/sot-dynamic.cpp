@@ -173,10 +173,10 @@ void Dynamic::setUrdfPath( const std::string& path )
     this->m_data = new se3::Data(m_model);
 }
 
-Eigen::VectorXd Dynamic::getPinocchioPosition()
+Eigen::VectorXd Dynamic::getPinocchioPos(int time)
 {
-    const Eigen::VectorXd qJoints=maalToEigenVectorXd(jointPositionSIN.access(1));
-    const Eigen::VectorXd qFF=maalToEigenVectorXd(freeFlyerPositionSIN.access(1));
+    const Eigen::VectorXd qJoints=maalToEigenVectorXd(jointPositionSIN.access(time));
+    const Eigen::VectorXd qFF=maalToEigenVectorXd(freeFlyerPositionSIN.access(time));
     Eigen::VectorXd q(qJoints.size() + 7);// assert qFF.size() = 6?
     urdf::Rotation rot;
     rot.setFromRPY(qFF(0),qFF(1),qFF(2));
@@ -189,6 +189,26 @@ Eigen::VectorXd Dynamic::getPinocchioPosition()
 
     q << x,y,z,w,qFF(3),qFF(4),qFF(5),qJoints;// assert q.size()==m_model.nq?
     return q;
+}
+
+Eigen::VectorXd Dynamic::getPinocchioVel(int time)
+{
+    const Eigen::VectorXd vJoints=maalToEigenVectorXd(jointVelocitySIN.access(time));
+    const Eigen::VectorXd vFF=maalToEigenVectorXd(freeFlyerVelocitySIN.access(time));
+    Eigen::VectorXd v(vJoints.size() + vFF.size());
+
+    v << vFF,vJoints;// assert q.size()==m_model.nq?
+    return v;
+}
+
+Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
+{
+    const Eigen::VectorXd aJoints=maalToEigenVectorXd(jointAccelerationSIN.access(time));
+    const Eigen::VectorXd aFF=maalToEigenVectorXd(freeFlyerAccelerationSIN.access(time));
+    Eigen::VectorXd a(aJoints.size() + aFF.size());
+
+    a << aFF,aJoints;// assert q.size()==m_model.nq?
+    return a;
 }
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
@@ -308,9 +328,12 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::accelerationsSOUT( const std::
 
 int& Dynamic::computeNewtonEuler( int& dummy,int time )
 {
-    const Eigen::VectorXd q=maalToEigenVectorXd(jointPositionSIN.access(1));
+    /*const Eigen::VectorXd q=maalToEigenVectorXd(jointPositionSIN.access(1));
     const Eigen::VectorXd v=maalToEigenVectorXd(jointVelocitySIN.access(1));
-    const Eigen::VectorXd a=maalToEigenVectorXd(jointAccelerationSIN.access(1));
+    const Eigen::VectorXd a=maalToEigenVectorXd(jointAccelerationSIN.access(1));*/
+    const Eigen::VectorXd q=getPinocchioPos(time);
+    const Eigen::VectorXd v=getPinocchioVel(time);
+    const Eigen::VectorXd a=getPinocchioAcc(time);
     se3::rnea(m_model,*m_data,q,v,a);
     return dummy;
 }
