@@ -19,7 +19,8 @@ ADD_DEFINITIONS(-DDEBUG=2)
 SET(tests
   dummy
   dev_test
-  dev_test_sign)
+  dev_test_sign
+  dev_test_jacobian)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
