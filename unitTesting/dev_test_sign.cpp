@@ -103,6 +103,7 @@ public:
 };
 
 ml::Vector data(6);
+ml::Vector data2(35);
 Signal<ml::Vector,double> sig("sigtest");
 Dummy2Class dummy;
 
@@ -151,6 +152,7 @@ int main(int argc, char * argv[])
         dyn->freeFlyerVelocitySIN.plug(&sigFreeVelOUT);
         dyn->freeFlyerAccelerationSIN.plug(&sigFreeAccOUT);
     }
+
     catch(sot::ExceptionAbstract& e ) { cout << e << endl; exit(1); }
 
     sigPosOUT.access(1); sigPosOUT.setReady();
@@ -159,7 +161,6 @@ int main(int argc, char * argv[])
     sigFreePosOUT.access(1); sigFreePosOUT.setReady();
     sigFreeVelOUT.access(2); sigFreeVelOUT.setReady();
     sigFreeAccOUT.access(3); sigFreeAccOUT.setReady();
-
 
     int dummy(0);
 
