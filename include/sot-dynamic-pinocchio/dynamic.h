@@ -26,6 +26,7 @@ namespace ml = maal::boost;
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/parser/urdf.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
 
 
 
@@ -100,11 +101,9 @@ public: /* --- SIGNAL --- */
 
 public:
  typedef int Dummy;
- dg::SignalTimeDependent<Dummy,int> firstSINTERN;
  dg::SignalTimeDependent<Dummy,int> newtonEulerSINTERN;
 
  int& computeNewtonEuler( int& dummy,int time );
- int& initNewtonEuler( int& dummy,int time );
 
 public:
 
@@ -145,7 +144,8 @@ protected: /* --- METHODS --- */
  double& computeFootHeight( double& res,int time );
 
  //CAUTION: j as int type, temporary
- ml::Matrix& computeGenericJacobian( int j,ml::Matrix& res,int time );
+public:
+ ml::Matrix& computeGenericJacobian( int jointId,ml::Matrix& res,int time );
  ml::Matrix& computeGenericEndeffJacobian( int j,ml::Matrix& res,int time );
  MatrixHomogeneous& computeGenericPosition( int j,MatrixHomogeneous& res,int time );
  ml::Vector& computeGenericVelocity( int j,ml::Vector& res,int time );
