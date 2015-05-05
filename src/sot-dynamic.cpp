@@ -210,9 +210,17 @@ Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
 /* --- COMPUTE -------------------------------------------------------------- */
 
 
-ml::Matrix& Dynamic::computeGenericJacobian( int aJoint,ml::Matrix& res,int time )
+ml::Matrix& Dynamic::computeGenericJacobian( int jointId,ml::Matrix& res,int time )
 {
-    //TODO: implement here
+    // Work done
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+
+    se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId);
+    res.initFromMotherLib(eigenMatrixXdToMaal(m_data->J).accessToMotherLib());
+
+    sotDEBUGOUT(25);
+
     return res;
 }
 
