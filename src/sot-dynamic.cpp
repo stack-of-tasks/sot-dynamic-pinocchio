@@ -174,7 +174,7 @@ Eigen::VectorXd Dynamic::getPinocchioPos(int time)
     const Eigen::VectorXd qFF=maalToEigenVectorXd(freeFlyerPositionSIN.access(time));
     Eigen::VectorXd q(qJoints.size() + 7);// assert qFF.size() = 6?
     urdf::Rotation rot;
-    rot.setFromRPY(qFF(0),qFF(1),qFF(2));
+    rot.setFromRPY(qFF(3),qFF(4),qFF(5));
     double x,y,z,w;
     double &refx = x;
     double &refy = y;
@@ -182,7 +182,7 @@ Eigen::VectorXd Dynamic::getPinocchioPos(int time)
     double &refw = w;
     rot.getQuaternion(refx,refy,refz,refw);
 
-    q << x,y,z,w,qFF(3),qFF(4),qFF(5),qJoints;// assert q.size()==m_model.nq?
+    q << qFF(0),qFF(1),qFF(2),x,y,z,w,qJoints;// assert q.size()==m_model.nq?
     return q;
 }
 
@@ -331,9 +331,6 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::accelerationsSOUT( const std::
 
 int& Dynamic::computeNewtonEuler( int& dummy,int time )
 {
-    /*const Eigen::VectorXd q=maalToEigenVectorXd(jointPositionSIN.access(1));
-    const Eigen::VectorXd v=maalToEigenVectorXd(jointVelocitySIN.access(1));
-    const Eigen::VectorXd a=maalToEigenVectorXd(jointAccelerationSIN.access(1));*/
     const Eigen::VectorXd q=getPinocchioPos(time);
     const Eigen::VectorXd v=getPinocchioVel(time);
     const Eigen::VectorXd a=getPinocchioAcc(time);
@@ -381,12 +378,4 @@ ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 {
     //TODO: implement here
     return res;
-}
-
-ml::Vector  Dynamic::testRNEA(const ml::Vector& maalQ,const ml::Vector& maalV,const ml::Vector& maalA)
-{
-    Eigen::VectorXd q=maalToEigenVectorXd(maalQ);
-    Eigen::VectorXd v=maalToEigenVectorXd(maalV);
-    Eigen::VectorXd a=maalToEigenVectorXd(maalA);
-    return eigenVectorXdToMaal(se3::rnea(m_model,*m_data,q,v,a));
 }
