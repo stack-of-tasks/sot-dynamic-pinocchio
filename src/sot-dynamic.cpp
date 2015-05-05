@@ -58,12 +58,8 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
   ,freeFlyerVelocitySIN     (NULL,"sotDynamic("+name+")::input(vector)::ffvelocity")
   ,jointAccelerationSIN     (NULL,"sotDynamic("+name+")::input(vector)::acceleration")
   ,freeFlyerAccelerationSIN (NULL,"sotDynamic("+name+")::input(vector)::ffacceleration")
-  ,firstSINTERN( boost::bind(&Dynamic::initNewtonEuler,this,_1,_2),
-                 sotNOSIGNAL,"sotDynamic("+name+")::intern(dummy)::init" )
   ,newtonEulerSINTERN( boost::bind(&Dynamic::computeNewtonEuler,this,_1,_2),
-                       firstSINTERN<<jointPositionSIN<<freeFlyerPositionSIN
-                                  <<jointVelocitySIN<<freeFlyerVelocitySIN
-                                 <<jointAccelerationSIN<<freeFlyerAccelerationSIN,
+                       sotNOSIGNAL,
                        "sotDynamic("+name+")::intern(dummy)::newtoneuleur" )
 
   ,zmpSOUT( boost::bind(&Dynamic::computeZmp,this,_1,_2),
@@ -123,7 +119,6 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
 {
     sotDEBUGIN(5);
 
-    firstSINTERN.setDependencyType(TimeDependency<int>::BOOL_DEPENDENT);
 
 
     signalRegistration(jointPositionSIN);
@@ -335,19 +330,6 @@ int& Dynamic::computeNewtonEuler( int& dummy,int time )
     const Eigen::VectorXd v=getPinocchioVel(time);
     const Eigen::VectorXd a=getPinocchioAcc(time);
     se3::rnea(m_model,*m_data,q,v,a);
-    return dummy;
-}
-
-int& Dynamic::initNewtonEuler( int& dummy,int time )
-{
-    // Work in progress...
-    sotDEBUGIN(15);
-    firstSINTERN.setReady(false);
-    computeNewtonEuler(dummy,time);
-    for(int i=0;i<3;++i)
-        int a = 0;
-
-    sotDEBUGOUT(15);
     return dummy;
 }
 

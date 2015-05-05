@@ -100,11 +100,9 @@ public: /* --- SIGNAL --- */
 
 public:
  typedef int Dummy;
- dg::SignalTimeDependent<Dummy,int> firstSINTERN;
  dg::SignalTimeDependent<Dummy,int> newtonEulerSINTERN;
 
  int& computeNewtonEuler( int& dummy,int time );
- int& initNewtonEuler( int& dummy,int time );
 
 public:
 
