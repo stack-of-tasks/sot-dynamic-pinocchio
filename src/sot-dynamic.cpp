@@ -268,7 +268,12 @@ ml::Vector& Dynamic::computeAngularMomentum( ml::Vector &res, int time)
 
 ml::Matrix& Dynamic::computeJcom( ml::Matrix& res,int time )
 {
-    //TODO: implement here
+    //Work done
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+
+    res.initFromMotherLib(eigenMatrixXdToMaal(m_data->Jcom).accessToMotherLib());
+    sotDEBUGOUT(25);
     return res;
 }
 
