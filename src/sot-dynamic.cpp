@@ -490,5 +490,11 @@ ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
                                         const std::string& jointName )
 {
-
+    if(!this->m_model.existBodyName(jointName))
+    {
+        throw runtime_error ("Robot has no joint corresponding to " + jointName);
+    }
+    int jointId = this->m_model.getBodyId(jointName);
+    createEndeffJacobianSignal(std::string("J")+opPointName,jointId);
+    createPositionSignal(opPointName,jointId);
 }
