@@ -16,39 +16,6 @@ const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
 using namespace std;
 
-static Eigen::VectorXd maalToEigenVectorXd(const ml::Vector& inVector)
-{
-    Eigen::VectorXd vector(inVector.size());
-    for (unsigned int r=0; r<inVector.size(); r++)
-        vector(r) = inVector(r);
-    return vector;
-}
-
-static Eigen::MatrixXd maalToEigenMatrixXd(const ml::Matrix& inMatrix)
-{
-    Eigen::MatrixXd matrix(inMatrix.nbRows(),inMatrix.nbCols());
-    for (unsigned int r=0; r<inMatrix.nbRows(); r++)
-        for (unsigned int c=0; c<inMatrix.nbCols(); c++)
-            matrix(r,c) = inMatrix(r,c);
-    return matrix;
-}
-
-static ml::Vector eigenVectorXdToMaal(const Eigen::VectorXd& inVector)
-{
-    ml::Vector vector(inVector.size());
-    for (unsigned int r=0; r<inVector.size(); r++)
-        vector(r) = inVector(r);
-    return vector;
-}
-
-static ml::Matrix eigenMatrixXdToMaal(const Eigen::MatrixXd& inMatrix)
-{
-    ml::Matrix matrix(inMatrix.rows(),inMatrix.cols());
-    for (unsigned int r=0; r<inMatrix.rows(); r++)
-        for (unsigned int c=0; c<inMatrix.cols(); c++)
-            matrix(r,c) = inMatrix(r,c);
-    return matrix;
-}
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
   ,m_data(NULL)
@@ -195,6 +162,49 @@ void Dynamic::setUrdfPath( const std::string& path )
 /* --- CONVERTION ---------------------------------------------------- */
 /* --- CONVERTION ---------------------------------------------------- */
 /* --- CONVERTION ---------------------------------------------------- */
+
+static Eigen::VectorXd maalToEigenVectorXd(const ml::Vector& inVector)
+{
+    Eigen::VectorXd vector(inVector.size());
+    for (unsigned int r=0; r<inVector.size(); r++)
+        vector(r) = inVector(r);
+    return vector;
+}
+
+static Eigen::MatrixXd maalToEigenMatrixXd(const ml::Matrix& inMatrix)
+{
+    Eigen::MatrixXd matrix(inMatrix.nbRows(),inMatrix.nbCols());
+    for (unsigned int r=0; r<inMatrix.nbRows(); r++)
+        for (unsigned int c=0; c<inMatrix.nbCols(); c++)
+            matrix(r,c) = inMatrix(r,c);
+    return matrix;
+}
+
+static ml::Vector eigenVectorXdToMaal(const Eigen::VectorXd& inVector)
+{
+    ml::Vector vector(inVector.size());
+    for (unsigned int r=0; r<inVector.size(); r++)
+        vector(r) = inVector(r);
+    return vector;
+}
+
+static ml::Matrix eigenMatrixXdToMaal(const Eigen::MatrixXd& inMatrix)
+{
+    ml::Matrix matrix(inMatrix.rows(),inMatrix.cols());
+    for (unsigned int r=0; r<inMatrix.rows(); r++)
+        for (unsigned int c=0; c<inMatrix.cols(); c++)
+            matrix(r,c) = inMatrix(r,c);
+    return matrix;
+}
+
+static void eigenVector3dToMaal( const Eigen::Vector3d& source,
+                ml::Vector & res )
+{
+  sotDEBUG(5) << source <<endl;
+  res(0) = source[0];
+  res(1) = source[1];
+  res(2) = source[2];
+}
 
 Eigen::VectorXd Dynamic::getPinocchioPos(int time)
 {
