@@ -47,12 +47,18 @@ using namespace std;
 namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
+    namespace commande {
+        class CreateOpPoint;
+    }
+
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
+    friend class sot::commande::CreateOpPoint;
+
     DYNAMIC_GRAPH_ENTITY_DECL();
     std::list< dg::SignalBase<int>*  > genericSignalRefs;
 public: /* --- CONSTRUCTION --- */
@@ -161,6 +167,9 @@ public:
  ml::Vector& getLowerTorqueLimits( ml::Vector& res,const int& time );
 
  ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
+
+public: /* --- PARAMS --- */
+ void cmd_createOpPointSignals(const std::string& sig,const std::string& j);
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */

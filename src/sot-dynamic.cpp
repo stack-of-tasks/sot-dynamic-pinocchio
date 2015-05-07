@@ -144,8 +144,32 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     signalRegistration( MomentaSOUT);
     signalRegistration(AngularMomentumSOUT);
     signalRegistration(dynamicDriftSOUT);
-}
 
+    //
+    // Commande
+    //
+    // #### Work in progress
+    using namespace ::dynamicgraph::command;
+    std::string docstring;
+
+    // CreateOpPoint
+    docstring =
+            "    \n"
+            "    Create an operational point attached to a robot joint local frame.\n"
+            "    \n"
+            "      Input: \n"
+            "        - a string: name of the operational point,\n"
+            "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
+            "          , left-wrist, right-wrist, waist, chest).\n"
+            "\n";
+    addCommand("CreateOpPoint",
+               makeCommandVoid2(*this,&Dynamic::cmd_createOpPointSignals,
+                                docstring));
+
+
+
+            // #### End Work in progress
+}
 
 Dynamic::~Dynamic( void )
 {
@@ -383,4 +407,14 @@ ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 {
     //TODO: implement here
     return res;
+}
+
+/* --- COMMANDS ------------------------------------------------------------- */
+/* --- COMMANDS ------------------------------------------------------------- */
+/* --- COMMANDS ------------------------------------------------------------- */
+
+void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
+                 const std::string& jointName )
+{
+
 }
