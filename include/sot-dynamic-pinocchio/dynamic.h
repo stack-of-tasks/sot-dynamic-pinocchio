@@ -83,14 +83,14 @@ public:/*  --- ATRIBUTES --- */
 
 public: /* --- SIGNAL ACTIVATION --- */
  //CAUTION: j as int type, temporary
-    dg::SignalTimeDependent< ml::Matrix,int > & createEndeffJacobianSignal( const std::string& signame, int inJoint );
-    dg::SignalTimeDependent< ml::Matrix,int > & createJacobianSigna       ( const std::string& signame, int inJoint );
+    dg::SignalTimeDependent< ml::Matrix,int > & createEndeffJacobianSignal( const std::string& signame, int jointId );
+    dg::SignalTimeDependent< ml::Matrix,int > & createJacobianSigna       ( const std::string& signame, int jointId );
     void destroyJacobianSignal                                            ( const std::string& signame );
-    dg::SignalTimeDependent< MatrixHomogeneous,int >&createPositionSignal ( const std::string& signame, int inJoint );
+    dg::SignalTimeDependent< MatrixHomogeneous,int >&createPositionSignal ( const std::string& signame, int jointId );
     void destroyPositionSignal                                            ( const std::string& signame );
-    dg::SignalTimeDependent< ml::Vector,int >&     createVelocitySignal   ( const std::string& signame,  int inJoint );
+    dg::SignalTimeDependent< ml::Vector,int >&     createVelocitySignal   ( const std::string& signame,  int jointId );
     void destroyVelocitySignal                                            ( const std::string& signame );
-    dg::SignalTimeDependent< ml::Vector,int >&   createAccelerationSignal ( const std::string& signame, int inJoint );
+    dg::SignalTimeDependent< ml::Vector,int >&   createAccelerationSignal ( const std::string& signame, int jointId );
     void destroyAccelerationSignal                                        ( const std::string& signame );
 
 

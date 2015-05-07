@@ -168,7 +168,7 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
 
 
 
-            // #### End Work in progress
+    // #### End Work in progress
 }
 
 Dynamic::~Dynamic( void )
@@ -191,6 +191,10 @@ void Dynamic::setUrdfPath( const std::string& path )
     if (this->m_data) delete this->m_data;
     this->m_data = new se3::Data(m_model);
 }
+
+/* --- CONVERTION ---------------------------------------------------- */
+/* --- CONVERTION ---------------------------------------------------- */
+/* --- CONVERTION ---------------------------------------------------- */
 
 Eigen::VectorXd Dynamic::getPinocchioPos(int time)
 {
@@ -229,6 +233,76 @@ Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
     a << aFF,aJoints;// assert q.size()==m_model.nq?
     return a;
 }
+
+/* --- SIGNAL ACTIVATION ---------------------------------------------------- */
+/* --- SIGNAL ACTIVATION ---------------------------------------------------- */
+/* --- SIGNAL ACTIVATION ---------------------------------------------------- */
+dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
+createEndeffJacobianSignal( const std::string& signame, int jointId )
+{
+    //TODO: implement here
+    dg::SignalTimeDependent<ml::Matrix,int> res;
+    return res;
+}
+
+dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
+createJacobianSigna( const std::string& signame, int jointId )
+{
+    //TODO: implement here
+    dg::SignalTimeDependent<ml::Matrix,int> res;
+    return res;
+}
+
+void Dynamic::
+destroyJacobianSignal( const std::string& signame )
+{
+    //TODO: implement here
+}
+
+dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
+createPositionSignal ( const std::string& signame, int jointId )
+{
+    //TODO: implement here
+    dg::SignalTimeDependent<MatrixHomogeneous,int> res;
+    return res;
+}
+
+void Dynamic::
+destroyPositionSignal( const std::string& signame )
+{
+    //TODO: implement here
+}
+
+dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
+createVelocitySignal( const std::string& signame,  int jointId )
+{
+    //TODO: implement here
+    dg::SignalTimeDependent<ml::Vector,int> res;
+    return res;
+}
+
+void Dynamic::
+destroyVelocitySignal( const std::string& signame )
+{
+    //TODO: implement here
+}
+
+dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
+createAccelerationSignal( const std::string& signame, int jointId )
+{
+    //TODO: implement here
+    dg::SignalTimeDependent<ml::Vector,int> res;
+    return res;
+}
+
+void Dynamic::
+destroyAccelerationSignal( const std::string& signame )
+{
+    //TODO: implement here
+}
+
+
+
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
@@ -414,7 +488,7 @@ ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 /* --- COMMANDS ------------------------------------------------------------- */
 
 void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
-                 const std::string& jointName )
+                                        const std::string& jointName )
 {
 
 }
