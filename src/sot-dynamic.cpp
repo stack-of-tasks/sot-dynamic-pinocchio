@@ -387,7 +387,12 @@ ml::Matrix& Dynamic::computeJcom( ml::Matrix& res,int time )
 
 ml::Vector& Dynamic::computeCom( ml::Vector& res,int time )
 {
-    //TODO: implement here
+    //Work in progress
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    res.resize(3);
+    eigenVector3dToMaal(this->m_data->com[0],res);
+    sotDEBUGOUT(25);
     return res;
 }
 
