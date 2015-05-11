@@ -9,6 +9,8 @@
 
 #include <dynamic-graph/all-commands.h>
 
+#include <pinocchio/algorithm/kinematics.hpp>
+
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
@@ -462,6 +464,8 @@ int& Dynamic::computeNewtonEuler( int& dummy,int time )
     const Eigen::VectorXd v=getPinocchioVel(time);
     const Eigen::VectorXd a=getPinocchioAcc(time);
     se3::rnea(m_model,*m_data,q,v,a);
+    se3::kinematics(m_model,*m_data,q,v);
+
     return dummy;
 }
 
