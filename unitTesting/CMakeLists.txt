@@ -21,7 +21,8 @@ SET(tests
   dev_test
   dev_test_sign
   dev_test_jacobian
-  dev_test_command)
+  dev_test_command
+  dev_test_all_compute)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
