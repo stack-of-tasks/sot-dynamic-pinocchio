@@ -194,9 +194,9 @@ int main(int argc, char * argv[])
     dyn->computeGenericPosition(Id,matmat,1);
     cout << "Display matmat" << endl;
     cout <<"Matrix homogeneous : "<< matmat << endl;
-    dyn->computeNewtonEuler(dummy,2);
-    dyn->computeGenericPosition(Id,matmat,1);
-    cout <<"Matrix homogeneous : "<< matmat << endl;
+//    dyn->computeNewtonEuler(dummy,2);
+//    dyn->computeGenericPosition(Id,matmat,1);
+//    cout <<"Matrix homogeneous : "<< matmat << endl;
 
 
 
