@@ -10,6 +10,7 @@
 #include <dynamic-graph/all-commands.h>
 
 #include <pinocchio/algorithm/kinematics.hpp>
+#include <pinocchio/spatial/motion.hpp>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
@@ -380,7 +381,21 @@ MatrixHomogeneous& Dynamic::computeGenericPosition( int jointId,MatrixHomogeneou
 
 ml::Vector& Dynamic::computeGenericVelocity( int j,ml::Vector& res,int time )
 {
-    //TODO: implement here
+    //work in progress
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+
+    se3::Motion aRV = this->m_data->v[j];
+    se3::MotionTpl<double>::Vector3 al= aRV.linear();
+    se3::MotionTpl<double>::Vector3 ar= aRV.angular();
+
+    res.resize(6);
+    for( int i=0;i<3;++i )
+      {
+        res(i)=al(i);
+        res(i+3)=ar(i);
+      }
+    sotDEBUGOUT(25);
     return res;
 }
 
