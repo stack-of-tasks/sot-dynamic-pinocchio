@@ -187,9 +187,9 @@ int main(int argc, char * argv[])
         return -1;
     }
 
-    /* ----- ComputegenericPosition ----- */
+    /* ----- computeGenericPosition ----- */
 
-    cout << "Test computeGenericPosition :" << endl;
+    cout << endl << "/* --- Test computegenericPosition --- */" << endl;
     MatrixHomogeneous matmat;
     dyn->computeGenericPosition(Id,matmat,1);
     cout << "Display matmat" << endl;
@@ -198,7 +198,12 @@ int main(int argc, char * argv[])
 //    dyn->computeGenericPosition(Id,matmat,1);
 //    cout <<"Matrix homogeneous : "<< matmat << endl;
 
+    /* ----- computeGenericVelocity ----- */
 
+    cout << endl << "/* --- Test computeGenericVelocity --- */" << endl;
+    ml::Vector restest;
+    dyn->computeGenericVelocity(Id,restest,1);
+    cout <<"restest vector : "<< restest << endl;
 
     delete dyn;
     return 0;

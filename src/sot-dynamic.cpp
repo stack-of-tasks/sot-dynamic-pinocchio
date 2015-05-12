@@ -381,7 +381,7 @@ MatrixHomogeneous& Dynamic::computeGenericPosition( int jointId,MatrixHomogeneou
 
 ml::Vector& Dynamic::computeGenericVelocity( int j,ml::Vector& res,int time )
 {
-    //work in progress
+    //work done
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
