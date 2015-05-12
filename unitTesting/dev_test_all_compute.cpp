@@ -201,9 +201,17 @@ int main(int argc, char * argv[])
     /* ----- computeGenericVelocity ----- */
 
     cout << endl << "/* --- Test computeGenericVelocity --- */" << endl;
-    ml::Vector restest;
-    dyn->computeGenericVelocity(Id,restest,1);
-    cout <<"restest vector : "<< restest << endl;
+    ml::Vector restestVit;
+    dyn->computeGenericVelocity(Id,restestVit,1);
+    cout <<"restestVit vector : "<< restestVit << endl;
+
+
+    /* ----- computeGenericAcceleration ----- */
+
+    cout << endl << "/* --- Test computeGenericAcceleration --- */" << endl;
+    ml::Vector restestAcc;
+    dyn->computeGenericAcceleration(Id,restestAcc,1);
+    cout <<"restestAcc vector : "<< restestAcc << endl;
 
     delete dyn;
     return 0;
