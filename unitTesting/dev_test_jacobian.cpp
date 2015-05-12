@@ -177,6 +177,13 @@ int main(int argc, char * argv[])
     cout << "Dynamic::computeGenericJacobian()" << dyn->computeGenericJacobian(5,res,1)<< endl;
     cout << " Matrix res : \n" << res << endl;
 
+    cout << endl << endl;
+    ml::Matrix res2(5,5);
+    res2.setZero();
+    cout << "//--- Test for computeGenericEndeffJacobian ---//" << endl;
+    cout << "Dynamic::computeGenericEndeffJacobian() : " << endl << dyn->computeGenericEndeffJacobian(5,res2,1) << endl;
+
+
     delete dyn;
     return 0;
 }
