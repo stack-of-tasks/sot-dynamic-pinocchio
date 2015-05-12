@@ -401,7 +401,21 @@ ml::Vector& Dynamic::computeGenericVelocity( int j,ml::Vector& res,int time )
 
 ml::Vector& Dynamic::computeGenericAcceleration( int j,ml::Vector& res,int time )
 {
-    //TODO: implement here
+    //work done
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    se3::Motion aRA = this->m_data->a[j];
+    se3::MotionTpl<double>::Vector3 al= aRA.linear();
+    se3::MotionTpl<double>::Vector3 ar= aRA.angular();
+
+    res.resize(6);
+    for( int i=0;i<3;++i )
+      {
+        res(i)=al(i);
+        res(i+3)=ar(i);
+      }
+
+    sotDEBUGOUT(25);
     return res;
 }
 
