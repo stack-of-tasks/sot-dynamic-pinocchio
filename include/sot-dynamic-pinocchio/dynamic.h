@@ -152,7 +152,7 @@ protected: /* --- METHODS --- */
  //CAUTION: j as int type, temporary
 public:
  ml::Matrix& computeGenericJacobian( int jointId,ml::Matrix& res,int time );
- ml::Matrix& computeGenericEndeffJacobian( int j,ml::Matrix& res,int time );
+ ml::Matrix& computeGenericEndeffJacobian( int jointId,ml::Matrix& res,int time );
  MatrixHomogeneous& computeGenericPosition( int jointId,MatrixHomogeneous& res,int time );
  ml::Vector& computeGenericVelocity( int j,ml::Vector& res,int time );
  ml::Vector& computeGenericAcceleration( int j,ml::Vector& res,int time );

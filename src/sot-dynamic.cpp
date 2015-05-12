@@ -334,21 +334,44 @@ ml::Matrix& Dynamic::computeGenericJacobian( int jointId,ml::Matrix& res,int tim
     return res;
 }
 
-ml::Matrix& Dynamic::computeGenericEndeffJacobian( int aJoint,ml::Matrix& res,int time )
+ml::Matrix& Dynamic::computeGenericEndeffJacobian( int jointId,ml::Matrix& res,int time )
 {
-    //TODO: implement herecurrentcon
+    //Work in progress
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+
+    se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId);
+
+    ml::Matrix J,V(6,6);
+    J.initFromMotherLib(eigenMatrixXdToMaal(m_data->J).accessToMotherLib());
+
+    MatrixHomogeneous M;
+    computeGenericPosition(jointId,M,time);
+
+    for( int i=0;i<3;++i )
+      for( int j=0;j<3;++j )
+        {
+      V(i,j)=M(j,i);
+      V(i+3,j+3)=M(j,i);
+      V(i+3,j)=0.;
+      V(i,j+3)=0.;
+        }
+
+    sotDEBUG(25) << "0Jn = "<< J;
+    sotDEBUG(25) << "V = "<< V;
+    V.multiply(J,res);
+
+    sotTDEBUGOUT(25);
     return res;
 }
 
 MatrixHomogeneous& Dynamic::computeGenericPosition( int jointId,MatrixHomogeneous& res,int time )
 {
-    //Work in progress
-    // issue : homogeneous matrix change with constant values in multi-executions
+    //Work done
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
     se3::SE3 se3tmp = this->m_data->oMi[jointId];
-    //cout << "omi" << this->m_data->oMi[jointId] << endl;
     res.initFromMotherLib(eigenMatrixXdToMaal(se3tmp.toHomogeneousMatrix()).accessToMotherLib());
 
     sotTDEBUGOUT(25);
