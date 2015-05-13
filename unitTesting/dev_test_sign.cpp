@@ -16,98 +16,25 @@ using namespace std;
 using namespace dynamicgraph;
 using namespace dynamicgraph::sot;
 
-/* ----- DUMMY CLASS -----*/
+/* ----- TEST SIGNAL CLASS -----*/
 
-
-template< class Res=double >
-class DummyClass
+class TestSignal
 {
-
 public:
-    DummyClass( void ) : res(),appel(0),timedata(0) {}
-
-    Res& fun( Res& res,int t)
-    {
-        appel++;  timedata=t;
-
-        cout << "DUMMY : " << appel <<" " << timedata << endl;
-
-        sotDEBUG(5) << "Inside " << typeid(Res).name() <<endl;
-        for( list< SignalTimeDependent<double,int>* >::iterator it=inputsig.begin();
-             it!=inputsig.end();++it )
-        { sotDEBUG(5) << *(*it) << endl; (*it)->access(timedata);}
-        for( list< SignalTimeDependent<ml::Vector,int>* >::iterator it=inputsigV.begin();
-             it!=inputsigV.end();++it )
-        { sotDEBUG(5) << *(*it) << endl; (*it)->access(timedata);}
-
-        return res=(*this)();
-    }
-
-    list< SignalTimeDependent<double,int>* > inputsig;
-    list< SignalTimeDependent<ml::Vector,int>* > inputsigV;
-
-    void add( SignalTimeDependent<double,int>& sig ){ inputsig.push_back(&sig); }
-    void add( SignalTimeDependent<ml::Vector,int>& sig ){ inputsigV.push_back(&sig); }
-
-    Res operator() ( void );
-
-    Res res;
-    int appel;
-    int timedata;
+  ml::Vector& initVect( ml::Vector& res, int size );
 
 };
-
-template< class Res >
-Res DummyClass<Res>::operator() (void)
-{ return this->res; }
-
-template<>
-double DummyClass<double>::operator() (void)
+ml::Vector& TestSignal::initVect(ml::Vector& res, int size)
 {
-    res=appel*timedata; return res;
-}
-template<>
-ml::Vector DummyClass<ml::Vector>::operator() (void)
-{
-    if(timedata==1){
-        res.resize(35);
-    }else{
-    res.resize(35);
-    }
-    res.fill(appel*timedata); return res;
+    res.resize(size);
+    res.fill(0);
+    cout <<"Vect 0 size :" << size << endl;
+    return res;
 }
 
-template<>
-VectorUTheta DummyClass<VectorUTheta>::operator() (void)
-{
-    res.fill(12.6); return res;
-}
+TestSignal testSign;
 
-void funtest( ml::Vector& /*v*/ ){ }
-
-/* ----- END DUMMY CLASS -----*/
-
-ml::Vector& setVector(ml::Vector& vect){
-    vect.resize(3);
-    vect.fill(42);
-    return vect;
-}
-
-class Dummy2Class
-{
-
-public:
-  ml::Vector& fun( ml::Vector& res,double j )
-  { res.resize(6); res.fill(j); return res; }
-
-};
-
-ml::Vector data(6);
-ml::Vector data2(35);
-Signal<ml::Vector,double> sig("sigtest");
-Dummy2Class dummy;
-
-ml::Vector& fun( ml::Vector& res,double /*j*/ ) { return res=data; }
+/* ----- END TEST SIGNAL CLASS -----*/
 
 int main(int argc, char * argv[])
 {
@@ -123,12 +50,16 @@ int main(int argc, char * argv[])
     cout<< "Test parsing " << argv[1] << " ..."<<endl;
     Dynamic * dyn = new Dynamic("tot");
     dyn->setUrdfPath( argv[1]);
-    DummyClass<ml::Vector> vectDummyPos;
-    DummyClass<ml::Vector> vectDummyVel;
-    DummyClass<ml::Vector> vectDummyAcc;
-    DummyClass<ml::Vector> vectDummyFreePos;
-    DummyClass<ml::Vector> vectDummyFreeVel;
-    DummyClass<ml::Vector> vectDummyFreeAcc;
+
+    ml::Vector vectPos;
+    ml::Vector vectVel;
+    ml::Vector vectAcc;
+    ml::Vector vectFreePos;
+    ml::Vector vectFreeVel;
+    ml::Vector vectFreeAcc;
+
+    int nq = dyn->m_model.nq;
+    int nv = dyn->m_model.nv;
 
     SignalTimeDependent<ml::Vector, int> sigPosOUT(sotNOSIGNAL,"sigPosOUT");
     SignalTimeDependent<ml::Vector, int> sigVelOUT(sotNOSIGNAL,"sigVelOUT");
@@ -137,13 +68,12 @@ int main(int argc, char * argv[])
     SignalTimeDependent<ml::Vector, int> sigFreeVelOUT(sotNOSIGNAL,"sigFreeVelOUT");
     SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
 
-    //this is an example using DummyClass or Dummy2Class (with or without template)
-    sigPosOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyPos,_1,_2) );
-    sigVelOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyVel,_1,_2) );//class with template
-    sigAccOUT.setFunction(boost::bind(&DummyClass<ml::Vector>::fun,vectDummyAcc,_1,_2) );
-    sigFreePosOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );//class without template
-    sigFreeVelOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
-    sigFreeAccOUT.setFunction(boost::bind(&Dummy2Class::fun,&dummy,_1,_2) );
+    sigPosOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nq) );
+    sigVelOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
+    sigAccOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
+    sigFreePosOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nq) );
+    sigFreeVelOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
+    sigFreeAccOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
     try{
         dyn->jointPositionSIN.plug(&sigPosOUT);
         dyn->jointVelocitySIN.plug(&sigVelOUT);
