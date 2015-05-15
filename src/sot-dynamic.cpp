@@ -327,8 +327,7 @@ ml::Matrix& Dynamic::computeGenericJacobian( int jointId,ml::Matrix& res,int tim
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
-    se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId);
-    res.initFromMotherLib(eigenMatrixXdToMaal(m_data->J).accessToMotherLib());
+    res = eigenMatrixXdToMaal(se3::computeJacobians(this->m_model,*this->m_data,this->getPinocchioPos(time)));
 
     sotDEBUGOUT(25);
 
@@ -341,26 +340,8 @@ ml::Matrix& Dynamic::computeGenericEndeffJacobian( int jointId,ml::Matrix& res,i
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
-    se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId);
-
-    ml::Matrix J,V(6,6);
-    J.initFromMotherLib(eigenMatrixXdToMaal(m_data->J).accessToMotherLib());
-
-    MatrixHomogeneous M;
-    computeGenericPosition(jointId,M,time);
-
-    for( int i=0;i<3;++i )
-      for( int j=0;j<3;++j )
-        {
-      V(i,j)=M(j,i);
-      V(i+3,j+3)=M(j,i);
-      V(i+3,j)=0.;
-      V(i,j+3)=0.;
-        }
-
-    sotDEBUG(25) << "0Jn = "<< J;
-    sotDEBUG(25) << "V = "<< V;
-    V.multiply(J,res);
+    res = eigenMatrixXdToMaal(se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId));
+    //TODO : verify with the size of cjrl matrix returned
 
     sotTDEBUGOUT(25);
     return res;
@@ -421,7 +402,18 @@ ml::Vector& Dynamic::computeGenericAcceleration( int j,ml::Vector& res,int time 
 
 ml::Vector& Dynamic::computeZmp( ml::Vector& res,int time )
 {
-    //TODO: implement here
+    //work in progress
+    sotDEBUGIN(25);
+    //res is latest ZMPval
+    if (res.size()!=3)
+      res.resize(3);
+
+    newtonEulerSINTERN(time);
+    std::vector<se3::Force> ftau = this->m_data->f;
+
+
+    sotDEBUGOUT(25);
+
     return res;
 }
 
@@ -516,7 +508,7 @@ int& Dynamic::computeNewtonEuler( int& dummy,int time )
     const Eigen::VectorXd v=getPinocchioVel(time);
     const Eigen::VectorXd a=getPinocchioAcc(time);
     se3::rnea(m_model,*m_data,q,v,a);
-    se3::kinematics(m_model,*m_data,q,v);
+    //se3::kinematics(m_model,*m_data,q,v);
 
     return dummy;
 }
