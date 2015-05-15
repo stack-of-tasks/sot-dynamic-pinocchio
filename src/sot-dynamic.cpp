@@ -11,6 +11,7 @@
 
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/spatial/motion.hpp>
+#include <pinocchio/algorithm/crba.hpp>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
@@ -453,7 +454,11 @@ ml::Vector& Dynamic::computeCom( ml::Vector& res,int time )
 
 ml::Matrix& Dynamic::computeInertia( ml::Matrix& res,int time )
 {
-    //TODO: implement here
+    //work done
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    res=eigenMatrixXdToMaal(se3::crba(this->m_model,*this->m_data,this->getPinocchioPos(time)));
+    sotDEBUGOUT(25);
     return res;
 }
 
