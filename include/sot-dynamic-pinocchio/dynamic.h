@@ -138,6 +138,8 @@ public:
  dg::SignalTimeDependent<ml::Vector,int> AngularMomentumSOUT;
  dg::SignalTimeDependent<ml::Vector,int> dynamicDriftSOUT;
 
+ ml::Matrix& computeInertia( ml::Matrix& res,int time );
+
 protected: /* --- METHODS --- */
 
  ml::Vector& computeZmp( ml::Vector& res,int time );
@@ -145,7 +147,6 @@ protected: /* --- METHODS --- */
  ml::Vector& computeAngularMomentum( ml::Vector &res, int time);
  ml::Matrix& computeJcom( ml::Matrix& res,int time );
  ml::Vector& computeCom( ml::Vector& res,int time );
- ml::Matrix& computeInertia( ml::Matrix& res,int time );
  ml::Matrix& computeInertiaReal( ml::Matrix& res,int time );
  double& computeFootHeight( double& res,int time );
 

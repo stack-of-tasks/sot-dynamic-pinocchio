@@ -213,6 +213,12 @@ int main(int argc, char * argv[])
     dyn->computeGenericAcceleration(Id,restestAcc,1);
     cout <<"restestAcc vector : "<< restestAcc << endl;
 
+    /* ----- computeInertia ----- */
+    cout << endl << "/* --- Test computeInertia --- */" << endl;
+    ml::Matrix restestInertia;
+    dyn->computeInertia(restestInertia,1);
+    cout <<"restestInertia Matrix : "<< restestInertia << endl;
+
     delete dyn;
     return 0;
 }
