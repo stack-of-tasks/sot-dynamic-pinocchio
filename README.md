@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 sot-dynamic
 ===========
 
@@ -59,4 +58,3 @@ have to be available on your machine.
 =======
 # sot-dynamic-pinocchio
 Encapsulate Pinocchio in SoT
->>>>>>> 056cbb3c42519e754972c8faf0b9d5b54887dbae
