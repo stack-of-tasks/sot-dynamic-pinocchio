@@ -278,6 +278,26 @@ void Dynamic::
 destroyJacobianSignal( const std::string& signame )
 {
     //TODO: implement here
+    bool deletable = false;
+    dg::SignalTimeDependent< ml::Matrix,int > * sig = & jacobiansSOUT( signame );
+    for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
+      iter != genericSignalRefs.end();
+      ++iter )
+      {
+        if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
+      }
+
+    if(! deletable )
+      {
+        SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
+                       "Cannot destroy signal",
+                       " (while trying to remove generic jac. signal <%s>).",
+                       signame.c_str() );
+      }
+
+    signalDeregistration( signame );
+
+    delete sig;
 }
 
 dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
@@ -302,7 +322,27 @@ createPositionSignal ( const std::string& signame, int jointId )
 void Dynamic::
 destroyPositionSignal( const std::string& signame )
 {
-    //TODO: implement here
+    //work done
+    bool deletable = false;
+    dg::SignalTimeDependent< MatrixHomogeneous,int > * sig = & positionsSOUT( signame );
+    for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
+      iter != genericSignalRefs.end();
+      ++iter )
+      {
+        if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
+      }
+
+    if(! deletable )
+      {
+        SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
+                       "Cannot destroy signal",
+                       " (while trying to remove generic pos. signal <%s>).",
+                       signame.c_str() );
+      }
+
+    signalDeregistration( signame );
+
+    delete sig;
 }
 
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
