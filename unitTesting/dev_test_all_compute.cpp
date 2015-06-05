@@ -145,6 +145,12 @@ int main(int argc, char * argv[])
     dyn->computeInertia(restestInertia,1);
     cout <<"restestInertia Matrix : "<< restestInertia << endl;
 
+    /* ----- computeZMP ----- */
+    cout << endl << "/* --- Test computeZMP --- */" << endl;
+    ml::Vector restestZMP;
+    dyn->computeZmp(restestZMP,1);
+    cout <<"restestZMP Vector : "<< restestZMP << endl;
+
     delete dyn;
     return 0;
 }
