@@ -403,15 +403,19 @@ ml::Vector& Dynamic::computeGenericAcceleration( int j,ml::Vector& res,int time 
 
 ml::Vector& Dynamic::computeZmp( ml::Vector& res,int time )
 {
-    //work in progress
+    //To be verified
     sotDEBUGIN(25);
-    //res is latest ZMPval
     if (res.size()!=3)
       res.resize(3);
 
     newtonEulerSINTERN(time);
-    std::vector<se3::Force> ftau = this->m_data->f;
-
+    se3::Force ftau = this->m_data->f[0];  //com ?
+    //ml::Vector tau(3);
+    se3::Force::Vector3 tau = ftau.angular();
+    se3::Force::Vector3 f = ftau.linear();
+    res(2) = 0;
+    res(0) = -tau[1]/f[2];//tau : x y z ?
+    res(1) = tau[0]/f[2];
 
     sotDEBUGOUT(25);
 
