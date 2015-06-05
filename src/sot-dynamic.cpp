@@ -254,9 +254,16 @@ Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
 createEndeffJacobianSignal( const std::string& signame, int jointId )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Matrix,int> res;
-    return res;
+    //Work done
+    dg::SignalTimeDependent< ml::Matrix,int > * sig
+      = new dg::SignalTimeDependent< ml::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
+        newtonEulerSINTERN,
+        "sotDynamic("+name+")::output(matrix)::"+signame );
+
+    genericSignalRefs.push_back( sig );
+    signalRegistration( *sig );
+    return *sig;
 }
 
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
@@ -276,9 +283,20 @@ destroyJacobianSignal( const std::string& signame )
 dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
 createPositionSignal ( const std::string& signame, int jointId )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<MatrixHomogeneous,int> res;
-    return res;
+    //Work done
+    sotDEBUGIN(15);
+
+    dg::SignalTimeDependent< MatrixHomogeneous,int > * sig
+      = new dg::SignalTimeDependent< MatrixHomogeneous,int >
+      ( boost::bind(&Dynamic::computeGenericPosition,this,jointId,_1,_2),
+        newtonEulerSINTERN,
+        "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+
+    genericSignalRefs.push_back( sig );
+    signalRegistration( *sig );
+
+    sotDEBUGOUT(15);
+    return *sig;;
 }
 
 void Dynamic::
