@@ -57,12 +57,17 @@ int main(int argc, char * argv[])
     int nq = dyn->m_model.nq;
     int nv = dyn->m_model.nv;
 
+    //Signals OUT (extern of dynamic)
     SignalTimeDependent<ml::Vector, int> sigPosOUT(sotNOSIGNAL,"sigPosOUT");
     SignalTimeDependent<ml::Vector, int> sigVelOUT(sotNOSIGNAL,"sigVelOUT");
     SignalTimeDependent<ml::Vector, int> sigAccOUT(sotNOSIGNAL,"sigAccOUT");
     SignalTimeDependent<ml::Vector, int> sigFreePosOUT(sotNOSIGNAL,"sigFreePosOUT");
     SignalTimeDependent<ml::Vector, int> sigFreeVelOUT(sotNOSIGNAL,"sigFreeVelOUT");
     SignalTimeDependent<ml::Vector, int> sigFreeAccOUT(sotNOSIGNAL,"sigFreeAccOUT");
+
+    //Signals IN (extern of dynamic)
+    SignalPtr<ml::Matrix,int> sigTestOpPointJacobianSIN(NULL,"sigTestOpPointJacobianSIN");
+    SignalPtr<MatrixHomogeneous,int> sigTestOpPointHomoSIN(NULL,"sigTestOpPointHomoSIN");
 
     sigPosOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nq) );
     sigVelOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
@@ -106,6 +111,10 @@ int main(int argc, char * argv[])
     /* ----- computeGenericPosition ----- */
     cout << endl << "/* --- Test computeGenericPosition --- */" << endl;
     dyn->cmd_createOpPointSignals("coucou","CHEST");
+    dyn->displaySignalList(cout);
+    sigTestOpPointJacobianSIN.plug(*dyn->genericSignalRefs.begin());
+    sigTestOpPointHomoSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+    sigTestOpPointJacobianSIN.access(1);
     dyn->displaySignalList(cout);
     delete dyn;
     return 0;
