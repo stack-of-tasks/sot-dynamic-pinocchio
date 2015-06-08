@@ -81,12 +81,12 @@ int main(int argc, char * argv[])
 
     catch(sot::ExceptionAbstract& e ) { cout << e << endl; exit(1); }
 
-    sigPosOUT.access(1); sigPosOUT.setReady();
-    sigVelOUT.access(2); sigVelOUT.setReady();
-    sigAccOUT.access(3); sigAccOUT.setReady();
-    sigFreePosOUT.access(1); sigFreePosOUT.setReady();
-    sigFreeVelOUT.access(2); sigFreeVelOUT.setReady();
-    sigFreeAccOUT.access(3); sigFreeAccOUT.setReady();
+    //    sigPosOUT.access(1); sigPosOUT.setReady();
+    //    sigVelOUT.access(2); sigVelOUT.setReady();
+    //    sigAccOUT.access(3); sigAccOUT.setReady();
+    //    sigFreePosOUT.access(1); sigFreePosOUT.setReady();
+    //    sigFreeVelOUT.access(2); sigFreeVelOUT.setReady();
+    //    sigFreeAccOUT.access(3); sigFreeAccOUT.setReady();
 
     int dummy(0);
 
@@ -106,7 +106,7 @@ int main(int argc, char * argv[])
     /* ----- computeGenericPosition ----- */
     cout << endl << "/* --- Test computeGenericPosition --- */" << endl;
     dyn->cmd_createOpPointSignals("coucou","CHEST");
-
+    dyn->displaySignalList(cout);
     delete dyn;
     return 0;
 }
