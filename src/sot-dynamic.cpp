@@ -593,9 +593,19 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::velocitiesSOUT( const std::str
 
 dg::SignalTimeDependent<ml::Vector,int>& Dynamic::accelerationsSOUT( const std::string& name )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Vector,int> res;
-    return res;
+    //Work in progress
+    SignalBase<int> & sigabs = Entity::getSignal(name);
+
+    try {
+      dg::SignalTimeDependent<ml::Vector,int>& res
+        = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+      return res;
+    } catch( std::bad_cast e ) {
+      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                    "Impossible cast.",
+                    " (while getting signal <%s> of type Vector.",
+                    name.c_str());
+    }
 }
 
 int& Dynamic::computeNewtonEuler( int& dummy,int time )
