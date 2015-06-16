@@ -543,9 +543,19 @@ double&     Dynamic::computeFootHeight( double& res,int time )
 /* --- SIGNAL --------------------------------------------------------------- */
 dg::SignalTimeDependent<ml::Matrix,int>& Dynamic::jacobiansSOUT( const std::string& name )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Matrix,int> res;
-    return res;
+    //Work in progress
+    SignalBase<int> & sigabs = Entity::getSignal(name);
+
+    try {
+      dg::SignalTimeDependent<ml::Matrix,int>& res
+        = dynamic_cast< dg::SignalTimeDependent<ml::Matrix,int>& >( sigabs );
+      return res;
+    } catch( std::bad_cast e ) {
+      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                    "Impossible cast.",
+                    " (while getting signal <%s> of type matrix.",
+                    name.c_str());
+    }
 }
 
 dg::SignalTimeDependent<MatrixHomogeneous,int>& Dynamic::positionsSOUT( const std::string& name )
