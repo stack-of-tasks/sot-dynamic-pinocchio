@@ -560,9 +560,19 @@ dg::SignalTimeDependent<ml::Matrix,int>& Dynamic::jacobiansSOUT( const std::stri
 
 dg::SignalTimeDependent<MatrixHomogeneous,int>& Dynamic::positionsSOUT( const std::string& name )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<MatrixHomogeneous,int> res;
-    return res;
+    //Work in progress
+    SignalBase<int> & sigabs = Entity::getSignal(name);
+
+    try {
+      dg::SignalTimeDependent<MatrixHomogeneous,int>& res
+        = dynamic_cast< dg::SignalTimeDependent<MatrixHomogeneous,int>& >( sigabs );
+      return res;
+    } catch( std::bad_cast e ) {
+      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                    "Impossible cast.",
+                    " (while getting signal <%s> of type matrixHomo.",
+                    name.c_str());
+    }
 }
 
 dg::SignalTimeDependent<ml::Vector,int>& Dynamic::velocitiesSOUT( const std::string& name )
