@@ -676,3 +676,9 @@ void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
     createEndeffJacobianSignal(std::string("J")+opPointName,jointId);
     createPositionSignal(opPointName,jointId);
 }
+
+void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
+                 const std::string& jointName )
+{
+    //TODO : implement here
+}
