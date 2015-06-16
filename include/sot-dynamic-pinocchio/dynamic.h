@@ -84,7 +84,7 @@ public:/*  --- ATRIBUTES --- */
 public: /* --- SIGNAL ACTIVATION --- */
  //CAUTION: j as int type, temporary
     dg::SignalTimeDependent< ml::Matrix,int > & createEndeffJacobianSignal( const std::string& signame, int jointId );
-    dg::SignalTimeDependent< ml::Matrix,int > & createJacobianSigna       ( const std::string& signame, int jointId );
+    dg::SignalTimeDependent< ml::Matrix,int > & createJacobianSignal      ( const std::string& signame, int jointId );
     void destroyJacobianSignal                                            ( const std::string& signame );
     dg::SignalTimeDependent< MatrixHomogeneous,int >&createPositionSignal ( const std::string& signame, int jointId );
     void destroyPositionSignal                                            ( const std::string& signame );
@@ -173,7 +173,7 @@ public:
 
 public: /* --- PARAMS --- */
  void cmd_createOpPointSignals(const std::string& sig,const std::string& j);
- void cmd_createJacobianWorldSignal      ( const std::string& sig,const std::string& j );
+ void cmd_createJacobianWorldSignal( const std::string& sig,const std::string& j );
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */

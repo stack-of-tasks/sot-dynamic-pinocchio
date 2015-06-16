@@ -267,11 +267,18 @@ createEndeffJacobianSignal( const std::string& signame, int jointId )
 }
 
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
-createJacobianSigna( const std::string& signame, int jointId )
+createJacobianSignal( const std::string& signame, int jointId )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Matrix,int> res;
-    return res;
+    //Work in progress
+    dg::SignalTimeDependent< ml::Matrix,int > * sig
+      = new dg::SignalTimeDependent< ml::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
+        newtonEulerSINTERN,
+        "sotDynamic("+name+")::output(matrix)::"+signame );
+
+    genericSignalRefs.push_back( sig );
+    signalRegistration( *sig );
+    return *sig;
 }
 
 void Dynamic::
