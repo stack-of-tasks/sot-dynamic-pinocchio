@@ -724,7 +724,13 @@ void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
 void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
                                                    const std::string& jointName )
 {
-  //TODO: implement here
+    //Work in progress
+    if(!this->m_model.existBodyName(jointName))
+    {
+        throw runtime_error ("Robot has no joint corresponding to " + jointName);
+    }
+    int jointId = this->m_model.getBodyId(jointName);
+    createEndeffJacobianSignal(signalName, jointId);
 }
 
 void Dynamic::cmd_createPositionSignal( const std::string& signalName,
@@ -732,3 +738,4 @@ void Dynamic::cmd_createPositionSignal( const std::string& signalName,
 {
     //TODO: implement here
 }
+
