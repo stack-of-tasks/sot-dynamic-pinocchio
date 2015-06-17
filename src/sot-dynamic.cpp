@@ -137,7 +137,22 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
                makeCommandVoid2(*this,&Dynamic::cmd_createOpPointSignals,
                                 docstring));
 
+    docstring = docCommandVoid2("Create a jacobian (world frame) signal only for one joint.",
+                "string (signal name)","string (joint name)");
+    addCommand("createJacobian",
+       makeCommandVoid2(*this,&Dynamic::cmd_createJacobianWorldSignal,
+                docstring));
 
+    docstring = docCommandVoid2("Create a jacobian (endeff frame) signal only for one joint.",
+                "string (signal name)","string (joint name)");
+    addCommand("createJacobianEndEff",
+       makeCommandVoid2(*this,&Dynamic::cmd_createJacobianEndEffectorSignal,
+                docstring));
+
+    docstring = docCommandVoid2("Create a position (matrix homo) signal only for one joint.",
+                "string (signal name)","string (joint name)");
+    addCommand("createPosition",
+       makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
 
     // #### End Work in progress
 }
