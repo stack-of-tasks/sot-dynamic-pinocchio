@@ -174,6 +174,7 @@ public:
 public: /* --- PARAMS --- */
  void cmd_createOpPointSignals(const std::string& sig,const std::string& j);
  void cmd_createJacobianWorldSignal( const std::string& sig,const std::string& j );
+ void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
 
 };
 } /* namespace sot */} /* namespace dynamicgraph */

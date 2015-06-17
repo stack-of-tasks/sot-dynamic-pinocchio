@@ -695,3 +695,9 @@ void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
     int jointId = this->m_model.getBodyId(jointName);
     createJacobianSignal(signalName, jointId);
 }
+
+void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
+                         const std::string& jointName )
+{
+  //TODO: implement here
+}
