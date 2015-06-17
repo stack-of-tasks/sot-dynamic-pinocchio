@@ -322,6 +322,10 @@ destroyJacobianSignal( const std::string& signame )
     delete sig;
 }
 
+/* --- POINT --- */
+/* --- POINT --- */
+/* --- POINT --- */
+
 dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
 createPositionSignal ( const std::string& signame, int jointId )
 {
@@ -367,6 +371,10 @@ destroyPositionSignal( const std::string& signame )
     delete sig;
 }
 
+/* --- VELOCITY --- */
+/* --- VELOCITY --- */
+/* --- VELOCITY --- */
+
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
 createVelocitySignal( const std::string& signame,  int jointId )
 {
@@ -380,6 +388,10 @@ destroyVelocitySignal( const std::string& signame )
 {
     //TODO: implement here
 }
+
+/* --- ACCELERATION --- */
+/* --- ACCELERATION --- */
+/* --- ACCELERATION --- */
 
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
 createAccelerationSignal( const std::string& signame, int jointId )
@@ -558,7 +570,11 @@ double&     Dynamic::computeFootHeight( double& res,int time )
     return res;
 }
 
-
+ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
+{
+    //TODO: implement here
+    return res;
+}
 
 /* --- SIGNAL --------------------------------------------------------------- */
 /* --- SIGNAL --------------------------------------------------------------- */
@@ -672,12 +688,6 @@ ml::Vector& Dynamic::getUpperTorqueLimits( ml::Vector& res,const int& time )
 }
 
 ml::Vector& Dynamic::getLowerTorqueLimits( ml::Vector& res,const int& time )
-{
-    //TODO: implement here
-    return res;
-}
-
-ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 {
     //TODO: implement here
     return res;
