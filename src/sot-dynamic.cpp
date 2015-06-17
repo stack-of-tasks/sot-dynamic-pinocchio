@@ -685,7 +685,7 @@ void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
 }
 
 void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
-                 const std::string& jointName )
+                                             const std::string& jointName )
 {
     //Work in progress
     if(!this->m_model.existBodyName(jointName))
@@ -697,7 +697,13 @@ void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
 }
 
 void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
-                         const std::string& jointName )
+                                                   const std::string& jointName )
 {
   //TODO: implement here
+}
+
+void Dynamic::cmd_createPositionSignal( const std::string& signalName,
+                                        const std::string& jointName )
+{
+    //TODO: implement here
 }
