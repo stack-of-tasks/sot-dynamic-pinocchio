@@ -68,6 +68,9 @@ int main(int argc, char * argv[])
     //Signals IN (extern of dynamic)
     SignalPtr<ml::Matrix,int> sigTestOpPointJacobianSIN(NULL,"sigTestOpPointJacobianSIN");
     SignalPtr<MatrixHomogeneous,int> sigTestOpPointHomoSIN(NULL,"sigTestOpPointHomoSIN");
+    SignalPtr<ml::Matrix,int> sigTestJacobianWorldSIN(NULL,"sigTestJacobianWorldSIN");
+    SignalPtr<ml::Matrix,int> sigTestJacobianEndEffectorSIN(NULL,"sigTestJacobianEndEffectorSIN");
+    SignalPtr<MatrixHomogeneous,int> sigTestPositionSIN(NULL,"sigTestPositionSIN");
 
     sigPosOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nq) );
     sigVelOUT.setFunction(boost::bind(&TestSignal::initVect,&testSign,_1,nv) );
@@ -108,14 +111,32 @@ int main(int argc, char * argv[])
         return -1;
     }
 
-    /* ----- computeGenericPosition ----- */
-    cout << endl << "/* --- Test computeGenericPosition --- */" << endl;
-    dyn->cmd_createOpPointSignals("coucou","CHEST");
+    /* ----- cmd_createOpPointSignals ----- */
+    cout << endl << "/* --- Test cmd_createOpPointSignals --- */" << endl;
+    dyn->cmd_createOpPointSignals("OpPoint","CHEST");
     dyn->displaySignalList(cout);
     sigTestOpPointJacobianSIN.plug(*dyn->genericSignalRefs.begin());
     sigTestOpPointHomoSIN.plug(*(++(dyn->genericSignalRefs.begin())));
     sigTestOpPointJacobianSIN.access(1);
+
+    /* ----- cmd_createJacobianWorldSignal ----- */
+    cout << endl << "/* --- Test cmd_createJacobianWorldSignal --- */" << endl;
+    dyn->cmd_createJacobianWorldSignal("JacobianWorld","CHEST");
+    sigTestJacobianWorldSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+
+    /* ----- cmd_createJacobianEndEffectorSignal ----- */
+    cout << endl << "/* --- Test cmd_createJacobianEndEffectorSignal --- */" << endl;
+    dyn->cmd_createJacobianEndEffectorSignal("JacobianEndEffector","CHEST");
+    sigTestJacobianEndEffectorSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+
+    /* ----- cmd_createPositionSignal ----- */
+    cout << endl << "/* --- Test cmd_createPositionSignal --- */" << endl;
+    dyn->cmd_createPositionSignal("Position","CHEST");
+    sigTestPositionSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+
+
     dyn->displaySignalList(cout);
+
     delete dyn;
     return 0;
 }
