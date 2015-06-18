@@ -123,17 +123,19 @@ int main(int argc, char * argv[])
     cout << endl << "/* --- Test cmd_createJacobianWorldSignal --- */" << endl;
     dyn->cmd_createJacobianWorldSignal("JacobianWorld","CHEST");
     sigTestJacobianWorldSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+    sigTestJacobianWorldSIN.access(2);
 
     /* ----- cmd_createJacobianEndEffectorSignal ----- */
     cout << endl << "/* --- Test cmd_createJacobianEndEffectorSignal --- */" << endl;
     dyn->cmd_createJacobianEndEffectorSignal("JacobianEndEffector","CHEST");
     sigTestJacobianEndEffectorSIN.plug(*(++(dyn->genericSignalRefs.begin())));
+    sigTestJacobianEndEffectorSIN.access(3);
 
     /* ----- cmd_createPositionSignal ----- */
     cout << endl << "/* --- Test cmd_createPositionSignal --- */" << endl;
     dyn->cmd_createPositionSignal("Position","CHEST");
     sigTestPositionSIN.plug(*(++(dyn->genericSignalRefs.begin())));
-
+    sigTestPositionSIN.access(4);
 
     dyn->displaySignalList(cout);
 
