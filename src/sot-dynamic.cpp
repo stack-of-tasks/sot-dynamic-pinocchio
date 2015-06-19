@@ -304,7 +304,7 @@ createJacobianSignal( const std::string& signame, int jointId )
 void Dynamic::
 destroyJacobianSignal( const std::string& signame )
 {
-    //TODO: implement here
+    //Work done
     bool deletable = false;
     dg::SignalTimeDependent< ml::Matrix,int > * sig = & jacobiansSOUT( signame );
     for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
@@ -615,7 +615,18 @@ ml::Matrix& Dynamic::computeInertia( ml::Matrix& res,int time )
 
 ml::Matrix& Dynamic::computeInertiaReal( ml::Matrix& res,int time )
 {
-    //TODO: implement here
+    //Work in progress
+    sotDEBUGIN(25);
+
+    const ml::Matrix & A = inertiaSOUT(time);
+    const ml::Vector & gearRatio = gearRatioSOUT(time);
+    const ml::Vector & inertiaRotor = inertiaRotorSOUT(time);
+
+    res = A;
+    for( unsigned int i=0;i<gearRatio.size();++i )
+      res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i));
+
+    sotDEBUGOUT(25);
     return res;
 }
 
