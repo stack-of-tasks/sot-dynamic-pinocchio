@@ -170,6 +170,10 @@ Dynamic::~Dynamic( void )
     return;
 }
 
+/* --- CONFIG --------------------------------------------------------------- */
+/* --- CONFIG --------------------------------------------------------------- */
+/* --- CONFIG --------------------------------------------------------------- */
+
 void Dynamic::setUrdfPath( const std::string& path )
 {
     this->m_model = se3::urdf::buildModel(path, true);
@@ -266,6 +270,7 @@ Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
+
 dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
 createEndeffJacobianSignal( const std::string& signame, int jointId )
 {
@@ -378,15 +383,44 @@ destroyPositionSignal( const std::string& signame )
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
 createVelocitySignal( const std::string& signame,  int jointId )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Vector,int> res;
-    return res;
+    //Work in progress
+    sotDEBUGIN(15);
+    SignalTimeDependent< ml::Vector,int > * sig
+      = new SignalTimeDependent< ml::Vector,int >
+      ( boost::bind(&Dynamic::computeGenericVelocity,this,jointId,_1,_2),
+        newtonEulerSINTERN,
+        "sotDynamic("+name+")::output(ml::Vector)::"+signame );
+    genericSignalRefs.push_back( sig );
+    signalRegistration( *sig );
+
+    sotDEBUGOUT(15);
+    return *sig;
 }
 
 void Dynamic::
 destroyVelocitySignal( const std::string& signame )
 {
-    //TODO: implement here
+    //Work in progress
+    bool deletable = false;
+    SignalTimeDependent< ml::Vector,int > * sig = & velocitiesSOUT( signame );
+    for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
+      iter != genericSignalRefs.end();
+      ++iter )
+      {
+        if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
+      }
+
+    if(! deletable )
+      {
+        SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
+                       "Cannot destroy signal",
+                       " (while trying to remove generic pos. signal <%s>).",
+                       signame.c_str() );
+      }
+
+    signalDeregistration( signame );
+
+    delete sig;
 }
 
 /* --- ACCELERATION --- */
