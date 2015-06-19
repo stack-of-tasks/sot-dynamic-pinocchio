@@ -313,7 +313,6 @@ destroyJacobianSignal( const std::string& signame )
       {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
       }
-
     if(! deletable )
       {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
@@ -321,7 +320,6 @@ destroyJacobianSignal( const std::string& signame )
                        " (while trying to remove generic jac. signal <%s>).",
                        signame.c_str() );
       }
-
     signalDeregistration( signame );
 
     delete sig;
@@ -362,7 +360,6 @@ destroyPositionSignal( const std::string& signame )
       {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
       }
-
     if(! deletable )
       {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
@@ -370,7 +367,6 @@ destroyPositionSignal( const std::string& signame )
                        " (while trying to remove generic pos. signal <%s>).",
                        signame.c_str() );
       }
-
     signalDeregistration( signame );
 
     delete sig;
@@ -409,7 +405,6 @@ destroyVelocitySignal( const std::string& signame )
       {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
       }
-
     if(! deletable )
       {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
@@ -417,9 +412,7 @@ destroyVelocitySignal( const std::string& signame )
                        " (while trying to remove generic pos. signal <%s>).",
                        signame.c_str() );
       }
-
     signalDeregistration( signame );
-
     delete sig;
 }
 
@@ -430,15 +423,43 @@ destroyVelocitySignal( const std::string& signame )
 dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
 createAccelerationSignal( const std::string& signame, int jointId )
 {
-    //TODO: implement here
-    dg::SignalTimeDependent<ml::Vector,int> res;
-    return res;
+    //Work in progress
+    sotDEBUGIN(15);
+    dg::SignalTimeDependent< ml::Vector,int > * sig
+      = new dg::SignalTimeDependent< ml::Vector,int >
+      ( boost::bind(&Dynamic::computeGenericAcceleration,this,jointId,_1,_2),
+        newtonEulerSINTERN,
+        "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+
+    genericSignalRefs.push_back( sig );
+    signalRegistration( *sig );
+
+    sotDEBUGOUT(15);
+    return *sig;
 }
 
 void Dynamic::
 destroyAccelerationSignal( const std::string& signame )
 {
-    //TODO: implement here
+    //Work in progress
+    bool deletable = false;
+    dg::SignalTimeDependent< ml::Vector,int > * sig = & accelerationsSOUT( signame );
+    for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
+      iter != genericSignalRefs.end();
+      ++iter )
+      {
+        if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
+      }
+    if(! deletable )
+      {
+        SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
+                    getName() + ":cannot destroy signal",
+                    " (while trying to remove generic acc "
+                    "signal <%s>).",
+                    signame.c_str() );
+      }
+    signalDeregistration( signame );
+    delete sig;
 }
 
 
