@@ -1,3 +1,4 @@
+#define EIGEN_INITIALIZE_MATRICES_BY_NAN
 
 #include <sot-dynamic-pinocchio/dynamic.h>
 #include <sot/core/debug.hh>
@@ -95,24 +96,41 @@ int main(int argc, char * argv[])
 
     int dummy(0);
 
+    /*  -----  get body -----   */
+//    cout << "Get body guard" << endl;
+    string name_body("CHEST");
+    int Id;
+    if(dyn->m_model.existBodyName(name_body))
+    {
+        Id = dyn->m_model.getBodyId(name_body);
+    }
+    else{
+        cout << "ERROR : Any body with this name!"<< endl;
+        return -1;
+    }
+
+    /* ----- Test Jacobians ----- */
+
     cout << "test Pinocchio sizes" << endl;
     cout << dyn->getPinocchioPos(1).size()<<endl;
     cout << dyn->getPinocchioVel(1).size()<<endl;
     cout << dyn->getPinocchioAcc(1).size()<<endl;
     cout << "end test \n\n\n" << endl;
-    cout << "data Jcom : " << dyn->m_data->Jcom << endl;
-    cout << "data J : " << dyn->m_data->J << endl;
-    cout << "se3::jacobian()" << se3::jacobian(dyn->m_model,*dyn->m_data,dyn->getPinocchioPos(1),5)<< endl;
-    ml::Matrix res(5,5);
-    res.setZero();
-    cout << "Dynamic::computeGenericJacobian()" << dyn->computeGenericJacobian(5,res,1)<< endl;
-    cout << " Matrix res : \n" << res << endl;
+    cout << "data Jcom : \n" << dyn->m_data->Jcom << endl;
+    cout << "data J : \n" << dyn->m_data->J << endl;
+    cout << "se3::jacobian()\n" << se3::jacobian(dyn->m_model,*dyn->m_data,dyn->getPinocchioPos(1),Id)<< endl;
 
-    cout << endl << endl;
     ml::Matrix res2(5,5);
     res2.setZero();
     cout << "//--- Test for computeGenericEndeffJacobian ---//" << endl;
-    cout << "Dynamic::computeGenericEndeffJacobian() : " << endl << dyn->computeGenericEndeffJacobian(5,res2,1) << endl;
+    cout << "Dynamic::computeGenericEndeffJacobian() : \n" << dyn->computeGenericEndeffJacobian(Id,res2,1) << endl;
+
+    ml::Matrix res(5,5);
+    res.setZero();
+    cout << "//--- Test for computeGenericJacobian ---//" << endl;
+    cout << "Dynamic::computeGenericJacobian() : \n" << dyn->computeGenericJacobian(Id,res,1)<< endl;
+    //cout << " Matrix res : \n" << res << endl;
+
 
 
     delete dyn;
