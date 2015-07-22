@@ -113,6 +113,20 @@ int main(int argc, char * argv[])
     cout << "data alpha[1] : " << dyn->m_data->a[1] << endl;
     cout << "data f[1`] : " << dyn->m_data->f[1] << endl;
 
+    /* ----- Test accesseurs ----- */
+
+    ml::Vector resJointUpLim;
+    dyn->getUpperJointLimits(resJointUpLim,1);
+    cout << "Joint Upper Limits : \n" << resJointUpLim << endl;
+
+    ml::Vector resJointLowLim;
+    dyn->getLowerJointLimits(resJointLowLim,1);
+    cout << "Joint Lower Limits : \n" << resJointLowLim << endl;
+
+    ml::Vector resVelLim;
+    dyn->getUpperVelocityLimits(resVelLim,1);
+    cout << "Velocity Limits : \n" << resVelLim << endl;
+
     delete dyn;
     return 0;
 }

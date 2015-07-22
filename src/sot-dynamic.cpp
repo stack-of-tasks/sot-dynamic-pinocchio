@@ -737,7 +737,12 @@ ml::Vector& Dynamic::getLowerJointLimits( ml::Vector& res,const int& time )
 
 ml::Vector& Dynamic::getUpperVelocityLimits( ml::Vector& res,const int& time )
 {
-    //TODO: implement here
+    //Work done
+    sotDEBUGIN(15);
+    newtonEulerSINTERN(time);
+    res = eigenVectorXdToMaal(this->m_data->velocityLimit);
+
+    sotDEBUGOUT(15);
     return res;
 }
 

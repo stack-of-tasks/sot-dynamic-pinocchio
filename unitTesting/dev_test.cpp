@@ -34,16 +34,6 @@ int main(int argc, char * argv[])
     ml::Vector v(dyn->m_model.nv);
     ml::Vector a(dyn->m_model.nv);
 
-    /* ----- Test accesseurs ----- */
-
-    ml::Vector resJointUpLim;
-    dyn->getUpperJointLimits(resJointUpLim,1);
-    cout << "Joint Upper Limits : \n" << resJointUpLim << endl;
-
-    ml::Vector resJointLowLim;
-    dyn->getLowerJointLimits(resJointLowLim,1);
-    cout << "Joint Lower Limits : \n" << resJointLowLim << endl;
-
     delete dyn;
     return 0;
 }
