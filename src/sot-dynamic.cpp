@@ -725,18 +725,11 @@ int& Dynamic::computeNewtonEuler( int& dummy,int time )
 
 ml::Vector& Dynamic::getUpperJointLimits( ml::Vector& res,const int& time )
 {
-    //Work in progress
+    //Work done
     sotDEBUGIN(15);
-    const unsigned int NbJoints = this->m_model.nFixBody;
-    for(unsigned int i=0; i<NbJoints;++i)
-    {
-        /*
-        const se3::JointModelBase joint = this->m_data->joints[i];
-        res(i)= joint.upperPosLimit();
-        */
-    }
 
-    sotDEBUG(15) << "upperLimit (" << NbJoints << ")=" << res <<endl;
+    res= eigenVectorXdToMaal(this->m_data->upperPositionLimit);
+
     sotDEBUGOUT(15);
     return res;
 }
