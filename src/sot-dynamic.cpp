@@ -61,17 +61,9 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
                 sotNOSIGNAL,
                 "sotDynamic("+name+")::output(vector)::upperVl" )
 
-  ,lowerVlSOUT( boost::bind(&Dynamic::getLowerVelocityLimits,this,_1,_2),
-                sotNOSIGNAL,
-                "sotDynamic("+name+")::output(vector)::lowerVl" )
-
   ,upperTlSOUT( boost::bind(&Dynamic::getUpperTorqueLimits,this,_1,_2),
                 sotNOSIGNAL,
                 "sotDynamic("+name+")::output(vector)::upperTl" )
-
-  ,lowerTlSOUT( boost::bind(&Dynamic::getLowerTorqueLimits,this,_1,_2),
-                sotNOSIGNAL,
-                "sotDynamic("+name+")::output(vector)::lowerTl" )
 
   ,inertiaRotorSOUT( "sotDynamic("+name+")::output(matrix)::inertiaRotor" )
   ,gearRatioSOUT( "sotDynamic("+name+")::output(matrix)::gearRatio" )
@@ -105,9 +97,7 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     signalRegistration(upperJlSOUT);
     signalRegistration(lowerJlSOUT);
     signalRegistration(upperVlSOUT);
-    signalRegistration(lowerVlSOUT);
     signalRegistration(upperTlSOUT);
-    signalRegistration(lowerTlSOUT);
     signalRegistration(inertiaSOUT);
     signalRegistration(inertiaRealSOUT);
     signalRegistration(inertiaRotorSOUT);
@@ -728,7 +718,7 @@ ml::Vector& Dynamic::getUpperJointLimits( ml::Vector& res,const int& time )
     //Work done
     sotDEBUGIN(15);
 
-    res= eigenVectorXdToMaal(this->m_data->upperPositionLimit);
+    res = eigenVectorXdToMaal(this->m_data->upperPositionLimit);
 
     sotDEBUGOUT(15);
     return res;
@@ -746,23 +736,12 @@ ml::Vector& Dynamic::getUpperVelocityLimits( ml::Vector& res,const int& time )
     return res;
 }
 
-ml::Vector& Dynamic::getLowerVelocityLimits( ml::Vector& res,const int& time )
-{
-    //TODO: implement here
-    return res;
-}
-
 ml::Vector& Dynamic::getUpperTorqueLimits( ml::Vector& res,const int& time )
 {
     //TODO: implement here
     return res;
 }
 
-ml::Vector& Dynamic::getLowerTorqueLimits( ml::Vector& res,const int& time )
-{
-    //TODO: implement here
-    return res;
-}
 
 /* --- COMMANDS ------------------------------------------------------------- */
 /* --- COMMANDS ------------------------------------------------------------- */
