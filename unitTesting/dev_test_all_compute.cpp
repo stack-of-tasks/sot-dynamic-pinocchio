@@ -163,6 +163,12 @@ int main(int argc, char * argv[])
     dyn->computeJcom(restestJCom,1);
     cout << "restestJCom matrix : \n"<< restestJCom << endl;
 
+    /* ----- computeInertiaReal ----- */
+    cout << "/* --- test computeInertiaReal --- */" << endl;
+    ml::Matrix restestInertReal;
+    dyn->computeInertiaReal(restestInertReal,1);
+    cout << "restestInertReal matrix : \n" << restestInertReal << endl;
+
     delete dyn;
     return 0;
 }
