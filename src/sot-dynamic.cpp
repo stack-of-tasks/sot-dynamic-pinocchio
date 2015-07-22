@@ -726,7 +726,12 @@ ml::Vector& Dynamic::getUpperJointLimits( ml::Vector& res,const int& time )
 
 ml::Vector& Dynamic::getLowerJointLimits( ml::Vector& res,const int& time )
 {
-    //TODO: implement here
+    //Work done
+    sotDEBUGIN(15);
+
+    res = eigenVectorXdToMaal(this->m_data->lowerPositionLimit);
+
+    sotDEBUGOUT(15);
     return res;
 }
 
