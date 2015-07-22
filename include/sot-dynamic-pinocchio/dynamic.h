@@ -147,8 +147,6 @@ protected: /* --- METHODS --- */
 
  ml::Vector& computeMomenta( ml::Vector &res, int time);
  ml::Vector& computeAngularMomentum( ml::Vector &res, int time);
- ml::Matrix& computeJcom( ml::Matrix& res,int time );
- ml::Vector& computeCom( ml::Vector& res,int time );
  ml::Matrix& computeInertiaReal( ml::Matrix& res,int time );
  double& computeFootHeight( double& res,int time );
 
@@ -159,6 +157,9 @@ public:
  MatrixHomogeneous& computeGenericPosition( int jointId,MatrixHomogeneous& res,int time );
  ml::Vector& computeGenericVelocity( int j,ml::Vector& res,int time );
  ml::Vector& computeGenericAcceleration( int j,ml::Vector& res,int time );
+
+ ml::Vector& computeCom( ml::Vector& res,int time );
+ ml::Matrix& computeJcom( ml::Matrix& res,int time );
 
  ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );
  ml::Vector& getLowerJointLimits( ml::Vector& res,const int& time );

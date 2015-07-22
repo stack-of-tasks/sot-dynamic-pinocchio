@@ -129,7 +129,7 @@ int main(int argc, char * argv[])
     cout << endl << "/* --- Test computeGenericVelocity --- */" << endl;
     ml::Vector restestVit;
     dyn->computeGenericVelocity(Id,restestVit,1);
-    cout <<"restestVit vector : "<< restestVit << endl;
+    cout <<"restestVit vector : \n"<< restestVit << endl;
 
 
     /* ----- computeGenericAcceleration ----- */
@@ -137,19 +137,31 @@ int main(int argc, char * argv[])
     cout << endl << "/* --- Test computeGenericAcceleration --- */" << endl;
     ml::Vector restestAcc;
     dyn->computeGenericAcceleration(Id,restestAcc,1);
-    cout <<"restestAcc vector : "<< restestAcc << endl;
+    cout <<"restestAcc vector : \n"<< restestAcc << endl;
 
     /* ----- computeInertia ----- */
     cout << endl << "/* --- Test computeInertia --- */" << endl;
     ml::Matrix restestInertia;
     dyn->computeInertia(restestInertia,1);
-    cout <<"restestInertia Matrix : "<< restestInertia << endl;
+    cout <<"restestInertia Matrix : \n"<< restestInertia << endl;
 
     /* ----- computeZMP ----- */
     cout << endl << "/* --- Test computeZMP --- */" << endl;
     ml::Vector restestZMP;
     dyn->computeZmp(restestZMP,1);
-    cout <<"restestZMP Vector : "<< restestZMP << endl;
+    cout <<"restestZMP Vector : \n"<< restestZMP << endl;
+
+    /* ----- computeCom ----- */
+    cout <<"/* --- test computeCom --- */" << endl;
+    ml::Vector restestCom;
+    dyn->computeCom(restestCom,1);
+    cout <<"restestCom Vector : \n"<< restestCom << endl;
+
+    /* ----- computeJCom ----- */
+    cout <<"/* --- test computeJCom --- */" << endl;
+    ml::Matrix restestJCom;
+    dyn->computeJcom(restestJCom,1);
+    cout << "restestJCom matrix : \n"<< restestJCom << endl;
 
     delete dyn;
     return 0;
