@@ -748,7 +748,12 @@ ml::Vector& Dynamic::getUpperVelocityLimits( ml::Vector& res,const int& time )
 
 ml::Vector& Dynamic::getUpperTorqueLimits( ml::Vector& res,const int& time )
 {
-    //TODO: implement here
+    //Work done
+    sotDEBUGIN(15);
+    newtonEulerSINTERN(time);
+    res = eigenVectorXdToMaal(this->m_data->effortLimit);
+
+    sotDEBUGOUT(15);
     return res;
 }
 

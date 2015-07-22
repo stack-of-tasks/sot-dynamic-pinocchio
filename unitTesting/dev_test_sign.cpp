@@ -127,6 +127,10 @@ int main(int argc, char * argv[])
     dyn->getUpperVelocityLimits(resVelLim,1);
     cout << "Velocity Limits : \n" << resVelLim << endl;
 
+    ml::Vector resTorLim;
+    dyn->getUpperTorqueLimits(resTorLim,1);
+    cout << "Torque Limits : \n" << resTorLim << endl;
+
     delete dyn;
     return 0;
 }
