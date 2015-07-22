@@ -607,7 +607,7 @@ ml::Matrix& Dynamic::computeInertiaReal( ml::Matrix& res,int time )
 {
     //Work in progress
     sotDEBUGIN(25);
-
+    newtonEulerSINTERN(time);
     const ml::Matrix & A = inertiaSOUT(time);
     const ml::Vector & gearRatio = gearRatioSOUT(time);
     const ml::Vector & inertiaRotor = inertiaRotorSOUT(time);
@@ -717,7 +717,7 @@ ml::Vector& Dynamic::getUpperJointLimits( ml::Vector& res,const int& time )
 {
     //Work done
     sotDEBUGIN(15);
-
+    newtonEulerSINTERN(time);
     res = eigenVectorXdToMaal(this->m_data->upperPositionLimit);
 
     sotDEBUGOUT(15);
@@ -728,7 +728,7 @@ ml::Vector& Dynamic::getLowerJointLimits( ml::Vector& res,const int& time )
 {
     //Work done
     sotDEBUGIN(15);
-
+    newtonEulerSINTERN(time);
     res = eigenVectorXdToMaal(this->m_data->lowerPositionLimit);
 
     sotDEBUGOUT(15);
