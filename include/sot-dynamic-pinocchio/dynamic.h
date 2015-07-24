@@ -59,6 +59,11 @@ class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
     friend class sot::command::CreateOpPoint;
 
+    static void initMap();
+    bool init;
+public:
+    int debuginertia;
+
     DYNAMIC_GRAPH_ENTITY_DECL();
     std::list< dg::SignalBase<int>*  > genericSignalRefs;
 public: /* --- CONSTRUCTION --- */
@@ -93,7 +98,32 @@ public: /* --- SIGNAL ACTIVATION --- */
     dg::SignalTimeDependent< ml::Vector,int >&   createAccelerationSignal ( const std::string& signame, int jointId );
     void destroyAccelerationSignal                                        ( const std::string& signame );
 
-
+    bool zmpActivation( void ) {
+        std::string Property("ComputeZMP");
+        std::string Value;
+        //m_HDR->getProperty(Property,Value);
+        return (Value=="true");
+    }
+    void zmpActivation( const bool& b ) {
+        std::string Property("ComputeZMP");
+        std::string Value;
+        if (b) Value="true";
+        else Value="false";
+        //m_HDR->setProperty(Property,Value);
+    }
+    bool comActivation( void ) {
+        std::string Property("ComputeCoM");
+        std::string Value;
+        //m_HDR->getProperty(Property,Value);
+        return (Value=="true");
+    }
+    void comActivation( const bool& b ) {
+        std::string Property("ComputeCoM");
+        std::string Value;
+        if (b) Value="true";
+        else Value="false";
+        //m_HDR->setProperty(Property,Value);
+    }
 
 public: /* --- SIGNAL --- */
     dg::SignalPtr<ml::Vector,int> jointPositionSIN;

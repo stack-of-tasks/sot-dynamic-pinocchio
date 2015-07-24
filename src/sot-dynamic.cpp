@@ -19,6 +19,61 @@ using namespace dynamicgraph;
 const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
 using namespace std;
+/* --------------------------------------------------------------------- */
+/* -----------------------ENUM------------------------------------------ */
+/* --------------------------------------------------------------------- */
+
+enum CmdLine{notdef,
+             debugInertia,
+             setFiles,
+             displayFiles,
+             parse,
+             createJacobian,
+             destroyJacobian,
+             createPosition,
+             destroyPosition,
+             createVelocity,
+             destroyVelocity,
+             createAcceleration,
+             destroyAcceleration,
+             createEndeffJacobian,
+             createOpPoint,
+             destroyOpPoint,
+             ndof,
+             setComputeCom,
+             setComputeZmp,
+             setProperty,
+             getProperty,
+             displayProperties,
+             help
+            };
+
+static std::map<std::string, CmdLine> mapCmdLine;
+
+void Dynamic::initMap(){
+    mapCmdLine["debugInertia"] = debugInertia;
+    mapCmdLine["setFiles"] = setFiles;
+    mapCmdLine["displayFiles"]= displayFiles;
+    mapCmdLine["parse"]= parse;
+    mapCmdLine["createJacobian"]= createJacobian;
+    mapCmdLine["destroyJacobian"]= destroyJacobian;
+    mapCmdLine["createPosition"]= createPosition;
+    mapCmdLine["destroyPosition"]= destroyPosition;
+    mapCmdLine["createVelocity"]= createVelocity;
+    mapCmdLine["destroyVelocity"]= destroyVelocity;
+    mapCmdLine["createAcceleration"]= createAcceleration;
+    mapCmdLine["destroyAcceleration"]= destroyAcceleration;
+    mapCmdLine["createEndeffJacobian"]= createEndeffJacobian;
+    mapCmdLine["createOpPoint"]= createOpPoint;
+    mapCmdLine["destroyOpPoint"]= destroyOpPoint;
+    mapCmdLine["ndof"]= ndof;
+    mapCmdLine["setComputeCom"]= setComputeCom;
+    mapCmdLine["setComputeZmp"]= setComputeZmp;
+    mapCmdLine["setProperty"]= setProperty;
+    mapCmdLine["getProperty"]= getProperty;
+    mapCmdLine["displayProperties"]= displayProperties;
+    mapCmdLine["help"]= help;
+}
 
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
@@ -110,6 +165,8 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     // Commande
     //
     // #### Work in progress
+    initMap();
+
     std::string docstring;
     {
         using namespace ::dynamicgraph::command;
@@ -213,12 +270,12 @@ static ml::Matrix eigenMatrixXdToMaal(const Eigen::MatrixXd& inMatrix)
 }
 
 static void eigenVector3dToMaal( const Eigen::Vector3d& source,
-                ml::Vector & res )
+                                 ml::Vector & res )
 {
-  sotDEBUG(5) << source <<endl;
-  res(0) = source[0];
-  res(1) = source[1];
-  res(2) = source[2];
+    sotDEBUG(5) << source <<endl;
+    res(0) = source[0];
+    res(1) = source[1];
+    res(2) = source[2];
 }
 
 Eigen::VectorXd Dynamic::getPinocchioPos(int time)
@@ -268,10 +325,10 @@ createEndeffJacobianSignal( const std::string& signame, int jointId )
 {
     //Work done
     dg::SignalTimeDependent< ml::Matrix,int > * sig
-      = new dg::SignalTimeDependent< ml::Matrix,int >
-      ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
-        newtonEulerSINTERN,
-        "sotDynamic("+name+")::output(matrix)::"+signame );
+            = new dg::SignalTimeDependent< ml::Matrix,int >
+            ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
+              newtonEulerSINTERN,
+              "sotDynamic("+name+")::output(matrix)::"+signame );
 
     genericSignalRefs.push_back( sig );
     signalRegistration( *sig );
@@ -283,10 +340,10 @@ createJacobianSignal( const std::string& signame, int jointId )
 {
     //Work in progress
     dg::SignalTimeDependent< ml::Matrix,int > * sig
-      = new dg::SignalTimeDependent< ml::Matrix,int >
-      ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
-        newtonEulerSINTERN,
-        "sotDynamic("+name+")::output(matrix)::"+signame );
+            = new dg::SignalTimeDependent< ml::Matrix,int >
+            ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
+              newtonEulerSINTERN,
+              "sotDynamic("+name+")::output(matrix)::"+signame );
 
     genericSignalRefs.push_back( sig );
     signalRegistration( *sig );
@@ -300,18 +357,18 @@ destroyJacobianSignal( const std::string& signame )
     bool deletable = false;
     dg::SignalTimeDependent< ml::Matrix,int > * sig = & jacobiansSOUT( signame );
     for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
-      iter != genericSignalRefs.end();
-      ++iter )
-      {
+          iter != genericSignalRefs.end();
+          ++iter )
+    {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
-      }
+    }
     if(! deletable )
-      {
+    {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
-                       "Cannot destroy signal",
-                       " (while trying to remove generic jac. signal <%s>).",
-                       signame.c_str() );
-      }
+                                    "Cannot destroy signal",
+                                    " (while trying to remove generic jac. signal <%s>).",
+                                    signame.c_str() );
+    }
     signalDeregistration( signame );
 
     delete sig;
@@ -328,10 +385,10 @@ createPositionSignal ( const std::string& signame, int jointId )
     sotDEBUGIN(15);
 
     dg::SignalTimeDependent< MatrixHomogeneous,int > * sig
-      = new dg::SignalTimeDependent< MatrixHomogeneous,int >
-      ( boost::bind(&Dynamic::computeGenericPosition,this,jointId,_1,_2),
-        newtonEulerSINTERN,
-        "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+            = new dg::SignalTimeDependent< MatrixHomogeneous,int >
+            ( boost::bind(&Dynamic::computeGenericPosition,this,jointId,_1,_2),
+              newtonEulerSINTERN,
+              "sotDynamic("+name+")::output(matrixHomo)::"+signame );
 
     genericSignalRefs.push_back( sig );
     signalRegistration( *sig );
@@ -347,18 +404,18 @@ destroyPositionSignal( const std::string& signame )
     bool deletable = false;
     dg::SignalTimeDependent< MatrixHomogeneous,int > * sig = & positionsSOUT( signame );
     for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
-      iter != genericSignalRefs.end();
-      ++iter )
-      {
+          iter != genericSignalRefs.end();
+          ++iter )
+    {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
-      }
+    }
     if(! deletable )
-      {
+    {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
-                       "Cannot destroy signal",
-                       " (while trying to remove generic pos. signal <%s>).",
-                       signame.c_str() );
-      }
+                                    "Cannot destroy signal",
+                                    " (while trying to remove generic pos. signal <%s>).",
+                                    signame.c_str() );
+    }
     signalDeregistration( signame );
 
     delete sig;
@@ -374,10 +431,10 @@ createVelocitySignal( const std::string& signame,  int jointId )
     //Work in progress
     sotDEBUGIN(15);
     SignalTimeDependent< ml::Vector,int > * sig
-      = new SignalTimeDependent< ml::Vector,int >
-      ( boost::bind(&Dynamic::computeGenericVelocity,this,jointId,_1,_2),
-        newtonEulerSINTERN,
-        "sotDynamic("+name+")::output(ml::Vector)::"+signame );
+            = new SignalTimeDependent< ml::Vector,int >
+            ( boost::bind(&Dynamic::computeGenericVelocity,this,jointId,_1,_2),
+              newtonEulerSINTERN,
+              "sotDynamic("+name+")::output(ml::Vector)::"+signame );
     genericSignalRefs.push_back( sig );
     signalRegistration( *sig );
 
@@ -392,18 +449,18 @@ destroyVelocitySignal( const std::string& signame )
     bool deletable = false;
     SignalTimeDependent< ml::Vector,int > * sig = & velocitiesSOUT( signame );
     for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
-      iter != genericSignalRefs.end();
-      ++iter )
-      {
+          iter != genericSignalRefs.end();
+          ++iter )
+    {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
-      }
+    }
     if(! deletable )
-      {
+    {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
-                       "Cannot destroy signal",
-                       " (while trying to remove generic pos. signal <%s>).",
-                       signame.c_str() );
-      }
+                                    "Cannot destroy signal",
+                                    " (while trying to remove generic pos. signal <%s>).",
+                                    signame.c_str() );
+    }
     signalDeregistration( signame );
     delete sig;
 }
@@ -418,10 +475,10 @@ createAccelerationSignal( const std::string& signame, int jointId )
     //Work in progress
     sotDEBUGIN(15);
     dg::SignalTimeDependent< ml::Vector,int > * sig
-      = new dg::SignalTimeDependent< ml::Vector,int >
-      ( boost::bind(&Dynamic::computeGenericAcceleration,this,jointId,_1,_2),
-        newtonEulerSINTERN,
-        "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+            = new dg::SignalTimeDependent< ml::Vector,int >
+            ( boost::bind(&Dynamic::computeGenericAcceleration,this,jointId,_1,_2),
+              newtonEulerSINTERN,
+              "sotDynamic("+name+")::output(matrixHomo)::"+signame );
 
     genericSignalRefs.push_back( sig );
     signalRegistration( *sig );
@@ -437,19 +494,19 @@ destroyAccelerationSignal( const std::string& signame )
     bool deletable = false;
     dg::SignalTimeDependent< ml::Vector,int > * sig = & accelerationsSOUT( signame );
     for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
-      iter != genericSignalRefs.end();
-      ++iter )
-      {
+          iter != genericSignalRefs.end();
+          ++iter )
+    {
         if( (*iter) == sig ) { genericSignalRefs.erase(iter); deletable = true; break; }
-      }
+    }
     if(! deletable )
-      {
+    {
         SOT_THROW ExceptionDynamic( ExceptionDynamic::CANT_DESTROY_SIGNAL,
-                    getName() + ":cannot destroy signal",
-                    " (while trying to remove generic acc "
-                    "signal <%s>).",
-                    signame.c_str() );
-      }
+                                    getName() + ":cannot destroy signal",
+                                    " (while trying to remove generic acc "
+                                    "signal <%s>).",
+                                    signame.c_str() );
+    }
     signalDeregistration( signame );
     delete sig;
 }
@@ -512,10 +569,10 @@ ml::Vector& Dynamic::computeGenericVelocity( int j,ml::Vector& res,int time )
 
     res.resize(6);
     for( int i=0;i<3;++i )
-      {
+    {
         res(i)=al(i);
         res(i+3)=ar(i);
-      }
+    }
     sotDEBUGOUT(25);
     return res;
 }
@@ -531,10 +588,10 @@ ml::Vector& Dynamic::computeGenericAcceleration( int j,ml::Vector& res,int time 
 
     res.resize(6);
     for( int i=0;i<3;++i )
-      {
+    {
         res(i)=al(i);
         res(i+3)=ar(i);
-      }
+    }
 
     sotDEBUGOUT(25);
     return res;
@@ -545,7 +602,7 @@ ml::Vector& Dynamic::computeZmp( ml::Vector& res,int time )
     //To be verified
     sotDEBUGIN(25);
     if (res.size()!=3)
-      res.resize(3);
+        res.resize(3);
 
     newtonEulerSINTERN(time);
     se3::Force ftau = this->m_data->f[0];  //com ?
@@ -616,7 +673,7 @@ ml::Matrix& Dynamic::computeInertiaReal( ml::Matrix& res,int time )
 
     res = A;
     for( unsigned int i=0;i<gearRatio.size();++i )
-      res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i));
+        res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i));
 
     sotDEBUGOUT(25);
     return res;
@@ -643,14 +700,14 @@ dg::SignalTimeDependent<ml::Matrix,int>& Dynamic::jacobiansSOUT( const std::stri
     SignalBase<int> & sigabs = Entity::getSignal(name);
 
     try {
-      dg::SignalTimeDependent<ml::Matrix,int>& res
-        = dynamic_cast< dg::SignalTimeDependent<ml::Matrix,int>& >( sigabs );
-      return res;
+        dg::SignalTimeDependent<ml::Matrix,int>& res
+                = dynamic_cast< dg::SignalTimeDependent<ml::Matrix,int>& >( sigabs );
+        return res;
     } catch( std::bad_cast e ) {
-      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
-                    "Impossible cast.",
-                    " (while getting signal <%s> of type matrix.",
-                    name.c_str());
+        SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                                   "Impossible cast.",
+                                   " (while getting signal <%s> of type matrix.",
+                                   name.c_str());
     }
 }
 
@@ -660,14 +717,14 @@ dg::SignalTimeDependent<MatrixHomogeneous,int>& Dynamic::positionsSOUT( const st
     SignalBase<int> & sigabs = Entity::getSignal(name);
 
     try {
-      dg::SignalTimeDependent<MatrixHomogeneous,int>& res
-        = dynamic_cast< dg::SignalTimeDependent<MatrixHomogeneous,int>& >( sigabs );
-      return res;
+        dg::SignalTimeDependent<MatrixHomogeneous,int>& res
+                = dynamic_cast< dg::SignalTimeDependent<MatrixHomogeneous,int>& >( sigabs );
+        return res;
     } catch( std::bad_cast e ) {
-      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
-                    "Impossible cast.",
-                    " (while getting signal <%s> of type matrixHomo.",
-                    name.c_str());
+        SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                                   "Impossible cast.",
+                                   " (while getting signal <%s> of type matrixHomo.",
+                                   name.c_str());
     }
 }
 
@@ -676,14 +733,14 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::velocitiesSOUT( const std::str
     //Work in progress
     SignalBase<int> & sigabs = Entity::getSignal(name);
     try {
-      dg::SignalTimeDependent<ml::Vector,int>& res
-        = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
-      return res;
-   } catch( std::bad_cast e ) {
-      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
-                    "Impossible cast.",
-                    " (while getting signal <%s> of type Vector.",
-                    name.c_str());
+        dg::SignalTimeDependent<ml::Vector,int>& res
+                = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+        return res;
+    } catch( std::bad_cast e ) {
+        SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                                   "Impossible cast.",
+                                   " (while getting signal <%s> of type Vector.",
+                                   name.c_str());
     }
 }
 
@@ -693,14 +750,14 @@ dg::SignalTimeDependent<ml::Vector,int>& Dynamic::accelerationsSOUT( const std::
     SignalBase<int> & sigabs = Entity::getSignal(name);
 
     try {
-      dg::SignalTimeDependent<ml::Vector,int>& res
-        = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
-      return res;
+        dg::SignalTimeDependent<ml::Vector,int>& res
+                = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+        return res;
     } catch( std::bad_cast e ) {
-      SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
-                    "Impossible cast.",
-                    " (while getting signal <%s> of type Vector.",
-                    name.c_str());
+        SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
+                                   "Impossible cast.",
+                                   " (while getting signal <%s> of type Vector.",
+                                   name.c_str());
     }
 }
 
@@ -820,5 +877,108 @@ void Dynamic::commandLine( const std::string& cmdLine,
                            std::istringstream& cmdArgs,
                            std::ostream& os )
 {
+    sotDEBUGIN(25) << "# In { Cmd " << cmdLine <<endl;
+    string filename;
+    string Jname;
+    unsigned int rank;
+    unsigned int b;
 
+    switch(mapCmdLine[cmdLine]){
+    case debugInertia:
+        cmdArgs>>ws; if(cmdArgs.good())
+               {
+                 std::string arg; cmdArgs >> arg;
+                 if( (arg=="true")||(arg=="1") )
+               { debuginertia = 1; }
+                 else if( (arg=="2")||(arg=="grip") )
+               { debuginertia = 2; }
+                 else debuginertia=0;
+
+               }
+        else { os << "debugInertia = " << debuginertia << std::endl; }
+        break;
+    case setFiles :
+        cmdArgs>>filename;
+        setUrdfPath(filename);
+        break;
+    case displayFiles:
+        break;
+    case parse:
+        break;
+    case createJacobian:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createJacobianSignal(Jname,rank);
+        break;
+    case destroyJacobian:
+        cmdArgs >> Jname;
+        destroyJacobianSignal(Jname);
+        break;
+    case createPosition:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createPositionSignal(Jname,rank);
+        break;
+    case destroyPosition:
+        cmdArgs >> Jname;
+        destroyPositionSignal(Jname);
+        break;
+    case createVelocity:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createVelocitySignal(Jname,rank);
+        break;
+    case destroyVelocity:
+        cmdArgs >> Jname;
+        destroyVelocitySignal(Jname);
+        break;
+    case createAcceleration:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createAccelerationSignal(Jname,rank);
+        break;
+    case destroyAcceleration:
+        cmdArgs >> Jname;
+        destroyAccelerationSignal(Jname);
+        break;
+    case createEndeffJacobian:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createEndeffJacobianSignal(Jname,rank);
+        break;
+    case createOpPoint:
+        cmdArgs >> Jname;
+        cmdArgs >> rank;
+        createEndeffJacobianSignal(string("J")+Jname,rank);
+        createPositionSignal(Jname,rank);
+        sotDEBUG(15)<<endl;
+        break;
+    case destroyOpPoint:
+        cmdArgs >> Jname;
+        destroyJacobianSignal(string("J")+Jname);
+        destroyPositionSignal(Jname);
+        break;
+    case ndof:
+        break;
+    case setComputeCom:
+        cmdArgs >> b;
+        comActivation((b!=0));
+        break;
+    case setComputeZmp:
+        cmdArgs >> b;
+        zmpActivation((b!=0));
+        break;
+    case setProperty:
+        break;
+    case getProperty:
+        break;
+    case displayProperties:
+        break;
+    case help:
+        break;
+    default:
+        break;
+    }
+
+    sotDEBUGOUT(25);
 }
