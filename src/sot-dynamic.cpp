@@ -110,40 +110,42 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     // Commande
     //
     // #### Work in progress
-    using namespace ::dynamicgraph::command;
     std::string docstring;
+    {
+        using namespace ::dynamicgraph::command;
 
-    // CreateOpPoint
-    docstring =
-            "    \n"
-            "    Create an operational point attached to a robot joint local frame.\n"
-            "    \n"
-            "      Input: \n"
-            "        - a string: name of the operational point,\n"
-            "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
-            "          , left-wrist, right-wrist, waist, chest).\n"
-            "\n";
-    addCommand("CreateOpPoint",
-               makeCommandVoid2(*this,&Dynamic::cmd_createOpPointSignals,
-                                docstring));
 
-    docstring = docCommandVoid2("Create a jacobian (world frame) signal only for one joint.",
-                "string (signal name)","string (joint name)");
-    addCommand("createJacobian",
-       makeCommandVoid2(*this,&Dynamic::cmd_createJacobianWorldSignal,
-                docstring));
+        // CreateOpPoint
+        docstring =
+                "    \n"
+                "    Create an operational point attached to a robot joint local frame.\n"
+                "    \n"
+                "      Input: \n"
+                "        - a string: name of the operational point,\n"
+                "        - a string: name the joint, among (gaze, left-ankle, right ankle\n"
+                "          , left-wrist, right-wrist, waist, chest).\n"
+                "\n";
+        addCommand("CreateOpPoint",
+                   makeCommandVoid2(*this,&Dynamic::cmd_createOpPointSignals,
+                                    docstring));
 
-    docstring = docCommandVoid2("Create a jacobian (endeff frame) signal only for one joint.",
-                "string (signal name)","string (joint name)");
-    addCommand("createJacobianEndEff",
-       makeCommandVoid2(*this,&Dynamic::cmd_createJacobianEndEffectorSignal,
-                docstring));
+        docstring = docCommandVoid2("Create a jacobian (world frame) signal only for one joint.",
+                                    "string (signal name)","string (joint name)");
+        addCommand("createJacobian",
+                   makeCommandVoid2(*this,&Dynamic::cmd_createJacobianWorldSignal,
+                                    docstring));
 
-    docstring = docCommandVoid2("Create a position (matrix homo) signal only for one joint.",
-                "string (signal name)","string (joint name)");
-    addCommand("createPosition",
-       makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
+        docstring = docCommandVoid2("Create a jacobian (endeff frame) signal only for one joint.",
+                                    "string (signal name)","string (joint name)");
+        addCommand("createJacobianEndEff",
+                   makeCommandVoid2(*this,&Dynamic::cmd_createJacobianEndEffectorSignal,
+                                    docstring));
 
+        docstring = docCommandVoid2("Create a position (matrix homo) signal only for one joint.",
+                                    "string (signal name)","string (joint name)");
+        addCommand("createPosition",
+                   makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
+    }
     // #### End Work in progress
 }
 
@@ -810,3 +812,13 @@ void Dynamic::cmd_createPositionSignal( const std::string& signalName,
     createPositionSignal(signalName, jointId);
 }
 
+/* --- PARAMS --------------------------------------------------------------- */
+/* --- PARAMS --------------------------------------------------------------- */
+/* --- PARAMS --------------------------------------------------------------- */
+
+void Dynamic::commandLine( const std::string& cmdLine,
+                           std::istringstream& cmdArgs,
+                           std::ostream& os )
+{
+
+}

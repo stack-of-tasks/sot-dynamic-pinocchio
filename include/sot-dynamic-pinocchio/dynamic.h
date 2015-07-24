@@ -47,7 +47,7 @@ using namespace std;
 namespace dynamicgraph { namespace sot {
 namespace dg = dynamicgraph;
 
-    namespace commande {
+    namespace command {
         class CreateOpPoint;
     }
 
@@ -57,7 +57,7 @@ namespace dg = dynamicgraph;
 
 class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
 {
-    friend class sot::commande::CreateOpPoint;
+    friend class sot::command::CreateOpPoint;
 
     DYNAMIC_GRAPH_ENTITY_DECL();
     std::list< dg::SignalBase<int>*  > genericSignalRefs;
@@ -167,6 +167,9 @@ public:
  ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
 
 public: /* --- PARAMS --- */
+ virtual void commandLine( const std::string& cmdLine,
+               std::istringstream& cmdArgs,
+               std::ostream& os );
  void cmd_createOpPointSignals(const std::string& sig,const std::string& j);
  void cmd_createJacobianWorldSignal( const std::string& sig,const std::string& j );
  void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
