@@ -78,6 +78,9 @@ void Dynamic::initMap(){
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
   ,m_data(NULL)
+
+  ,init(false)
+
   ,jointPositionSIN         (NULL,"sotDynamic("+name+")::input(vector)::position")
   ,freeFlyerPositionSIN     (NULL,"sotDynamic("+name+")::input(vector)::ffposition")
   ,jointVelocitySIN         (NULL,"sotDynamic("+name+")::input(vector)::velocity")
@@ -229,6 +232,7 @@ void Dynamic::setUrdfPath( const std::string& path )
     this->m_urdfPath = path;
     if (this->m_data) delete this->m_data;
     this->m_data = new se3::Data(m_model);
+    init=true;
 }
 
 /* --- CONVERTION ---------------------------------------------------- */
@@ -538,7 +542,7 @@ ml::Matrix& Dynamic::computeGenericEndeffJacobian( int jointId,ml::Matrix& res,i
     newtonEulerSINTERN(time);
 
     res = eigenMatrixXdToMaal(se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId));
-    //TODO : verify with the size of cjrl matrix returned
+    //TODO : check referential
 
     sotTDEBUGOUT(25);
     return res;
@@ -885,16 +889,17 @@ void Dynamic::commandLine( const std::string& cmdLine,
 
     switch(mapCmdLine[cmdLine]){
     case debugInertia:
-        cmdArgs>>ws; if(cmdArgs.good())
-               {
-                 std::string arg; cmdArgs >> arg;
-                 if( (arg=="true")||(arg=="1") )
-               { debuginertia = 1; }
-                 else if( (arg=="2")||(arg=="grip") )
-               { debuginertia = 2; }
-                 else debuginertia=0;
+        cmdArgs>>ws;
+        if(cmdArgs.good())
+        {
+            std::string arg; cmdArgs >> arg;
+            if( (arg=="true")||(arg=="1") )
+            { debuginertia = 1; }
+            else if( (arg=="2")||(arg=="grip") )
+            { debuginertia = 2; }
+            else debuginertia=0;
 
-               }
+        }
         else { os << "debugInertia = " << debuginertia << std::endl; }
         break;
     case setFiles :
@@ -902,8 +907,16 @@ void Dynamic::commandLine( const std::string& cmdLine,
         setUrdfPath(filename);
         break;
     case displayFiles:
+    {
+        cmdArgs >> ws;
+        std::string filetype; cmdArgs >> filetype;
+        sotDEBUG(15) << " Request: " << filetype << std::endl;
+        os << m_urdfPath << std::endl;
         break;
+    }
     case parse:
+        if(! init) cout << "No file parsed, run command setFiles" << endl;
+        else cout << "Already parsed!" << endl;
         break;
     case createJacobian:
         cmdArgs >> Jname;
@@ -961,18 +974,23 @@ void Dynamic::commandLine( const std::string& cmdLine,
     case ndof:
         break;
     case setComputeCom:
+        // useless
         cmdArgs >> b;
         comActivation((b!=0));
         break;
     case setComputeZmp:
+        // useless
         cmdArgs >> b;
         zmpActivation((b!=0));
         break;
     case setProperty:
+        // useless
         break;
     case getProperty:
+        // useless
         break;
     case displayProperties:
+        // useless
         break;
     case help:
         break;

@@ -98,6 +98,7 @@ public: /* --- SIGNAL ACTIVATION --- */
     dg::SignalTimeDependent< ml::Vector,int >&   createAccelerationSignal ( const std::string& signame, int jointId );
     void destroyAccelerationSignal                                        ( const std::string& signame );
 
+    // getProperty and setProperty never implement in cjrl >> useless
     bool zmpActivation( void ) {
         std::string Property("ComputeZMP");
         std::string Value;
