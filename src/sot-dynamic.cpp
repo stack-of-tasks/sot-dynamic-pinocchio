@@ -738,7 +738,15 @@ double&     Dynamic::computeFootHeight( double& res,int time )
 
 ml::Vector& Dynamic::computeTorqueDrift( ml::Vector& res,const int& time )
 {
-    //TODO: implement here
+    //Work done
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    const unsigned int NB_JOINTS = jointPositionSIN.accessCopy().size();
+
+    res.resize(NB_JOINTS);
+    res = eigenVectorXdToMaal(this->m_data->tau);
+
+    sotDEBUGOUT(25);
     return res;
 }
 
