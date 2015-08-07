@@ -79,7 +79,7 @@ namespace dynamicgraph { namespace sot {
     }; // class Parse
 
     // Command SetProperty
-    // TODO :Implement
+    // Useless
     class SetProperty : public Command
     {
     public:
@@ -94,18 +94,16 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string property = values[0].value();
-//	std::string value = values[1].value();
-
-//	robot.m_HDR->setProperty(property, value);
-	return Value();
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string property = values[0].value();
+    std::string value = values[1].value();
+    return Value();
       }
     }; // class SetProperty
 
     // Command GetProperty
-    // TODO :Implement
+    // Useless
     class GetProperty : public Command
     {
     public:
@@ -120,20 +118,14 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string property = values[0].value();
-//	std::string value;
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string property = values[0].value();
+    std::string value;
 
-//	if(! robot.m_HDR->getProperty(property, value) )
-//	  {
-//	    if( property == "vrmlDirectory" ) value = robot.vrmlDirectory;
-//	    else if( property == "xmlSpecificityFile" ) value = robot.xmlSpecificityFile;
-//	    else if( property == "xmlRankFile" ) value = robot.xmlRankFile;
-//	    else if( property == "vrmlMainFile" ) value = robot.vrmlMainFile;
-//	  }
+    if( property == "urdfPath" ) value = robot.m_urdfPath;
 
-    return Value(/*value*/);
+    return Value(value);
       }
     }; // class GetProperty
 
