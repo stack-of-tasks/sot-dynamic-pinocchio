@@ -185,6 +185,17 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     addCommand("setFiles",
            new command::SetFiles(*this, docstring));
 
+    // parse
+    docstring =
+      "\n"
+      "    Informe if files already parsed by setFiles\n"
+      "\n"
+      "      No input.\n"
+      "      Files are defined by command setFiles \n"
+      "\n";
+      addCommand("parse",
+             new command::Parse(*this, docstring));
+
     {
         using namespace ::dynamicgraph::command;
 

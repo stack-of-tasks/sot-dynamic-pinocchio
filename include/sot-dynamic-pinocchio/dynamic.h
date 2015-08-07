@@ -60,8 +60,9 @@ class SOTDYNAMIC_EXPORT Dynamic:public dg::Entity
     friend class sot::command::CreateOpPoint;
 
     static void initMap();
-    bool init;
+
 public:
+    bool init;
     int debuginertia;
 
     DYNAMIC_GRAPH_ENTITY_DECL();

@@ -57,7 +57,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetFiles
 
     // Command Parse
-    // TODO :Implement
+    // Work done
     class Parse : public Command
     {
     public:
@@ -71,10 +71,9 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	if(! robot.init ) robot.parseConfigFiles();
-//	else std::cout << "  !! Already parsed." << std::endl;
-//	// return void
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    if(! robot.init) std::cout << "No file parsed, run command setFiles" << std::endl;
+    else std::cout << "Already parsed!" << std::endl;
     return Value();
       }
     }; // class Parse
