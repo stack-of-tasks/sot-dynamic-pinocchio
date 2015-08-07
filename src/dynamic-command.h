@@ -49,14 +49,16 @@ namespace dynamicgraph { namespace sot {
       {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
-	std::string vrmlDirectory = values[0].value();
-	std::string vrmlMainFile = values[1].value();
-	std::string xmlSpecificityFiles = values[2].value();
-	std::string xmlRankFile = values[3].value();
-	robot.setVrmlDirectory(vrmlDirectory);
-	robot.setVrmlMainFile(vrmlMainFile);
-	robot.setXmlSpecificityFile(xmlSpecificityFiles);
-	robot.setXmlRankFile(xmlRankFile);
+//	std::string vrmlDirectory = values[0].value();
+//	std::string vrmlMainFile = values[1].value();
+//	std::string xmlSpecificityFiles = values[2].value();
+//	std::string xmlRankFile = values[3].value();
+//	robot.setVrmlDirectory(vrmlDirectory);
+//	robot.setVrmlMainFile(vrmlMainFile);
+//	robot.setXmlSpecificityFile(xmlSpecificityFiles);
+//	robot.setXmlRankFile(xmlRankFile);
+    std::string urdfPath = values[0].value();
+    robot.setUrdfPath(urdfPath);
 	// return void
 	return Value();
       }
@@ -76,11 +78,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	if(! robot.init ) robot.parseConfigFiles();
-	else std::cout << "  !! Already parsed." << std::endl;
-	// return void
-	return Value();
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	if(! robot.init ) robot.parseConfigFiles();
+//	else std::cout << "  !! Already parsed." << std::endl;
+//	// return void
+    return Value();
       }
     }; // class Parse
 
@@ -99,12 +101,12 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string property = values[0].value();
-	std::string value = values[1].value();
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string property = values[0].value();
+//	std::string value = values[1].value();
 
-	robot.m_HDR->setProperty(property, value);
+//	robot.m_HDR->setProperty(property, value);
 	return Value();
       }
     }; // class SetProperty
@@ -124,20 +126,20 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string property = values[0].value();
-	std::string value;
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string property = values[0].value();
+//	std::string value;
 
-	if(! robot.m_HDR->getProperty(property, value) )
-	  {
-	    if( property == "vrmlDirectory" ) value = robot.vrmlDirectory;
-	    else if( property == "xmlSpecificityFile" ) value = robot.xmlSpecificityFile;
-	    else if( property == "xmlRankFile" ) value = robot.xmlRankFile;
-	    else if( property == "vrmlMainFile" ) value = robot.vrmlMainFile;
-	  }
+//	if(! robot.m_HDR->getProperty(property, value) )
+//	  {
+//	    if( property == "vrmlDirectory" ) value = robot.vrmlDirectory;
+//	    else if( property == "xmlSpecificityFile" ) value = robot.xmlSpecificityFile;
+//	    else if( property == "xmlRankFile" ) value = robot.xmlRankFile;
+//	    else if( property == "vrmlMainFile" ) value = robot.vrmlMainFile;
+//	  }
 
-	return Value(value);
+    return Value(/*value*/);
       }
     }; // class GetProperty
 
@@ -156,8 +158,8 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	robot.createRobot();
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	robot.createRobot();
 	return Value();
       }
     }; // class CreateRobot
@@ -177,12 +179,12 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	std::string jointType = values[1].value();
-	maal::boost::Matrix position = values[2].value();
-	robot.createJoint(jointName, jointType, position);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	std::string jointType = values[1].value();
+//	maal::boost::Matrix position = values[2].value();
+//	robot.createJoint(jointName, jointType, position);
 	return Value();
       }
     }; // class CreateJoint
@@ -201,10 +203,10 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	robot.setRootJoint(jointName);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	robot.setRootJoint(jointName);
 	return Value();
       }
     }; // class SetRootJoint
@@ -224,11 +226,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string parentName = values[0].value();
-	std::string childName = values[1].value();
-	robot.addJoint(parentName, childName);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string parentName = values[0].value();
+//	std::string childName = values[1].value();
+//	robot.addJoint(parentName, childName);
 	return Value();
       }
     }; // class AddJoint
@@ -248,13 +250,13 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	unsigned int dofId = values[1].value();
-	double minValue = values[2].value();
-	double maxValue = values[3].value();
-	robot.setDofBounds(jointName, dofId, minValue, maxValue);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	unsigned int dofId = values[1].value();
+//	double minValue = values[2].value();
+//	double maxValue = values[3].value();
+//	robot.setDofBounds(jointName, dofId, minValue, maxValue);
 	return Value();
       }
     }; // class SetDofBounds
@@ -274,11 +276,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	double mass = values[1].value();
-	robot.setMass(jointName, mass);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	double mass = values[1].value();
+//	robot.setMass(jointName, mass);
 	return Value();
       }
     }; // class SetMass
@@ -298,11 +300,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	ml::Vector com = values[1].value();
-	robot.setLocalCenterOfMass(jointName, com);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	ml::Vector com = values[1].value();
+//	robot.setLocalCenterOfMass(jointName, com);
 	return Value();
       }
     }; // class SetLocalCenterOfMass
@@ -322,11 +324,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	ml::Matrix inertiaMatrix = values[1].value();
-	robot.setInertiaMatrix(jointName, inertiaMatrix);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	ml::Matrix inertiaMatrix = values[1].value();
+//	robot.setInertiaMatrix(jointName, inertiaMatrix);
 	return Value();
       }
     }; // class SetInertiaMatrix
@@ -346,11 +348,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string jointName = values[0].value();
-	std::string jointType = values[1].value();
-	robot.setSpecificJoint(jointName, jointType);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string jointName = values[0].value();
+//	std::string jointType = values[1].value();
+//	robot.setSpecificJoint(jointName, jointType);
 	return Value();
       }
     }; // class SetSpecificJoint
@@ -370,15 +372,15 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	bool right = values[0].value();
-	ml::Vector center = values[1].value();
-	ml::Vector thumbAxis = values[2].value();
-	ml::Vector forefingerAxis = values[3].value();
-	ml::Vector palmNormalAxis = values[4].value();
-	robot.setHandParameters(right, center, thumbAxis, forefingerAxis,
-				palmNormalAxis);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	bool right = values[0].value();
+//	ml::Vector center = values[1].value();
+//	ml::Vector thumbAxis = values[2].value();
+//	ml::Vector forefingerAxis = values[3].value();
+//	ml::Vector palmNormalAxis = values[4].value();
+//	robot.setHandParameters(right, center, thumbAxis, forefingerAxis,
+//				palmNormalAxis);
 	return Value();
       }
     }; // class SetHandParameters
@@ -397,13 +399,13 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	bool right = values[0].value();
-	double soleLength = values[1].value();
-	double soleWidth = values[2].value();
-	ml::Vector anklePosition = values[3].value();
-	robot.setFootParameters(right, soleLength, soleWidth, anklePosition);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	bool right = values[0].value();
+//	double soleLength = values[1].value();
+//	double soleWidth = values[2].value();
+//	ml::Vector anklePosition = values[3].value();
+//	robot.setFootParameters(right, soleLength, soleWidth, anklePosition);
 	return Value();
       }
     }; // class Setfootparameters
@@ -423,11 +425,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	ml::Vector gazeOrigin  = values[0].value();
-	ml::Vector gazeDirection = values[1].value();
-	robot.setGazeParameters(gazeOrigin, gazeDirection);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	ml::Vector gazeOrigin  = values[0].value();
+//	ml::Vector gazeDirection = values[1].value();
+//	robot.setGazeParameters(gazeOrigin, gazeDirection);
 	return Value();
       }
     }; // class SetGazeParameters
@@ -447,8 +449,8 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	robot.m_HDR->initialize();
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	robot.m_HDR->initialize();
 	return Value();
       }
     }; // class InitializeRobot
@@ -468,9 +470,9 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	unsigned int dimension = robot.m_HDR->numberDof();
-	return Value(dimension);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	unsigned int dimension = robot.m_HDR->numberDof();
+    return Value(/*dimension*/);
       }
     }; // class GetDimension
 
@@ -489,12 +491,12 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	std::string filename = values[0].value();
-	std::ofstream file(filename.c_str(), std::ios_base::out);
-	file << *(robot.m_HDR);
-	file.close();
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	std::string filename = values[0].value();
+//	std::ofstream file(filename.c_str(), std::ios_base::out);
+//	file << *(robot.m_HDR);
+//	file.close();
 	return Value();
       }
     }; // class Write
@@ -509,28 +511,28 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute ()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
-	std::vector<Value> values = getParameterValues();
-	bool right = values [0].value ();
-	ml::Matrix handParameter (4,4);
-	handParameter.setIdentity ();
-	CjrlHand* hand;
-	if (right) hand = robot.m_HDR->rightHand ();
-	else hand = robot.m_HDR->leftHand ();
-	vector3d axis;
-	hand->getThumbAxis (axis);
-	for (unsigned int i=0; i<3; i++)
-	  handParameter (i,0) = axis (i);
-	hand->getForeFingerAxis (axis);
-	for (unsigned int i=0; i<3; i++)
-	  handParameter (i,1) = axis (i);
-	hand->getPalmNormal (axis);
-	for (unsigned int i=0; i<3; i++)
-	  handParameter (i,2) = axis (i);
-	hand->getCenter (axis);
-	for (unsigned int i=0; i<3; i++)
-	  handParameter (i,3) = axis (i);
-	return Value (handParameter);
+//	Dynamic& robot = static_cast<Dynamic&>(owner());
+//	std::vector<Value> values = getParameterValues();
+//	bool right = values [0].value ();
+//	ml::Matrix handParameter (4,4);
+//	handParameter.setIdentity ();
+//	CjrlHand* hand;
+//	if (right) hand = robot.m_HDR->rightHand ();
+//	else hand = robot.m_HDR->leftHand ();
+//	vector3d axis;
+//	hand->getThumbAxis (axis);
+//	for (unsigned int i=0; i<3; i++)
+//	  handParameter (i,0) = axis (i);
+//	hand->getForeFingerAxis (axis);
+//	for (unsigned int i=0; i<3; i++)
+//	  handParameter (i,1) = axis (i);
+//	hand->getPalmNormal (axis);
+//	for (unsigned int i=0; i<3; i++)
+//	  handParameter (i,2) = axis (i);
+//	hand->getCenter (axis);
+//	for (unsigned int i=0; i<3; i++)
+//	  handParameter (i,3) = axis (i);
+    return Value (/*handParameter*/);
       }
     }; // class GetHandParameter
   } // namespace command

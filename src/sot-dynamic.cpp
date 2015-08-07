@@ -13,6 +13,8 @@
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
 
+#include "../src/dynamic-command.h"
+
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
