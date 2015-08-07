@@ -730,9 +730,22 @@ ml::Matrix& Dynamic::computeInertiaReal( ml::Matrix& res,int time )
     return res;
 }
 
-double&     Dynamic::computeFootHeight( double& res,int time )
+double& Dynamic::computeFootHeight( double& res,int time )
 {
-    //TODO: implement here
+    //Work in progress
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    if(!this->m_model.existBodyName("rigthFoot"))
+    {
+        throw runtime_error ("Robot has no joint corresponding to rigthFoot");
+    }
+    int jointId = this->m_model.getBodyId("rigthFoot");
+
+    se3::SE3 joint = this->m_data->oMi[jointId];
+    MatrixHomogeneous tmpMat;
+    tmpMat.initFromMotherLib(eigenMatrixXdToMaal(joint.toHomogeneousMatrix()).accessToMotherLib());
+    res = tmpMat(3,2);
+    sotDEBUGOUT(25);
     return res;
 }
 
