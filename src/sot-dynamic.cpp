@@ -524,11 +524,12 @@ destroyAccelerationSignal( const std::string& signame )
 
 ml::Matrix& Dynamic::computeGenericJacobian( int jointId,ml::Matrix& res,int time )
 {
+    // Useless
     // Work done
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
-    res = eigenMatrixXdToMaal(se3::computeJacobians(this->m_model,*this->m_data,this->getPinocchioPos(time)));
+   res = eigenMatrixXdToMaal( se3::computeJacobians(this->m_model,*this->m_data,this->getPinocchioPos(time)));
 
     sotDEBUGOUT(25);
 
@@ -537,12 +538,13 @@ ml::Matrix& Dynamic::computeGenericJacobian( int jointId,ml::Matrix& res,int tim
 
 ml::Matrix& Dynamic::computeGenericEndeffJacobian( int jointId,ml::Matrix& res,int time )
 {
-    //Work in progress
+    //Work done
     sotDEBUGIN(25);
     newtonEulerSINTERN(time);
 
-    res = eigenMatrixXdToMaal(se3::jacobian(this->m_model,*this->m_data,this->getPinocchioPos(time),jointId));
-    //TODO : check referential
+    Eigen::MatrixXd J (Eigen::MatrixXd::Zero(6,this->m_model.nv));
+    se3::getJacobian<false>(this->m_model, *this->m_data,(se3::Model::Index)jointId,J);
+    res = eigenMatrixXdToMaal(J);
 
     sotTDEBUGOUT(25);
     return res;
