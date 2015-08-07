@@ -173,6 +173,18 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     initMap();
 
     std::string docstring;
+
+    // setFiles
+    docstring =
+      "\n"
+      "    Define files to parse in order to build the robot.\n"
+      "\n"
+      "      Input:\n"
+      "        - a string: urdf file with its path,\n"
+      "\n";
+    addCommand("setFiles",
+           new command::SetFiles(*this, docstring));
+
     {
         using namespace ::dynamicgraph::command;
 
