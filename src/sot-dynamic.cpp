@@ -176,25 +176,25 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
 
     // setFiles
     docstring =
-      "\n"
-      "    Define files to parse in order to build the robot.\n"
-      "\n"
-      "      Input:\n"
-      "        - a string: urdf file with its path,\n"
-      "\n";
+            "\n"
+            "    Define files to parse in order to build the robot.\n"
+            "\n"
+            "      Input:\n"
+            "        - a string: urdf file with its path,\n"
+            "\n";
     addCommand("setFiles",
-           new command::SetFiles(*this, docstring));
+               new command::SetFiles(*this, docstring));
 
     // parse
     docstring =
-      "\n"
-      "    Informe if files already parsed by setFiles\n"
-      "\n"
-      "      No input.\n"
-      "      Files are defined by command setFiles \n"
-      "\n";
-      addCommand("parse",
-             new command::Parse(*this, docstring));
+            "\n"
+            "    Informe if files already parsed by setFiles\n"
+            "\n"
+            "      No input.\n"
+            "      Files are defined by command setFiles \n"
+            "\n";
+    addCommand("parse",
+               new command::Parse(*this, docstring));
 
     {
         using namespace ::dynamicgraph::command;
@@ -231,6 +231,26 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
         addCommand("createPosition",
                    makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
     }
+
+    // SetProperty
+    docstring = "    \n"
+            "    Set a property.\n"
+            "    \n"
+            "      Input:\n"
+            "        - a string: name of the property,\n"
+            "        - a string: value of the property.\n"
+            "    \n";
+    addCommand("setProperty", new command::SetProperty(*this, docstring));
+
+    docstring = "    \n"
+            "    Get a property\n"
+            "    \n"
+            "      Input:\n"
+            "        - a string: name of the property,\n"
+            "      Return:\n"
+            "        - a string: value of the property\n";
+    addCommand("getProperty", new command::GetProperty(*this, docstring));
+
     // #### End Work in progress
 }
 
