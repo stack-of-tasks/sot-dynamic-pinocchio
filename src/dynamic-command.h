@@ -33,6 +33,7 @@ namespace dynamicgraph { namespace sot {
     using ::dynamicgraph::command::Value;
 
     // Command SetFiles
+    // Work done
     class SetFiles : public Command
     {
     public:
@@ -49,22 +50,14 @@ namespace dynamicgraph { namespace sot {
       {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
-//	std::string vrmlDirectory = values[0].value();
-//	std::string vrmlMainFile = values[1].value();
-//	std::string xmlSpecificityFiles = values[2].value();
-//	std::string xmlRankFile = values[3].value();
-//	robot.setVrmlDirectory(vrmlDirectory);
-//	robot.setVrmlMainFile(vrmlMainFile);
-//	robot.setXmlSpecificityFile(xmlSpecificityFiles);
-//	robot.setXmlRankFile(xmlRankFile);
     std::string urdfPath = values[0].value();
     robot.setUrdfPath(urdfPath);
-	// return void
 	return Value();
       }
     }; // class SetFiles
 
     // Command Parse
+    // TODO :Implement
     class Parse : public Command
     {
     public:
@@ -87,6 +80,7 @@ namespace dynamicgraph { namespace sot {
     }; // class Parse
 
     // Command SetProperty
+    // TODO :Implement
     class SetProperty : public Command
     {
     public:
@@ -112,6 +106,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetProperty
 
     // Command GetProperty
+    // TODO :Implement
     class GetProperty : public Command
     {
     public:
@@ -144,6 +139,7 @@ namespace dynamicgraph { namespace sot {
     }; // class GetProperty
 
     // Command CreateRobot
+    // TODO :Implement
     class CreateRobot : public Command
     {
     public:
@@ -165,6 +161,7 @@ namespace dynamicgraph { namespace sot {
     }; // class CreateRobot
 
     // Command CreateJoint
+    // TODO :Implement
     class CreateJoint : public Command
     {
     public:
@@ -190,6 +187,7 @@ namespace dynamicgraph { namespace sot {
     }; // class CreateJoint
 
     // Command SetRootJoint
+    // TODO :Implement
     class SetRootJoint : public Command
     {
     public:
@@ -212,6 +210,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetRootJoint
 
     // Command AddJoint
+    // TODO :Implement
     class AddJoint : public Command
     {
     public:
@@ -236,6 +235,7 @@ namespace dynamicgraph { namespace sot {
     }; // class AddJoint
 
     // Command SetDofBounds
+    // TODO :Implement
     class SetDofBounds : public Command
     {
     public:
@@ -262,6 +262,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetDofBounds
 
     // Command SetMass
+    // TODO :Implement
     class SetMass : public Command
     {
     public:
@@ -286,6 +287,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetMass
 
     // Command SetLocalCenterOfMass
+    // TODO :Implement
     class SetLocalCenterOfMass : public Command
     {
     public:
@@ -310,6 +312,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetLocalCenterOfMass
 
     // Command SetInertiaMatrix
+    // TODO :Implement
     class SetInertiaMatrix : public Command
     {
     public:
@@ -334,6 +337,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetInertiaMatrix
 
     // Command SetSpecificJoint
+    // TODO :Implement
     class SetSpecificJoint : public Command
     {
     public:
@@ -358,6 +362,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetSpecificJoint
 
     // Command SetHandParameters
+    // TODO :Implement
     class SetHandParameters : public Command
     {
     public:
@@ -384,7 +389,9 @@ namespace dynamicgraph { namespace sot {
 	return Value();
       }
     }; // class SetHandParameters
+
     // Command SetFootParameters
+    // TODO :Implement
     class SetFootParameters : public Command
     {
     public:
@@ -411,6 +418,7 @@ namespace dynamicgraph { namespace sot {
     }; // class Setfootparameters
 
     // Command SetGazeParameters
+    // TODO :Implement
     class SetGazeParameters : public Command
     {
     public:
@@ -435,6 +443,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetGazeParameters
 
     // Command InitializeRobot
+    // TODO :Implement
     class InitializeRobot : public Command
     {
     public:
@@ -456,6 +465,7 @@ namespace dynamicgraph { namespace sot {
     }; // class InitializeRobot
 
     // Command GetDimension
+    // TODO :Implement
     class GetDimension : public Command
     {
     public:
@@ -477,6 +487,7 @@ namespace dynamicgraph { namespace sot {
     }; // class GetDimension
 
     // Command Write
+    // TODO :Implement
     class Write : public Command
     {
     public:
@@ -501,6 +512,8 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class Write
 
+    // Command GetHandParameter
+    // TODO :Implement
     class GetHandParameter : public Command
     {
     public:
