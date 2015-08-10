@@ -671,7 +671,23 @@ ml::Vector& Dynamic::computeZmp( ml::Vector& res,int time )
 
 ml::Vector& Dynamic::computeMomenta( ml::Vector &res, int time)
 {
-    //TODO: implement here
+    //Work in progress
+    se3::Force::Vector3 linearMomentum, angularMomentum;
+    if(res.size()!=6) res.resize(6);
+
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    se3::Force ftau = this->m_data->f[0];
+    linearMomentum = ftau.linear();
+    angularMomentum = ftau.angular();
+
+    for(unsigned int i=3; i<3;i++ )
+    {
+        res(i) = linearMomentum(i);
+        res(i+3) = angularMomentum(i);
+    }
+
+    sotDEBUGOUT(25) << "Momenta : " << res;
     return res;
 }
 
