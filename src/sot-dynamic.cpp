@@ -693,7 +693,18 @@ ml::Vector& Dynamic::computeMomenta( ml::Vector &res, int time)
 
 ml::Vector& Dynamic::computeAngularMomentum( ml::Vector &res, int time)
 {
-    //TODO: implement here
+    // work in progress
+    se3::Force::Vector3 angularMomentum;
+    if(res.size()!=3) res.resize(3);
+
+    sotDEBUGIN(25);
+    newtonEulerSINTERN(time);
+    se3::Force ftau = this->m_data->f[0];
+    angularMomentum = ftau.angular();
+
+    for(unsigned int i=3; i<3;i++ ) res(i+3) = angularMomentum(i);
+
+    sotDEBUGOUT(25) << "AngularMomenta : " << res;
     return res;
 }
 
