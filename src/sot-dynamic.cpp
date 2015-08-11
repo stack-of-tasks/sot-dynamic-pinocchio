@@ -1107,3 +1107,71 @@ void Dynamic::createRobot()
         this->m_data = NULL;
     }
 }
+
+void Dynamic::createJoint(const std::string& inJointName,
+              const std::string& inJointType,
+               const ml::Matrix& inPosition)
+{
+    /*
+  if (jointMap_.count(inJointName) == 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "a joint with name " + inJointName +
+                   " has already been created.");
+  }
+  matrix4d position = maalToMatrix4d(inPosition);
+  CjrlJoint* joint=NULL;
+
+  if (inJointType == "freeflyer") {
+    joint = factory_.createJointFreeflyer(position);
+  } else if (inJointType == "rotation") {
+    joint = factory_.createJointRotation(position);
+  } else if (inJointType == "translation") {
+    joint = factory_.createJointTranslation(position);
+  } else if (inJointType == "anchor") {
+    joint = factory_.createJointAnchor(position);
+  } else {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   inJointType + " is not a valid type.\n"
+                   "Valid types are 'freeflyer', 'rotation', 'translation', 'anchor'.");
+  }
+  jointMap_[inJointName] = joint;
+  */
+}
+
+void Dynamic::setRootJoint(const std::string& inJointName)
+{
+    /*
+  if (!m_HDR) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "you must create a robot first.");
+  }
+  if (jointMap_.count(inJointName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inJointName +
+                   " has been created.");
+  }
+  m_HDR->rootJoint(*jointMap_[inJointName]);
+  */
+}
+
+void Dynamic::addJoint(const std::string& inParentName,
+               const std::string& inChildName)
+{
+    /*
+  if (!m_HDR) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "you must create a robot first.");
+  }
+  if (jointMap_.count(inParentName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inParentName +
+                   " has been created.");
+  }
+  if (jointMap_.count(inChildName) != 1) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inChildName +
+                   " has been created.");
+  }
+  jointMap_[inParentName]->addChildJoint(*(jointMap_[inChildName]));
+  */
+}

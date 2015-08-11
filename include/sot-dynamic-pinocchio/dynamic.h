@@ -207,7 +207,9 @@ public: /* --- PARAMS --- */
  void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
  void cmd_createPositionSignal( const std::string& sig,const std::string& j );
  void createRobot();
-
+ void createJoint(const std::string& inJointName,const std::string& inJointType,const ml::Matrix& inPosition);
+ void setRootJoint(const std::string& inJointName);
+ void addJoint(const std::string& inParentName,const std::string& inChildName);
 };
 } /* namespace sot */} /* namespace dynamicgraph */
 #endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H
