@@ -1095,3 +1095,14 @@ void Dynamic::commandLine( const std::string& cmdLine,
 
     sotDEBUGOUT(25);
 }
+
+void Dynamic::createRobot()
+{
+    if (this->m_model.nq!=0)
+    {
+        this->m_model.~Model();
+        this->m_model=se3::Model();
+        delete this->m_data;
+        this->m_data = NULL;
+    }
+}
