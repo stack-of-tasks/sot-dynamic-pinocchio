@@ -80,6 +80,7 @@ void Dynamic::initMap(){
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
   ,m_data(NULL)
+  ,m_model()
 
   ,init(false)
 
