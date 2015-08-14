@@ -52,6 +52,20 @@ namespace dg = dynamicgraph;
     }
 
 /* --------------------------------------------------------------------- */
+/* --- Structure ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+
+typedef struct NewJoints NewJoints;
+struct NewJoints{
+    const std::string JointName;
+    const std::string JointType;
+    const ml::Matrix Position;
+
+    NewJoints():JointName(""),JointType(""),Position(ml::Matrix(6,6)){}
+    NewJoints(const std::string& n, const std::string& m,const ml::Matrix p):JointName(n),JointType(m),Position(p){}
+};
+
+/* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 

@@ -77,6 +77,7 @@ void Dynamic::initMap(){
     mapCmdLine["help"]= help;
 }
 
+static std::map<std::string,NewJoints> mapJoints;
 
 Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
   ,m_data(NULL)
@@ -1112,7 +1113,10 @@ void Dynamic::createJoint(const std::string& inJointName,
               const std::string& inJointType,
                const ml::Matrix& inPosition)
 {
-    /*
+
+    const NewJoints newJoints(inJointName,inJointType,inPosition);
+    mapJoints.insert(std::pair<std::string,NewJoints>(inJointName,newJoints ));
+ /*
   if (jointMap_.count(inJointName) == 1) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
                    "a joint with name " + inJointName +
