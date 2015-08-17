@@ -145,7 +145,6 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     sotDEBUGIN(5);
 
 
-
     signalRegistration(jointPositionSIN);
     signalRegistration(freeFlyerPositionSIN);
     signalRegistration(jointVelocitySIN);
@@ -327,6 +326,21 @@ static void eigenVector3dToMaal( const Eigen::Vector3d& source,
     res(0) = source[0];
     res(1) = source[1];
     res(2) = source[2];
+}
+
+static se3::SE3 maalToSE3(const maal::boost::Matrix matmat)
+{
+    se3::SE3 mat;
+    se3::SE3::Matrix3 mat3;
+    for (unsigned int r=0; r<3; ++r)
+        for (unsigned int c=0; c<3; ++c)
+            mat3(r,c) = matmat(r,c);
+    mat.rotation(mat3);
+    se3::SE3::Vector3 vect3;
+    for(unsigned int c=0;c<3;++c)
+        vect3(c) = matmat(3,c);
+    mat.translation(vect3);
+    return mat;
 }
 
 Eigen::VectorXd Dynamic::getPinocchioPos(int time)
