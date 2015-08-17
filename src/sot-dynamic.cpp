@@ -1110,35 +1110,25 @@ void Dynamic::createRobot()
 }
 
 void Dynamic::createJoint(const std::string& inJointName,
-              const std::string& inJointType,
-               const ml::Matrix& inPosition)
+                          const std::string& inJointType,
+                          const se3::Inertia& inertia,
+                          const ml::Matrix& inPosition)
 {
+    if(mapJoints.count(inJointName)== 1){
+        SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                       "a joint with name " + inJointName +
+                       " has already been created.");
+    }
 
-    const NewJoints newJoints(inJointName,inJointType,inPosition);
+    const NewJoints newJoints(inJointName,inJointType,inertia,inPosition);
     mapJoints.insert(std::pair<std::string,NewJoints>(inJointName,newJoints ));
- /*
-  if (jointMap_.count(inJointName) == 1) {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
-                   "a joint with name " + inJointName +
-                   " has already been created.");
-  }
-  matrix4d position = maalToMatrix4d(inPosition);
-  CjrlJoint* joint=NULL;
 
-  if (inJointType == "freeflyer") {
-    joint = factory_.createJointFreeflyer(position);
-  } else if (inJointType == "rotation") {
-    joint = factory_.createJointRotation(position);
-  } else if (inJointType == "translation") {
-    joint = factory_.createJointTranslation(position);
-  } else if (inJointType == "anchor") {
-    joint = factory_.createJointAnchor(position);
+ /*
   } else {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
                    inJointType + " is not a valid type.\n"
                    "Valid types are 'freeflyer', 'rotation', 'translation', 'anchor'.");
   }
-  jointMap_[inJointName] = joint;
   */
 }
 
