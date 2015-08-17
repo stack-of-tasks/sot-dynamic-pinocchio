@@ -1156,21 +1156,21 @@ void Dynamic::setRootJoint(const std::string& inJointName)
 void Dynamic::addJoint(const std::string& inParentName,
                const std::string& inChildName)
 {
-    /*
-  if (!m_HDR) {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
-                   "you must create a robot first.");
-  }
-  if (jointMap_.count(inParentName) != 1) {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
-                   "No joint with name " + inParentName +
-                   " has been created.");
-  }
-  if (jointMap_.count(inChildName) != 1) {
+  if (mapJoints.count(inChildName) != 1) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
                    "No joint with name " + inChildName +
                    " has been created.");
   }
-  jointMap_[inParentName]->addChildJoint(*(jointMap_[inChildName]));
-  */
+  if (!this->m_model.existBodyName(inParentName)) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inParentName +
+                   " has been created.");
+  }
+  const NewJoints newjoint = mapJoints["inChildName"];
+  se3::Model::Index parent = this->m_model.getBodyId(inParentName);
+
+  //const se3::JointModelBase<se3::JointModelRX()> ModelBase;
+  //Eigen::MatrixXd a = maalToEigenMatrixXd(newjoint.Position);
+  //this->m_model.addBody(parent,se3::JointModelRX(),a,newjoint.inertia,inChildName,inChildName);
+
 }
