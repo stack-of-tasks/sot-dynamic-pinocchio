@@ -1120,16 +1120,21 @@ void Dynamic::createJoint(const std::string& inJointName,
                        " has already been created.");
     }
 
-    const NewJoints newJoints(inJointName,inJointType,inertia,inPosition);
-    mapJoints.insert(std::pair<std::string,NewJoints>(inJointName,newJoints ));
-
- /*
-  } else {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
-                   inJointType + " is not a valid type.\n"
-                   "Valid types are 'freeflyer', 'rotation', 'translation', 'anchor'.");
-  }
-  */
+    if(inJointType == "JointModelRX" || inJointType =="JointModelRY" ||
+            inJointType =="JointModelRZ" ||inJointType =="JointModelRevoluteUnaligned" ||
+            inJointType =="JointModelSpherical" ||inJointType =="JointModelSphericalZYX" ||
+            inJointType =="JointModelPX" || inJointType =="JointModelPY" ||
+            inJointType =="JointModelPZ" || inJointType =="JointModelFreeFlyer" ||
+            inJointType =="JointModelPlanar" || inJointType =="JointModelTranslation")
+    {
+        const NewJoints newJoints(inJointName,inJointType,inertia,inPosition);
+        mapJoints.insert(std::pair<std::string,NewJoints>(inJointName,newJoints ));
+    }else
+    {
+        SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                                   inJointType + " is not a valid type.\n"
+                                   "Valid types are JointModelRX, JointModelRY, JointModelRZ, JointModelRevoluteUnaligned, JointModelSpherical, JointModelSphericalZYX, JointModelPX, JointModelPY, JointModelPZ, JointModelFreeFlyer, JointModelPlanar, JointModelTranslation.");
+    }
 }
 
 void Dynamic::setRootJoint(const std::string& inJointName)
