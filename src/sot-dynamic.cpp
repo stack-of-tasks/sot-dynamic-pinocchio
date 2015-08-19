@@ -252,6 +252,30 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
             "        - a string: value of the property\n";
     addCommand("getProperty", new command::GetProperty(*this, docstring));
 
+    docstring = "    \n"
+      "    Create an empty robot\n"
+      "    \n";
+    addCommand("createRobot", new command::CreateRobot(*this, docstring));
+
+    docstring = "    \n"
+      "    Create a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+            "        - a string: type of the joint in ['JointModelRX', 'JointModelRY', 'JointModelRZ', 'JointModelRevoluteUnaligned', 'JointModelSpherical', 'JointModelSphericalZYX', 'JointModelPX', 'JointModelPY', 'JointModelPZ', 'JointModelFreeFlyer', 'JointModelPlanar', 'JointModelTranslation'],\n"
+      "        - a matrix: (homogeneous) position of the joint.\n"
+      "    \n";
+    addCommand("createJoint", new command::CreateJoint(*this, docstring));
+
+    docstring = "    \n"
+      "    Add a child joint to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the parent joint,\n"
+      "        - a string: name of the child joint.\n"
+      "    \n";
+    addCommand("addJoint", new command::AddJoint(*this, docstring));
+
     // #### End Work in progress
 }
 
