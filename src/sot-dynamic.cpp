@@ -1128,12 +1128,29 @@ void Dynamic::commandLine( const std::string& cmdLine,
         // useless
         break;
     case help:
+        os << "Dynamics:"<<endl
+       << "  - setFiles ...\t: set and parse the config file" <<endl
+       << "  - displayFiles\t\t\t:display the config file" <<endl
+       << "  - parse\t\t\t: display if the config file are already parse." <<endl
+       << "  - createJacobian <name> <point>:create a signal named <name> " << endl
+       << "  - createEndeffJacobian <name> <point>:create a signal named <name> "
+       << "forwarding the jacoian computed at <point>." <<endl
+       << "  - destroyJacobian <name>\t:delete the jacobian signal <name>" << endl
+       << "  - {create|destroy}Position\t:handle position signals." <<endl
+       << "  - {create|destroy}OpPoint\t:handle Operation Point (ie pos+jac) signals." <<endl
+       << "  - {create|destroy}Acceleration\t:handle acceleration signals." <<endl
+       << "  - {get|set}Property <name> [<val>]: set/get the property." <<endl
+       << "  - displayProperties: print the prop-val couples list." <<endl
+       << "  - ndof\t\t\t: display the number of DOF of the robot."<< endl;
+
+        Entity::commandLine(cmdLine,cmdArgs,os);
         break;
     default:
+        Entity::commandLine( cmdLine,cmdArgs,os);
         break;
     }
 
-    sotDEBUGOUT(25);
+    sotDEBUGOUT(15);
 }
 
 void Dynamic::createRobot()
