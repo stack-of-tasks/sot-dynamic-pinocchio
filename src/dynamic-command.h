@@ -152,7 +152,7 @@ namespace dynamicgraph { namespace sot {
     }; // class CreateRobot
 
     // Command CreateJoint
-    // TODO :Implement
+    // Work done
     class CreateJoint : public Command
     {
     public:
@@ -167,12 +167,12 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string jointName = values[0].value();
-//	std::string jointType = values[1].value();
-//	maal::boost::Matrix position = values[2].value();
-//	robot.createJoint(jointName, jointType, position);
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string jointName = values[0].value();
+    std::string jointType = values[1].value();
+    maal::boost::Matrix position = values[2].value();
+    robot.createJoint(jointName, jointType, position);
 	return Value();
       }
     }; // class CreateJoint
