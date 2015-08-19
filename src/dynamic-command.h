@@ -216,11 +216,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string parentName = values[0].value();
-//	std::string childName = values[1].value();
-//	robot.addJoint(parentName, childName);
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string parentName = values[0].value();
+    std::string childName = values[1].value();
+    robot.addJoint(parentName, childName);
 	return Value();
       }
     }; // class AddJoint
