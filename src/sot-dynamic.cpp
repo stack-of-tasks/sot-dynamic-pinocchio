@@ -1272,3 +1272,17 @@ void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
   se3::Model::Index index = this->m_model.getBodyId(inJointName);
   this->m_data->com[index] = maalToEigenVectorXd(inCom);
 }
+
+void Dynamic::setInertiaMatrix(const std::string& inJointName,
+                   ml::Matrix inMatrix)
+{
+  if (!this->m_model.existBodyName(inJointName)) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inJointName +
+                   " has been created.");
+  }
+  se3::Model::Index index = this->m_model.getBodyId(inJointName);
+
+  se3::Inertia inertia(this->m_data->mass[index],this->m_data->com[index],maalToEigenMatrixXd(inMatrix));
+  this->m_model.inertias[index]=inertia;
+}

@@ -226,6 +226,7 @@ public: /* --- PARAMS --- */
  void addJoint(const std::string& inParentName,const std::string& inChildName);
  void setMass(const std::string& inJointName, double inMass);
  void setLocalCenterOfMass(const std::string& inJointName, ml::Vector inCom);
+ void setInertiaMatrix(const std::string& inJointName, ml::Matrix inMatrix);
 };
 } /* namespace sot */} /* namespace dynamicgraph */
 #endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H
