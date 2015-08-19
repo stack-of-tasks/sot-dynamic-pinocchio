@@ -1249,3 +1249,14 @@ void Dynamic::addJoint(const std::string& inParentName,
   else if(type =="JointModelTranslation" )
       this->m_model.addBody(parent,se3::JointModelTranslation (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
 }
+
+void Dynamic::setMass(const std::string& inJointName, double inMass)
+{
+  if (!this->m_model.existBodyName(inJointName)) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inJointName +
+                   " has been created.");
+  }
+  se3::Model::Index index = this->m_model.getBodyId(inJointName);
+  this->m_data->mass[index]= inMass;
+}

@@ -224,6 +224,7 @@ public: /* --- PARAMS --- */
  void createJoint(const std::string& inJointName,const std::string& inJointType, const ml::Matrix& inPosition);
  void setRootJoint(const std::string& inJointName);
  void addJoint(const std::string& inParentName,const std::string& inChildName);
+ void setMass(const std::string& inJointName, double inMass);
 };
 } /* namespace sot */} /* namespace dynamicgraph */
 #endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H
