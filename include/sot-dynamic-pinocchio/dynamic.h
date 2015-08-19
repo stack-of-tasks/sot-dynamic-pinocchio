@@ -59,11 +59,10 @@ typedef struct NewJoints NewJoints;
 struct NewJoints{
     const std::string JointName;
     const std::string JointType;
-    const se3::Inertia inertia;
     const ml::Matrix Position;
 
-    NewJoints():JointName(""),JointType(""),inertia(),Position(ml::Matrix(6,6)){}
-    NewJoints(const std::string& name, const std::string& type, const se3::Inertia& inert,const ml::Matrix& position):JointName(name),JointType(type),inertia(inert),Position(position){}
+    NewJoints():JointName(""),JointType(""),Position(ml::Matrix(6,6)){}
+    NewJoints(const std::string& name, const std::string& type,const ml::Matrix& position):JointName(name),JointType(type),Position(position){}
 };
 
 /* --------------------------------------------------------------------- */
@@ -222,7 +221,7 @@ public: /* --- PARAMS --- */
  void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
  void cmd_createPositionSignal( const std::string& sig,const std::string& j );
  void createRobot();
- void createJoint(const std::string& inJointName,const std::string& inJointType,const se3::Inertia& inertia, const ml::Matrix& inPosition);
+ void createJoint(const std::string& inJointName,const std::string& inJointType, const ml::Matrix& inPosition);
  void setRootJoint(const std::string& inJointName);
  void addJoint(const std::string& inParentName,const std::string& inChildName);
 };

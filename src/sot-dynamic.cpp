@@ -1125,7 +1125,6 @@ void Dynamic::createRobot()
 
 void Dynamic::createJoint(const std::string& inJointName,
                           const std::string& inJointType,
-                          const se3::Inertia& inertia,
                           const ml::Matrix& inPosition)
 {
     if(mapJoints.count(inJointName)== 1){
@@ -1141,7 +1140,7 @@ void Dynamic::createJoint(const std::string& inJointName,
             inJointType =="JointModelPZ" || inJointType =="JointModelFreeFlyer" ||
             inJointType =="JointModelPlanar" || inJointType =="JointModelTranslation")
     {
-        const NewJoints newJoints(inJointName,inJointType,inertia,inPosition);
+        const NewJoints newJoints(inJointName,inJointType,inPosition);
         mapJoints.insert(std::pair<std::string,NewJoints>(inJointName,newJoints ));
     }else
     {
@@ -1183,28 +1182,29 @@ void Dynamic::addJoint(const std::string& inParentName,
   const NewJoints newjoint = mapJoints[inChildName];
   se3::Model::Index parent = this->m_model.getBodyId(inParentName);
   const string type = newjoint.JointType;
+  const se3::Inertia inertia = se3::Inertia::Zero();
   if(type == "JointModelRX")
-      this->m_model.addBody(parent,se3::JointModelRX (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelRX (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type == "JointModelRY" )
-      this->m_model.addBody(parent,se3::JointModelRY (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelRY (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelRZ" )
-      this->m_model.addBody(parent,se3::JointModelRZ (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelRZ (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelRevoluteUnaligned" )
-      this->m_model.addBody(parent,se3::JointModelRevoluteUnaligned (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelRevoluteUnaligned (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelSpherical" )
-      this->m_model.addBody(parent,se3::JointModelSpherical (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelSpherical (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelSphericalZYX" )
-      this->m_model.addBody(parent,se3::JointModelSphericalZYX (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelSphericalZYX (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelPX" )
-      this->m_model.addBody(parent,se3::JointModelPX (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelPX (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelPY" )
-      this->m_model.addBody(parent,se3::JointModelPY (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelPY (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelPZ" )
-      this->m_model.addBody(parent,se3::JointModelPZ (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelPZ (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelFreeFlyer" )
-      this->m_model.addBody(parent,se3::JointModelFreeFlyer (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelFreeFlyer (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelPlanar" )
-      this->m_model.addBody(parent,se3::JointModelPlanar (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelPlanar (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
   else if(type =="JointModelTranslation" )
-      this->m_model.addBody(parent,se3::JointModelTranslation (),maalToSE3(newjoint.Position),newjoint.inertia,inChildName,inChildName);
+      this->m_model.addBody(parent,se3::JointModelTranslation (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
 }
