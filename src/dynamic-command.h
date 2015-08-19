@@ -130,7 +130,7 @@ namespace dynamicgraph { namespace sot {
     }; // class GetProperty
 
     // Command CreateRobot
-    // TODO :Implement
+    // Work done
     class CreateRobot : public Command
     {
     public:
@@ -145,8 +145,8 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	robot.createRobot();
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    robot.createRobot();
 	return Value();
       }
     }; // class CreateRobot
