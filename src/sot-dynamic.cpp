@@ -285,6 +285,17 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
       "    \n";
     addCommand("setMass", new command::SetMass(*this, docstring));
 
+    docstring = "    \n"
+      "    Set the position of the center of mass of a body\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a vector: the coordinate of the center of mass in the local\n"
+      "                    frame of the joint.\n"
+      "    \n";
+    addCommand("setLocalCenterOfMass",
+           new command::SetLocalCenterOfMass(*this, docstring));
+
     // #### End Work in progress
 }
 

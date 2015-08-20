@@ -278,7 +278,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetMass
 
     // Command SetLocalCenterOfMass
-    // TODO :Implement
+    // Work done
     class SetLocalCenterOfMass : public Command
     {
     public:
@@ -293,11 +293,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string jointName = values[0].value();
-//	ml::Vector com = values[1].value();
-//	robot.setLocalCenterOfMass(jointName, com);
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string jointName = values[0].value();
+    ml::Vector com = values[1].value();
+    robot.setLocalCenterOfMass(jointName, com);
 	return Value();
       }
     }; // class SetLocalCenterOfMass
