@@ -276,6 +276,15 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
       "    \n";
     addCommand("addJoint", new command::AddJoint(*this, docstring));
 
+    docstring = "    \n"
+      "    Set the mass of the body attached to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a floating point number: the mass of the body.\n"
+      "    \n";
+    addCommand("setMass", new command::SetMass(*this, docstring));
+
     // #### End Work in progress
 }
 

@@ -201,7 +201,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetRootJoint
 
     // Command AddJoint
-    // TODO :Implement
+    // Work done
     class AddJoint : public Command
     {
     public:
@@ -253,7 +253,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetDofBounds
 
     // Command SetMass
-    // TODO :Implement
+    // Work done
     class SetMass : public Command
     {
     public:
@@ -268,11 +268,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string jointName = values[0].value();
-//	double mass = values[1].value();
-//	robot.setMass(jointName, mass);
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string jointName = values[0].value();
+    double mass = values[1].value();
+    robot.setMass(jointName, mass);
 	return Value();
       }
     }; // class SetMass
