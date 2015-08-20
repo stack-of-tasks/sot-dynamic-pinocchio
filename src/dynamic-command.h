@@ -327,31 +327,6 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class SetInertiaMatrix
 
-    // Command SetSpecificJoint
-    // TODO :Implement
-    class SetSpecificJoint : public Command
-    {
-    public:
-      virtual ~SetSpecificJoint() {}
-      /// Create command and store it in Entity
-      /// \param entity instance of Entity owning this command
-      /// \param docstring documentation of the command
-      SetSpecificJoint(Dynamic& entity, const std::string& docstring) :
-	Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING),
-		docstring)
-      {
-      }
-      virtual Value doExecute()
-      {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string jointName = values[0].value();
-//	std::string jointType = values[1].value();
-//	robot.setSpecificJoint(jointName, jointType);
-	return Value();
-      }
-    }; // class SetSpecificJoint
-
     // Command SetHandParameters
     // TODO :Implement
     class SetHandParameters : public Command
