@@ -296,6 +296,16 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     addCommand("setLocalCenterOfMass",
            new command::SetLocalCenterOfMass(*this, docstring));
 
+    docstring = "    \n"
+      "    Set inertia matrix of a body attached to a joint\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: name of the joint,\n"
+      "        - a matrix: inertia matrix.\n"
+      "    \n";
+    addCommand("setInertiaMatrix",
+           new command::SetInertiaMatrix(*this, docstring));
+
     // #### End Work in progress
 }
 

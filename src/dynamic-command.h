@@ -303,7 +303,7 @@ namespace dynamicgraph { namespace sot {
     }; // class SetLocalCenterOfMass
 
     // Command SetInertiaMatrix
-    // TODO :Implement
+    // Work done
     class SetInertiaMatrix : public Command
     {
     public:
@@ -318,11 +318,11 @@ namespace dynamicgraph { namespace sot {
       }
       virtual Value doExecute()
       {
-//	Dynamic& robot = static_cast<Dynamic&>(owner());
-//	std::vector<Value> values = getParameterValues();
-//	std::string jointName = values[0].value();
-//	ml::Matrix inertiaMatrix = values[1].value();
-//	robot.setInertiaMatrix(jointName, inertiaMatrix);
+    Dynamic& robot = static_cast<Dynamic&>(owner());
+    std::vector<Value> values = getParameterValues();
+    std::string jointName = values[0].value();
+    ml::Matrix inertiaMatrix = values[1].value();
+    robot.setInertiaMatrix(jointName, inertiaMatrix);
 	return Value();
       }
     }; // class SetInertiaMatrix
