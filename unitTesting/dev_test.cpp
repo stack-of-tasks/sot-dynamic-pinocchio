@@ -29,10 +29,15 @@ int main(int argc, char * argv[])
     cout<<dyn->m_data->oMi[0];   //display the first oMi (not relevent but for access test)
     cout<<dyn->m_urdfPath<<endl;
     cout<<"size of oMi : "<<dyn->m_data->oMi.size()<<endl;
+    cout<< "Upper Limit size : "<< dyn->m_data->upperPositionLimit.size() << endl;
+    cout<< "Upper Limit : "<< dyn->m_data->upperPositionLimit << endl;
+    cout<< "Upper Limit size : "<< dyn->m_data->lowerPositionLimit.size() << endl;
+    cout<< "Lower Limit : "<< dyn->m_data->lowerPositionLimit << endl;
 
     ml::Vector q(dyn->m_model.nq);
     ml::Vector v(dyn->m_model.nv);
     ml::Vector a(dyn->m_model.nv);
+
 
     delete dyn;
     return 0;
