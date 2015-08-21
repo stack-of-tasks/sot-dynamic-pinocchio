@@ -212,6 +212,7 @@ public: /* --- PARAMS --- */
     void createJoint(const std::string& inJointName,const std::string& inJointType, const ml::Matrix& inPosition);
     void setRootJoint(const std::string& inJointName);
     void addJoint(const std::string& inParentName,const std::string& inChildName);
+    void setDofBounds(const std::string& inJointName,unsigned int inDofId,double inMinValue, double inMaxValue);
     void setMass(const std::string& inJointName, double inMass);
     void setLocalCenterOfMass(const std::string& inJointName, ml::Vector inCom);
     void setInertiaMatrix(const std::string& inJointName, ml::Matrix inMatrix);

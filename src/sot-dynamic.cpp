@@ -1244,6 +1244,20 @@ void Dynamic::addJoint(const std::string& inParentName,
         this->m_model.addBody(parent,se3::JointModelTranslation (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
 }
 
+void Dynamic::setDofBounds(const std::string& inJointName,
+               unsigned int inDofId,
+               double inMinValue, double inMaxValue)
+{
+  if (!this->m_model.existBodyName(inJointName)) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                   "No joint with name " + inJointName +
+                   " has been created.");
+  }
+  se3::Model::Index index = this->m_model.getBodyId(inJointName);
+  this->m_data->upperPositionLimit[index] = inMaxValue;
+  this->m_data->lowerPositionLimit[index] = inMinValue;
+}
+
 void Dynamic::setMass(const std::string& inJointName, double inMass)
 {
     if (!this->m_model.existBodyName(inJointName)) {
