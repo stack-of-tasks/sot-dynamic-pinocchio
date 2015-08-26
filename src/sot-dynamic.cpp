@@ -1244,8 +1244,9 @@ void Dynamic::addJoint(const std::string& inParentName,
         this->m_model.addBody(parent,se3::JointModelTranslation (),maalToSE3(newjoint.Position),inertia,inChildName,inChildName);
 }
 
+// State : Only considered revolute joint or joint with one DoF
+// TODO : Extend if more DoF per joint must be considered
 void Dynamic::setDofBounds(const std::string& inJointName,
-               unsigned int inDofId,
                double inMinValue, double inMaxValue)
 {
   if (!this->m_model.existBodyName(inJointName)) {
@@ -1254,8 +1255,13 @@ void Dynamic::setDofBounds(const std::string& inJointName,
                    " has been created.");
   }
   se3::Model::Index index = this->m_model.getBodyId(inJointName);
-  this->m_data->upperPositionLimit[index] = inMaxValue;
-  this->m_data->lowerPositionLimit[index] = inMinValue;
+  if(index == 0){
+      SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
+                     "Joint " + inJointName +
+                     " is the freeflyer, no limit can be set.");
+  }
+  this->m_data->upperPositionLimit[index+6] = inMaxValue;
+  this->m_data->lowerPositionLimit[index+6] = inMinValue;
 }
 
 void Dynamic::setMass(const std::string& inJointName, double inMass)
