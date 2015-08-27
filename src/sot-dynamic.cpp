@@ -277,6 +277,17 @@ Dynamic::Dynamic( const std::string & name, bool build ):Entity(name)
     addCommand("addJoint", new command::AddJoint(*this, docstring));
 
     docstring = "    \n"
+      "    Set the bounds of a joint degree of freedom\n"
+      "    \n"
+      "      Input:\n"
+      "        - a string: the name of the joint,\n"
+      "        - a non-negative integer: the dof id in the joint\n"
+      "        - a floating point number: the minimal value,\n"
+      "        - a floating point number: the maximal value.\n"
+      "    \n";
+    addCommand("setDofBounds", new command::SetDofBounds(*this, docstring));
+
+    docstring = "    \n"
             "    Set the mass of the body attached to a joint\n"
             "    \n"
             "      Input:\n"
