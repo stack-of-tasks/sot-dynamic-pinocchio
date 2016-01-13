@@ -83,46 +83,46 @@ IntegratorForce::
 /* The derivative of the signal is such that: M v_dot + B v = f. We deduce:
  * v_dot =  M^-1 (f - Bv)
  */
-ml::Vector& IntegratorForce::
-computeDerivative( ml::Vector& res,
+dynamicgraph::Vector& IntegratorForce::
+computeDerivative( dynamicgraph::Vector& res,
 		   const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & force = forceSIN( time );
-  const ml::Matrix & massInverse = massInverseSIN( time );
-  const ml::Matrix & friction = frictionSIN( time );
+  const dynamicgraph::Vector & force = forceSIN( time );
+  const dynamicgraph::Matrix & massInverse = massInverseSIN( time );
+  const dynamicgraph::Matrix & friction = frictionSIN( time );
 
   sotDEBUG(15) << "force = " << force << std::endl;
 
-  ml::Vector f_bv( force.size() );
+  dynamicgraph::Vector f_bv( force.size() );
 
   if( velocityPrecSIN )
     { 
-      const ml::Vector & vel = velocityPrecSIN( time );
+      const dynamicgraph::Vector & vel = velocityPrecSIN( time );
       sotDEBUG(15) << "vel = " << vel << std::endl;
-      friction .multiply( vel,f_bv ); f_bv *= -1; 
+      f_bv = friction*vel; f_bv *= -1; 
     } else { f_bv.fill(0) ; } // vel is not set yet.
       
   f_bv+=force;
-  massInverse.multiply( f_bv, res );
+  res = massInverse*f_bv;
   
   sotDEBUGOUT(15);
   return res;
 }
 
-ml::Vector& IntegratorForce::
-computeIntegral( ml::Vector& res,
+dynamicgraph::Vector& IntegratorForce::
+computeIntegral( dynamicgraph::Vector& res,
 		 const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & dvel =velocityDerivativeSOUT( time );
+  const dynamicgraph::Vector & dvel =velocityDerivativeSOUT( time );
   res = dvel;
   res *= timeStep;
   if( velocityPrecSIN )
     {
-      const ml::Vector & vel = velocityPrecSIN( time );
+      const dynamicgraph::Vector & vel = velocityPrecSIN( time );
       res += vel; 
     } 
   else { /* vprec not set yet. */ }
@@ -132,14 +132,14 @@ computeIntegral( ml::Vector& res,
   return res;
 }
 
-ml::Matrix& IntegratorForce::
-computeMassInverse( ml::Matrix& res,
+dynamicgraph::Matrix& IntegratorForce::
+computeMassInverse( dynamicgraph::Matrix& res,
 		    const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Matrix & mass = massSIN( time );
-  mass.inverse( res );
+  const dynamicgraph::Matrix & mass = massSIN( time );
+  res = mass.inverse();
 
   sotDEBUGOUT(15);
   return res;

@@ -26,16 +26,15 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-geometry.hh>
+
 #include <sot-dynamic/integrator-force.h>
 
 /* STD */
@@ -80,7 +79,7 @@ class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact
 
 
  public: /* --- FUNCTIONS --- */
-  ml::Vector& computeVelocityExact( ml::Vector& res,
+  dynamicgraph::Vector& computeVelocityExact( dynamicgraph::Vector& res,
 				    const int& time );
   
 /*  public: /\* --- PARAMS --- *\/ */

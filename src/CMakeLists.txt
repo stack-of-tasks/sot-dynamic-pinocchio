@@ -47,7 +47,6 @@ FOREACH(lib ${plugins})
   PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
-  PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-mal)
 
   INSTALL(TARGETS ${lib} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
 

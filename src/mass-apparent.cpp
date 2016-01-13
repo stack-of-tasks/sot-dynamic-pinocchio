@@ -67,46 +67,46 @@ MassApparent::
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-ml::Matrix& MassApparent::
-computeMassInverse( ml::Matrix& res,
+dynamicgraph::Matrix& MassApparent::
+computeMassInverse( dynamicgraph::Matrix& res,
 		   const int& time )
 {
   sotDEBUGIN(15);
   
-  const ml::Matrix & J = jacobianSIN( time );
-  const ml::Matrix & A = inertiaInverseSIN( time );
+  const dynamicgraph::Matrix & J = jacobianSIN( time );
+  const dynamicgraph::Matrix & A = inertiaInverseSIN( time );
 
-  ml::Matrix AJt( J.nbCols(),J.nbRows() );
-  A.multiply( J.transpose(),AJt );
+  dynamicgraph::Matrix AJt( J.cols(),J.rows() );
+  AJt = A* J.transpose();
 
-  res.resize( J.nbRows(),J.nbRows() );
-  J.multiply( AJt,res );
+  res.resize( J.rows(),J.rows() );
+  res = J* AJt;
 
   sotDEBUGOUT(15);
   return res;
 }
 
-ml::Matrix& MassApparent::
-computeMass( ml::Matrix& res,
+dynamicgraph::Matrix& MassApparent::
+computeMass( dynamicgraph::Matrix& res,
 		   const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Matrix & omega = massInverseSOUT( time );
-  omega.inverse( res );
+  const dynamicgraph::Matrix & omega = massInverseSOUT( time );
+  res = omega.inverse();
 
   sotDEBUGOUT(15);
   return res;
 }
 
-ml::Matrix& MassApparent::
-computeInertiaInverse( ml::Matrix& res,
+dynamicgraph::Matrix& MassApparent::
+computeInertiaInverse( dynamicgraph::Matrix& res,
 		       const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Matrix & A = inertiaSIN( time );
-  A.inverse( res );
+  const dynamicgraph::Matrix & A = inertiaSIN( time );
+  res = A.inverse();
 
   sotDEBUGOUT(15);
   return res;

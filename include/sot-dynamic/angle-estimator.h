@@ -39,16 +39,15 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-geometry.hh>
+
 
 /* STD */
 #include <string>
@@ -79,21 +78,21 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
   dg::SignalPtr<MatrixHomogeneous,int> sensorEmbeddedPositionSIN; // waistRchest
   dg::SignalPtr<MatrixHomogeneous,int> contactWorldPositionSIN; // estimate(worldRf)
   dg::SignalPtr<MatrixHomogeneous,int> contactEmbeddedPositionSIN; // waistRleg
-  dg::SignalTimeDependent<ml::Vector,int> anglesSOUT;  // [ flex1 flex2 yaw_drift ]
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> anglesSOUT;  // [ flex1 flex2 yaw_drift ]
   dg::SignalTimeDependent<MatrixRotation,int> flexibilitySOUT;  // footRleg
   dg::SignalTimeDependent<MatrixRotation,int> driftSOUT;  // Ryaw = worldRc est(wRc)^-1
   dg::SignalTimeDependent<MatrixRotation,int> sensorWorldRotationSOUT;  // worldRc
   dg::SignalTimeDependent<MatrixRotation,int> waistWorldRotationSOUT;  // worldRwaist
   dg::SignalTimeDependent<MatrixHomogeneous,int> waistWorldPositionSOUT; // worldMwaist
-  dg::SignalTimeDependent<ml::Vector,int> waistWorldPoseRPYSOUT; // worldMwaist
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> waistWorldPoseRPYSOUT; // worldMwaist
 
-  dg::SignalPtr<ml::Matrix,int> jacobianSIN;
-  dg::SignalPtr<ml::Vector,int> qdotSIN;
-  dg::SignalTimeDependent<ml::Vector,int> xff_dotSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> qdotSOUT;
+  dg::SignalPtr<dynamicgraph::Matrix,int> jacobianSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> qdotSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> xff_dotSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> qdotSOUT;
 
  public: /* --- FUNCTIONS --- */
-  ml::Vector& computeAngles( ml::Vector& res,
+  dynamicgraph::Vector& computeAngles( dynamicgraph::Vector& res,
 			     const int& time );
   MatrixRotation& computeFlexibilityFromAngles( MatrixRotation& res,
 						   const int& time );
@@ -105,11 +104,11 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator
 						const int& time );
   MatrixHomogeneous& computeWaistWorldPosition( MatrixHomogeneous& res,
 						   const int& time );
-  ml::Vector& computeWaistWorldPoseRPY( ml::Vector& res,
+  dynamicgraph::Vector& computeWaistWorldPoseRPY( dynamicgraph::Vector& res,
 					const int& time );
-  ml::Vector& compute_xff_dotSOUT( ml::Vector& res,
+  dynamicgraph::Vector& compute_xff_dotSOUT( dynamicgraph::Vector& res,
 				   const int& time );
-  ml::Vector& compute_qdotSOUT( ml::Vector& res,
+  dynamicgraph::Vector& compute_qdotSOUT( dynamicgraph::Vector& res,
 				const int& time );
 
  public: /* --- PARAMS --- */

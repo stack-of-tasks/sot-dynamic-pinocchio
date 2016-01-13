@@ -23,13 +23,11 @@
 
 #include <ostream>
 
-#include "jrl/mal/boost.hh"
-#include "jrl/mal/matrixabstractlayer.hh"
+#include "dynamic-graph/linear-algebra.h"
 
-#include <sot/core/matrix-twist.hh>
-#include <sot/core/matrix-force.hh>
-#include <sot/core/matrix-rotation.hh>
-#include <sot/core/matrix-homogeneous.hh>
+
+
+#include <sot/core/matrix-geometry.hh>
 
 namespace dynamicsJRLJapan
 {
@@ -90,11 +88,11 @@ private:
   std::vector<CjrlJoint*>                              joints_;
   std::vector<int>                                     parentIndex_;
  
-  std::vector< ml::Matrix >  Ic;
-  std::vector< ml::Vector >      phi;
+  std::vector< dynamicgraph::Matrix >  Ic;
+  std::vector< dynamicgraph::Vector >      phi;
   std::vector< MatrixTwist >  iVpi;
   std::vector< MatrixForce >  iVpiT;
-  ml::Matrix inertia_;
+  dynamicgraph::Matrix inertia_;
 
 
 };

@@ -21,7 +21,6 @@
 #include <sot-dynamic/zmpreffromcom.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
-
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(ZmprefFromCom,"ZmprefFromCom");
@@ -65,22 +64,22 @@ ZmprefFromCom::
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-ml::Vector& ZmprefFromCom::
-computeZmpref( ml::Vector& res,
+dynamicgraph::Vector& ZmprefFromCom::
+computeZmpref( dynamicgraph::Vector& res,
 	       const int& time )
 {
   sotDEBUGIN(15);
   
-  const ml::Vector& com = comPositionSIN( time );
-  const ml::Vector& dcom = dcomSIN( time );
+  const dynamicgraph::Vector& com = comPositionSIN( time );
+  const dynamicgraph::Vector& dcom = dcomSIN( time );
   const MatrixHomogeneous& oTw = waistPositionSIN( time );
 
   MatrixHomogeneous wTo = oTw.inverse();
-  ml::Vector nextComRef = dcom;  nextComRef*= dt;nextComRef+=com;
+  dynamicgraph::Vector nextComRef = dcom;  nextComRef*= dt;nextComRef+=com;
   
   
   nextComRef(2) = -footHeight; // projection on the ground.
-  wTo.multiply(nextComRef,res);
+  res = wTo.matrix()*nextComRef;
 
   sotDEBUGOUT(15);
   return res;

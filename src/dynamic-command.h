@@ -181,7 +181,7 @@ namespace dynamicgraph { namespace sot {
 	std::vector<Value> values = getParameterValues();
 	std::string jointName = values[0].value();
 	std::string jointType = values[1].value();
-	maal::boost::Matrix position = values[2].value();
+	dynamicgraph::Matrix position = values[2].value();
 	robot.createJoint(jointName, jointType, position);
 	return Value();
       }
@@ -301,7 +301,7 @@ namespace dynamicgraph { namespace sot {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
 	std::string jointName = values[0].value();
-	ml::Vector com = values[1].value();
+	dynamicgraph::Vector com = values[1].value();
 	robot.setLocalCenterOfMass(jointName, com);
 	return Value();
       }
@@ -325,7 +325,7 @@ namespace dynamicgraph { namespace sot {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
 	std::string jointName = values[0].value();
-	ml::Matrix inertiaMatrix = values[1].value();
+	dynamicgraph::Matrix inertiaMatrix = values[1].value();
 	robot.setInertiaMatrix(jointName, inertiaMatrix);
 	return Value();
       }
@@ -373,10 +373,10 @@ namespace dynamicgraph { namespace sot {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
 	bool right = values[0].value();
-	ml::Vector center = values[1].value();
-	ml::Vector thumbAxis = values[2].value();
-	ml::Vector forefingerAxis = values[3].value();
-	ml::Vector palmNormalAxis = values[4].value();
+	dynamicgraph::Vector center = values[1].value();
+	dynamicgraph::Vector thumbAxis = values[2].value();
+	dynamicgraph::Vector forefingerAxis = values[3].value();
+	dynamicgraph::Vector palmNormalAxis = values[4].value();
 	robot.setHandParameters(right, center, thumbAxis, forefingerAxis,
 				palmNormalAxis);
 	return Value();
@@ -402,7 +402,7 @@ namespace dynamicgraph { namespace sot {
 	bool right = values[0].value();
 	double soleLength = values[1].value();
 	double soleWidth = values[2].value();
-	ml::Vector anklePosition = values[3].value();
+	dynamicgraph::Vector anklePosition = values[3].value();
 	robot.setFootParameters(right, soleLength, soleWidth, anklePosition);
 	return Value();
       }
@@ -425,8 +425,8 @@ namespace dynamicgraph { namespace sot {
       {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
-	ml::Vector gazeOrigin  = values[0].value();
-	ml::Vector gazeDirection = values[1].value();
+	dynamicgraph::Vector gazeOrigin  = values[0].value();
+	dynamicgraph::Vector gazeDirection = values[1].value();
 	robot.setGazeParameters(gazeOrigin, gazeDirection);
 	return Value();
       }
@@ -512,12 +512,12 @@ namespace dynamicgraph { namespace sot {
 	Dynamic& robot = static_cast<Dynamic&>(owner());
 	std::vector<Value> values = getParameterValues();
 	bool right = values [0].value ();
-	ml::Matrix handParameter (4,4);
+	dynamicgraph::Matrix handParameter (4,4);
 	handParameter.setIdentity ();
 	CjrlHand* hand;
 	if (right) hand = robot.m_HDR->rightHand ();
 	else hand = robot.m_HDR->leftHand ();
-	vector3d axis;
+	Eigen::Vector3d axis;
 	hand->getThumbAxis (axis);
 	for (unsigned int i=0; i<3; i++)
 	  handParameter (i,0) = axis (i);

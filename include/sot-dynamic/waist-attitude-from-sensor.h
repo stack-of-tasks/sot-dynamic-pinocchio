@@ -26,15 +26,14 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
+#include <sot/core/matrix-geometry.hh>
 
 /* STD */
 #include <string>
@@ -115,11 +114,11 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
 
  public: /* --- SIGNAL --- */
 
-  ml::Vector& computePositionWaist( ml::Vector& res,
+  dynamicgraph::Vector& computePositionWaist( dynamicgraph::Vector& res,
 				    const int& time );
 
   dg::SignalPtr<MatrixHomogeneous,int> positionContactSIN;
-  dg::SignalTimeDependent<ml::Vector,int> positionWaistSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> positionWaistSOUT;
 
 
  public: /* --- PARAMS --- */

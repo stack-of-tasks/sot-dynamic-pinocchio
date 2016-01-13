@@ -60,24 +60,24 @@ IntegratorForceRK4::
  */
 static const double rk_fact[4] = { 1.,2.,2.,1. };
 
-ml::Vector& IntegratorForceRK4::
-computeDerivativeRK4( ml::Vector& res,
+dynamicgraph::Vector& IntegratorForceRK4::
+computeDerivativeRK4( dynamicgraph::Vector& res,
 		      const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & force = forceSIN( time );
-  const ml::Matrix & massInverse = massInverseSIN( time );
-  const ml::Matrix & friction = frictionSIN( time );
-  unsigned int nf = force.size(), nv = friction.nbCols();
+  const dynamicgraph::Vector & force = forceSIN( time );
+  const dynamicgraph::Matrix & massInverse = massInverseSIN( time );
+  const dynamicgraph::Matrix & friction = frictionSIN( time );
+  unsigned int nf = force.size(), nv = friction.cols();
   res.resize(nv); res.fill(0);
 
   if(! velocityPrecSIN )
     { 
-      ml::Vector zero( nv ); zero.fill(0);
+      dynamicgraph::Vector zero( nv ); zero.fill(0);
       velocityPrecSIN = zero;
     } 
-  const ml::Vector & vel = velocityPrecSIN( time );
+  const dynamicgraph::Vector & vel = velocityPrecSIN( time );
   double & dt = this->IntegratorForce::timeStep; // this is &
 
   sotDEBUG(15) << "force = " << force;
@@ -86,18 +86,18 @@ computeDerivativeRK4( ml::Vector& res,
   sotDEBUG(25) << "B = " << friction;
   sotDEBUG(25) << "dt = " << dt << std::endl;
 
-  std::vector<ml::Vector> v(4);
-  ml::Vector ki( nv ), fi( nf );
+  std::vector<dynamicgraph::Vector> v(4);
+  dynamicgraph::Vector ki( nv ), fi( nf );
   double sumFact = 0;
   v[0]=vel;
 
   for( unsigned int i=0;i<4;++i )
     {
       sotDEBUG(35) << "v"<<i<<" = " << v[i];
-      friction.multiply( v[i],fi ); fi*=-1;
+      fi = friction*v[i]; fi*=-1;
       fi += force;
       sotDEBUG(35) << "f"<<i<<" = " << fi;
-      massInverse.multiply( fi,ki );
+      ki = massInverse*fi;
       sotDEBUG(35) << "k"<<i<<" = " << ki;
       if( i+1<4 ) 
 	{

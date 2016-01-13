@@ -17,6 +17,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
 
@@ -39,12 +40,10 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 SETUP_PROJECT()
 
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("jrl-mal >= 1.9.0")
-
 ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
 
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 2.5.0")
-ADD_REQUIRED_DEPENDENCY("sot-core >= 2.5")
+ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
+ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools")
 
 # List plug-ins that will be compiled.
@@ -73,6 +72,7 @@ PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 # Boost
 SET(BOOST_COMPONENTS filesystem system)
 SEARCH_FOR_BOOST()
+SEARCH_FOR_EIGEN()
 
 # Add subdirectories.
 ADD_SUBDIRECTORY(include)

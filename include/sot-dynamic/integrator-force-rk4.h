@@ -26,16 +26,15 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-geometry.hh>
+
 #include <sot-dynamic/integrator-force.h>
 
 /* STD */
@@ -80,7 +79,7 @@ class SOTINTEGRATORFORCERK4_EXPORT IntegratorForceRK4
 
 
  public: /* --- FUNCTIONS --- */
-  ml::Vector& computeDerivativeRK4( ml::Vector& res,
+  dynamicgraph::Vector& computeDerivativeRK4( dynamicgraph::Vector& res,
 				    const int& time );
   
 /*  public: /\* --- PARAMS --- *\/ */

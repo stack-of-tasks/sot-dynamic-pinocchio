@@ -41,9 +41,9 @@ const std::string dynamicgraph::sot::Dynamic::CLASS_NAME = "DynamicLib";
 
 using namespace std;
 
-static matrix4d maalToMatrix4d(const ml::Matrix& inMatrix)
+static jrlMathTools::Matrix4x4<double> maalToMatrix4d(const dynamicgraph::Matrix& inMatrix)
 {
-  matrix4d homogeneous;
+  jrlMathTools::Matrix4x4<double> homogeneous;
   for (unsigned int r=0; r<4; r++) {
     for (unsigned int c=0; c<4; c++) {
       homogeneous(r,c) = inMatrix(r,c);
@@ -52,18 +52,18 @@ static matrix4d maalToMatrix4d(const ml::Matrix& inMatrix)
   return homogeneous;
 }
 
-static vector3d maalToVector3d(const ml::Vector& inVector)
+static Eigen::Vector3d maalToVector3d(const dynamicgraph::Vector& inVector)
 {
-  vector3d vector;
+  Eigen::Vector3d vector;
   vector(0) = inVector(0);
   vector(1) = inVector(1);
   vector(2) = inVector(2);
   return vector;
 }
 
-static matrix3d maalToMatrix3d(const ml::Matrix& inMatrix)
+static Eigen::Matrix3d maalToMatrix3d(const dynamicgraph::Matrix& inMatrix)
 {
-  matrix3d matrix;
+  Eigen::Matrix3d matrix;
   for (unsigned int r=0; r<3; r++) {
     for (unsigned int c=0; c<3; c++) {
       matrix(r,c) = inMatrix(r,c);
@@ -429,7 +429,7 @@ Dynamic( const std::string & name, bool build )
       "    Get ankle position in left foot frame.\n"
       "    \n";
     addCommand("getAnklePositionInFootFrame",
-	       new dynamicgraph::command::Getter<Dynamic, ml::Vector>
+	       new dynamicgraph::command::Getter<Dynamic, dynamicgraph::Vector>
 	       (*this, &Dynamic::getAnklePositionInFootFrame, docstring));
 
     docstring = "    \n"
@@ -600,11 +600,11 @@ void Dynamic::parseConfigFiles()
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
 /* --- SIGNAL ACTIVATION ---------------------------------------------------- */
-dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
+dg::SignalTimeDependent< dynamicgraph::Matrix,int > & Dynamic::
 createJacobianSignal( const std::string& signame, CjrlJoint* aJoint )
 {
-  dg::SignalTimeDependent< ml::Matrix,int > * sig
-    = new dg::SignalTimeDependent< ml::Matrix,int >
+  dg::SignalTimeDependent< dynamicgraph::Matrix,int > * sig
+    = new dg::SignalTimeDependent< dynamicgraph::Matrix,int >
     ( boost::bind(&Dynamic::computeGenericJacobian,this,aJoint,_1,_2),
       newtonEulerSINTERN,
       "sotDynamic("+name+")::output(matrix)::"+signame );
@@ -614,13 +614,13 @@ createJacobianSignal( const std::string& signame, CjrlJoint* aJoint )
   return *sig;
 }
 
-dg::SignalTimeDependent< ml::Matrix,int > & Dynamic::
+dg::SignalTimeDependent< dynamicgraph::Matrix,int > & Dynamic::
 createEndeffJacobianSignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
 
-  dg::SignalTimeDependent< ml::Matrix,int > * sig
-    = new dg::SignalTimeDependent< ml::Matrix,int >
+  dg::SignalTimeDependent< dynamicgraph::Matrix,int > * sig
+    = new dg::SignalTimeDependent< dynamicgraph::Matrix,int >
     ( boost::bind(&Dynamic::computeGenericEndeffJacobian,this,aJoint,_1,_2),
       newtonEulerSINTERN,
       "sotDynamic("+name+")::output(matrix)::"+signame );
@@ -636,7 +636,7 @@ void Dynamic::
 destroyJacobianSignal( const std::string& signame )
 {
   bool deletable = false;
-  dg::SignalTimeDependent< ml::Matrix,int > * sig = & jacobiansSOUT( signame );
+  dg::SignalTimeDependent< dynamicgraph::Matrix,int > * sig = & jacobiansSOUT( signame );
   for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
 	iter != genericSignalRefs.end();
 	++iter )
@@ -709,15 +709,15 @@ destroyPositionSignal( const std::string& signame )
 /* --- VELOCITY --- */
 /* --- VELOCITY --- */
 
-SignalTimeDependent< ml::Vector,int >& Dynamic::
+SignalTimeDependent< dynamicgraph::Vector,int >& Dynamic::
 createVelocitySignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
-  SignalTimeDependent< ml::Vector,int > * sig
-    = new SignalTimeDependent< ml::Vector,int >
+  SignalTimeDependent< dynamicgraph::Vector,int > * sig
+    = new SignalTimeDependent< dynamicgraph::Vector,int >
     ( boost::bind(&Dynamic::computeGenericVelocity,this,aJoint,_1,_2),
       newtonEulerSINTERN,
-      "sotDynamic("+name+")::output(ml::Vector)::"+signame );
+      "sotDynamic("+name+")::output(dynamicgraph::Vector)::"+signame );
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
 
@@ -730,7 +730,7 @@ void Dynamic::
 destroyVelocitySignal( const std::string& signame )
 {
   bool deletable = false;
-  SignalTimeDependent< ml::Vector,int > * sig = & velocitiesSOUT( signame );
+  SignalTimeDependent< dynamicgraph::Vector,int > * sig = & velocitiesSOUT( signame );
   for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
 	iter != genericSignalRefs.end();
 	++iter )
@@ -755,12 +755,12 @@ destroyVelocitySignal( const std::string& signame )
 /* --- ACCELERATION --- */
 /* --- ACCELERATION --- */
 
-dg::SignalTimeDependent< ml::Vector,int >& Dynamic::
+dg::SignalTimeDependent< dynamicgraph::Vector,int >& Dynamic::
 createAccelerationSignal( const std::string& signame, CjrlJoint* aJoint )
 {
   sotDEBUGIN(15);
-  dg::SignalTimeDependent< ml::Vector,int > * sig
-    = new dg::SignalTimeDependent< ml::Vector,int >
+  dg::SignalTimeDependent< dynamicgraph::Vector,int > * sig
+    = new dg::SignalTimeDependent< dynamicgraph::Vector,int >
     ( boost::bind(&Dynamic::computeGenericAcceleration,this,aJoint,_1,_2),
       newtonEulerSINTERN,
       "sotDynamic("+name+")::output(matrixHomo)::"+signame );
@@ -777,7 +777,7 @@ void Dynamic::
 destroyAccelerationSignal( const std::string& signame )
 {
   bool deletable = false;
-  dg::SignalTimeDependent< ml::Vector,int > * sig = & accelerationsSOUT( signame );
+  dg::SignalTimeDependent< dynamicgraph::Vector,int > * sig = & accelerationsSOUT( signame );
   for(  std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
 	iter != genericSignalRefs.end();
 	++iter )
@@ -802,10 +802,9 @@ destroyAccelerationSignal( const std::string& signame )
 /* --- COMPUTE -------------------------------------------------------------- */
 /* --- COMPUTE -------------------------------------------------------------- */
 
-#include <jrl/mal/boostspecific.hh>
 
-static void MAAL1_V3d_to_MAAL2( const vector3d& source,
-				ml::Vector & res )
+static void MAAL1_V3d_to_MAAL2( const Eigen::Vector3d& source,
+				dynamicgraph::Vector & res )
 {
   sotDEBUG(5) << source <<endl;
   res(0) = source[0];
@@ -813,29 +812,29 @@ static void MAAL1_V3d_to_MAAL2( const vector3d& source,
   res(2) = source[2];
 }
 
-ml::Matrix& Dynamic::
-computeGenericJacobian( CjrlJoint * aJoint,ml::Matrix& res,int time )
+dynamicgraph::Matrix& Dynamic::
+computeGenericJacobian( CjrlJoint * aJoint,dynamicgraph::Matrix& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
 
   aJoint->computeJacobianJointWrtConfig();
-  res.initFromMotherLib(aJoint->jacobianJointWrtConfig());
+  res = aJoint->jacobianJointWrtConfig();
   sotDEBUGOUT(25);
 
   return res;
 }
 
-ml::Matrix& Dynamic::
-computeGenericEndeffJacobian( CjrlJoint * aJoint,ml::Matrix& res,int time )
+dynamicgraph::Matrix& Dynamic::
+computeGenericEndeffJacobian( CjrlJoint * aJoint,dynamicgraph::Matrix& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
 
   aJoint->computeJacobianJointWrtConfig();
 
-  ml::Matrix J,V(6,6);
-  J.initFromMotherLib(aJoint->jacobianJointWrtConfig());
+  dynamicgraph::Matrix J,V(6,6);
+  J = aJoint->jacobianJointWrtConfig();
 
   /* --- TODO --- */
   MatrixHomogeneous M;
@@ -853,7 +852,7 @@ computeGenericEndeffJacobian( CjrlJoint * aJoint,ml::Matrix& res,int time )
 
   sotDEBUG(25) << "0Jn = "<< J;
   sotDEBUG(25) << "V = "<< V;
-  V.multiply(J,res);
+  res = V*J;
   sotDEBUGOUT(25);
 
   return res;
@@ -864,24 +863,21 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  const matrix4d & m4 = aJoint->currentTransformation();
+  const Eigen::Matrix4d & m4 = aJoint->currentTransformation();
 
-  res.resize(4,4);
-  for( int i=0;i<4;++i )
-    for( int j=0;j<4;++j )
-      res(i,j) = MAL_S4x4_MATRIX_ACCESS_I_J(m4,i,j);
+  res.matrix() = m4;
 
   //  aJoint->computeJacobianJointWrtConfig();
   //res.initFromMotherLib(aJoint->jacobianJointWrtConfig());
 
   // adaptation to the new dynamic -- to be optimized
-    matrix4d initialTr;
+  Eigen::Matrix4d initialTr;
     initialTr = aJoint->initialPosition();
     MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,0,3) = 0.0;
     MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,1,3) = 0.0;
     MAL_S4x4_MATRIX_ACCESS_I_J(initialTr,2,3) = 0.0;
 
-    matrix4d invrot;
+    Eigen::Matrix4d invrot;
     for(unsigned int i=0;i<3;i++)
       for(unsigned int j=0;j<3;j++)
         {
@@ -904,14 +900,14 @@ computeGenericPosition( CjrlJoint * aJoint,MatrixHomogeneous& res,int time )
   return res;
 }
 
-ml::Vector& Dynamic::
-computeGenericVelocity( CjrlJoint* j,ml::Vector& res,int time )
+dynamicgraph::Vector& Dynamic::
+computeGenericVelocity( CjrlJoint* j,dynamicgraph::Vector& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
   CjrlRigidVelocity aRV = j->jointVelocity();
-  vector3d al= aRV.linearVelocity();
-  vector3d ar= aRV.rotationVelocity();
+  Eigen::Vector3d al= aRV.linearVelocity();
+  Eigen::Vector3d ar= aRV.rotationVelocity();
 
   res.resize(6);
   for( int i=0;i<3;++i )
@@ -924,14 +920,14 @@ computeGenericVelocity( CjrlJoint* j,ml::Vector& res,int time )
   return res;
 }
 
-ml::Vector& Dynamic::
-computeGenericAcceleration( CjrlJoint* j,ml::Vector& res,int time )
+dynamicgraph::Vector& Dynamic::
+computeGenericAcceleration( CjrlJoint* j,dynamicgraph::Vector& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
   CjrlRigidAcceleration aRA = j->jointAcceleration();
-  vector3d al= aRA.linearAcceleration();
-  vector3d ar= aRA.rotationAcceleration(); // TODO: Dont copy, reference.
+  Eigen::Vector3d al= aRA.linearAcceleration();
+  Eigen::Vector3d ar= aRA.rotationAcceleration(); // TODO: Dont copy, reference.
 
   res.resize(6);
   for( int i=0;i<3;++i )
@@ -946,8 +942,8 @@ computeGenericAcceleration( CjrlJoint* j,ml::Vector& res,int time )
 
 
 
-ml::Vector& Dynamic::
-computeZmp( ml::Vector& ZMPval,int time )
+dynamicgraph::Vector& Dynamic::
+computeZmp( dynamicgraph::Vector& ZMPval,int time )
 {
   if (ZMPval.size()!=3)
     ZMPval.resize(3);
@@ -959,10 +955,10 @@ computeZmp( ml::Vector& ZMPval,int time )
 }
 
 
-ml::Vector& Dynamic::
-computeMomenta(ml::Vector & Momenta, int time)
+dynamicgraph::Vector& Dynamic::
+computeMomenta(dynamicgraph::Vector & Momenta, int time)
 {
-  vector3d LinearMomentum, AngularMomentum;
+  Eigen::Vector3d LinearMomentum, AngularMomentum;
 
   if (Momenta.size()!=6)
     Momenta.resize(6);
@@ -982,10 +978,10 @@ computeMomenta(ml::Vector & Momenta, int time)
   return Momenta;
 }
 
-ml::Vector& Dynamic::
-computeAngularMomentum(ml::Vector & Momenta, int time)
+dynamicgraph::Vector& Dynamic::
+computeAngularMomentum(dynamicgraph::Vector & Momenta, int time)
 {
-  vector3d  AngularMomentum;
+  Eigen::Vector3d  AngularMomentum;
 
   if (Momenta.size()!=3)
     Momenta.resize(3);
@@ -1004,23 +1000,23 @@ computeAngularMomentum(ml::Vector & Momenta, int time)
 
 }
 
-ml::Matrix& Dynamic::
-computeJcom( ml::Matrix& Jcom,int time )
+dynamicgraph::Matrix& Dynamic::
+computeJcom( dynamicgraph::Matrix& Jcom,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
 
-  matrixNxP jacobian;
+  Matrix jacobian;
   jacobian.resize(3, m_HDR->numberDof());
   m_HDR->getJacobianCenterOfMass(*m_HDR->rootJoint(), jacobian);
 
-  Jcom.initFromMotherLib(jacobian);
+  Jcom = jacobian;
   sotDEBUGOUT(25);
   return Jcom;
 }
 
-ml::Vector& Dynamic::
-computeCom( ml::Vector& com,int time )
+dynamicgraph::Vector& Dynamic::
+computeCom( dynamicgraph::Vector& com,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
@@ -1030,14 +1026,14 @@ computeCom( ml::Vector& com,int time )
   return com;
 }
 
-ml::Matrix& Dynamic::
-computeInertia( ml::Matrix& A,int time )
+dynamicgraph::Matrix& Dynamic::
+computeInertia( dynamicgraph::Matrix& A,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
 
   m_HDR->computeInertiaMatrix();
-  A.initFromMotherLib(m_HDR->inertiaMatrix());
+  A = m_HDR->inertiaMatrix();
 
   if( 1==debugInertia )
     {
@@ -1078,17 +1074,17 @@ computeInertia( ml::Matrix& A,int time )
   return A;
 }
 
-ml::Matrix& Dynamic::
-computeInertiaReal( ml::Matrix& res,int time )
+dynamicgraph::Matrix& Dynamic::
+computeInertiaReal( dynamicgraph::Matrix& res,int time )
 {
   sotDEBUGIN(25);
 
-  const ml::Matrix & A = inertiaSOUT(time);
-  const ml::Vector & gearRatio = gearRatioSOUT(time);
-  const ml::Vector & inertiaRotor = inertiaRotorSOUT(time);
+  const dynamicgraph::Matrix & A = inertiaSOUT(time);
+  const dynamicgraph::Vector & gearRatio = gearRatioSOUT(time);
+  const dynamicgraph::Vector & inertiaRotor = inertiaRotorSOUT(time);
 
   res = A;
-  for( unsigned int i=0;i<gearRatio.size();++i )
+  for( int i=0;i<gearRatio.size();++i )
     res(i,i) += (gearRatio(i)*gearRatio(i)*inertiaRotor(i));
 
   sotDEBUGOUT(25);
@@ -1101,7 +1097,7 @@ computeFootHeight (double&, int time)
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
   CjrlFoot* RightFoot = m_HDR->rightFoot();
-  vector3d AnkleInLocalRefFrame;
+  Eigen::Vector3d AnkleInLocalRefFrame;
   RightFoot->getAnklePositionInLocalFrame(AnkleInLocalRefFrame);
   sotDEBUGOUT(25);
   return AnkleInLocalRefFrame[2];
@@ -1112,14 +1108,14 @@ computeFootHeight (double&, int time)
 /* --- SIGNAL --------------------------------------------------------------- */
 /* --- SIGNAL --------------------------------------------------------------- */
 
-dg::SignalTimeDependent<ml::Matrix,int>& Dynamic::
+dg::SignalTimeDependent<dynamicgraph::Matrix,int>& Dynamic::
 jacobiansSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
 
   try {
-    dg::SignalTimeDependent<ml::Matrix,int>& res
-      = dynamic_cast< dg::SignalTimeDependent<ml::Matrix,int>& >( sigabs );
+    dg::SignalTimeDependent<dynamicgraph::Matrix,int>& res
+      = dynamic_cast< dg::SignalTimeDependent<dynamicgraph::Matrix,int>& >( sigabs );
     return res;
   } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
@@ -1145,13 +1141,13 @@ positionsSOUT( const std::string& name )
   }
 }
 
-dg::SignalTimeDependent<ml::Vector,int>& Dynamic::
+dg::SignalTimeDependent<dynamicgraph::Vector,int>& Dynamic::
 velocitiesSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
   try {
-    dg::SignalTimeDependent<ml::Vector,int>& res
-      = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+    dg::SignalTimeDependent<dynamicgraph::Vector,int>& res
+      = dynamic_cast< dg::SignalTimeDependent<dynamicgraph::Vector,int>& >( sigabs );
     return res;
  } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
@@ -1161,14 +1157,14 @@ velocitiesSOUT( const std::string& name )
   }
 }
 
-dg::SignalTimeDependent<ml::Vector,int>& Dynamic::
+dg::SignalTimeDependent<dynamicgraph::Vector,int>& Dynamic::
 accelerationsSOUT( const std::string& name )
 {
   SignalBase<int> & sigabs = Entity::getSignal(name);
 
   try {
-    dg::SignalTimeDependent<ml::Vector,int>& res
-      = dynamic_cast< dg::SignalTimeDependent<ml::Vector,int>& >( sigabs );
+    dg::SignalTimeDependent<dynamicgraph::Vector,int>& res
+      = dynamic_cast< dg::SignalTimeDependent<dynamicgraph::Vector,int>& >( sigabs );
     return res;
   } catch( std::bad_cast e ) {
     SOT_THROW ExceptionSignal( ExceptionSignal::BAD_CAST,
@@ -1183,15 +1179,15 @@ int& Dynamic::
 computeNewtonEuler( int& dummy,int time )
 {
   sotDEBUGIN(15);
-  ml::Vector pos = jointPositionSIN(time); // TODO &pos
-  ml::Vector vel = jointVelocitySIN(time);
-  ml::Vector acc = jointAccelerationSIN(time);
+  dynamicgraph::Vector pos = jointPositionSIN(time); // TODO &pos
+  dynamicgraph::Vector vel = jointVelocitySIN(time);
+  dynamicgraph::Vector acc = jointAccelerationSIN(time);
 
   sotDEBUG(5) << "computeNewtonEuler: " << pos << endl;
   firstSINTERN(time);
   if( freeFlyerPositionSIN )
     {
-      const ml::Vector& ffpos = freeFlyerPositionSIN(time);
+      const dynamicgraph::Vector& ffpos = freeFlyerPositionSIN(time);
 
       for( int i=0;i<6;++i ) pos(i) = ffpos(i) ;
       sotDEBUG(5) << "computeNewtonEuler: (" << name << ") ffpos = " << ffpos << endl;
@@ -1199,15 +1195,15 @@ computeNewtonEuler( int& dummy,int time )
   sotDEBUG(5) << "computeNewtonEuler: (" << name << ") pos = " << pos << endl;
   if( freeFlyerVelocitySIN )
     {
-      const ml::Vector& ffvel = freeFlyerVelocitySIN(time);
+      const dynamicgraph::Vector& ffvel = freeFlyerVelocitySIN(time);
       for( int i=0;i<6;++i ) vel(i) = ffvel(i);
     }
   if( freeFlyerAccelerationSIN )
     {
-      const ml::Vector& ffacc = freeFlyerAccelerationSIN(time);
+      const dynamicgraph::Vector& ffacc = freeFlyerAccelerationSIN(time);
       for( int i=0;i<6;++i ) acc(i) = ffacc(i);
     }
-  if(! m_HDR->currentConfiguration(pos.accessToMotherLib()))
+  if(! m_HDR->currentConfiguration(pos))
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				  getName() +
@@ -1218,7 +1214,7 @@ computeNewtonEuler( int& dummy,int time )
     }
 
 
-  if(! m_HDR->currentVelocity(vel.accessToMotherLib()) )
+  if(! m_HDR->currentVelocity(vel) )
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				  getName() +
@@ -1228,7 +1224,7 @@ computeNewtonEuler( int& dummy,int time )
 				  m_HDR->currentVelocity().size() );
     }
 
-  if(! m_HDR->currentAcceleration(acc.accessToMotherLib()) )
+  if(! m_HDR->currentAcceleration(acc) )
     {
       SOT_THROW ExceptionDynamic( ExceptionDynamic::JOINT_SIZE,
 				  getName() +
@@ -1260,8 +1256,8 @@ initNewtonEuler( int& dummy,int time )
   return dummy;
 }
 
-ml::Vector& Dynamic::
-getUpperJointLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getUpperJointLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1275,8 +1271,8 @@ getUpperJointLimits(ml::Vector& res, const int&)
   return res;
 }
 
-ml::Vector& Dynamic::
-getLowerJointLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getLowerJointLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1290,8 +1286,8 @@ getLowerJointLimits(ml::Vector& res, const int&)
   return res;
 }
 
-ml::Vector& Dynamic::
-getUpperVelocityLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getUpperVelocityLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1305,8 +1301,8 @@ getUpperVelocityLimits(ml::Vector& res, const int&)
   return res;
 }
 
-ml::Vector& Dynamic::
-getLowerVelocityLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getLowerVelocityLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1321,8 +1317,8 @@ getLowerVelocityLimits(ml::Vector& res, const int&)
 }
 
 
-ml::Vector& Dynamic::
-getUpperTorqueLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getUpperTorqueLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1336,8 +1332,8 @@ getUpperTorqueLimits(ml::Vector& res, const int&)
   return res;
 }
 
-ml::Vector& Dynamic::
-getLowerTorqueLimits(ml::Vector& res, const int&)
+dynamicgraph::Vector& Dynamic::
+getLowerTorqueLimits(dynamicgraph::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   const unsigned int NBJ = m_HDR->numberDof();
@@ -1354,15 +1350,15 @@ getLowerTorqueLimits(ml::Vector& res, const int&)
 
 
 
-ml::Vector& Dynamic::
-computeTorqueDrift( ml::Vector& tauDrift,const int  & iter )
+dynamicgraph::Vector& Dynamic::
+computeTorqueDrift( dynamicgraph::Vector& tauDrift,const int  & iter )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(iter);
   const unsigned int NB_JOINTS = jointPositionSIN.accessCopy().size();
 
   tauDrift.resize(NB_JOINTS);
-  const vectorN& Torques = m_HDR->currentJointTorques();
+  const Vector& Torques = m_HDR->currentJointTorques();
   for( unsigned int i=0;i<NB_JOINTS; ++i ) tauDrift(i) = Torques(i);
 
   sotDEBUGOUT(25);
@@ -1665,14 +1661,14 @@ void Dynamic::createRobot()
 
 void Dynamic::createJoint(const std::string& inJointName,
 			  const std::string& inJointType,
-			   const ml::Matrix& inPosition)
+			   const dynamicgraph::Matrix& inPosition)
 {
   if (jointMap_.count(inJointName) == 1) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "a joint with name " + inJointName +
 			       " has already been created.");
   }
-  matrix4d position = maalToMatrix4d(inPosition);
+  jrlMathTools::Matrix4x4<double> position = maalToMatrix4d(inPosition);
   CjrlJoint* joint=NULL;
 
   if (inJointType == "freeflyer") {
@@ -1762,7 +1758,7 @@ void Dynamic::setMass(const std::string& inJointName, double inMass)
 }
 
 void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
-				   ml::Vector inCom)
+				   dynamicgraph::Vector inCom)
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1782,7 +1778,7 @@ void Dynamic::setLocalCenterOfMass(const std::string& inJointName,
 }
 
 void Dynamic::setInertiaMatrix(const std::string& inJointName,
-			       ml::Matrix inMatrix)
+			       dynamicgraph::Matrix inMatrix)
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1848,10 +1844,10 @@ void Dynamic::setSpecificJoint(const std::string& inJointName,
   }
 }
 
-void Dynamic::setHandParameters(bool inRight, const ml::Vector& inCenter,
-				const ml::Vector& inThumbAxis,
-				const ml::Vector& inForefingerAxis,
-				const ml::Vector& inPalmNormal)
+void Dynamic::setHandParameters(bool inRight, const dynamicgraph::Vector& inCenter,
+				const dynamicgraph::Vector& inThumbAxis,
+				const dynamicgraph::Vector& inForefingerAxis,
+				const dynamicgraph::Vector& inPalmNormal)
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1875,7 +1871,7 @@ void Dynamic::setHandParameters(bool inRight, const ml::Vector& inCenter,
 
 void Dynamic::setFootParameters(bool inRight, const double& inSoleLength,
 				const double& inSoleWidth,
-				const ml::Vector& inAnklePosition)
+				const dynamicgraph::Vector& inAnklePosition)
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1927,7 +1923,7 @@ double Dynamic::getSoleWidth() const
   return width;
 }
 
-ml::Vector Dynamic::getAnklePositionInFootFrame() const
+dynamicgraph::Vector Dynamic::getAnklePositionInFootFrame() const
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1938,17 +1934,17 @@ ml::Vector Dynamic::getAnklePositionInFootFrame() const
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
 			       "left foot has not been defined yet");
   }
-  vector3d anklePosition;
+  Eigen::Vector3d anklePosition;
   foot->getAnklePositionInLocalFrame(anklePosition);
-  ml::Vector res(3);
+  dynamicgraph::Vector res(3);
   res(0) = anklePosition[0];
   res(1) = anklePosition[1];
   res(2) = anklePosition[2];
   return res;
 }
 
-void Dynamic::setGazeParameters(const ml::Vector& inGazeOrigin,
-				const ml::Vector& inGazeDirection)
+void Dynamic::setGazeParameters(const dynamicgraph::Vector& inGazeOrigin,
+				const dynamicgraph::Vector& inGazeDirection)
 {
   if (!m_HDR) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::DYNAMIC_JRL,
@@ -1977,7 +1973,7 @@ std::ostream& sot::operator<<(std::ostream& os,
   os << std::endl;
   os << "  left hand" << std::endl;
   CjrlHand* hand = robot.leftHand();
-  vector3d v;
+  Eigen::Vector3d v;
   hand-> getCenter(v);
   os << "    center: " << v << std::endl;
   hand-> getThumbAxis(v);

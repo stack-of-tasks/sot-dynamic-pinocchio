@@ -70,12 +70,12 @@ computeAttitudeWaist( VectorRollPitchYaw & res,
   const MatrixHomogeneous & waistMchest = positionSensorSIN( time );
   const MatrixRotation & worldRchest = attitudeSensorSIN( time );
 
-  MatrixRotation waistRchest; waistMchest.extract(waistRchest);
-  MatrixRotation chestRwaist; waistRchest.transpose( chestRwaist );
+  MatrixRotation waistRchest; waistRchest = waistMchest.linear();
+  MatrixRotation chestRwaist; chestRwaist = waistRchest.transpose();
 
   MatrixRotation worldrchest;
-  worldRchest.multiply( chestRwaist,worldrchest);
-  res.fromMatrix(worldrchest);
+  worldrchest = worldRchest*chestRwaist;
+  res = (worldrchest.eulerAngles(2,1,0)).reverse();
   sotDEBUGOUT(15);
   return res;
 }
@@ -161,14 +161,14 @@ WaistPoseFromSensorAndContact::
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-ml::Vector& WaistPoseFromSensorAndContact::
-computePositionWaist( ml::Vector& res,
+dynamicgraph::Vector& WaistPoseFromSensorAndContact::
+computePositionWaist( dynamicgraph::Vector& res,
 		      const int& time )
 {
   sotDEBUGIN(15);
   
   const MatrixHomogeneous&  waistMcontact = positionContactSIN( time );
-  MatrixHomogeneous contactMwaist; waistMcontact.inverse(contactMwaist);
+  MatrixHomogeneous contactMwaist; contactMwaist = waistMcontact.inverse();
 
   res.resize(6);
   for( unsigned int i=0;i<3;++i ) 
@@ -182,10 +182,8 @@ computePositionWaist( ml::Vector& res,
     }
   else
     {
-      MatrixRotation contactRwaist; 
-      contactMwaist.extract(contactRwaist);
       VectorRollPitchYaw contactrwaist; 
-      contactrwaist.fromMatrix( contactRwaist );
+      contactrwaist = contactMwaist.linear().eulerAngles(2,1,0).reverse();
       
       for( unsigned int i=0;i<3;++i ) 
 	{ res(i+3)=contactrwaist(i); }

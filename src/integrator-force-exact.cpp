@@ -54,7 +54,6 @@ IntegratorForceExact::
 /* --- EIGEN VALUE ---------------------------------------------------------- */
 /* --- EIGEN VALUE ---------------------------------------------------------- */
 /* --- EIGEN VALUE ---------------------------------------------------------- */
-namespace ublas = boost::numeric::ublas;
 
 
 extern "C"
@@ -65,22 +64,22 @@ extern "C"
 }
 
 
-int geev(::boost::numeric::ublas::matrix<double, ::boost::numeric::ublas::column_major> &a,
-	 ublas::vector< std::complex<double> > &w,
-	 ::boost::numeric::ublas::matrix<double,::boost::numeric::ublas::column_major> &vl2,
-	 ::boost::numeric::ublas::matrix<double,::boost::numeric::ublas::column_major> &vr2
+int geev(Matrix &a,
+	 Eigen::VectorXcd &w,
+	 Matrix &vl2,
+	 Matrix &vr2
 	 )
 {
   char jobvl='V';
   char jobvr='V';
-  int const n = a.size1();
+  int const n = a.rows();
   
-  ::boost::numeric::ublas::vector<double> wr(n);
-  ::boost::numeric::ublas::vector<double> wi(n);
+  Vector wr(n);
+  Vector wi(n);
   double* vl_real = MRAWDATA(vl2);
-  const int ldvl =vl2.size1();
+  const int ldvl =vl2.rows();
   double* vr_real = MRAWDATA(vr2);
-  const int ldvr = vr2.size1();
+  const int ldvr = vr2.rows();
   
   // workspace query
   int lwork = -1;
@@ -88,19 +87,19 @@ int geev(::boost::numeric::ublas::matrix<double, ::boost::numeric::ublas::column
   int result=0;
   dgeev_(&jobvl, &jobvr, &n,
 	 MRAWDATA(a), &n, 
-	 VRAWDATA(wr), VRAWDATA(wi), 
+	 MRAWDATA(wr), MRAWDATA(wi), 
 	 vl_real, &ldvl, vr_real, &ldvr,
 	 &work_temp, &lwork, &result);
   if (result != 0)
     return result;
   
   lwork = (int) work_temp;
-  ::boost::numeric::ublas::vector<double> work(lwork);
+  Vector work(lwork);
   dgeev_(&jobvl, &jobvr, &n,
 	 MRAWDATA(a), &n, 
-	 VRAWDATA(wr), VRAWDATA(wi), 
+	 MRAWDATA(wr), MRAWDATA(wi), 
 	 vl_real, &ldvl, vr_real, &ldvr,
-	 VRAWDATA(work), &lwork,
+	 MRAWDATA(work), &lwork,
 	 &result);
 
   for (int i = 0; i < n; i++)
@@ -109,15 +108,15 @@ int geev(::boost::numeric::ublas::matrix<double, ::boost::numeric::ublas::column
   return result;
 }
 
-static void eigenDecomp( const ml::Matrix& M,
-			 ml::Matrix& P,
-			 ml::Vector& eig )
+static void eigenDecomp( const dynamicgraph::Matrix& M,
+			 dynamicgraph::Matrix& P,
+			 dynamicgraph::Vector& eig )
 {
-  unsigned int SIZE = M.nbCols();
-  ublas::matrix<double, ublas::column_major> Y=M.matrix;
-  ublas::vector< std::complex<double> > evals(SIZE);
-  ublas::matrix<double, ublas::column_major> vl(SIZE,SIZE);
-  ublas::matrix<double, ublas::column_major> vr(SIZE,SIZE);
+  unsigned int SIZE = M.cols();
+  Matrix Y(M);
+  Eigen::VectorXcd evals(SIZE);
+  Matrix vl(SIZE,SIZE);
+  Matrix vr(SIZE,SIZE);
   
   //  const int errCode = lapack::geev(Y, evals, &vl, &vr, lapack::optimal_workspace());
   const int errCode = geev(Y,evals,vl,vr);
@@ -143,25 +142,25 @@ static void eigenDecomp( const ml::Matrix& M,
   return ;
 }
 
-static void expMatrix( const ml::Matrix& MiB,
-		       ml::Matrix& Mexp )
+static void expMatrix( const dynamicgraph::Matrix& MiB,
+		       dynamicgraph::Matrix& Mexp )
 {
-  unsigned int SIZE = MiB.nbCols();
+  unsigned int SIZE = MiB.cols();
 
-  ml::Matrix Pmib(MiB.nbCols(),MiB.nbCols());
-  ml::Vector eig_mib(MiB.nbCols());
+  dynamicgraph::Matrix Pmib(MiB.cols(),MiB.cols());
+  dynamicgraph::Vector eig_mib(MiB.cols());
   eigenDecomp( MiB,Pmib,eig_mib );
   sotDEBUG(45) << "V = " << Pmib;
   sotDEBUG(45) << "d = " << eig_mib;
 
-  ml::Matrix Pinv(SIZE,SIZE); Pmib.inverse(Pinv);
+  dynamicgraph::Matrix Pinv(SIZE,SIZE); Pinv = Pmib.inverse();
   sotDEBUG(45) << "Vinv = " << Pinv;
 
   Mexp.resize(SIZE,SIZE);
   for( unsigned int i=0;i<SIZE;++i )
     for( unsigned int j=0;j<SIZE;++j )
       Pmib(i,j)*= exp( eig_mib(j) );
-  Pmib.multiply(Pinv,Mexp);
+  Mexp = Pmib*Pinv;
   
   sotDEBUG(45) << "expMiB = " << Mexp;
   return ;
@@ -177,24 +176,24 @@ static void expMatrix( const ml::Matrix& MiB,
  * dv = exp( M^-1.B.t) ( v0-B^-1.f ) + B^-1.f
  */
 
-ml::Vector& IntegratorForceExact::
-computeVelocityExact( ml::Vector& res,
+dynamicgraph::Vector& IntegratorForceExact::
+computeVelocityExact( dynamicgraph::Vector& res,
 		      const int& time )
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & force = forceSIN( time );
-  const ml::Matrix & massInverse = massInverseSIN( time );
-  const ml::Matrix & friction = frictionSIN( time );
-  unsigned int nf = force.size(), nv = friction.nbCols();
-  res.resize(nv); res.fill(0);
+  const dynamicgraph::Vector & force = forceSIN( time );
+  const dynamicgraph::Matrix & massInverse = massInverseSIN( time );
+  const dynamicgraph::Matrix & friction = frictionSIN( time );
+  unsigned int nf = force.size(), nv = friction.cols();
+  res.resize(nv); res.setZero();
 
   if(! velocityPrecSIN )
     { 
-      ml::Vector zero( nv ); zero.fill(0);
+      dynamicgraph::Vector zero( nv ); zero.fill(0);
       velocityPrecSIN = zero;
     } 
-  const ml::Vector & vel = velocityPrecSIN( time );
+  const dynamicgraph::Vector & vel = velocityPrecSIN( time );
   double & dt = this->IntegratorForce::timeStep; // this is &
 
   sotDEBUG(15) << "force = " << force;
@@ -203,25 +202,25 @@ computeVelocityExact( ml::Vector& res,
   sotDEBUG(25) << "B = " << friction;
   sotDEBUG(25) << "dt = " << dt << std::endl;
 
-  ml::Matrix MiB( nv,nv );
-  massInverse.multiply(friction,MiB);
+  dynamicgraph::Matrix MiB( nv,nv );
+  MiB = massInverse*friction;
   sotDEBUG(25) << "MiB = " << MiB;
   
-  ml::Matrix MiBexp( nv,nv );
+  dynamicgraph::Matrix MiBexp( nv,nv );
   MiB*=-dt; expMatrix(MiB,MiBexp);
   sotDEBUG(25) << "expMiB = " << MiBexp;
 
-  ml::Matrix Binv( nv,nv ); friction.inverse(Binv);
-  ml::Vector Bif( nf ); Binv.multiply( force,Bif );
+  dynamicgraph::Matrix Binv( nv,nv ); Binv = friction.inverse();
+  dynamicgraph::Vector Bif( nf ); Bif = Binv*force;
   sotDEBUG(25) << "Binv = " << Binv;
   sotDEBUG(25) << "Bif = " << Bif;
   
-  ml::Vector v0_bif = vel;
+  dynamicgraph::Vector v0_bif = vel;
   v0_bif -= Bif;
   sotDEBUG(25) << "Kst = " << v0_bif;
   
-  res.resize( MiBexp.nbRows() );
-  MiBexp.multiply( v0_bif,res );
+  res.resize( MiBexp.rows() );
+  res = MiBexp*v0_bif;
 
   res += Bif;
   velocityPrecSIN = res ;

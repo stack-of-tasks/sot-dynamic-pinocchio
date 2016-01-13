@@ -135,7 +135,7 @@ initDofTable( void )
     {
       Joint* j = static_cast<Joint*>(joints_[i]);
       vector3d z =  j->axe();
-      ml::Vector & phi_i = phi[i];
+      dynamicgraph::Vector & phi_i = phi[i];
       phi_i.resize(6);      phi_i.fill(0.);
       for( int n=0;n<3;++n ) phi_i(n+3) = z(n);
       sotDEBUG(25) << phi_i <<endl;
@@ -177,7 +177,7 @@ void MatrixInertia::update( void )
 	  for( unsigned int loopj=0;loopj<3;++loopj ) 
 	    piRi( loopi,loopj ) = piRi_tmp(loopi,loopj);
       }
-      ml::Vector piTi(3); 
+      dynamicgraph::Vector piTi(3); 
       {
 	vector3d piTi_tmp; 
 	j->getStaticTranslation( piTi_tmp );
@@ -226,7 +226,7 @@ void MatrixInertia::computeInertiaMatrix()
       sotDEBUG(45) << "Icm"<<i<<" = [ " << Icm<<"]"<<endl;
       matrix3d Sct = Sc.Transpose();
       matrix3d Irr = Sc*Sct;
-      ml::Matrix & Ici = Ic[i];  Ici.resize(6,6);
+      dynamicgraph::Matrix & Ici = Ic[i];  Ici.resize(6,6);
       for( unsigned int loopi=0;loopi<3;++loopi )
 	for( unsigned int loopj=0;loopj<3;++loopj )
 	  {
@@ -240,18 +240,18 @@ void MatrixInertia::computeInertiaMatrix()
       sotDEBUG(25) << "Ic" << i << " = " << Ici;
     }
   
-  ml::Vector Fi(6);
-  ml::Matrix iVpiT_Ici(6,6);
-  ml::Matrix iVpiT_Ici_iVpi(6,6);
+  dynamicgraph::Vector Fi(6);
+  dynamicgraph::Matrix iVpiT_Ici(6,6);
+  dynamicgraph::Matrix iVpiT_Ici_iVpi(6,6);
 
   for( int i=SIZE-1;i>=1;--i ) 
     {
       const unsigned int iRank = joints_[i]->rankInConfiguration();
 
-      ml::Matrix & Ici = Ic[i]; 
+      dynamicgraph::Matrix & Ici = Ic[i]; 
       sotMatrixTwist & iVpii = iVpi[i]; 
       MatrixForce & iVpiiT = iVpiT[i]; 
-      ml::Vector & phii = phi[i];
+      dynamicgraph::Vector & phii = phi[i];
       /* F = Ic_i . phi_i */
       Fi = Ici*phii;  
       /* H_ii = phi_i' . F */
@@ -298,7 +298,7 @@ void MatrixInertia::computeInertiaMatrix()
     }
 
   /* --- FREE FLYER = Ic0 --- */
-  const ml::Matrix & Ic0 = Ic[0];
+  const dynamicgraph::Matrix & Ic0 = Ic[0];
   for(size_t i = 0; i < 6; ++i)
     for(size_t j = 0; j < 6; ++j)
       {inertia_(i, j) = Ic0(i,j);}

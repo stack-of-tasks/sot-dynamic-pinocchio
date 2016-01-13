@@ -26,14 +26,14 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geometry.hh>
 
 /* STD */
 #include <string>
@@ -78,13 +78,13 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
 
  public: /* --- SIGNAL --- */
 
-  ml::Vector& computeZmpref( ml::Vector& res,
+  dynamicgraph::Vector& computeZmpref( dynamicgraph::Vector& res,
 					       const int& time );
 
   dg::SignalPtr<MatrixHomogeneous,int> waistPositionSIN;
-  dg::SignalPtr<ml::Vector,int> comPositionSIN;
-  dg::SignalPtr<ml::Vector,int> dcomSIN;
-  dg::SignalTimeDependent<ml::Vector,int> zmprefSOUT;
+  dg::SignalPtr<dynamicgraph::Vector,int> comPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> dcomSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> zmprefSOUT;
 
 
  public: /* --- PARAMS --- */

@@ -26,16 +26,15 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-geometry.hh>
+
 
 /* STD */
 #include <string>
@@ -81,26 +80,26 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce
 
  public: /* --- SIGNAL --- */
 
-  dg::SignalPtr<ml::Vector,int> forceSIN; 
-  dg::SignalPtr<ml::Matrix,int> massInverseSIN; 
-  dg::SignalPtr<ml::Matrix,int> frictionSIN; 
+  dg::SignalPtr<dynamicgraph::Vector,int> forceSIN; 
+  dg::SignalPtr<dynamicgraph::Matrix,int> massInverseSIN; 
+  dg::SignalPtr<dynamicgraph::Matrix,int> frictionSIN; 
 
   /* Memory of the previous iteration. The sig is fed by the previous
    * computations. */
-  dg::SignalPtr<ml::Vector,int> velocityPrecSIN; 
-  dg::SignalTimeDependent<ml::Vector,int> velocityDerivativeSOUT; 
-  dg::SignalTimeDependent<ml::Vector,int> velocitySOUT; 
+  dg::SignalPtr<dynamicgraph::Vector,int> velocityPrecSIN; 
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocityDerivativeSOUT; 
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocitySOUT; 
 
-  dg::SignalPtr<ml::Matrix,int> massSIN; 
-  dg::SignalTimeDependent<ml::Matrix,int> massInverseSOUT; 
+  dg::SignalPtr<dynamicgraph::Matrix,int> massSIN; 
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT; 
 
  public: /* --- FUNCTIONS --- */
-  ml::Vector& computeDerivative( ml::Vector& res,
+  dynamicgraph::Vector& computeDerivative( dynamicgraph::Vector& res,
 				  const int& time );
-  ml::Vector& computeIntegral( ml::Vector& res,
+  dynamicgraph::Vector& computeIntegral( dynamicgraph::Vector& res,
 			       const int& time );
 
-  ml::Matrix& computeMassInverse( ml::Matrix& res,
+  dynamicgraph::Matrix& computeMassInverse( dynamicgraph::Matrix& res,
 				  const int& time );
 
   

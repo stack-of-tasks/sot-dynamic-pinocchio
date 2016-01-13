@@ -29,9 +29,8 @@ have to be available on your machine.
 
  - Libraries:
    - [jrl-dynamics][jrl-dynamics] (>= 1.16.1)
-   - [dynamic-graph][dynamic-graph] (>= 1.0.0)
-   - [sot-core][sot-core] (>= 1.0.0)
-   - [jrl-mal][jrl-mal] (>= 1.8.0)
+   - [dynamic-graph][dynamic-graph] (>= 3.0.0)
+   - [sot-core][sot-core] (>= 3.0.0)
  - Closed source libraries:
    - hrp2Dynamics (>= 1.3.0)
    - hrp2-10-optimized (>= 1.3.0) [optional]
@@ -43,5 +42,4 @@ have to be available on your machine.
 
 [dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
 [jrl-dynamics]: http://github.com/jrl-umi3218/jrl-dynamics
-[jrl-mal]: http://github.com/jrl-umi3218/jrl-mal
 [sot-core]: http://github.com/stack-of-tasks/sot-core

@@ -26,16 +26,15 @@
 /* --------------------------------------------------------------------- */
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
-#include <sot/core/vector-roll-pitch-yaw.hh>
-#include <sot/core/matrix-rotation.hh>
+#include <sot/core/matrix-geometry.hh>
+
 
 /* STD */
 #include <string>
@@ -75,18 +74,18 @@ namespace dynamicgraph { namespace sot {
 
       public: /* --- SIGNAL --- */
 
-	dg::SignalPtr<ml::Matrix,int> jacobianSIN; 
-	dg::SignalPtr<ml::Matrix,int> inertiaInverseSIN; 
-	dg::SignalTimeDependent<ml::Matrix,int> massInverseSOUT; 
-	dg::SignalTimeDependent<ml::Matrix,int> massSOUT; 
+	dg::SignalPtr<dynamicgraph::Matrix,int> jacobianSIN; 
+	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaInverseSIN; 
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT; 
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massSOUT; 
 
-	dg::SignalPtr<ml::Matrix,int> inertiaSIN; 
-	dg::SignalTimeDependent<ml::Matrix,int> inertiaInverseSOUT; 
+	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaSIN; 
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaInverseSOUT; 
 
       public: /* --- FUNCTIONS --- */
-	ml::Matrix& computeMassInverse( ml::Matrix& res,const int& time );
-	ml::Matrix& computeMass( ml::Matrix& res,const int& time );
-	ml::Matrix& computeInertiaInverse( ml::Matrix& res,const int& time );
+	dynamicgraph::Matrix& computeMassInverse( dynamicgraph::Matrix& res,const int& time );
+	dynamicgraph::Matrix& computeMass( dynamicgraph::Matrix& res,const int& time );
+	dynamicgraph::Matrix& computeInertiaInverse( dynamicgraph::Matrix& res,const int& time );
       };
 
 

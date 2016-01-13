@@ -25,7 +25,6 @@
 #include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
 
-#include <jrl/mal/matrixabstractlayer.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
@@ -147,8 +146,8 @@ AngleEstimator::
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-ml::Vector& AngleEstimator::
-computeAngles( ml::Vector& res,
+dynamicgraph::Vector& AngleEstimator::
+computeAngles( dynamicgraph::Vector& res,
 	       const int& time )
 {
   sotDEBUGIN(15);
@@ -158,12 +157,12 @@ computeAngles( ml::Vector& res,
   const MatrixRotation &worldestRchest = sensorWorldRotationSIN( time );
   sotDEBUG(35) << "worldestRchest = " << std::endl << worldestRchest;
   const MatrixHomogeneous &waistMchest = sensorEmbeddedPositionSIN( time );
-  MatrixRotation waistRchest; waistMchest.extract( waistRchest );
+  MatrixRotation waistRchest; waistRchest = waistMchest.linear();
 
   const MatrixHomogeneous & waistMleg = contactEmbeddedPositionSIN( time );
-  MatrixRotation waistRleg; waistMleg.extract( waistRleg );
-  MatrixRotation chestRleg; waistRchest.transpose().multiply( waistRleg,chestRleg );
-  MatrixRotation worldestRleg; worldestRchest.multiply( chestRleg,worldestRleg );
+  MatrixRotation waistRleg; waistRleg = waistMleg.linear();
+  MatrixRotation chestRleg; chestRleg = waistRchest.transpose()*waistRleg;
+  MatrixRotation worldestRleg; worldestRleg = worldestRchest*chestRleg;
 
   sotDEBUG(35) << "worldestRleg = " << std::endl << worldestRleg;
 
@@ -215,7 +214,7 @@ computeFlexibilityFromAngles( MatrixRotation& res,
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & angles = anglesSOUT( time );
+  const dynamicgraph::Vector & angles = anglesSOUT( time );
   double cx= cos( angles(0) );
   double sx= sin( angles(0) );
   double cy= cos( angles(1) );
@@ -247,7 +246,7 @@ computeDriftFromAngles( MatrixRotation& res,
 {
   sotDEBUGIN(15);
 
-  const ml::Vector & angles = anglesSOUT( time );
+  const dynamicgraph::Vector & angles = anglesSOUT( time );
   double cz = cos( angles(2) );
   double sz = sin( angles(2) );
 
@@ -278,7 +277,7 @@ computeSensorWorldRotation( MatrixRotation& res,
   const MatrixRotation & worldRworldest = driftSOUT( time );
   const MatrixRotation & worldestRsensor = sensorWorldRotationSIN( time );
 
-  worldRworldest.multiply( worldestRsensor,res );
+  res = worldRworldest*worldestRsensor;
 
   sotDEBUGOUT(15);
   return res;
@@ -293,9 +292,9 @@ computeWaistWorldRotation( MatrixRotation& res,
   // chest = sensor
   const MatrixRotation & worldRsensor = sensorWorldRotationSOUT( time );
   const MatrixHomogeneous & waistMchest = sensorEmbeddedPositionSIN( time );
-  MatrixRotation waistRchest; waistMchest.extract( waistRchest );
+  MatrixRotation waistRchest; waistRchest = waistMchest.linear();
 
-  worldRsensor .multiply( waistRchest.transpose(),res );
+  res = worldRsensor* waistRchest.transpose();
 
   sotDEBUGOUT(15);
   return res;
@@ -311,32 +310,31 @@ computeWaistWorldPosition( MatrixHomogeneous& res,
 
   const MatrixHomogeneous & waistMleg = contactEmbeddedPositionSIN( time );
   const MatrixHomogeneous& contactPos = contactWorldPositionSIN( time );
-  MatrixHomogeneous legMwaist; waistMleg.inverse( legMwaist );
+  MatrixHomogeneous legMwaist(waistMleg.inverse());
   MatrixHomogeneous tmpRes;
   if( fromSensor_ )
     {
       const MatrixRotation & Rflex = flexibilitySOUT( time ); // footRleg
-      ml::Vector zero(3); zero.fill(0.);
-      MatrixHomogeneous footMleg; footMleg.buildFrom( Rflex,zero );
+      MatrixHomogeneous footMleg; 
+      footMleg.linear() = Rflex; footMleg.translation().setZero();
 
-      footMleg.multiply( legMwaist,tmpRes );
+      tmpRes = footMleg*legMwaist;
     }
   else { tmpRes = legMwaist; }
 
-  contactPos.multiply( tmpRes, res );
+  res = contactPos*tmpRes;
   sotDEBUGOUT(15);
   return res;
 }
 
-ml::Vector& AngleEstimator::
-computeWaistWorldPoseRPY( ml::Vector& res,
+dynamicgraph::Vector& AngleEstimator::
+computeWaistWorldPoseRPY( dynamicgraph::Vector& res,
 			  const int& time )
 {
   const MatrixHomogeneous & M = waistWorldPositionSOUT( time );
 
-  MatrixRotation R; M.extract(R);
-  VectorRollPitchYaw r; r.fromMatrix(R);
-  ml::Vector t(3); M.extract(t);
+  VectorRollPitchYaw r = (M.linear().eulerAngles(2,1,0)).reverse();
+  dynamicgraph::Vector t(3); t = M.translation();
 
   res.resize(6);
   for( int i=0;i<3;++i ) { res(i)=t(i); res(i+3)=r(i); }
@@ -346,37 +344,37 @@ computeWaistWorldPoseRPY( ml::Vector& res,
 
 /* --- VELOCITY SIGS -------------------------------------------------------- */
 
-ml::Vector& AngleEstimator::
-compute_xff_dotSOUT( ml::Vector& res,
+dynamicgraph::Vector& AngleEstimator::
+compute_xff_dotSOUT( dynamicgraph::Vector& res,
 		     const int& time )
 {
-  const ml::Matrix & J = jacobianSIN( time );
-  const ml::Vector & dq = qdotSIN( time );
+  const dynamicgraph::Matrix & J = jacobianSIN( time );
+  const dynamicgraph::Vector & dq = qdotSIN( time );
 
-  const int nr=J.nbRows(), nc=J.nbCols()-6;
+  const int nr=J.rows(), nc=J.cols()-6;
   assert( nr==6 );
-  ml::Matrix Ja( nr,nc ); ml::Vector dqa(nc);
+  dynamicgraph::Matrix Ja( nr,nc ); dynamicgraph::Vector dqa(nc);
   for( int j=0;j<nc;++j )
     {
       for( int i=0;i<nr;++i )
 	Ja(i,j) = J(i,j+6);
       dqa(j) = dq(j+6);
     }
-  ml::Matrix Jff( 6,6 );
+  dynamicgraph::Matrix Jff( 6,6 );
   for( int j=0;j<6;++j )
     for( int i=0;i<6;++i )
       Jff(i,j) = J(i,j);
 
-  res.resize(nr); res = -Jff.inverse()*Ja*dqa;
+  res.resize(nr); res = (Jff.inverse()*(Ja*dqa))*(-1);
   return res;
 }
 
-ml::Vector& AngleEstimator::
-compute_qdotSOUT( ml::Vector& res,
+dynamicgraph::Vector& AngleEstimator::
+compute_qdotSOUT( dynamicgraph::Vector& res,
 		  const int& time )
 {
-  const ml::Vector & dq = qdotSIN( time );
-  const ml::Vector & dx = xff_dotSOUT( time );
+  const dynamicgraph::Vector & dq = qdotSIN( time );
+  const dynamicgraph::Vector & dx = xff_dotSOUT( time );
 
   assert( dx.size()==6 );
 

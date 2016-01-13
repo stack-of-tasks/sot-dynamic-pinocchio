@@ -25,7 +25,7 @@
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geometry.hh>
 
 namespace sot {
   namespace dynamic {

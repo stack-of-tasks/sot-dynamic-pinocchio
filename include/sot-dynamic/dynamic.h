@@ -30,9 +30,8 @@
 #include <map>
 
 /* Matrix */
-#include <jrl/mal/boost.hh>
-#include "jrl/mal/matrixabstractlayer.hh"
-namespace ml = maal::boost;
+#include <dynamic-graph/linear-algebra.h>
+
 
 /* JRL dynamic */
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
@@ -47,7 +46,7 @@ namespace djj = dynamicsJRLJapan;
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot/core/exception-dynamic.hh>
-#include <sot/core/matrix-homogeneous.hh>
+#include <sot/core/matrix-geometry.hh>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -146,10 +145,10 @@ class SOTDYNAMIC_EXPORT Dynamic
   void parseConfigFiles( void );
 
  public: /* --- SIGNAL ACTIVATION --- */
-  dg::SignalTimeDependent< ml::Matrix,int > &
+  dg::SignalTimeDependent< dynamicgraph::Matrix,int > &
     createEndeffJacobianSignal( const std::string& signame,
 				CjrlJoint* inJoint );
-  dg::SignalTimeDependent< ml::Matrix,int > &
+  dg::SignalTimeDependent< dynamicgraph::Matrix,int > &
     createJacobianSignal( const std::string& signame,
 			  CjrlJoint* inJoint );
   void destroyJacobianSignal( const std::string& signame );
@@ -157,11 +156,11 @@ class SOTDYNAMIC_EXPORT Dynamic
     createPositionSignal( const std::string& signame,
 			  CjrlJoint* inJoint );
   void destroyPositionSignal( const std::string& signame );
-  dg::SignalTimeDependent< ml::Vector,int >&
+  dg::SignalTimeDependent< dynamicgraph::Vector,int >&
       createVelocitySignal( const std::string& signame,
   			     CjrlJoint* inJoint );
     void destroyVelocitySignal( const std::string& signame );
-  dg::SignalTimeDependent< ml::Vector,int >&
+  dg::SignalTimeDependent< dynamicgraph::Vector,int >&
     createAccelerationSignal( const std::string& signame,
 			     CjrlJoint* inJoint );
   void destroyAccelerationSignal( const std::string& signame );
@@ -177,12 +176,12 @@ class SOTDYNAMIC_EXPORT Dynamic
 
  public: /* --- SIGNAL --- */
 
-  dg::SignalPtr<ml::Vector,int> jointPositionSIN;
-  dg::SignalPtr<ml::Vector,int> freeFlyerPositionSIN;
-  dg::SignalPtr<ml::Vector,int> jointVelocitySIN;
-  dg::SignalPtr<ml::Vector,int> freeFlyerVelocitySIN;
-  dg::SignalPtr<ml::Vector,int> jointAccelerationSIN;
-  dg::SignalPtr<ml::Vector,int> freeFlyerAccelerationSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> jointPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> freeFlyerPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> jointVelocitySIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> freeFlyerVelocitySIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> jointAccelerationSIN;
+  dg::SignalPtr<dynamicgraph::Vector,int> freeFlyerAccelerationSIN;
 
   // protected:
  public:
@@ -194,57 +193,57 @@ class SOTDYNAMIC_EXPORT Dynamic
   int& initNewtonEuler( int& dummy,int time );
 
  public:
-  dg::SignalTimeDependent<ml::Vector,int> zmpSOUT;
-  dg::SignalTimeDependent<ml::Matrix,int> JcomSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> comSOUT;
-  dg::SignalTimeDependent<ml::Matrix,int> inertiaSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> zmpSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int> JcomSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> comSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaSOUT;
 
-  dg::SignalTimeDependent<ml::Matrix,int>& jacobiansSOUT( const std::string& name );
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int>& jacobiansSOUT( const std::string& name );
   dg::SignalTimeDependent<MatrixHomogeneous,int>& positionsSOUT( const std::string& name );
-  dg::SignalTimeDependent<ml::Vector,int>& velocitiesSOUT( const std::string& name );
-  dg::SignalTimeDependent<ml::Vector,int>& accelerationsSOUT( const std::string& name );
+  dg::SignalTimeDependent<dynamicgraph::Vector,int>& velocitiesSOUT( const std::string& name );
+  dg::SignalTimeDependent<dynamicgraph::Vector,int>& accelerationsSOUT( const std::string& name );
 
   dg::SignalTimeDependent<double,int> footHeightSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> upperJlSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> lowerJlSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> upperVlSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> lowerVlSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> upperTlSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> lowerTlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> upperJlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> lowerJlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> upperVlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> lowerVlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> upperTlSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> lowerTlSOUT;
 
-  dg::Signal<ml::Vector,int> inertiaRotorSOUT;
-  dg::Signal<ml::Vector,int> gearRatioSOUT;
-  dg::SignalTimeDependent<ml::Matrix,int> inertiaRealSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> MomentaSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> AngularMomentumSOUT;
-  dg::SignalTimeDependent<ml::Vector,int> dynamicDriftSOUT;
+  dg::Signal<dynamicgraph::Vector,int> inertiaRotorSOUT;
+  dg::Signal<dynamicgraph::Vector,int> gearRatioSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaRealSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> MomentaSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> AngularMomentumSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> dynamicDriftSOUT;
 
  protected:
-  ml::Vector& computeZmp( ml::Vector& res,int time );
-  ml::Vector& computeMomenta( ml::Vector &res, int time);
-  ml::Vector& computeAngularMomentum( ml::Vector &res, int time);
-  ml::Matrix& computeJcom( ml::Matrix& res,int time );
-  ml::Vector& computeCom( ml::Vector& res,int time );
-  ml::Matrix& computeInertia( ml::Matrix& res,int time );
-  ml::Matrix& computeInertiaReal( ml::Matrix& res,int time );
+  dynamicgraph::Vector& computeZmp( dynamicgraph::Vector& res,int time );
+  dynamicgraph::Vector& computeMomenta( dynamicgraph::Vector &res, int time);
+  dynamicgraph::Vector& computeAngularMomentum( dynamicgraph::Vector &res, int time);
+  dynamicgraph::Matrix& computeJcom( dynamicgraph::Matrix& res,int time );
+  dynamicgraph::Vector& computeCom( dynamicgraph::Vector& res,int time );
+  dynamicgraph::Matrix& computeInertia( dynamicgraph::Matrix& res,int time );
+  dynamicgraph::Matrix& computeInertiaReal( dynamicgraph::Matrix& res,int time );
   double& computeFootHeight( double& res,int time );
 
-  ml::Matrix& computeGenericJacobian( CjrlJoint* j,ml::Matrix& res,int time );
-  ml::Matrix& computeGenericEndeffJacobian( CjrlJoint* j,ml::Matrix& res,int time );
+  dynamicgraph::Matrix& computeGenericJacobian( CjrlJoint* j,dynamicgraph::Matrix& res,int time );
+  dynamicgraph::Matrix& computeGenericEndeffJacobian( CjrlJoint* j,dynamicgraph::Matrix& res,int time );
   MatrixHomogeneous& computeGenericPosition( CjrlJoint* j,MatrixHomogeneous& res,int time );
-  ml::Vector& computeGenericVelocity( CjrlJoint* j,ml::Vector& res,int time );
-  ml::Vector& computeGenericAcceleration( CjrlJoint* j,ml::Vector& res,int time );
+  dynamicgraph::Vector& computeGenericVelocity( CjrlJoint* j,dynamicgraph::Vector& res,int time );
+  dynamicgraph::Vector& computeGenericAcceleration( CjrlJoint* j,dynamicgraph::Vector& res,int time );
 
-  ml::Vector& getUpperJointLimits( ml::Vector& res,const int& time );
-  ml::Vector& getLowerJointLimits( ml::Vector& res,const int& time );
+  dynamicgraph::Vector& getUpperJointLimits( dynamicgraph::Vector& res,const int& time );
+  dynamicgraph::Vector& getLowerJointLimits( dynamicgraph::Vector& res,const int& time );
 
-  ml::Vector& getUpperVelocityLimits( ml::Vector& res,const int& time );
-  ml::Vector& getLowerVelocityLimits( ml::Vector& res,const int& time );
+  dynamicgraph::Vector& getUpperVelocityLimits( dynamicgraph::Vector& res,const int& time );
+  dynamicgraph::Vector& getLowerVelocityLimits( dynamicgraph::Vector& res,const int& time );
 
-  ml::Vector& getUpperTorqueLimits( ml::Vector& res,const int& time );
-  ml::Vector& getLowerTorqueLimits( ml::Vector& res,const int& time );
+  dynamicgraph::Vector& getUpperTorqueLimits( dynamicgraph::Vector& res,const int& time );
+  dynamicgraph::Vector& getLowerTorqueLimits( dynamicgraph::Vector& res,const int& time );
 
-  ml::Vector& computeTorqueDrift( ml::Vector& res,const int& time );
+  dynamicgraph::Vector& computeTorqueDrift( dynamicgraph::Vector& res,const int& time );
 
  public: /* --- PARAMS --- */
   virtual void commandLine( const std::string& cmdLine,
@@ -272,7 +271,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// commands. An empty CjrlBody is also created and attached to the joint.
   void createJoint(const std::string& inJointName,
 		   const std::string& inJointType,
-		   const ml::Matrix& inPosition);
+		   const dynamicgraph::Matrix& inPosition);
 
   /// \brief Set a joint as root joint of the robot.
   void setRootJoint(const std::string& inJointName);
@@ -302,14 +301,14 @@ class SOTDYNAMIC_EXPORT Dynamic
   ///
   /// \param inJointName name of the joint to which the body is attached,
   /// \param inCom local center of mass.
-  void setLocalCenterOfMass(const std::string& inJointName, ml::Vector inCom);
+  void setLocalCenterOfMass(const std::string& inJointName, dynamicgraph::Vector inCom);
 
   /// \brief Set inertia matrix of a body
   ///
   /// \param inJointName name of the joint to which the body is attached,
   /// \param inMatrix inertia matrix.
   void setInertiaMatrix(const std::string& inJointName,
-			ml::Matrix inMatrix);
+			dynamicgraph::Matrix inMatrix);
 
   /// \brief Set specific joints
   ///
@@ -325,10 +324,10 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \param inThumbAxis thumb axis in wrist local frame,
   /// \param inForefingerAxis forefinger axis in wrist local frame,
   /// \param inPalmNormalAxis palm normal in wrist local frame,
-  void setHandParameters(bool inRight, const ml::Vector& inCenter,
-			 const ml::Vector& inThumbAxis,
-			 const ml::Vector& inForefingerAxis,
-			 const ml::Vector& inPalmNormal);
+  void setHandParameters(bool inRight, const dynamicgraph::Vector& inCenter,
+			 const dynamicgraph::Vector& inThumbAxis,
+			 const dynamicgraph::Vector& inForefingerAxis,
+			 const dynamicgraph::Vector& inPalmNormal);
 
   /// \brief Set foot parameters
   ///
@@ -338,14 +337,14 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \param inAnklePosition ankle position in foot local frame,
   void setFootParameters(bool inRight, const double& inSoleLength,
 			 const double& inSoleWidth,
-			 const ml::Vector& inAnklePosition);
+			 const dynamicgraph::Vector& inAnklePosition);
 
   /// \brief Set gaze parameters
   ///
   /// \param inGazeOrigin origin of the gaze in gaze joint local frame,
   /// \param inGazeDirection direction of the gase in gaze joint local frame.
-  void setGazeParameters(const ml::Vector& inGazeOrigin,
-			 const ml::Vector& inGazeDirection);
+  void setGazeParameters(const dynamicgraph::Vector& inGazeOrigin,
+			 const dynamicgraph::Vector& inGazeDirection);
 
   /// \brief Get length of left foot sole.
   ///
@@ -360,7 +359,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \brief Get left ankle position in foot frame
   ///
   /// The robot is assumed to be symmetric.
-  ml::Vector getAnklePositionInFootFrame() const;
+  dynamicgraph::Vector getAnklePositionInFootFrame() const;
 
   /// @}
   ///
