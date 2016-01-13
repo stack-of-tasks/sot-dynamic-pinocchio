@@ -51,11 +51,11 @@ void DisplayDynamicRobotInformation(CjrlDynamicRobot *aDynamicRobot)
 
 }
 
-void DisplayMatrix(Eigen::MatrixXd &aJ)
+void DisplayMatrix(MAL_MATRIX(&aJ,double))
 {
-  for(int i=0;i<6;i++)
+  for(unsigned int i=0;i<6;i++)
     {
-      for(int j=0;j<aJ.cols();j++)
+      for(unsigned int j=0;j<MAL_MATRIX_NB_COLS(aJ);j++)
 	{
 	  if (aJ(i,j)==0.0)
 	    printf("0 ");
@@ -66,6 +66,7 @@ void DisplayMatrix(Eigen::MatrixXd &aJ)
     }
 
 }
+
 
 /* --- DISPLAY MASS PROPERTIES OF A CHAIN --- */
 void GoDownTree(const CjrlJoint * startJoint)
@@ -145,20 +146,20 @@ int main(int argc, char *argv[])
   cout << "NbOfDofs :" << NbOfDofs << endl;
 
   /* Set current conf to dInitPos. */
-  Eigen::VectorXd aCurrentConf(NbOfDofs);
+  boost::numeric::ublas::vector<double> aCurrentConf(NbOfDofs);
   for( int i=0;i<((NbOfDofs<46)?NbOfDofs:46);++i )
     if( i<6 ) aCurrentConf[i] = 0.0;
     else aCurrentConf[i] = dInitPos[i-6]*M_PI/180.0;
   aHDR->currentConfiguration(aCurrentConf);
 
   /* Set current velocity to 0. */
-  Eigen::VectorXd aCurrentVel(NbOfDofs);
+  boost::numeric::ublas::vector<double> aCurrentVel(NbOfDofs);
   for(int i=0;i<NbOfDofs;i++) aCurrentVel[i] = 0.0;
   aHDR->currentVelocity(aCurrentVel);
 
   /* Compute ZMP and CoM */
-  Eigen::Vector3d ZMPval;
-  // MAL_S3_VECTOR(ZMPval,double);
+  //  Eigen::Vector3d ZMPval;
+  MAL_S3_VECTOR(ZMPval,double);
   string Property("ComputeZMP");
   string Value("true");
   aHDR->setProperty(Property,Value);
@@ -177,8 +178,7 @@ int main(int argc, char *argv[])
   vector<CjrlJoint *> aVec = aHDR->jointVector();
   CjrlJoint * aJoint = aVec[22];
   aJoint->computeJacobianJointWrtConfig();
-  //MAL_MATRIX(aJ,double);
-  Eigen::MatrixXd aJ;
+  MAL_MATRIX(aJ,double);
   aJ = aJoint->jacobianJointWrtConfig();
   DisplayMatrix(aJ);
 
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 
   /* Get CoM jacobian. */
   cout << "****************************" << endl;
-  Eigen::MatrixXd jacobian;
+  matrixNxP jacobian;
   aHDR->getJacobianCenterOfMass(*aHDR->rootJoint(), jacobian);
   cout << "Value of the CoM's Jacobian:" << endl
        << jacobian << endl;
@@ -203,9 +203,11 @@ int main(int argc, char *argv[])
   cout << "Force " << aHDR->mass()*9.81 << endl;
 
   cout << "****************************" << endl;
-  aCurrentVel.setZero();
-  Eigen::VectorXd aCurrentAcc(NbOfDofs);
-  aCurrentAcc.setZero();
+  MAL_VECTOR_FILL(aCurrentVel,0.0);
+  //  Eigen::VectorXd aCurrentAcc(NbOfDofs);
+  //  aCurrentAcc.setZero();
+  MAL_VECTOR_DIM(aCurrentAcc,double,NbOfDofs);
+  MAL_VECTOR_FILL(aCurrentAcc,0.0);
 
   // This is mandatory for this implementation of computeForwardKinematics
   // to compute the derivative of the momentum.

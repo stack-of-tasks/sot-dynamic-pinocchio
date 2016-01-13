@@ -517,7 +517,7 @@ namespace dynamicgraph { namespace sot {
 	CjrlHand* hand;
 	if (right) hand = robot.m_HDR->rightHand ();
 	else hand = robot.m_HDR->leftHand ();
-	Eigen::Vector3d axis;
+	jrlMathTools::Vector3D<double> axis;
 	hand->getThumbAxis (axis);
 	for (unsigned int i=0; i<3; i++)
 	  handParameter (i,0) = axis (i);

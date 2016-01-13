@@ -34,7 +34,7 @@ namespace djj = dynamicsJRLJapan;
 
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
-
+#include <dynamic-graph/linear-algebra.h>
 using namespace std;
 
 int main(int argc, char * argv[])
@@ -81,31 +81,31 @@ int main(int argc, char * argv[])
 
   std::ofstream FileActualRHPos,FileRefRHPos,FileRefLHPos;
 
-  //  MAL_VECTOR_DIM(m_ReferenceStateConf,double,46);
-  Eigen::VectorXd m_ReferenceStateConf(46);
-  //MAL_VECTOR_DIM(m_ReferenceStateConfPrev,double,46);
-  Eigen::VectorXd m_ReferenceStateConfPrev(46);
-  //MAL_VECTOR_DIM(m_ReferenceStateSpeed,double,46);
-  Eigen::VectorXd m_ReferenceStateSpeed(46);
-  //MAL_VECTOR_DIM(m_ReferenceStateSpeedPrev,double,46);
-  Eigen::VectorXd m_ReferenceStateSpeedPrev(46);
-  //MAL_VECTOR_DIM(m_ReferenceStateAcc,double,46);
-  Eigen::VectorXd m_ReferenceStateAcc(46);
-  //MAL_VECTOR_DIM(m_ActualStateConf,double,46);
-  Eigen::VectorXd m_ActualStateConf(46);
-  //MAL_VECTOR_DIM(m_ActualStateConfPrev,double,46);
-  Eigen::VectorXd m_ActualStateConfPrev(46);
-  //MAL_VECTOR_DIM(m_ActualStateSpeed,double,46);
-  Eigen::VectorXd m_ActualStateSpeed(46);
-  //MAL_VECTOR_DIM(m_ActualStateSpeedPrev,double,46);
-  Eigen::VectorXd m_ActualStateSpeedPrev(46);
-  //MAL_VECTOR_DIM(m_ActualStateAcc,double,46);
-  Eigen::VectorXd m_ActualStateAcc(46);
+  MAL_VECTOR_DIM(m_ReferenceStateConf,double,46);
+  //Eigen::VectorXd m_ReferenceStateConf(46);
+  MAL_VECTOR_DIM(m_ReferenceStateConfPrev,double,46);
+  //Eigen::VectorXd m_ReferenceStateConfPrev(46);
+  MAL_VECTOR_DIM(m_ReferenceStateSpeed,double,46);
+  //Eigen::VectorXd m_ReferenceStateSpeed(46);
+  MAL_VECTOR_DIM(m_ReferenceStateSpeedPrev,double,46);
+  //Eigen::VectorXd m_ReferenceStateSpeedPrev(46);
+  MAL_VECTOR_DIM(m_ReferenceStateAcc,double,46);
+  //Eigen::VectorXd m_ReferenceStateAcc(46);
+  MAL_VECTOR_DIM(m_ActualStateConf,double,46);
+  //Eigen::VectorXd m_ActualStateConf(46);
+  MAL_VECTOR_DIM(m_ActualStateConfPrev,double,46);
+  //Eigen::VectorXd m_ActualStateConfPrev(46);
+  MAL_VECTOR_DIM(m_ActualStateSpeed,double,46);
+  //Eigen::VectorXd m_ActualStateSpeed(46);
+  MAL_VECTOR_DIM(m_ActualStateSpeedPrev,double,46);
+  //Eigen::VectorXd m_ActualStateSpeedPrev(46);
+  MAL_VECTOR_DIM(m_ActualStateAcc,double,46);
+  //Eigen::VectorXd m_ActualStateAcc(46);
 
-  //MAL_VECTOR_DIM(m_ReferenceStateData,double,100);
-  Eigen::VectorXd m_ReferenceStateData(100);
-  //MAL_VECTOR_DIM(m_ActualStateData,double,131);
-  Eigen::VectorXd m_ActualStateData(131);
+  MAL_VECTOR_DIM(m_ReferenceStateData,double,100);
+  //Eigen::VectorXd m_ReferenceStateData(100);
+  MAL_VECTOR_DIM(m_ActualStateData,double,131);
+  //Eigen::VectorXd m_ActualStateData(131);
   
   unsigned int NbIterations=0;
 
@@ -121,12 +121,12 @@ int main(int argc, char * argv[])
   ActualLeftFoot = aHDR2->leftFoot()->associatedAnkle();
   ActualRightHand = aHDR2->rightWrist();
   
-  Eigen::Matrix4d ReferenceSupportFootPosition;
-  Eigen::Matrix4d ReferenceRightHandPosition;
-  Eigen::Matrix4d ReferenceLeftHandPosition;
+  matrix4d ReferenceSupportFootPosition;
+  matrix4d ReferenceRightHandPosition;
+  matrix4d ReferenceLeftHandPosition;
 
-  Eigen::Matrix4d ActualSupportFootPosition;
-  Eigen::Matrix4d ActualRightHandPosition;
+  matrix4d ActualSupportFootPosition;
+  matrix4d ActualRightHandPosition;
 
   FileActualRHPos.open("ActualRHPos.dat");
   FileRefRHPos.open("RefRHPos.dat");

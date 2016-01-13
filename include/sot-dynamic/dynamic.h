@@ -31,7 +31,7 @@
 
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
-
+#include <jrl/mal/matrixabstractlayer.hh>
 
 /* JRL dynamic */
 #include <abstract-robot-dynamics/humanoid-dynamic-robot.hh>
