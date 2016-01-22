@@ -23,8 +23,8 @@ INCLUDE(cmake/cpack.cmake)
 
 SET(PROJECT_NAME sot-dynamic)
 
-SET(PROJECT_DESCRIPTION "jrl-dynamics bindings for dynamic-graph.")
-SET(PROJECT_URL "http://github.com/stack-of-tasks/sot-dynamic")
+SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
+SET(PROJECT_URL "https://github.com/proyan/sot-dynamic/tree/topic/sot-pinocchio")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -38,13 +38,11 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   )
 
 SETUP_PROJECT()
-
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
-
+ADD_REQUIRED_DEPENDENCY("pinocchio")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-tools")
+ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
 
 # List plug-ins that will be compiled.
 SET(plugins
@@ -70,7 +68,7 @@ PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
 # Search for dependencies.
 # Boost
-SET(BOOST_COMPONENTS filesystem system)
+SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 

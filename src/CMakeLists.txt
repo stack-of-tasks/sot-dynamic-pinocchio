@@ -29,7 +29,6 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
-
 FOREACH(lib ${plugins})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
 
@@ -44,7 +43,7 @@ FOREACH(lib ${plugins})
 
   TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
 
-  PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
+  PKG_CONFIG_USE_DEPENDENCY(${lib} pinocchio)
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
 
@@ -61,13 +60,13 @@ ENDFOREACH(lib)
 
 # Main Library
 ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic.cpp)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} jrl-dynamics)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} pinocchio)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} sot-core)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} jrl-dynamics)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} pinocchio)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} sot-core)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
-
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 TARGET_LINK_LIBRARIES(dynamic ${LIBRARY_NAME})

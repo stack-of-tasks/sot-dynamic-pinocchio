@@ -20,9 +20,8 @@
 
 #include <string>
 #include <cstdio>
+#include <jrl/mal/matrixabstractlayer.hh>
 #include "jrl/dynamics/dynamicsfactory.hh"
-#include <dynamic-graph/linear-algebra.h>
-
 using namespace std;
 using namespace dynamicsJRLJapan;
 
@@ -66,7 +65,6 @@ void DisplayMatrix(MAL_MATRIX(&aJ,double))
     }
 
 }
-
 
 /* --- DISPLAY MASS PROPERTIES OF A CHAIN --- */
 void GoDownTree(const CjrlJoint * startJoint)
@@ -146,19 +144,18 @@ int main(int argc, char *argv[])
   cout << "NbOfDofs :" << NbOfDofs << endl;
 
   /* Set current conf to dInitPos. */
-  boost::numeric::ublas::vector<double> aCurrentConf(NbOfDofs);
+  MAL_VECTOR_DIM(aCurrentConf,double,NbOfDofs);
   for( int i=0;i<((NbOfDofs<46)?NbOfDofs:46);++i )
     if( i<6 ) aCurrentConf[i] = 0.0;
     else aCurrentConf[i] = dInitPos[i-6]*M_PI/180.0;
   aHDR->currentConfiguration(aCurrentConf);
 
   /* Set current velocity to 0. */
-  boost::numeric::ublas::vector<double> aCurrentVel(NbOfDofs);
+  MAL_VECTOR_DIM(aCurrentVel,double,NbOfDofs);
   for(int i=0;i<NbOfDofs;i++) aCurrentVel[i] = 0.0;
   aHDR->currentVelocity(aCurrentVel);
 
   /* Compute ZMP and CoM */
-  //  Eigen::Vector3d ZMPval;
   MAL_S3_VECTOR(ZMPval,double);
   string Property("ComputeZMP");
   string Value("true");
@@ -204,8 +201,6 @@ int main(int argc, char *argv[])
 
   cout << "****************************" << endl;
   MAL_VECTOR_FILL(aCurrentVel,0.0);
-  //  Eigen::VectorXd aCurrentAcc(NbOfDofs);
-  //  aCurrentAcc.setZero();
   MAL_VECTOR_DIM(aCurrentAcc,double,NbOfDofs);
   MAL_VECTOR_FILL(aCurrentAcc,0.0);
 
