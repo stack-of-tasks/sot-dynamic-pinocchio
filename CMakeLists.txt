@@ -41,10 +41,9 @@ SETUP_PROJECT()
 
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("jrl-dynamics >= 1.19.0")
-
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-tools")
+ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
 
 # List plug-ins that will be compiled.
 SET(plugins
