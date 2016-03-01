@@ -29,12 +29,10 @@
 /* STD */
 #include <string>
 #include <map>
-
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
 
 /*Python API*/
-#include <Python.h>
 
 /* SOT */
 #include <sot/core/flags.hh>
@@ -97,12 +95,11 @@ class SOTDYNAMIC_EXPORT Dynamic
   DYNAMIC_GRAPH_ENTITY_DECL();
 
   /*  --- MODEL ATRIBUTES --- */
-  se3::Model*  m_model;
+  se3::Model  m_model;
   se3::Data*   m_data;
   std::string  m_urdfPath;
 
   /*  --- MODEL ATRIBUTES --- */
-  PyObject* getPinocchioModel(PyObject*, PyObject* args);
 
     public:
   /* --- SIGNAL ACTIVATION --- */
@@ -182,13 +179,18 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \note creates a pinocchio model. needs urdfdom libraries to parse.
   void setUrdfFile( const std::string& path );
 
+  //TODO:
+  //  void parseAndAddFrames(se3::Model& pinocchio_model,
+  //			 const std::string& filename);
+
+
   /// \name Construction of a robot by commands
   ///@{
   ///
 
   /// \brief Create an empty device
   void createRobot();
-  void displayModel(){ std::cout<<*m_model<<std::endl; };
+  void displayModel(){ std::cout<<m_model<<std::endl; };
 
   /// \brief create a joint
   /// \param inJointName name of the joint,
@@ -259,34 +261,54 @@ class SOTDYNAMIC_EXPORT Dynamic
 			    const dg::Matrix& inertia3);
   
     
+  /// \brief Set the bounds of a joint degree of freedom
+  /// \param the name of the joint
+  /// \param  non-negative integer: the dof id in the joint
+  /// \param  the minimal value of the dof
+  /// \param: the maximal value of the dof
+  void setDofBounds(const std::string& inJointName,
+		    const unsigned int inDofId,
+		    const double inMinValue, double inMaxValue);
+    
+
+
   /// \brief Set lower bound of joint position
   ///
   /// \param inJointName name of the joint,
-  /// \param lowPos vector containing lower limit bounds for all dofs of joint.
+  /// \param vector containing lower limit bounds for all dofs of joint, or a double containing limits for a revolute joint.
   void setLowerPositionLimit(const std::string& inJointName,
-				      const dg::Vector& lowPos);
+			     const dg::Vector& lowPos);
+  
+  void setLowerPositionLimit(const std::string& inJointName,
+			     const double lowPos);
   
   /// \brief Set upper bound of joint position
   ///
   /// \param inJointName name of the joint,
-  /// \param upPos vector containing upper limit bounds for all dofs of joint.
+  /// \param upPos vector containing upper limit bounds for all dofs of joint, or a double containing limits for a revolute joint.
   void setUpperPositionLimit(const std::string& inJointName,
-				      const dg::Vector& lowPos);
+			     const dg::Vector& upPos);
+  void setUpperPositionLimit(const std::string& inJointName,
+			     const double upPos);
 
   /// \brief Set upper bound of joint velocities
   ///
   /// \param inJointName name of the joint,
-  /// \param maxVel vector containing upper limit bounds for all dofs of joint.
+  /// \param maxVel vector containing upper limit bounds for all dofs of joint, or a double containing limits for a revolute joint.
   void setMaxVelocityLimit(const std::string& inJointName,
 			   const dg::Vector& maxVel);
+  void setMaxVelocityLimit(const std::string& inJointName,
+			   const double maxVel);
 
 
   /// \brief Set upper bound of joint effort
   ///
   /// \param inJointName name of the joint,
-  /// \param maxEffort vector containing upper limit bounds for all dofs of joint.
+  /// \param maxEffort vector containing upper limit bounds for all dofs of joint, or a double containing limits for a revolute joint.
   void setMaxEffortLimit(const std::string& inJointName,
-				  const dg::Vector& maxEffort);
+			 const dg::Vector& maxEffort);
+  void setMaxEffortLimit(const std::string& inJointName,
+			 const double maxEffort);
   
   /* --- GETTERS --- */
 
@@ -352,6 +374,9 @@ class SOTDYNAMIC_EXPORT Dynamic
   typedef std::pair<std::string,dg::Matrix> JointDetails;
   std::map<std::string, JointDetails> jointMap_;
   std::vector<std::string> jointTypes;
+
+
+  std::map<std::string,std::string> specificitiesMap;
 
 };
 

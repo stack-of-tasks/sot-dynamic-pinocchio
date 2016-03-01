@@ -16,7 +16,8 @@
 ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
-dev_test_all_compute
+test_constructor
+test_config
 #  dummy
 #  test_djj
 #  test_dyn

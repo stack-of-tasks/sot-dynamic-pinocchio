@@ -36,7 +36,8 @@ namespace dynamicgraph { namespace sot {
     class SetFile : public Command
     {
     public:
-      virtual ~SetFile() {}
+      virtual ~SetFile() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -58,7 +59,8 @@ namespace dynamicgraph { namespace sot {
     class CreateRobot : public Command
     {
     public:
-      virtual ~CreateRobot() {}
+      virtual ~CreateRobot() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -79,7 +81,8 @@ namespace dynamicgraph { namespace sot {
     class DisplayModel : public Command
     {
     public:
-      virtual ~DisplayModel() {}
+      virtual ~DisplayModel() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -100,7 +103,8 @@ namespace dynamicgraph { namespace sot {
     class CreateJoint : public Command
     {
     public:
-      virtual ~CreateJoint() {}
+      virtual ~CreateJoint() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -125,7 +129,8 @@ namespace dynamicgraph { namespace sot {
     class AddBody : public Command
     {
     public:
-      virtual ~AddBody() {}
+      virtual ~AddBody() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -150,7 +155,8 @@ namespace dynamicgraph { namespace sot {
     class SetMass : public Command
     {
     public:
-      virtual ~SetMass() {}
+      virtual ~SetMass() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -174,7 +180,8 @@ namespace dynamicgraph { namespace sot {
     class SetLocalCenterOfMass : public Command
     {
     public:
-      virtual ~SetLocalCenterOfMass() {}
+      virtual ~SetLocalCenterOfMass() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -198,7 +205,8 @@ namespace dynamicgraph { namespace sot {
     class SetInertiaMatrix : public Command
     {
     public:
-      virtual ~SetInertiaMatrix() {}
+      virtual ~SetInertiaMatrix() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -222,7 +230,8 @@ namespace dynamicgraph { namespace sot {
     class SetInertiaProperties : public Command
     {
     public:
-      virtual ~SetInertiaProperties() {}
+      virtual ~SetInertiaProperties() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -245,12 +254,39 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class SetInertiaMatrix
 
+    // Command SetDofBounds
+    class SetDofBounds : public Command
+    {
+    public:
+      virtual ~SetDofBounds() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      SetDofBounds(Dynamic& entity, const std::string& docstring) :
+	Command(entity, boost::assign::list_of(Value::STRING)(Value::UNSIGNED)
+		(Value::DOUBLE)(Value::DOUBLE), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string jointName = values[0].value();
+	unsigned int dofId = values[1].value();
+	double minValue = values[2].value();
+	double maxValue = values[3].value();
+	robot.setDofBounds(jointName, dofId, minValue, maxValue);
+	return Value();
+      }
+    }; // class SetDofBounds
 
     // Command SetLowerPositionLimit
     class SetLowerPositionLimit : public Command
     {
     public:
-      virtual ~SetLowerPositionLimit() {}
+      virtual ~SetLowerPositionLimit() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -270,11 +306,14 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class SetLowerPositionLimit
 
+
+
     // Command SetUpperPositionLimit
     class SetUpperPositionLimit : public Command
     {
     public:
-      virtual ~SetUpperPositionLimit() {}
+      virtual ~SetUpperPositionLimit() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -298,7 +337,8 @@ namespace dynamicgraph { namespace sot {
     class SetMaxVelocityLimit : public Command
     {
     public:
-      virtual ~SetMaxVelocityLimit() {}
+      virtual ~SetMaxVelocityLimit() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -323,7 +363,8 @@ namespace dynamicgraph { namespace sot {
     class SetMaxEffortLimit : public Command
     {
     public:
-      virtual ~SetMaxEffortLimit() {}
+      virtual ~SetMaxEffortLimit() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
@@ -343,6 +384,54 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class SetMaxEffortLimit
 
+
+    // Command GetDimension
+    class GetDimension : public Command
+    {
+    public:
+      virtual ~GetDimension() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      GetDimension(Dynamic& entity, const std::string& docstring) :
+	Command(entity, std::vector<Value::Type>(),
+		docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	unsigned int dimension = robot.m_model.nv;
+	return Value(dimension);
+      }
+    }; // class GetDimension
+
+    // Command Write
+    class Write : public Command
+    {
+    public:
+      virtual ~Write() {	sotDEBUGIN(15);
+	sotDEBUGOUT(15);}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      Write(Dynamic& entity, const std::string& docstring) :
+      Command(entity, boost::assign::list_of(Value::STRING),
+	      docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	std::vector<Value> values = getParameterValues();
+	std::string filename = values[0].value();
+	std::ofstream file(filename.c_str(), std::ios_base::out);
+	file << (robot.m_model);
+	file.close();
+	return Value();
+      }
+    }; // class Write
 
 
   } // namespace command

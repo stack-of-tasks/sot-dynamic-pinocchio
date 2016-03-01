@@ -35,7 +35,10 @@ namespace dynamicgraph { namespace sot {
     class FromSensor : public Command
     {
     public:
-      virtual ~FromSensor() {}
+      virtual ~FromSensor() {
+	sotDEBUGIN(15);
+	sotDEBUGOUT(15);
+      }
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
