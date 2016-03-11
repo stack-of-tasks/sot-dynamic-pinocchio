@@ -31,11 +31,19 @@ install_dependency()
     make install
 }
 
+install_pinocchio_devel()
+{
+    echo "--> Compiling stack-of-tasks/pinocchio"
+    mkdir -p "$build_dir/stack-of-tasks/pinocchio"
+    cd "$build_dir"
+    $git_clone -b devel git://github.com/stack-of-tasks/pinocchio stack-of-tasks/pinocchio
+    cd "$build_dir/stack-of-tasks/pinocchio"
+    cmake . -DCMAKE_INSTALL_PREFIX:STRING="$install_dir"
+    make install
+}
+
 # Retrieve jrl-mathtools
-install_dependency jrl-umi3218/jrl-mathtools
-install_dependency jrl-umi3218/jrl-mal
-install_dependency laas/abstract-robot-dynamics
-install_dependency jrl-umi3218/jrl-dynamics
+install_pinocchio_devel
 install_dependency proyan/dynamic-graph
 install_dependency proyan/dynamic-graph-python
 install_dependency proyan/sot-core
