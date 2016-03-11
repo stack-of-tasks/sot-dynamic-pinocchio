@@ -14,10 +14,11 @@ rm -rf "$build_dir" "$install_dir"
 mkdir -p "$build_dir"
 mkdir -p "$install_dir"
 
+
 # Setup environment variables.
-export LD_LIBRARY_PATH="$install_dir/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$install_dir/lib:/opt/openrobots/lib:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH="$install_dir/lib/`dpkg-architecture -qDEB_BUILD_MULTIARCH`:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="$install_dir/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="$install_dir/lib/pkgconfig:/opt/openrobots/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PKG_CONFIG_PATH="$install_dir/lib/`dpkg-architecture -qDEB_BUILD_MULTIARCH`/pkgconfig:$PKG_CONFIG_PATH"
 
 install_dependency()
@@ -42,7 +43,6 @@ install_pinocchio_devel()
     make install
 }
 
-# Retrieve jrl-mathtools
 install_pinocchio_devel
 install_dependency proyan/dynamic-graph
 install_dependency proyan/dynamic-graph-python

@@ -24,6 +24,14 @@ test_config
 #  test_results
 )
 
+
+#----------------------------------------------------
+# Install procedure for the urdf files
+#----------------------------------------------------
+
+FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/two_link.urdf
+  DESTINATION urdf)
+
 SET(test_dyn_plugins_dependencies dynamic)
 
 # Make Boost.Test generates the main function in test cases.
