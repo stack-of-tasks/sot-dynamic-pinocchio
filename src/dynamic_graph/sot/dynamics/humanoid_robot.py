@@ -47,6 +47,10 @@ class AbstractHumanoidRobot (object):
       - rightAnkle,
       - Gaze.
 
+    Operational points are mapped to the actual joints in the robot model
+    via 'OperationalPointsMap' dictionary.
+    This attribute *must* be defined in the subclasses
+
     Other attributes require to be defined:
         - halfSitting: half-sitting position is the robot initial pose.
             This attribute *must* be defined in subclasses.
@@ -65,6 +69,8 @@ class AbstractHumanoidRobot (object):
     OperationalPoints = ['left-wrist', 'right-wrist',
                          'left-ankle', 'right-ankle',
                          'gaze']
+
+
     """
     Operational points are specific interesting points of the robot
     used to control it.
@@ -89,7 +95,6 @@ class AbstractHumanoidRobot (object):
     - transformation w.r.t to the operational point,
     - operational point file.
     """
-
 
 
     frames = dict()
@@ -163,51 +168,48 @@ class AbstractHumanoidRobot (object):
         self.setProperties(model)
         return model
 
-    def loadModelFromJrlDynamics(self, name, modelDir, modelName,
-                                 specificitiesPath, jointRankPath,
-                                 dynamicType):
+    def loadModelFromUrdf(self, name, urdfPath,
+                          dynamicType):
         """
-        Load a model using the jrl-dynamics parser. This parser looks
-        for VRML files in which kinematics and dynamics information
-        have been added by extending the VRML format.
-
-        It is mainly used by OpenHRP.
+        Load a model using the pinocchio urdf parser. This parser looks
+        for urdf files in which kinematics and dynamics information
+        have been added.
 
         Additional information are located in two different XML files.
         """
         model = dynamicType(name)
-        self.setProperties(model)
-        model.setFiles(modelDir, modelName,
-                       specificitiesPath, jointRankPath)
+        #TODO: setproperty flags in sot-pinocchio
+        #self.setProperties(model)
+        model.setFile(urdfPath)
         model.parse()
         return model
 
-    def setProperties(self, model):
-        model.setProperty('TimeStep', str(self.timeStep))
-
-        model.setProperty('ComputeAcceleration', 'false')
-        model.setProperty('ComputeAccelerationCoM', 'false')
-        model.setProperty('ComputeBackwardDynamics', 'false')
-        model.setProperty('ComputeCoM', 'false')
-        model.setProperty('ComputeMomentum', 'false')
-        model.setProperty('ComputeSkewCom', 'false')
-        model.setProperty('ComputeVelocity', 'false')
-        model.setProperty('ComputeZMP', 'false')
-
-        model.setProperty('ComputeAccelerationCoM', 'true')
-        model.setProperty('ComputeCoM', 'true')
-        model.setProperty('ComputeVelocity', 'true')
-        model.setProperty('ComputeZMP', 'true')
-
-        if self.enableZmpComputation:
-            model.setProperty('ComputeBackwardDynamics', 'true')
-            model.setProperty('ComputeAcceleration', 'true')
-            model.setProperty('ComputeMomentum', 'true')
+    #TODO: put these flags in sot-pinocchio
+    #def setProperties(self, model):
+    #    model.setProperty('TimeStep', str(self.timeStep))
+    #
+    #    model.setProperty('ComputeAcceleration', 'false')
+    #    model.setProperty('ComputeAccelerationCoM', 'false')
+    #    model.setProperty('ComputeBackwardDynamics', 'false')
+    #    model.setProperty('ComputeCoM', 'false')
+    #    model.setProperty('ComputeMomentum', 'false')
+    #    model.setProperty('ComputeSkewCom', 'false')
+    #    model.setProperty('ComputeVelocity', 'false')
+    #    model.setProperty('ComputeZMP', 'false')
+    #    model.setProperty('ComputeAccelerationCoM', 'true')
+    #    model.setProperty('ComputeCoM', 'true')
+    #    model.setProperty('ComputeVelocity', 'true')
+    #    model.setProperty('ComputeZMP', 'true')
+    #
+    #    if self.enableZmpComputation:
+    #        model.setProperty('ComputeBackwardDynamics', 'true')
+    #        model.setProperty('ComputeAcceleration', 'true')
+    #        model.setProperty('ComputeMomentum', 'true')
 
 
     def initializeOpPoints(self, model):
         for op in self.OperationalPoints:
-            model.createOpPoint(op, op)
+            model.createOpPoint(self.OperationalPointsMap[op], self.OperationalPointsMap[op])
 
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
@@ -263,27 +265,27 @@ class AbstractHumanoidRobot (object):
 
         self.initializeOpPoints(self.dynamic)
 
-        # --- additional frames ---
-        self.frames = dict()
-        frameName = 'rightHand'
-        self.frames [frameName] = self.createFrame (
-            "{0}_{1}".format (self.name, frameName),
-            self.dynamic.getHandParameter (True), "right-wrist")
+        #TODO: hand parameters through srdf --- additional frames ---
+        #self.frames = dict()
+        #frameName = 'rightHand'
+        #self.frames [frameName] = self.createFrame (
+        #    "{0}_{1}".format (self.name, frameName),
+        #    self.dynamic.getHandParameter (True), "right-wrist")
         # rightGripper is an alias for the rightHand:
-        self.frames ['rightGripper'] = self.frames [frameName]
+        #self.frames ['rightGripper'] = self.frames [frameName]
 
-        frameName = 'leftHand'
-        self.frames [frameName] = self.createFrame (
-            "{0}_{1}".format (self.name, frameName),
-            self.dynamic.getHandParameter (False), "left-wrist")
+        #frameName = 'leftHand'
+        #self.frames [frameName] = self.createFrame (
+        #    "{0}_{1}".format (self.name, frameName),
+        #    self.dynamic.getHandParameter (False), "left-wrist")
         # leftGripper is an alias for the leftHand:
-        self.frames ["leftGripper"] = self.frames [frameName]
+        #self.frames ["leftGripper"] = self.frames [frameName]
 
-        for (frameName, transformation, signalName) in self.AdditionalFrames:
-            self.frames[frameName] = self.createFrame(
-                "{0}_{1}".format(self.name, frameName),
-                transformation,
-                signalName)
+        #for (frameName, transformation, signalName) in self.AdditionalFrames:
+        #    self.frames[frameName] = self.createFrame(
+        #        "{0}_{1}".format(self.name, frameName),
+        #        transformation,
+        #        signalName)
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
@@ -371,21 +373,25 @@ class AbstractHumanoidRobot (object):
         self.dynamic.Jcom.recompute(self.device.state.time+1)
 
         for op in self.OperationalPoints:
-            self.dynamic.signal(op).recompute(self.device.state.time+1)
-            self.dynamic.signal('J'+op).recompute(self.device.state.time+1)
+            self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
+            self.dynamic.signal('J'+self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
 
 class HumanoidRobot(AbstractHumanoidRobot):
 
     halfSitting = [] #FIXME
-
+    
     name = None
     filename = None
 
     def __init__(self, name, filename, tracer = None):
         AbstractHumanoidRobot.__init__(self, name, tracer)
         self.filename = filename
-        self.dynamic = \
-            self.loadModelFromKxml (self.name + '_dynamics', self.filename)
+        self.OperationalPointsMap ={'left-wrist'  : 'left-wrist',
+                                    'right-wrist' : 'right-wrist',
+                                    'left-ankle'  : 'left-ankle',
+                                    'right-ankle' : 'right-ankle',
+                                    'gaze'        : 'gaze'}
+        self.dynamic = self.loadModelFromKxml (self.name + '_dynamics', self.filename)
         self.dimension = self.dynamic.getDimension()
         self.halfSitting = self.dimension*(0.,)
         self.initializeRobot()

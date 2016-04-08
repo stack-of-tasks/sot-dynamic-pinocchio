@@ -17,7 +17,6 @@
  * have received a copy of the GNU Lesser General Public License along
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <limits>
 #include <sot/core/debug.hh>
 
 #include <sot-dynamic/dynamic.h>
@@ -27,7 +26,6 @@
 #include <boost/format.hpp>
 
 #include <pinocchio/algorithm/kinematics.hpp>
-#include <pinocchio/algorithm/joint-limits.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
@@ -47,7 +45,7 @@ Dynamic( const std::string & name)
   :Entity(name)
   ,m_model()
   ,m_data(NULL)
-  ,m_urdfPath()
+  ,m_urdfPath("")
 
   ,init(false)
 
@@ -128,17 +126,17 @@ Dynamic( const std::string & name)
   jointTypes.push_back("JointModelTranslation");
 
 
-  //TODO: wrist and ankle have different roll-pitch-yaw frames. Confirm which?
-  /*
-    specificitiesMap["right-wrist"] = "RWristRoll";
-    specificitiesMap["left-wrist"] = "RWristRoll";
-    specificitiesMap["right-ankle"] = "RWristRoll";
-    specificitiesMap["left-ankle"] = "RWristRoll";
-    specificitiesMap["gaze"] = "";
-    specificitiesMap["waist"] = "";
-    specificitiesMap["chest"] = "";
-  */
 
+  //TODO: gaze_joint is fixed joint: not one of pinocchio joint types. Confirm specificities joint.
+  /*
+  specificitiesMap["right-wrist"] = "RWristPitch";
+  specificitiesMap["left-wrist"] = "LWristPitch";
+  specificitiesMap["right-ankle"] = "LAnkleRoll";
+  specificitiesMap["left-ankle"] = "RAnkleRoll";
+  specificitiesMap["gaze"] = "HeadRoll";
+  specificitiesMap["waist"] = "waist";
+  specificitiesMap["chest"] = "TrunkYaw";
+  */
 
   //TODO-------------------------------------------
  
@@ -183,6 +181,16 @@ Dynamic( const std::string & name)
     "\n";
   addCommand("setFile",
 	     new command::SetFile(*this, docstring));
+
+  docstring =
+    "\n"
+    "    Parse files in order to build the robot.\n"
+    "\n"
+    "      Input:\n"
+    "        - none \n"
+    "\n";
+  addCommand("parse",
+	     new command::Parse(*this, docstring));
 
   docstring =
     "\n"
@@ -243,7 +251,7 @@ Dynamic( const std::string & name)
   addCommand("createJoint", new command::CreateJoint(*this, docstring));
   
   docstring = "    \n"
-    "    Add a child joint\n"
+    "    Add a child Body\n"
     "    \n"
     "      Input:\n"
     "        - a string: name of the parent body,\n"
@@ -273,15 +281,25 @@ Dynamic( const std::string & name)
   addCommand("getDimension",
 	     new command::GetDimension(*this, docstring));
   
-    docstring = "    \n"
-      "    Write the robot kinematic chain in a file.\n"
-      "    \n"
-      "      Input:\n"
-      "        a string: a filename.\n"
-      "    \n";
-    addCommand("write",
-	       new command::Write(*this, docstring));
-    //TODO: add specifities commands
+  docstring = "    \n"
+    "    Write the robot kinematic chain in a file.\n"
+    "    \n"
+    "      Input:\n"
+    "        a string: a filename.\n"
+    "    \n";
+  addCommand("write",
+	     new command::Write(*this, docstring));
+  //TODO: add specifities commands
+
+  /*
+  docstring = "    \n"
+    "    Get ankle position in left foot frame.\n"
+    "    \n";
+  addCommand("getAnklePositionInFootFrame",
+	     new dynamicgraph::command::Getter<Dynamic, dynamicgraph::Vector>
+	     (*this, &Dynamic::getAnklePositionInFootFrame, docstring));
+  
+  */
   docstring = "    \n"
     "    Set the position of the center of mass of a body\n"
     "    \n"
@@ -384,26 +402,35 @@ Dynamic::~Dynamic( void ) {
 //Import from urdf file
 void Dynamic::setUrdfFile(const std::string& filename) {
   sotDEBUGIN(15);
-  //  m_model = new se3::Model();
-  m_model = se3::urdf::buildModel(filename);
-  this->m_urdfPath = filename;
-  if (m_data) delete m_data;
-  m_data = new se3::Data(m_model);
-  se3::jointLimits(m_model, *m_data, Eigen::VectorXd::Zero(m_model.nq));
-  init=true;
+  m_urdfPath = filename;
+  sotDEBUG(15)<<"Urdf file path: "<<m_urdfPath<<std::endl;
   sotDEBUGOUT(15);
 }
+
+void Dynamic::parseUrdfFile() {
+  sotDEBUGIN(15);
+  if (m_urdfPath.empty()) std::cerr<<"Set input file first"<<std::endl;
+  m_model = se3::urdf::buildModel(this->m_urdfPath, false);
+  if (m_data) delete m_data;
+  m_data = new se3::Data(m_model);
+  init=true;
+  std::vector<se3::Frame>::const_iterator it = m_model.operational_frames.begin();
+  for(;it!=m_model.operational_frames.end();it++)
+    sotDEBUG(15)<<"Operational Frames Added: "<<it->name<<std::endl;
+  sotDEBUG(15)<<m_model<<std::endl;
+  displayModel();
+  sotDEBUGOUT(15);
+}
+
 
 //Create an empty robot
 void Dynamic::createRobot()
 {
   sotDEBUGIN(15);
-  //  if (m_model) {
-  //m_model.~Model();
-    delete m_data;
-    //}
+  delete m_data;
   m_model= se3::Model();
   m_data = new se3::Data(m_model);
+  init=true;
   sotDEBUGOUT(15);
 }
 
@@ -422,7 +449,8 @@ void Dynamic::createJoint(const std::string& inJointName,
 			       " already exists in the model.");
 
   if(std::find(jointTypes.begin(),jointTypes.end(),inJointType) != jointTypes.end()) {
-    JointDetails jointDetails(inJointType,inPosition);
+    Eigen::Matrix4d inposition_ = inPosition;
+    JointDetails jointDetails(inJointType,inposition_);
     jointMap_[inJointName] = jointDetails;
   }
   else {
@@ -443,7 +471,6 @@ void Dynamic::addBody(const std::string& inParentName,
 	  ,0,Eigen::Vector3d::Zero(),Eigen::Matrix3d::Zero());
   sotDEBUGOUT(15);
 }
-
 
 void Dynamic::addBody(const std::string& inParentName,
 		      const std::string& inJointName,
@@ -512,7 +539,6 @@ void Dynamic::addBody(const std::string& inParentName,
 
   if(m_data) delete m_data;
   m_data = new se3::Data(m_model);
-  se3::jointLimits(m_model, *m_data, Eigen::VectorXd::Zero(m_model.nq));
   sotDEBUGOUT(15);
 }
 
@@ -580,11 +606,12 @@ void Dynamic::setDofBounds(const std::string& inJointName,
 			       "No joint with name " + inJointName +
 			       " has been created.");
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   int prev_cumulative_nq = se3::idx_q(m_model.joints[joint_index]);  
+
   assert(se3::nq(m_model.joints[joint_index]) > inDofId);
-  m_data->lowerPositionLimit(prev_cumulative_nq+inDofId) = inMinValue;
-  m_data->upperPositionLimit(prev_cumulative_nq+inDofId) = inMaxValue;
+
+  m_model.lowerPositionLimit(prev_cumulative_nq+inDofId) = inMinValue;
+  m_model.upperPositionLimit(prev_cumulative_nq+inDofId) = inMaxValue;
   sotDEBUGOUT(15);  
   return;
 }
@@ -598,9 +625,8 @@ void Dynamic::setLowerPositionLimit(const std::string& inJointName,
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
 
   int prev_cumulative_nq = se3::idx_q(m_model.joints[joint_index]);  
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (se3::nq(m_model.joints[joint_index])==1 && "Joint is not revolute");
-  m_data->lowerPositionLimit(prev_cumulative_nq) = lowPos;
+  m_model.lowerPositionLimit(prev_cumulative_nq) = lowPos;
   return;
 }
 
@@ -613,9 +639,8 @@ void Dynamic::setLowerPositionLimit(const std::string& inJointName,
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
   int prev_cumulative_nq = se3::idx_q(m_model.joints[joint_index]);  
   int current_nq = se3::nq(m_model.joints[joint_index]);
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (lowPos.size()==current_nq);
-  m_data->lowerPositionLimit.segment(prev_cumulative_nq,current_nq) = lowPos;
+  m_model.lowerPositionLimit.segment(prev_cumulative_nq,current_nq) = lowPos;
   return;
 }
 
@@ -628,9 +653,8 @@ void Dynamic::setUpperPositionLimit(const std::string& inJointName,
 			       " has been created.");
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
   int prev_cumulative_nq = se3::idx_q(m_model.joints[joint_index]);  
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (se3::nq(m_model.joints[joint_index])==1 && "Joint is not revolute");
-  m_data->upperPositionLimit(prev_cumulative_nq) = upPos;
+  m_model.upperPositionLimit(prev_cumulative_nq) = upPos;
   return;
 }
 
@@ -645,8 +669,7 @@ void Dynamic::setUpperPositionLimit(const std::string& inJointName,
   int current_nq = se3::nq(m_model.joints[joint_index]);
 
   assert (upPos.size()==current_nq);
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
-  m_data->upperPositionLimit.segment(prev_cumulative_nq,current_nq) = upPos;
+  m_model.upperPositionLimit.segment(prev_cumulative_nq,current_nq) = upPos;
   return;
 }
 
@@ -660,8 +683,7 @@ void Dynamic::setMaxVelocityLimit(const std::string& inJointName,
   int prev_cumulative_nv = se3::idx_v(m_model.joints[joint_index]);  
 
   assert (se3::nv(m_model.joints[joint_index])==1 && "Joint is not revolute");
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
-  m_data->velocityLimit(prev_cumulative_nv) = maxVel;
+  m_model.velocityLimit(prev_cumulative_nv) = maxVel;
   return;
 }
 
@@ -674,9 +696,8 @@ void Dynamic::setMaxVelocityLimit(const std::string& inJointName,
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
   int prev_cumulative_nv = se3::idx_v(m_model.joints[joint_index]);  
   int current_nv = se3::nv(m_model.joints[joint_index]);
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (maxVel.size()==current_nv);
-  m_data->velocityLimit.segment(prev_cumulative_nv,current_nv) = maxVel;
+  m_model.velocityLimit.segment(prev_cumulative_nv,current_nv) = maxVel;
   return;
 }
 
@@ -690,9 +711,8 @@ void Dynamic::setMaxEffortLimit(const std::string& inJointName,
 			       " has been created.");
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
   int prev_cumulative_nv = se3::idx_v(m_model.joints[joint_index]);  
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (se3::nv(m_model.joints[joint_index])==1 && "Joint is not revolute");
-  m_data->effortLimit(prev_cumulative_nv) = maxEffort;
+  m_model.effortLimit(prev_cumulative_nv) = maxEffort;
   return;
 }
 
@@ -706,9 +726,8 @@ void Dynamic::setMaxEffortLimit(const std::string& inJointName,
   se3::Model::Index joint_index = m_model.getJointId(inJointName);
   int prev_cumulative_nv = se3::idx_v(m_model.joints[joint_index]);  
   int current_nv = se3::nv(m_model.joints[joint_index]);
-  //TODO: Only change in data->vector. No change in the joint model class. Potential bug
   assert (maxEffort.size()==current_nv);
-  m_data->effortLimit.segment(prev_cumulative_nv,current_nv) = maxEffort;
+  m_model.effortLimit.segment(prev_cumulative_nv,current_nv) = maxEffort;
   return;
 }
 
@@ -721,7 +740,7 @@ getLowerPositionLimits(dg::Vector& res, const int&)
  
   sotDEBUGIN(15);
   res.resize(m_model.nq);
-  res = m_data->lowerPositionLimit;
+  res = m_model.lowerPositionLimit;
   sotDEBUG(15) << "lowerLimit (" << res << ")=" << std::endl;
   sotDEBUGOUT(15);
   return res;
@@ -732,7 +751,7 @@ getUpperPositionLimits(dg::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   res.resize(m_model.nq);
-  res = m_data->upperPositionLimit;
+  res = m_model.upperPositionLimit;
   sotDEBUG(15) << "upperLimit (" << res << ")=" <<std::endl;
   sotDEBUGOUT(15);
   return res;
@@ -743,7 +762,7 @@ getUpperVelocityLimits(dg::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   res.resize(m_model.nv);
-  res = m_data->velocityLimit;
+  res = m_model.velocityLimit;
   sotDEBUG(15) << "upperVelocityLimit (" << res << ")=" <<std::endl;
   sotDEBUGOUT(15);
   return res;
@@ -754,10 +773,29 @@ getMaxEffortLimits(dg::Vector& res, const int&)
 {
   sotDEBUGIN(15);
   res.resize(m_model.nv);
-  res = m_data->effortLimit;
+  res = m_model.effortLimit;
   sotDEBUGOUT(15);
   return res;
 }
+
+
+//TODO: To be set via srdf file
+/*dynamicgraph::Vector Dynamic::getAnklePositionInFootFrame() const
+{
+  if (!m_data) {
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+			       "you must create a robot first.");
+  }
+  
+  dg::Vector anklePosition(3);
+  foot->getAnklePositionInLocalFrame(anklePosition);
+  dynamicgraph::Vector res(3);
+  res(0) = anklePosition[0];
+  res(1) = anklePosition[1];
+  res(2) = anklePosition[2];
+  return res;
+}
+*/
 
 /* ---------------- INTERNAL ------------------------------------------------ */
 dg::Vector Dynamic::getPinocchioPos(int time)
@@ -821,16 +859,28 @@ Eigen::VectorXd Dynamic::getPinocchioAcc(int time)
 dg::SignalTimeDependent< dg::Matrix,int > & Dynamic::
 createJacobianSignal( const std::string& signame, const std::string& jointName )
 {
-  int jointId = m_model.getJointId(jointName);
-
-  dg::SignalTimeDependent< dg::Matrix,int > * sig
-    = new dg::SignalTimeDependent< dg::Matrix,int >
-    ( boost::bind(&Dynamic::computeGenericJacobian,this,jointId,_1,_2),
-      newtonEulerSINTERN,
-      "sotDynamic("+name+")::output(matrix)::"+signame );
+  sotDEBUGIN(15);
+  dg::SignalTimeDependent< dg::Matrix,int > * sig;
+  if(m_model.existFrame(jointName)) {
+    int frameId = m_model.getFrameId(jointName);
+    sig = new dg::SignalTimeDependent< dg::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericJacobian,this,true,frameId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrix)::"+signame );
+  }
+  else if(m_model.existJointName(jointName)) {
+    int jointId = m_model.getJointId(jointName); 
+    sig = new dg::SignalTimeDependent< dg::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericJacobian,this,false,jointId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrix)::"+signame );
+  }
+  else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+				  "Robot has no joint corresponding to " + jointName);
 
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
+  sotDEBUGOUT(15);
   return *sig;
 }
 
@@ -838,16 +888,25 @@ dg::SignalTimeDependent< dg::Matrix,int > & Dynamic::
 createEndeffJacobianSignal( const std::string& signame, const std::string& jointName )
 {
   sotDEBUGIN(15);
-  int jointId = m_model.getJointId(jointName);
-  dg::SignalTimeDependent< dg::Matrix,int > * sig
-    = new dg::SignalTimeDependent< dg::Matrix,int >
-    ( boost::bind(&Dynamic::computeGenericEndeffJacobian,this,jointId,_1,_2),
-      newtonEulerSINTERN,
-      "sotDynamic("+name+")::output(matrix)::"+signame );
-
+  dg::SignalTimeDependent< dg::Matrix,int > * sig;
+  if(m_model.existFrame(jointName)) {
+    int frameId = m_model.getFrameId(jointName);
+    sig = new dg::SignalTimeDependent< dg::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericEndeffJacobian,this,true,frameId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrix)::"+signame );
+  }
+  else if(m_model.existJointName(jointName)) {
+    int jointId = m_model.getJointId(jointName); 
+    sig = new dg::SignalTimeDependent< dg::Matrix,int >
+      ( boost::bind(&Dynamic::computeGenericEndeffJacobian,this,false,jointId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrix)::"+signame );
+  }
+  else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+				  "Robot has no joint corresponding to " + jointName);
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
-
   sotDEBUGOUT(15);
   return *sig;
 }
@@ -856,15 +915,26 @@ dg::SignalTimeDependent< MatrixHomogeneous,int >& Dynamic::
 createPositionSignal( const std::string& signame, const std::string& jointName)
 {
   sotDEBUGIN(15);
-  int jointId = m_model.getJointId(jointName);
-  dg::SignalTimeDependent< MatrixHomogeneous,int > * sig
-    = new dg::SignalTimeDependent< MatrixHomogeneous,int >
-    ( boost::bind(&Dynamic::computeGenericPosition,this,jointId,_1,_2),
-      newtonEulerSINTERN,
-      "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+  dg::SignalTimeDependent< MatrixHomogeneous,int > * sig;
+  if(m_model.existFrame(jointName)) {
+    int frameId = m_model.getFrameId(jointName);
+    sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
+      ( boost::bind(&Dynamic::computeGenericPosition,this,true,frameId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
+  }
+  else if(m_model.existJointName(jointName)) {
+    int jointId = m_model.getJointId(jointName); 
+    sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
+      ( boost::bind(&Dynamic::computeGenericPosition,this,false,jointId,_1,_2),
+	newtonEulerSINTERN,
+	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
+  }
+  else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+				  "Robot has no joint corresponding to " + jointName);
+  
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
-
   sotDEBUGOUT(15);
   return *sig;
 }
@@ -1034,9 +1104,9 @@ dg::Vector& Dynamic::computeZmp( dg::Vector& res,int time )
     return res;
 }
 
-//In world frame
+//In world coordinates
 dg::Matrix& Dynamic::
-computeGenericJacobian( int jointId,dg::Matrix& res,int time )
+computeGenericJacobian(bool isFrame, int jointId, dg::Matrix& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
@@ -1044,25 +1114,32 @@ computeGenericJacobian( int jointId,dg::Matrix& res,int time )
   se3::computeJacobians(m_model,*m_data,this->getPinocchioPos(time));
 
   se3::Data::Matrix6x m_output = Eigen::MatrixXd::Zero(6,m_model.nv);
-  //Computes Jacobian in world frame. 
-  se3::getJacobian<false>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
-
+  //Computes Jacobian in world coordinates. 
+  if(isFrame){
+    se3::framesForwardKinematics(m_model,*m_data);
+    se3::getFrameJacobian<false>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
+  }
+  else se3::getJacobian<false>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
   res = m_output;
   sotDEBUGOUT(25);
   return res;
 }
 
 dg::Matrix& Dynamic::
-computeGenericEndeffJacobian( int jointId,dg::Matrix& res,int time )
+computeGenericEndeffJacobian(bool isFrame, int jointId,dg::Matrix& res,int time )
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
   res.resize(6,m_model.nv);
-  //In local Frame.
+  //In local coordinates.
   se3::computeJacobians(m_model,*m_data,this->getPinocchioPos(time));
-
   se3::Data::Matrix6x m_output = Eigen::MatrixXd::Zero(6,m_model.nv);
-  se3::getJacobian<true>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
+
+  if(isFrame){
+    se3::framesForwardKinematics(m_model,*m_data);
+    se3::getFrameJacobian<true>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
+  }
+  else se3::getJacobian<true>(m_model,*m_data,(se3::Model::Index)jointId,m_output);
 
   res = m_output;
   sotDEBUGOUT(25);
@@ -1071,18 +1148,25 @@ computeGenericEndeffJacobian( int jointId,dg::Matrix& res,int time )
 }
 
 MatrixHomogeneous& Dynamic::
-computeGenericPosition( int jointId, MatrixHomogeneous& res, int time)
+computeGenericPosition(bool isFrame, int jointId, MatrixHomogeneous& res, int time)
 {
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
-  res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
+  
+  if(isFrame){
+    //TODO: Confirm if we need this. Already being called when calculating jacobian
+    //se3::framesForwardKinematics(m_model,*m_data);
+    res.matrix()= m_data->oMof[jointId].toHomogeneousMatrix();
+  }
+  else res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
+
+  sotDEBUGOUT(25);
   return res;
 }
 
 dg::Vector& Dynamic::
 computeGenericVelocity( int jointId, dg::Vector& res,int time )
 {
-
   sotDEBUGIN(25);
   newtonEulerSINTERN(time);
   res.resize(6);
@@ -1321,7 +1405,7 @@ commandLine( const std::string& cmdLine,
     displayModel();
   }
   else if( cmdLine == "parse" ) {
-    if(!init)  std::cout << "No file parsed, run command setFile" << std::endl;
+    if(!init)  parseUrdfFile();
     else std::cout << "  !! Already parsed." <<std::endl;
   }
   else if( cmdLine == "displayFile" ) {
@@ -1398,6 +1482,28 @@ commandLine( const std::string& cmdLine,
        << "  - {create|destroy}Position\t:handle position signals." <<std::endl
        << "  - {create|destroy}OpPoint\t:handle Operation Point (ie pos+jac) signals." <<std::endl
        << "  - {create|destroy}Acceleration\t:handle acceleration signals." <<std::endl
+      /*TODO: Put these flags for computations (copied from humanoid_robot.py):
+    def setProperties(self, model):
+        model.setProperty('TimeStep', str(self.timeStep))
+        model.setProperty('ComputeAcceleration', 'false')
+        model.setProperty('ComputeAccelerationCoM', 'false')
+        model.setProperty('ComputeBackwardDynamics', 'false')
+        model.setProperty('ComputeCoM', 'false')
+        model.setProperty('ComputeMomentum', 'false')
+        model.setProperty('ComputeSkewCom', 'false')
+        model.setProperty('ComputeVelocity', 'false')
+        model.setProperty('ComputeZMP', 'false')
+
+        model.setProperty('ComputeAccelerationCoM', 'true')
+        model.setProperty('ComputeCoM', 'true')
+        model.setProperty('ComputeVelocity', 'true')
+        model.setProperty('ComputeZMP', 'true')
+
+        if self.enableZmpComputation:
+            model.setProperty('ComputeBackwardDynamics', 'true')
+            model.setProperty('ComputeAcceleration', 'true')
+            model.setProperty('ComputeMomentum', 'true')
+      */
       //       << "  - {get|set}Property <name> [<val>]: set/get the property." <<std::endl
       //       << "  - displayProperties: print the prop-val couples list." <<std::endl
        << "  - ndof\t\t\t: display the number of DOF of the robot."<< std::endl;
@@ -1411,56 +1517,26 @@ commandLine( const std::string& cmdLine,
   
 }
 
+//jointName is either a fixed-joint (pinocchio operational frame) or a 
+//movable joint (pinocchio joint-variant).
 void Dynamic::cmd_createOpPointSignals( const std::string& opPointName,
 					const std::string& jointName )
 {
-  if(std::find(m_model.names.begin(),
-	       m_model.names.end(),
-	       jointName)!=m_model.names.end()) {
     createEndeffJacobianSignal(std::string("J")+opPointName,jointName);
     createPositionSignal(opPointName,jointName);
-  }
-  else
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
-			       "Robot has no joint corresponding to " + jointName);
-  
 }
 void Dynamic::cmd_createJacobianWorldSignal( const std::string& signalName,
 					     const std::string& jointName )
 {
-  if(std::find(m_model.names.begin(),
-	       m_model.names.end(),
-	       jointName)!=m_model.names.end()) {
     createJacobianSignal(signalName, jointName);
-  }
-  else
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
-			       "Robot has no joint corresponding to " + jointName);
 }
 void Dynamic::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
 					     const std::string& jointName )
 {
-  if(std::find(m_model.names.begin(),
-	       m_model.names.end(),
-	       jointName)!=m_model.names.end()) {
     createEndeffJacobianSignal(signalName, jointName);
-  }
-  else
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
-			       "Robot has no joint corresponding to " + jointName);
 }
 void Dynamic::cmd_createPositionSignal( const std::string& signalName,
 					const std::string& jointName )
 {
-  SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
-			     "Robot has no joint corresponding to " + jointName);
-  if(std::find(m_model.names.begin(),
-	       m_model.names.end(),
-	       jointName)!=m_model.names.end()) {
     createPositionSignal(signalName, jointName);
-  }
-  else
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
-			       "Robot has no joint corresponding to " + jointName);
-
 }

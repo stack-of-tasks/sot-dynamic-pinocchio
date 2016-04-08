@@ -49,6 +49,7 @@
 #include <pinocchio/multibody/parser/urdf.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/operational-frames.hpp>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -173,24 +174,23 @@ class SOTDYNAMIC_EXPORT Dynamic
 
   /* --- MODEL CREATION --- */
 
-  /// \brief parse a urdf file to create robot model
+  /// \brief sets a urdf filepath to create robot model. Call parseUrdfFile to parse
   /// \param path file location.
   ///
-  /// \note creates a pinocchio model. needs urdfdom libraries to parse.
   void setUrdfFile( const std::string& path );
 
-  //TODO:
-  //  void parseAndAddFrames(se3::Model& pinocchio_model,
-  //			 const std::string& filename);
 
-
-  /// \name Construction of a robot by commands
-  ///@{
+  /// \brief parses a urdf filepath to create robot model. Call setUrdfFile to give path
+  /// \param none.
   ///
+  /// \note creates a pinocchio model. needs urdfdom libraries to parse.
+  void parseUrdfFile(void);
+
 
   /// \brief Create an empty device
   void createRobot();
-  void displayModel(){ std::cout<<m_model<<std::endl; };
+  void displayModel() const 
+  { std::cout<<m_model<<std::endl; };
 
   /// \brief create a joint
   /// \param inJointName name of the joint,
@@ -336,11 +336,19 @@ class SOTDYNAMIC_EXPORT Dynamic
   /// \return result vector
   dg::Vector& getMaxEffortLimits(dg::Vector& res,const int&);
 
- 
- protected:
-  dg::Matrix& computeGenericJacobian(int jointId,dg::Matrix& res,int time );
-  dg::Matrix& computeGenericEndeffJacobian(int jointId,dg::Matrix& res,int time );
-  MatrixHomogeneous& computeGenericPosition(int jointId,MatrixHomogeneous& res,int time );
+
+  //  dg::Vector& getAnklePositionInFootFrame() const;
+
+    protected:
+  dg::Matrix& computeGenericJacobian(bool isFrame,
+				     int jointId,
+				     dg::Matrix& res,int time );
+  dg::Matrix& computeGenericEndeffJacobian(bool isFrame,
+					   int jointId,
+					   dg::Matrix& res,int time );
+  MatrixHomogeneous& computeGenericPosition(bool isFrame, 
+					    int jointId,
+					    MatrixHomogeneous& res,int time );
   dg::Vector& computeGenericVelocity(int jointId,dg::Vector& res,int time );
   dg::Vector& computeGenericAcceleration(int jointId,dg::Vector& res,int time );
 
@@ -371,12 +379,12 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::Vector getPinocchioVel(int);
   dg::Vector getPinocchioAcc(int);
 
-  typedef std::pair<std::string,dg::Matrix> JointDetails;
+  typedef std::pair<std::string,Eigen::Matrix4d> JointDetails;
   std::map<std::string, JointDetails> jointMap_;
   std::vector<std::string> jointTypes;
 
 
-  std::map<std::string,std::string> specificitiesMap;
+  //std::map<std::string,std::string> specificitiesMap;
 
 };
 

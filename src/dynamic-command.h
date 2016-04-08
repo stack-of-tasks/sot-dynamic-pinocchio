@@ -55,6 +55,29 @@ namespace dynamicgraph { namespace sot {
       }
     }; // class SetFiles
 
+    // Command Parse
+    class Parse : public Command
+    {
+    public:
+      virtual ~Parse() {}
+      /// Create command and store it in Entity
+      /// \param entity instance of Entity owning this command
+      /// \param docstring documentation of the command
+      Parse(Dynamic& entity, const std::string& docstring) :
+	Command(entity, std::vector<Value::Type>(), docstring)
+      {
+      }
+      virtual Value doExecute()
+      {
+	Dynamic& robot = static_cast<Dynamic&>(owner());
+	if(! robot.init ) robot.parseUrdfFile();
+	else std::cout << "  !! Already parsed." << std::endl;
+	// return void
+	return Value();
+      }
+    }; // class Parse
+
+
     // Command CreateRobot
     class CreateRobot : public Command
     {

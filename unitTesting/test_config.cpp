@@ -46,6 +46,8 @@ BOOST_AUTO_TEST_CASE (config)
 
   //Parse urdf file
   dynamic_.setUrdfFile("urdf/two_link.urdf");
+  dynamic_.parseUrdfFile();
+  dynamic_.displayModel();  
   BOOST_CHECK_EQUAL(dynamic_.m_model.nbody,3);
   BOOST_CHECK_EQUAL(std::strcmp(dynamic_.m_model.names[0].c_str(),"universe"),0);
   BOOST_CHECK_EQUAL(std::strcmp(dynamic_.m_model.names[1].c_str(),"JOINT1"),0);
