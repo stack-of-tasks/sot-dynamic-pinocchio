@@ -576,7 +576,8 @@ void Dynamic::setInertiaMatrix(const std::string& inBodyName,
 			       "No body with name " + inBodyName +
 			       " has been added.");
   se3::Model::Index index = m_model.getBodyId(inBodyName);
-  se3::Symmetric3 symmetricMatrix(inertia3);
+  Eigen::Matrix3d inertia_3d(inertia3);
+  se3::Symmetric3 symmetricMatrix(inertia_3d);
   m_model.inertias[index].inertia() = symmetricMatrix;
   sotDEBUGOUT(15);
 }
