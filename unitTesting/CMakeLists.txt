@@ -59,7 +59,7 @@ FOREACH(test ${tests})
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
     zmpreffromcom
     force-compensation
-    integrator-force-exact
+    #integrator-force-exact
     mass-apparent
     integrator-force-rk4
     integrator-force
