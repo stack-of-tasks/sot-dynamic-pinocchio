@@ -19,7 +19,7 @@
 
 /*-----------PINOCCHIO-------------*/
 #include <pinocchio/multibody/model.hpp>
-#include <pinocchio/multibody/parser/urdf.hpp>
+#include <pinocchio/parsers/urdf.hpp>
 
 
 using namespace dynamicgraph::sot;

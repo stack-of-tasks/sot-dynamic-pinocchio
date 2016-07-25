@@ -23,24 +23,23 @@ set_printoptions(suppress=True, precision=7)
 
 #Define robotName, urdfpath and initialConfig
 
-#robotName = 'romeo'
-#urdfpath = ""
+robotName = 'romeo'
+urdfpath = "/local/rbudhira/git/proyan/sot-pinocchio/unitTesting/romeoNoToes.urdf"
 
-#initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
-#                 0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # LLEG
-#                 0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # RLEG
-#                 0,                                                      # TRUNK
-#                 1.5,  0.6,  -0.5, -1.05, -0.4, -0.3, -0.2,              # LARM
-#                 0, 0, 0, 0,                                             # HEAD
-#                 1.5, -0.6,   0.5,  1.05, -0.4, -0.3, -0.2,              # RARM
-#                 )
+initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
+                 0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # LLEG
+                 0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # RLEG
+                 0,                                                      # TRUNK
+                 1.5,  0.6,  -0.5, -1.05, -0.4, -0.3, -0.2,              # LARM
+                 0, 0, 0, 0,                                             # HEAD
+                 1.5, -0.6,   0.5,  1.05, -0.4, -0.3, -0.2,              # RARM
+                 )
 
 #-----------------------------------------------------------------------------
 #---- DYN --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 dyn = Dynamic("dyn")
-dyn.setFile(urdfpath)
-dyn.parse()
+
 dyn.displayModel()
 
 inertiaRotor = (0,)*6+(5e-4,)*31

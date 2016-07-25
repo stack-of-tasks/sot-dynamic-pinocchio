@@ -14,6 +14,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
+INCLUDE(../custom_cmake/python.cmake)
 INCLUDE(../cmake/python.cmake)
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
@@ -44,6 +45,7 @@ FOREACH(lib ${plugins})
   TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${lib} pinocchio)
+  PKG_CONFIG_USE_DEPENDENCY(${lib} eigenpy)
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
 
@@ -52,7 +54,7 @@ FOREACH(lib ${plugins})
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
-  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
+  SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
     ${lib}
     sot-dynamics-${PYTHON_LIBRARY_NAME}-wrap
     )
@@ -79,4 +81,3 @@ INSTALL(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/parser.py
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
   )
-

@@ -40,6 +40,7 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 SETUP_PROJECT()
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("pinocchio")
+ADD_REQUIRED_DEPENDENCY("eigenpy")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
@@ -68,7 +69,7 @@ PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
 # Search for dependencies.
 # Boost
-SET(BOOST_COMPONENTS filesystem system unit_test_framework)
+SET(BOOST_COMPONENTS filesystem system unit_test_framework python)
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
@@ -77,7 +78,7 @@ ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(python)
-ADD_SUBDIRECTORY(unitTesting)
+#ADD_SUBDIRECTORY(unitTesting)
 
 SETUP_PROJECT_FINALIZE()
 SETUP_PROJECT_CPACK()
