@@ -96,15 +96,15 @@ namespace dynamicgraph{
 	dyn_entity->m_model = cppModelHandle.ptr();
       }
       catch (const std::exception& exc) {
-	PyErr_SetString(dgpyError, exc.what());			
+	//PyErr_SetString(dgpyError, exc.what());
 	return NULL;
       }								
       catch (const char* s) {								
-	PyErr_SetString(dgpyError, s);
+	//PyErr_SetString(dgpyError, s);
 	return NULL;
       }
       catch (...) {
-	PyErr_SetString(dgpyError, "Unknown exception");		
+	//PyErr_SetString(dgpyError, "Unknown exception");
 	return NULL;						
       }
       // Return the pointer to the signal without destructor since the signal
@@ -129,25 +129,21 @@ namespace dynamicgraph{
       pointer1 = PyCObject_AsVoidPtr(object);
       Dynamic* dyn_entity = (Dynamic*) pointer1;
 
-      std::string msg("Error in obtaining pinocchio model");
-      PyObject* dgpyError =
-	PyErr_NewException(const_cast<char*>(msg.c_str()), NULL, NULL);
-      
       try {
 	se3::python::DataHandler cppDataHandle = 
 	  boost::python::extract<se3::python::DataHandler>(pyPinocchioObject);
 	dyn_entity->m_data = cppDataHandle.ptr();
       }
       catch (const std::exception& exc) {
-	PyErr_SetString(dgpyError, exc.what());			
+	//	PyErr_SetString(dgpyError, exc.what());			
 	return NULL;
       }								
       catch (const char* s) {								
-	PyErr_SetString(dgpyError, s);
+	//	PyErr_SetString(dgpyError, s);
 	return NULL;
       }
       catch (...) {
-	PyErr_SetString(dgpyError, "Unknown exception");		
+	//	PyErr_SetString(dgpyError, "Unknown exception");		
 	return NULL;						
       }
       // Return the pointer to the signal without destructor since the signal
