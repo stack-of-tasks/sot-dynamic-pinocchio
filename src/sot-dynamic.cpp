@@ -286,21 +286,29 @@ dg::Vector Dynamic::getPinocchioPos(int time)
 
   if( freeFlyerPositionSIN) {
     dg::Vector qFF=freeFlyerPositionSIN.access(time);
+
+
     q.resize(qJoints.size() + 7);
-    urdf::Rotation rot;
-    rot.setFromRPY(qFF(3),qFF(4),qFF(5));
-    double x,y,z,w;
-    rot.getQuaternion(x,y,z,w);
-    q << qFF(0),qFF(1),qFF(2),x,y,z,w,qJoints;
+
+    Eigen::Quaternion<double> quat = Eigen::AngleAxisd(qFF(5),Eigen::Vector3d::UnitZ())*
+      Eigen::AngleAxisd(qFF(4),Eigen::Vector3d::UnitY())*
+      Eigen::AngleAxisd(qFF(3),Eigen::Vector3d::UnitX());
+    
+    q << qFF(0),qFF(1),qFF(2),
+      quat.x(),quat.y(),quat.z(),quat.w(),
+      qJoints;
   }
   else if (se3::nv(m_model->joints[1]) == 6){
     dg::Vector qFF = qJoints.head<6>();
-    urdf::Rotation rot;
-    rot.setFromRPY(qFF(3),qFF(4),qFF(5));
-    double x,y,z,w;
-    rot.getQuaternion(x,y,z,w);
     q.resize(qJoints.size()+1);
-    q << qFF(0),qFF(1),qFF(2),x,y,z,w,qJoints.segment(6,qJoints.size()-6);
+
+    Eigen::Quaternion<double> quat = Eigen::AngleAxisd(qFF(5),Eigen::Vector3d::UnitZ())*
+      Eigen::AngleAxisd(qFF(4),Eigen::Vector3d::UnitY())*
+      Eigen::AngleAxisd(qFF(3),Eigen::Vector3d::UnitX());
+    q << qFF(0),qFF(1),qFF(2),
+      quat.x(),quat.y(),quat.z(),quat.w(),
+      qJoints.segment(6,qJoints.size()-6);
+
     assert(q.size() == m_model->nq);
   }
   else {

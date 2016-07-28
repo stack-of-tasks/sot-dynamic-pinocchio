@@ -86,10 +86,6 @@ namespace dynamicgraph{
       pointer1 = PyCObject_AsVoidPtr(object);
       Dynamic* dyn_entity = (Dynamic*) pointer1;
 
-      std::string msg("Error in obtaining pinocchio model");
-      PyObject* dgpyError =
-	PyErr_NewException(const_cast<char*>(msg.c_str()), NULL, NULL);
-      
       try {
 	se3::python::ModelHandler cppModelHandle = 
 	  boost::python::extract<se3::python::ModelHandler>(pyPinocchioObject);

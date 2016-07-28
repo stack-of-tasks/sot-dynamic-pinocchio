@@ -47,7 +47,6 @@
 /* PINOCCHIO */
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/joint/joint-variant.hpp>
-#include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/frames.hpp>

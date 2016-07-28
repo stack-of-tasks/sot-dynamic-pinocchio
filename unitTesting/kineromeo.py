@@ -5,6 +5,7 @@
 #
 # ______________________________________________________________________________
 # ******************************************************************************
+import pinocchio as se3
 from dynamic_graph import plug
 from dynamic_graph.sot.core import *
 from dynamic_graph.sot.dynamics import *
@@ -24,7 +25,7 @@ set_printoptions(suppress=True, precision=7)
 #Define robotName, urdfpath and initialConfig
 
 robotName = 'romeo'
-urdfpath = "/local/rbudhira/git/proyan/sot-pinocchio/unitTesting/romeoNoToes.urdf"
+urdfpath = "romeoNoToes.urdf"
 
 initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
                  0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # LLEG
@@ -35,13 +36,24 @@ initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
                  1.5, -0.6,   0.5,  1.05, -0.4, -0.3, -0.2,              # RARM
                  )
 
+
+#-----------------------------------------------------------------------------
+#---- PINOCCHIO MODEL AND DATA --------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+pinocchioModel = se3.buildModelFromUrdf(urdfpath,se3.JointModelFreeFlyer())
+pinocchioData = pinocchioModel.createData()
+
 #-----------------------------------------------------------------------------
 #---- DYN --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 dyn = Dynamic("dyn")
+dyn.setModel(pinocchioModel)
+dyn.setData(pinocchioData)
 
 dyn.displayModel()
 
+
+robotDim = dyn.getDimension()
 inertiaRotor = (0,)*6+(5e-4,)*31
 gearRatio =  (0,)*6+(200,)*31
 dyn.inertiaRotor.value = inertiaRotor
