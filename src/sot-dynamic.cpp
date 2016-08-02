@@ -29,6 +29,7 @@
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
+#include <pinocchio/multibody/model.hpp>
 
 #include <dynamic-graph/all-commands.h>
 
@@ -287,7 +288,6 @@ dg::Vector Dynamic::getPinocchioPos(int time)
   if( freeFlyerPositionSIN) {
     dg::Vector qFF=freeFlyerPositionSIN.access(time);
 
-
     q.resize(qJoints.size() + 7);
 
     Eigen::Quaternion<double> quat = Eigen::AngleAxisd(qFF(5),Eigen::Vector3d::UnitZ())*
@@ -308,15 +308,14 @@ dg::Vector Dynamic::getPinocchioPos(int time)
     q << qFF(0),qFF(1),qFF(2),
       quat.x(),quat.y(),quat.z(),quat.w(),
       qJoints.segment(6,qJoints.size()-6);
-
     assert(q.size() == m_model->nq);
   }
   else {
     q.resize(qJoints.size());
     q=qJoints;
   }
-
-  sotDEBUGOUT(15) <<"Position out"<<q<<std::endl;
+  sotDEBUG(15) <<"Position out"<<q<<std::endl;
+  sotDEBUGOUT(15);
   return q;
 }
 
@@ -636,16 +635,19 @@ computeGenericEndeffJacobian(bool isFrame, int jointId,dg::Matrix& res,int time 
   //In local coordinates.
   se3::computeJacobians(*m_model,*m_data,this->getPinocchioPos(time));
   se3::Data::Matrix6x m_output = Eigen::MatrixXd::Zero(6,m_model->nv);
-
+  std::string temp;
   if(isFrame){
     se3::framesForwardKinematics(*m_model,*m_data);
     se3::getFrameJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
+    temp = m_model->getFrameName((se3::Model::Index)jointId);
   }
-  else se3::getJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
-
+  else {
+    temp = m_model->getJointName((se3::Model::Index)jointId);
+    se3::getJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
+  }
   res = m_output;
+  sotDEBUG(25) << "EndEffJacobian for "<<temp<<" is "<<m_output<<std::endl;
   sotDEBUGOUT(25);
-
   return res;
 }
 
@@ -655,13 +657,17 @@ computeGenericPosition(bool isFrame, int jointId, MatrixHomogeneous& res, int ti
   sotDEBUGIN(25);
   assert(m_data);
   newtonEulerSINTERN(time);
+  std::string temp;
   if(isFrame){
-    //TODO: Confirm if we need this. Already being called when calculating jacobian
-    //se3::framesForwardKinematics(m_model,*m_data);
-    res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
+    se3::framesForwardKinematics(*m_model,*m_data);
+    res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
+    temp = m_model->getFrameName((se3::Model::Index)jointId);
   }
-  else res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
-
+  else{
+    res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
+    temp = m_model->getJointName((se3::Model::Index)jointId);
+  }
+  sotDEBUG(25)<<"For "<<temp<<" with id: "<<jointId<<" position is "<<res<<std::endl;
   sotDEBUGOUT(25);
   return res;
 }
@@ -698,6 +704,7 @@ computeNewtonEuler( int& dummy,int time )
   sotDEBUGIN(15);
   assert(m_model);
   assert(m_data);
+
   
   const Eigen::VectorXd q=getPinocchioPos(time);
   const Eigen::VectorXd v=getPinocchioVel(time);

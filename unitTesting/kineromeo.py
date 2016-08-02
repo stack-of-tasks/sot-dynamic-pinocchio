@@ -5,7 +5,6 @@
 #
 # ______________________________________________________________________________
 # ******************************************************************************
-import pinocchio as se3
 from dynamic_graph import plug
 from dynamic_graph.sot.core import *
 from dynamic_graph.sot.dynamics import *
@@ -13,7 +12,7 @@ import dynamic_graph.script_shortcuts
 from dynamic_graph.script_shortcuts import optionalparentheses
 from dynamic_graph.sot.core.matrix_util import matrixToTuple, vectorToTuple,rotate, matrixToRPY
 from dynamic_graph.sot.core.meta_tasks_kine import *
-from dynamic_graph.sot.core.utils.viewer_helper import addRobotViewer,VisualPinger,updateComDisplay
+#from dynamic_graph.sot.core.utils.viewer_helper import addRobotViewer,VisualPinger,updateComDisplay
 from numpy import *
 
 set_printoptions(suppress=True, precision=7)
@@ -24,9 +23,17 @@ set_printoptions(suppress=True, precision=7)
 
 #Define robotName, urdfpath and initialConfig
 
-robotName = 'romeo'
-urdfpath = "romeoNoToes.urdf"
+#Taking input from pinocchio
+from pinocchio.romeo_wrapper import RomeoWrapper
+import pinocchio as se3
 
+#SET THE PATH TO THE URDF AND MESHES
+urdfPath = "~/git/sot/pinocchio/models/romeo.urdf"
+urdfDir = ["~/git/sot/pinocchio/models"]
+pinocchioRobot = RomeoWrapper(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+robotName = 'romeo'
+pinocchioRobot.initDisplay(loadModel=True)
+pinocchioRobot.display(pinocchioRobot.q0)
 initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
                  0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # LLEG
                  0,  0,  -0.3490658,  0.6981317,  -0.3490658,   0,       # RLEG
@@ -40,18 +47,17 @@ initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
 #-----------------------------------------------------------------------------
 #---- PINOCCHIO MODEL AND DATA --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
-pinocchioModel = se3.buildModelFromUrdf(urdfpath,se3.JointModelFreeFlyer())
-pinocchioData = pinocchioModel.createData()
+#pinocchioModel = se3.buildModelFromUrdf(urdfpath, se3.JointModelFreeFlyer())
+#pinocchioData = pinocchioModel.createData()
 
 #-----------------------------------------------------------------------------
 #---- DYN --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 dyn = Dynamic("dyn")
-dyn.setModel(pinocchioModel)
-dyn.setData(pinocchioData)
+dyn.setModel(pinocchioRobot.model)
+dyn.setData(pinocchioRobot.data)
 
 dyn.displayModel()
-
 
 robotDim = dyn.getDimension()
 inertiaRotor = (0,)*6+(5e-4,)*31
@@ -71,9 +77,10 @@ robot = RobotSimu(robotName)
 robot.resize(robotDim)
 dt=5e-3
 
-robot.set( initialConfig )
-addRobotViewer(robot, small=False)
+#TODO: This configuration follows xyzQuat format for freeflyer. Do something about it
+#initialConfig = zip(*(list(matrixToTuple(pinocchioRobot.q0))))[0]
 
+robot.set(initialConfig)
 plug(robot.state,dyn.position)
 
 # ------------------------------------------------------------------------------
@@ -83,6 +90,9 @@ sot = SOT('sot')
 sot.setSize(robotDim)
 plug(sot.control,robot.control)
 
+
+
+#--------------------------------DISPLAY-----------------------------------------
 
 # ------------------------------------------------------------------------------
 # ---- TASKS -------------------------------------------------------------------
@@ -112,7 +122,12 @@ for name,joint in [ ['LF','LAnkleRoll'], ['RF','RAnkleRoll' ] ]:
 
 
 target = (0.5,-0.2,1.3)
-robot.viewer.updateElementConfig('zmp',target+(0,0,0))
+
+#addRobotViewer(robot, small=False)
+#robot.viewer.updateElementConfig('zmp',target+(0,0,0))
+
+
+
 gotoNd(taskRH,target,'111',(4.9,0.9,0.01,0.9))
 sot.push(contactRF.task.name)
 sot.push(contactLF.task.name)
@@ -123,27 +138,10 @@ sot.push(taskRH.task.name)
 #----- MAIN LOOP ---------------------------------------------------------------
 #-------------------------------------------------------------------------------
 
-from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread,loopShortcuts
-@loopInThread
-def inc():
-    robot.increment(dt)
-#    print "dyn_position_value_devel"
-#    print asarray(dyn.position.value)
-#    print "robot_control_value_devel"
-#    print asarray(robot.control.value)
-#    print "task_contactlf_jacobian_devel"
-#    print transpose(asarray(contactLF.feature.signal("jacobian").value))
-#    print "dyn_JLF_devel"
-#    print transpose(asarray(dyn.signal("JLF").value))
-runner=inc()
-[go,stop,next,n]=loopShortcuts(runner)
 
-print "dyn_position_value_devel"
-print asarray(dyn.position.value)
-print "robot_control_value_devel"
-print asarray(robot.control.value)
-print "task_contactlf_jacobian_devel"
-print transpose(asarray(contactLF.feature.signal("jacobian").value))
-print "dyn_JLF_devel"
-print transpose(asarray(dyn.signal("JLF").value))
-go()
+def runner(n):
+    for i in xrange(n):
+        robot.increment(dt)
+        pinocchioRobot.display(fromSotToPinocchio(robot.state.value))
+
+runner(1000)
