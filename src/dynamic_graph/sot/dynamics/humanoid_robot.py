@@ -207,9 +207,9 @@ class AbstractHumanoidRobot (object):
     #        model.setProperty('ComputeMomentum', 'true')
 
 
-    def initializeOpPoints(self, model):
+    def initializeOpPoints(self):
         for op in self.OperationalPoints:
-            model.createOpPoint(self.OperationalPointsMap[op], self.OperationalPointsMap[op])
+            self.dynamic.createOpPoint(self.OperationalPointsMap[op], self.OperationalPointsMap[op])
 
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
@@ -263,7 +263,7 @@ class AbstractHumanoidRobot (object):
         else:
             self.dynamic.acceleration.value = self.dimension*(0.,)
 
-        self.initializeOpPoints(self.dynamic)
+        self.initializeOpPoints()
 
         #TODO: hand parameters through srdf --- additional frames ---
         #self.frames = dict()
@@ -376,22 +376,43 @@ class AbstractHumanoidRobot (object):
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
             self.dynamic.signal('J'+self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
 
+from dynamic_graph.sot.dynamics import Dynamic
 class HumanoidRobot(AbstractHumanoidRobot):
-
-    halfSitting = [] #FIXME
-    
-    name = None
-    filename = None
-
-    def __init__(self, name, filename, tracer = None):
+    def __init__(self, name, pinocchio_model, pinocchio_data, initialConfig, OperationalPointsMap = None, tracer = None):
         AbstractHumanoidRobot.__init__(self, name, tracer)
-        self.filename = filename
-        self.OperationalPointsMap ={'left-wrist'  : 'left-wrist',
-                                    'right-wrist' : 'right-wrist',
-                                    'left-ankle'  : 'left-ankle',
-                                    'right-ankle' : 'right-ankle',
-                                    'gaze'        : 'gaze'}
-        self.dynamic = self.loadModelFromKxml (self.name + '_dynamics', self.filename)
+
+        self.OperationalPoints.append('waist')
+        self.OperationalPoints.append('chest')
+        self.OperationalPointsMap = OperationalPointsMap
+
+        self.dynamic = Dynamic(self.name + "_dynamic")
+        self.dynamic.setModel(pinocchio_model)
+        self.dynamic.setData(pinocchio_data)
         self.dimension = self.dynamic.getDimension()
-        self.halfSitting = self.dimension*(0.,)
-        self.initializeRobot()
+
+        self.device = RobotSimu(self.name + "_device")
+
+        self.device.resize(self.dynamic.getDimension())
+        self.halfSitting = initialConfig
+        self.device.set(self.halfSitting)
+        plug(self.device.state, self.dynamic.position)
+
+        if self.enableVelocityDerivator:
+            self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
+            self.velocityDerivator.dt.value = self.timeStep
+            plug(self.device.state, self.velocityDerivator.sin)
+            plug(self.velocityDerivator.sout, self.dynamic.velocity)
+        else:
+            self.dynamic.velocity.value = self.dimension*(0.,)
+
+        if self.enableAccelerationDerivator:
+            self.accelerationDerivator = \
+                Derivator_of_Vector('accelerationDerivator')
+            self.accelerationDerivator.dt.value = self.timeStep
+            plug(self.velocityDerivator.sout,
+                 self.accelerationDerivator.sin)
+            plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
+        else:
+            self.dynamic.acceleration.value = self.dimension*(0.,)
+        if self.OperationalPointsMap is not None:
+            self.initializeOpPoints()

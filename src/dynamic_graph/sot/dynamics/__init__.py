@@ -1,19 +1,25 @@
-from dynamic import Dynamic
+from dynamic import Dynamic as DynamicOld
 from angle_estimator import AngleEstimator
 from zmp_from_forces import ZmpFromForces
 import numpy as np
 from numpy import arctan2, arcsin, sin, cos, sqrt
 
-DynamicOld = Dynamic
+#DynamicOld = Dynamic
 
 class Dynamic (DynamicOld):
+    def __init__(self, name):
+        DynamicOld.__init__(self, name)
+        self.model = None
+        self.data = None
 
     def setData(self, pinocchio_data):
         dynamic.wrap.set_pinocchio_data(self.obj,pinocchio_data)
+        self.data = pinocchio_data
         return
         
     def setModel(self, pinocchio_model):
         dynamic.wrap.set_pinocchio_model(self.obj,pinocchio_model)
+        self.model = pinocchio_model
         return
 
 def fromSotToPinocchio(q_sot, freeflyer=True):
