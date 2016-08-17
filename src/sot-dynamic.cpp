@@ -196,6 +196,9 @@ Dynamic( const std::string & name)
     addCommand("createPosition",
 	       makeCommandVoid2(*this,&Dynamic::cmd_createPositionSignal,docstring));
   }
+
+
+  sphericalJoints.clear();
   
   sotDEBUG(10)<< "Dynamic class_name address"<<&CLASS_NAME<<std::endl;
   sotDEBUGOUT(5);
@@ -216,6 +219,27 @@ Dynamic::~Dynamic( void ) {
     delete sigPtr;
   }
   sotDEBUGOUT(15);
+}
+
+void
+Dynamic::setModel(se3::Model* modelPtr){
+  this->m_model = modelPtr;
+
+  if (this->m_model->nq > m_model->nv) {
+    if (se3::nv(this->m_model->joints[1]) == 6)
+      sphericalJoints.push_back(3);  //FreeFlyer Orientation
+
+    for(int i = 1; i<this->m_model->njoint; i++)  //0: universe
+      if(se3::nq(this->m_model->joints[i]) == 4) //Spherical Joint Only
+	sphericalJoints.push_back(se3::idx_v(this->m_model->joints[i]));
+  }
+}
+
+
+void
+Dynamic::setData(se3::Data* dataPtr){
+  this->m_data = dataPtr;
+  
 }
 
 /*--------------------------------GETTERS-------------------------------------------*/
@@ -283,32 +307,35 @@ dg::Vector Dynamic::getPinocchioPos(int time)
   sotDEBUGIN(15);
   dg::Vector qJoints=jointPositionSIN.access(time);
   dg::Vector q;
-  assert(m_model);
-
-  if( freeFlyerPositionSIN) {
-    dg::Vector qFF=freeFlyerPositionSIN.access(time);
-
-    q.resize(qJoints.size() + 7);
-
-    Eigen::Quaternion<double> quat = Eigen::AngleAxisd(qFF(5),Eigen::Vector3d::UnitZ())*
-      Eigen::AngleAxisd(qFF(4),Eigen::Vector3d::UnitY())*
-      Eigen::AngleAxisd(qFF(3),Eigen::Vector3d::UnitX());
-    
-    q << qFF(0),qFF(1),qFF(2),
-      quat.x(),quat.y(),quat.z(),quat.w(),
-      qJoints;
-  }
-  else if (se3::nv(m_model->joints[1]) == 6){
-    dg::Vector qFF = qJoints.head<6>();
-    q.resize(qJoints.size()+1);
-
-    Eigen::Quaternion<double> quat = Eigen::AngleAxisd(qFF(5),Eigen::Vector3d::UnitZ())*
-      Eigen::AngleAxisd(qFF(4),Eigen::Vector3d::UnitY())*
-      Eigen::AngleAxisd(qFF(3),Eigen::Vector3d::UnitX());
-    q << qFF(0),qFF(1),qFF(2),
-      quat.x(),quat.y(),quat.z(),quat.w(),
-      qJoints.segment(6,qJoints.size()-6);
-    assert(q.size() == m_model->nq);
+  if (!sphericalJoints.empty()){
+    if( freeFlyerPositionSIN) {
+      dg::Vector qFF=freeFlyerPositionSIN.access(time);
+      qJoints.head<6>() = qFF;  //Overwrite qJoints ff with ffposition value
+      assert(sphericalJoints[0] == 3); // FreeFlyer should ideally be present.
+    }
+    q.resize(qJoints.size()+sphericalJoints.size());
+    int fillingIndex = 0;
+    int origIndex = 0;
+    for (std::vector<int>::const_iterator it = sphericalJoints.begin(); it < sphericalJoints.end(); it++){
+      if(*it-origIndex > 0){
+	q.segment(fillingIndex,*it-origIndex) = qJoints.segment(origIndex,*it-origIndex);
+	fillingIndex += *it-origIndex;
+	origIndex += *it-origIndex;
+      }
+      assert(*it == origIndex);
+      Eigen::Quaternion<double> temp =
+	Eigen::AngleAxisd(qJoints(origIndex+2),Eigen::Vector3d::UnitZ())*
+	Eigen::AngleAxisd(qJoints(origIndex+1),Eigen::Vector3d::UnitY())*
+	Eigen::AngleAxisd(qJoints(origIndex),Eigen::Vector3d::UnitX());
+      q(fillingIndex) = temp.x();
+      q(fillingIndex+1) = temp.y();
+      q(fillingIndex+2) = temp.z();
+      q(fillingIndex+3) = temp.w();
+      it++;
+      fillingIndex +=4;
+      origIndex +=3;
+    }
+    if(qJoints.size()>origIndex) q.segment(fillingIndex, qJoints.size()-origIndex) = qJoints.tail(qJoints.size()-origIndex);
   }
   else {
     q.resize(qJoints.size());
@@ -316,7 +343,7 @@ dg::Vector Dynamic::getPinocchioPos(int time)
   }
   sotDEBUG(15) <<"Position out"<<q<<std::endl;
   sotDEBUGOUT(15);
-  return q;
+  return q; 
 }
 
 Eigen::VectorXd Dynamic::getPinocchioVel(int time)

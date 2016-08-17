@@ -89,7 +89,8 @@ namespace dynamicgraph{
       try {
 	se3::python::ModelHandler cppModelHandle = 
 	  boost::python::extract<se3::python::ModelHandler>(pyPinocchioObject);
-	dyn_entity->m_model = cppModelHandle.ptr();
+	dyn_entity->setModel(cppModelHandle.ptr());
+	//dyn_entity->m_model = cppModelHandle.ptr();
       }
       catch (const std::exception& exc) {
 	//PyErr_SetString(dgpyError, exc.what());
@@ -128,7 +129,8 @@ namespace dynamicgraph{
       try {
 	se3::python::DataHandler cppDataHandle = 
 	  boost::python::extract<se3::python::DataHandler>(pyPinocchioObject);
-	dyn_entity->m_data = cppDataHandle.ptr();
+	dyn_entity->setData(cppDataHandle.ptr());
+	//dyn_entity->m_data = cppDataHandle.ptr();
       }
       catch (const std::exception& exc) {
 	//	PyErr_SetString(dgpyError, exc.what());			

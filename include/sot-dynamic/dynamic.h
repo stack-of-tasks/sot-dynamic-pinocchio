@@ -138,7 +138,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::SignalPtr<dg::Vector,int> freeFlyerAccelerationSIN;
   
   dg::SignalTimeDependent<Dummy,int> newtonEulerSINTERN;
-  
+
   int& computeNewtonEuler( int& dummy,int time );
   
   dg::SignalTimeDependent<dg::Vector,int> zmpSOUT;
@@ -177,6 +177,9 @@ class SOTDYNAMIC_EXPORT Dynamic
   void displayModel() const 
   { assert(m_model); std::cout<<(*m_model)<<std::endl; };
 
+  void setModel(se3::Model*);
+
+  void setData(se3::Data*);
   
   /* --- GETTERS --- */
 
@@ -246,6 +249,7 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::Vector getPinocchioPos(int);
   dg::Vector getPinocchioVel(int);
   dg::Vector getPinocchioAcc(int);
+  std::vector<int> sphericalJoints;
 
 };
 
