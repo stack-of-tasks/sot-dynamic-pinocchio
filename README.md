@@ -1,8 +1,8 @@
 sot-dynamic
 ===========
 
-[![Build Status](https://travis-ci.org/stack-of-tasks/sot-dynamic.png?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic)
-[![Coverage Status](https://coveralls.io/repos/stack-of-tasks/sot-dynamic/badge.png)](https://coveralls.io/r/stack-of-tasks/sot-dynamic)
+[![Build Status](https://travis-ci.org/proyan/sot-dynamic.png?branch=master)](https://travis-ci.org/proyan/sot-dynamic)
+[![Coverage Status](https://coveralls.io/repos/proyan/sot-dynamic/badge.png)](https://coveralls.io/r/proyan/sot-dynamic)
 
 This software provides robot dynamic computation for dynamic-graph
 by using jrl-dynamics.
@@ -28,18 +28,15 @@ The matrix abstract layer depends on several packages which
 have to be available on your machine.
 
  - Libraries:
-   - [jrl-dynamics][jrl-dynamics] (>= 1.16.1)
    - [dynamic-graph][dynamic-graph] (>= 3.0.0)
    - [sot-core][sot-core] (>= 3.0.0)
- - Closed source libraries:
-   - hrp2Dynamics (>= 1.3.0)
-   - hrp2-10-optimized (>= 1.3.0) [optional]
+   - [pinocchio][pinocchio] (>= 1.1.2)
  - System tools:
    - CMake (>=2.6)
    - pkg-config
    - usual compilation tools (GCC/G++, make, etc.)
 
 
-[dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
-[jrl-dynamics]: http://github.com/jrl-umi3218/jrl-dynamics
-[sot-core]: http://github.com/stack-of-tasks/sot-core
+[dynamic-graph]: http://github.com/proyan/dynamic-graph
+[pinocchio]: http://github.com/stack-of-tasks/pinocchio
+[sot-core]: http://github.com/proyan/sot-core

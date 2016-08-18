@@ -16,23 +16,38 @@
 ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
-  dummy
-  test_djj
-  test_dyn
-  test_results)
+test_constructor
+test_config
+#  dummy
+#  test_djj
+#  test_dyn
+#  test_results
+)
+
+
+#----------------------------------------------------
+# Install procedure for the urdf files
+#----------------------------------------------------
+
+FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/two_link.urdf
+  DESTINATION urdf)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
+# Make Boost.Test generates the main function in test cases.
+ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
+
+
 # getting the information for the robot.
-SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/)
-SET(samplespec
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleSpecificities.xml
-  )
-SET(sampleljr
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleLinkJointRank.xml
-  )
-SET(sampleinitconfig
-  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
+#SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/)
+#SET(samplespec
+#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleSpecificities.xml
+#  )
+#SET(sampleljr
+#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleLinkJointRank.xml
+#  )
+#SET(sampleinitconfig
+#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
@@ -44,7 +59,7 @@ FOREACH(test ${tests})
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
     zmpreffromcom
     force-compensation
-    integrator-force-exact
+    #integrator-force-exact
     mass-apparent
     integrator-force-rk4
     integrator-force
@@ -53,7 +68,7 @@ FOREACH(test ${tests})
     ${LIBRARY_NAME}
     )
 
-  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} jrl-dynamics)
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} pinocchio)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
 
@@ -62,9 +77,9 @@ FOREACH(test ${tests})
     TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
   ENDIF(${test}_plugins_dependencies)
 
-
+  TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
   ADD_TEST(${test} ${EXECUTABLE_NAME}
-    ${samplemodelpath} sample.wrl ${samplespec} ${sampleljr} )
+    ${samplemodelpath} ${samplespec} ${sampleljr} )
 
   IF (UNIX)
     SET(EXTRA_LD_LIBRARY_PATH $ENV{LD_LIBRARY_PATH})

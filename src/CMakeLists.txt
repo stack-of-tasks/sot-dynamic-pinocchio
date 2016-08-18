@@ -14,6 +14,7 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
+INCLUDE(../custom_cmake/python.cmake)
 INCLUDE(../cmake/python.cmake)
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
@@ -29,7 +30,6 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
-
 FOREACH(lib ${plugins})
   ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
 
@@ -44,7 +44,8 @@ FOREACH(lib ${plugins})
 
   TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
 
-  PKG_CONFIG_USE_DEPENDENCY(${lib} jrl-dynamics)
+  PKG_CONFIG_USE_DEPENDENCY(${lib} pinocchio)
+  PKG_CONFIG_USE_DEPENDENCY(${lib} eigenpy)
   PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
 
@@ -53,7 +54,7 @@ FOREACH(lib ${plugins})
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
-  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
+  SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
     ${lib}
     sot-dynamics-${PYTHON_LIBRARY_NAME}-wrap
     )
@@ -61,13 +62,13 @@ ENDFOREACH(lib)
 
 # Main Library
 ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic.cpp)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} jrl-dynamics)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} pinocchio)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} sot-core)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} jrl-dynamics)
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} pinocchio)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} sot-core)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
-
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 TARGET_LINK_LIBRARIES(dynamic ${LIBRARY_NAME})
@@ -80,4 +81,3 @@ INSTALL(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics/parser.py
   DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics
   )
-

@@ -23,8 +23,8 @@
 #include <map>
 
 #include <sot-dynamic/matrix-inertia.h>
-#include <jrl/dynamics/Joint.h>
-#include <jrl/dynamics/HumanoidDynamicMultiBody.h>
+//#include <jrl/dynamics/Joint.h>
+//#include <jrl/dynamics/HumanoidDynamicMultiBody.h>
 #include <abstract-robot-dynamics/robot-dynamics-object-constructor.hh>
 
 #include <sot/core/debug.hh>

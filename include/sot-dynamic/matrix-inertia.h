@@ -29,13 +29,6 @@
 
 #include <sot/core/matrix-geometry.hh>
 
-namespace dynamicsJRLJapan
-{
-  class HumanoidDynamicMultiBody;
-}
-
-class CjrlHumanoidDynamicRobot;
-class CjrlJoint;
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */

@@ -21,7 +21,17 @@
 #include <sot-dynamic/dynamic.h>
 #include <dynamic-graph/factory.h>
 
-using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
+using namespace dynamicgraph::sot;
 
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(Dynamic,"Dynamic");
+extern "C" {
+  ::dynamicgraph::Entity*						
+  EntityMaker_Dynamic(const std::string& objname)			
+  {									
+    return new Dynamic (objname);					
+  }									
+  ::dynamicgraph::EntityRegisterer					
+  reg_Dynamic ("Dynamic",						
+	       &EntityMaker_Dynamic);				
+}
+//DYNAMICGRAPH_FACTORY_DYNAMIC_PLUGIN(Dynamic,"Dynamic");
