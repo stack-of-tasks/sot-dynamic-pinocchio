@@ -331,7 +331,6 @@ dg::Vector Dynamic::getPinocchioPos(int time)
       q(fillingIndex+1) = temp.y();
       q(fillingIndex+2) = temp.z();
       q(fillingIndex+3) = temp.w();
-      it++;
       fillingIndex +=4;
       origIndex +=3;
     }
@@ -341,6 +340,7 @@ dg::Vector Dynamic::getPinocchioPos(int time)
     q.resize(qJoints.size());
     q=qJoints;
   }
+
   sotDEBUG(15) <<"Position out"<<q<<std::endl;
   sotDEBUGOUT(15);
   return q; 
