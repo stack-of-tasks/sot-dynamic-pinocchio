@@ -18,9 +18,9 @@
 #include <boost/python.hpp>
 #include <typeinfo>
 #include <cstdio>
-#include <pinocchio/python/model.hpp>
-#include <pinocchio/python/data.hpp>
-#include <pinocchio/python/handler.hpp>
+#include <pinocchio/bindings/python/model.hpp>
+#include <pinocchio/bindings/python/data.hpp>
+#include <pinocchio/bindings/python/handler.hpp>
 
 
 namespace dynamicgraph{
