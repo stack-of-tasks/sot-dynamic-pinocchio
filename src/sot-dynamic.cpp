@@ -247,13 +247,38 @@ Dynamic::setData(se3::Data* dataPtr){
 dg::Vector& Dynamic::
 getLowerPositionLimits(dg::Vector& res, const int&)
 {
- 
   sotDEBUGIN(15);
   assert(m_model);
 
-  res.resize(m_model->nq);
-  res = m_model->lowerPositionLimit;
+  res.resize(m_model->nv);
+  if (!sphericalJoints.empty()) {
+    int fillingIndex = 0; //SoTValue
+    int origIndex = 0;  //PinocchioValue
+    for (std::vector<int>::const_iterator it = sphericalJoints.begin();
+	 it < sphericalJoints.end(); it++){
+      if(*it-fillingIndex > 0){
+	res.segment(fillingIndex, *it-fillingIndex) = m_model->lowerPositionLimit.segment(origIndex, *it-fillingIndex);
 
+	//Don't Change this order
+	origIndex += *it-fillingIndex;
+	fillingIndex += *it-fillingIndex;
+      }
+      //Found a Spherical Joint.
+      //Assuming that spherical joint limits are unset
+      res(fillingIndex) = std::numeric_limits<double>::min();
+      res(fillingIndex+1) = std::numeric_limits<double>::min();
+      res(fillingIndex+2) = std::numeric_limits<double>::min();
+      fillingIndex +=3;
+      origIndex +=4;
+    }
+    assert(m_model->nv-fillingIndex == m_model->nq- origIndex);
+    if(m_model->nv > fillingIndex)
+      res.segment(fillingIndex, m_model->nv-fillingIndex) =
+	m_model->lowerPositionLimit.segment(origIndex, m_model->nv-fillingIndex);
+  }
+  else {
+    res = m_model->lowerPositionLimit;
+  }
   sotDEBUG(15) << "lowerLimit (" << res << ")=" << std::endl;
   sotDEBUGOUT(15);
   return res;
@@ -265,10 +290,36 @@ getUpperPositionLimits(dg::Vector& res, const int&)
   sotDEBUGIN(15);
   assert(m_model);
 
-  res.resize(m_model->nq);
-  res = m_model->upperPositionLimit;
+  res.resize(m_model->nv);
+  if (!sphericalJoints.empty()) {
+    int fillingIndex = 0; //SoTValue
+    int origIndex = 0;  //PinocchioValue
+    for (std::vector<int>::const_iterator it = sphericalJoints.begin();
+	 it < sphericalJoints.end(); it++){
+      if(*it-fillingIndex > 0){
+	res.segment(fillingIndex, *it-fillingIndex) = m_model->upperPositionLimit.segment(origIndex, *it-fillingIndex);
 
-  sotDEBUG(15) << "upperLimit (" << res << ")=" <<std::endl;
+	//Don't Change this order
+	origIndex += *it-fillingIndex;
+	fillingIndex += *it-fillingIndex;
+      }
+      //Found a Spherical Joint.
+      //Assuming that spherical joint limits are unset
+      res(fillingIndex) = std::numeric_limits<double>::max();
+      res(fillingIndex+1) = std::numeric_limits<double>::max();
+      res(fillingIndex+2) = std::numeric_limits<double>::max();
+      fillingIndex +=3;
+      origIndex +=4;
+    }
+    assert(m_model->nv-fillingIndex == m_model->nq- origIndex);
+    if(m_model->nv > fillingIndex)
+      res.segment(fillingIndex, m_model->nv-fillingIndex) =
+	m_model->upperPositionLimit.segment(origIndex, m_model->nv-fillingIndex);
+  }
+  else {
+    res = m_model->upperPositionLimit;
+  }
+  sotDEBUG(15) << "upperLimit (" << res << ")=" << std::endl;
   sotDEBUGOUT(15);
   return res;
 }

@@ -249,6 +249,8 @@ class SOTDYNAMIC_EXPORT Dynamic
   dg::Vector getPinocchioPos(int);
   dg::Vector getPinocchioVel(int);
   dg::Vector getPinocchioAcc(int);
+  
+  //\brief Index list for the first dof of (spherical joints)/ (spherical part of free-flyer joint).
   std::vector<int> sphericalJoints;
 
 };
