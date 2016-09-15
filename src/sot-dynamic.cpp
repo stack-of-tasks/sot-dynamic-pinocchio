@@ -717,7 +717,7 @@ computeGenericEndeffJacobian(bool isFrame, int jointId,dg::Matrix& res,int time 
   if(isFrame){
     se3::framesForwardKinematics(*m_model,*m_data);
     se3::getFrameJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
-    temp = m_model->getFrameName((se3::Model::Index)jointId);
+    temp = m_model->frames.at((se3::Model::Index)jointId).name;
   }
   else {
     temp = m_model->getJointName((se3::Model::Index)jointId);
@@ -739,7 +739,7 @@ computeGenericPosition(bool isFrame, int jointId, MatrixHomogeneous& res, int ti
   if(isFrame){
     se3::framesForwardKinematics(*m_model,*m_data);
     res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
-    temp = m_model->getFrameName((se3::Model::Index)jointId);
+    temp = m_model->frames.at((se3::Model::Index)jointId).name;
   }
   else{
     res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
