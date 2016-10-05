@@ -19,7 +19,7 @@ matrix:
 before_install:
 - git submodule update --init --recursive
 #Add robotpkg and pinocchio dependencies
-- sudo sh -c "echo \"deb http://robotpkg.openrobots.org/packages/debian precise robotpkg\" >> /etc/apt/sources.list "
+- sudo sh -c "echo \"deb http://robotpkg.openrobots.org/packages/debian/pub precise robotpkg\" >> /etc/apt/sources.list "
 - curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key | sudo apt-key add -
 - sudo apt-get update -qq
 - sudo apt-get install -qq doxygen doxygen-latex libboost-all-dev libeigen3-dev liblapack-dev libblas-dev gfortran python-dev 
