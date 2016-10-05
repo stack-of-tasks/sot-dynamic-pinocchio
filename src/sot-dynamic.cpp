@@ -229,7 +229,7 @@ Dynamic::setModel(se3::Model* modelPtr){
     if (se3::nv(this->m_model->joints[1]) == 6)
       sphericalJoints.push_back(3);  //FreeFlyer Orientation
 
-    for(int i = 1; i<this->m_model->njoint; i++)  //0: universe
+    for(int i = 1; i<this->m_model->njoints; i++)  //0: universe
       if(se3::nq(this->m_model->joints[i]) == 4) //Spherical Joint Only
 	sphericalJoints.push_back(se3::idx_v(this->m_model->joints[i]));
   }
