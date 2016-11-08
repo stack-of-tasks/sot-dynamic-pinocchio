@@ -19,61 +19,18 @@
 #include <typeinfo>
 #include <cstdio>
 #include <pinocchio/bindings/python/multibody/model.hpp>
-#include <pinocchio/bindings/python/data.hpp>
-#include <pinocchio/bindings/python/handler.hpp>
+#include <pinocchio/bindings/python/multibody/data.hpp>
+#include <pinocchio/bindings/python/utils/handler.hpp>
 
 
 namespace dynamicgraph{
   namespace sot{
 
-    /*    PyObject* getPinocchioModel(PyObject* // self
-				,PyObject* args) {
-      PyObject* object = NULL;
-      void* pointer = NULL;
-      
-      if (!PyArg_ParseTuple(args, "O", &object))
-	return NULL;
-      
-      if (!PyCObject_Check(object)) {
-	PyErr_SetString(PyExc_TypeError,
-			"function takes a PyCObject as argument");
-	return NULL;
-      }
-      
-      pointer = PyCObject_AsVoidPtr(object);
-      Dynamic* dyn_entity = (Dynamic*) pointer;
-      
-      se3::Model* model_ptr = NULL;
-      
-      try {
-      model_ptr = dyn_entity->m_model;
-      se3::python::ModelHandler& _model(& (dyn_entity->m_model));	
-      }
-      catch (const std::exception& exc) {
-      PyErr_SetString(dgpyError, exc.what());			
-      return NULL;						
-      }								
-      catch (const char* s) {								
-      PyErr_SetString(dgpyError, s);
-      return NULL;
-      }
-      catch (...) {
-	    PyErr_SetString(dgpyError, "Unknown exception");		
-	    return NULL;						
-	    }
-	    //CATCH_ALL_EXCEPTIONS();
-	    
-	    // Return the pointer to the signal without destructor since the signal
-	    // is not owned by the calling object but by the Entity.
-	    //return boost::python::incref();
-	    return PyCObject_FromVoidPtr((void*)model_ptr, NULL);
-    }
-    */
-
     PyObject* setPinocchioModel(PyObject* /* self */,PyObject* args) {
       PyObject* object = NULL;
       PyObject* pyPinocchioObject;
       void* pointer1 = NULL;
+      se3::Model* pointer2 = NULL;
       if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject))
 	return NULL;
 
@@ -87,10 +44,9 @@ namespace dynamicgraph{
       Dynamic* dyn_entity = (Dynamic*) pointer1;
 
       try {
-	se3::python::ModelHandler cppModelHandle = 
-	  boost::python::extract<se3::python::ModelHandler>(pyPinocchioObject);
-	dyn_entity->setModel(cppModelHandle.ptr());
-	//dyn_entity->m_model = cppModelHandle.ptr();
+	boost::python::extract<se3::Model&> cppHandle(pyPinocchioObject);
+	pointer2 = (se3::Model*) &cppHandle();
+	dyn_entity->setModel(pointer2);
       }
       catch (const std::exception& exc) {
 	//PyErr_SetString(dgpyError, exc.what());
@@ -104,9 +60,7 @@ namespace dynamicgraph{
 	//PyErr_SetString(dgpyError, "Unknown exception");
 	return NULL;						
       }
-      // Return the pointer to the signal without destructor since the signal
-      // is not owned by the calling object but by the Entity.
-      //return boost::python::incref();
+      
       return Py_BuildValue("");
     }
 
@@ -114,6 +68,7 @@ namespace dynamicgraph{
       PyObject* object = NULL;
       PyObject* pyPinocchioObject;
       void* pointer1 = NULL;
+      se3::Data* pointer2 = NULL;
       if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject))
 	return NULL;
 
@@ -127,10 +82,9 @@ namespace dynamicgraph{
       Dynamic* dyn_entity = (Dynamic*) pointer1;
 
       try {
-	se3::python::DataHandler cppDataHandle = 
-	  boost::python::extract<se3::python::DataHandler>(pyPinocchioObject);
-	dyn_entity->setData(cppDataHandle.ptr());
-	//dyn_entity->m_data = cppDataHandle.ptr();
+	boost::python::extract<se3::Data&> cppHandle(pyPinocchioObject);
+	pointer2 = (se3::Data*) &cppHandle();
+	dyn_entity->setData(pointer2);
       }
       catch (const std::exception& exc) {
 	//	PyErr_SetString(dgpyError, exc.what());			
@@ -144,9 +98,7 @@ namespace dynamicgraph{
 	//	PyErr_SetString(dgpyError, "Unknown exception");		
 	return NULL;						
       }
-      // Return the pointer to the signal without destructor since the signal
-      // is not owned by the calling object but by the Entity.
-      //return boost::python::incref();
+
       return Py_BuildValue("");
     }
   }
