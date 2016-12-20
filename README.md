@@ -6,7 +6,7 @@ Encapsulate Pinocchio in SoT
 [![Coverage Status](https://coveralls.io/repos/proyan/sot-dynamic/badge.png)](https://coveralls.io/r/proyan/sot-dynamic)
 
 This software provides robot dynamic computation for dynamic-graph
-by using jrl-dynamics.
+by using pinocchio.
 
 Setup
 -----
