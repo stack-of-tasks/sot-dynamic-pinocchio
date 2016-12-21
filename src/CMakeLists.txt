@@ -31,33 +31,34 @@ SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
 FOREACH(lib ${plugins})
-  ADD_LIBRARY(${lib} SHARED ${lib}.cpp)
-
-  SET_TARGET_PROPERTIES(${lib} PROPERTIES
+  SET(libname dp-${lib})
+  ADD_LIBRARY(${libname} SHARED ${lib}.cpp)
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES
     PREFIX ""
     SOVERSION ${PROJECT_VERSION})
 
   IF(${lib}_plugins_dependencies)
-    ADD_DEPENDENCIES(${lib} "${${lib}_plugins_dependencies}")
-    TARGET_LINK_LIBRARIES(${lib} "${${lib}_plugins_dependencies}")
+    ADD_DEPENDENCIES(${libname} "dp-${${lib}_plugins_dependencies}")
+    TARGET_LINK_LIBRARIES(${libname} "dp-${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
 
-  TARGET_LINK_LIBRARIES(${lib} ${Boost_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 
-  PKG_CONFIG_USE_DEPENDENCY(${lib} pinocchio)
-  PKG_CONFIG_USE_DEPENDENCY(${lib} eigenpy)
-  PKG_CONFIG_USE_DEPENDENCY(${lib} sot-core)
-  PKG_CONFIG_USE_DEPENDENCY(${lib} dynamic-graph)
+  PKG_CONFIG_USE_DEPENDENCY(${libname} pinocchio)
+  PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
+  PKG_CONFIG_USE_DEPENDENCY(${libname} sot-core)
+  PKG_CONFIG_USE_DEPENDENCY(${libname} dynamic-graph)
 
-  INSTALL(TARGETS ${lib} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
+  INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
 
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
-  SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
-    ${lib}
+  SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
+    ${libname}
     sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
     )
+  UNSET({libname})
 ENDFOREACH(lib)
 
 # Main Library
@@ -71,7 +72,7 @@ PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-TARGET_LINK_LIBRARIES(dynamic ${LIBRARY_NAME})
+TARGET_LINK_LIBRARIES(dp-dynamic ${LIBRARY_NAME})
 
 # Install empty __init__.py files in intermediate directories.
 INSTALL(FILES
