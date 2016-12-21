@@ -18,8 +18,8 @@
  * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SOT_DYNAMIC_H__
-#define __SOT_DYNAMIC_H__
+#ifndef __SOT_DYNAMIC_PINOCCHIO_H__
+#define __SOT_DYNAMIC_PINOCCHIO_H__
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -86,7 +86,7 @@ namespace dynamicgraph {
       by the dynamicsJRLJapan library to make it accessible in the stack of tasks.
       The robot is described by a VRML file.
     */
-class SOTDYNAMIC_EXPORT Dynamic
+class SOTDYNAMIC_EXPORT DynamicPinocchio
  :public dg::Entity {
   friend class sot::command::SetFile;
   friend class sot::command::CreateOpPoint;
@@ -167,8 +167,8 @@ class SOTDYNAMIC_EXPORT Dynamic
 
     public:
   /* --- CONSTRUCTOR --- */
-  Dynamic( const std::string& name);
-  virtual ~Dynamic( void );
+  DynamicPinocchio( const std::string& name);
+  virtual ~DynamicPinocchio( void );
 
 
   /* --- MODEL CREATION --- */
@@ -260,4 +260,4 @@ class SOTDYNAMIC_EXPORT Dynamic
 
 
 
-#endif // #ifndef __SOT_DYNAMIC_H__
+#endif // #ifndef __SOT_DYNAMIC_PINOCCHIO_H__

@@ -5,20 +5,20 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic.
- * sot-dynamic is free software: you can redistribute it and/or
+ * This file is part of sot-dynamic-pinocchio.
+ * sot-dynamic-pinocchio is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * sot-dynamic is distributed in the hope that it will be
+ * sot-dynamic-pinocchio is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.  You should
  * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
+ * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-dynamic/integrator-force-exact.h>
+#include <sot-dynamic-pinocchio/integrator-force-exact.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <sot/core/exception-dynamic.hh>
@@ -72,14 +72,14 @@ int geev(Matrix &a,
 {
   char jobvl='V';
   char jobvr='V';
-  int const n = a.rows();
+  int const n = (int)a.rows();
   
   Vector wr(n);
   Vector wi(n);
   double* vl_real = MRAWDATA(vl2);
-  const int ldvl =vl2.rows();
+  const int ldvl = (int)vl2.rows();
   double* vr_real = MRAWDATA(vr2);
-  const int ldvr = vr2.rows();
+  const int ldvr = (int)vr2.rows();
   
   // workspace query
   int lwork = -1;
@@ -112,7 +112,7 @@ static void eigenDecomp( const dynamicgraph::Matrix& M,
 			 dynamicgraph::Matrix& P,
 			 dynamicgraph::Vector& eig )
 {
-  unsigned int SIZE = M.cols();
+  long int SIZE = M.cols();
   Matrix Y(M);
   Eigen::VectorXcd evals(SIZE);
   Matrix vl(SIZE,SIZE);
@@ -145,7 +145,7 @@ static void eigenDecomp( const dynamicgraph::Matrix& M,
 static void expMatrix( const dynamicgraph::Matrix& MiB,
 		       dynamicgraph::Matrix& Mexp )
 {
-  unsigned int SIZE = MiB.cols();
+  long int SIZE = MiB.cols();
 
   dynamicgraph::Matrix Pmib(MiB.cols(),MiB.cols());
   dynamicgraph::Vector eig_mib(MiB.cols());
@@ -185,7 +185,7 @@ computeVelocityExact( dynamicgraph::Vector& res,
   const dynamicgraph::Vector & force = forceSIN( time );
   const dynamicgraph::Matrix & massInverse = massInverseSIN( time );
   const dynamicgraph::Matrix & friction = frictionSIN( time );
-  unsigned int nf = force.size(), nv = friction.cols();
+  long int nf = force.size(), nv = friction.cols();
   res.resize(nv); res.setZero();
 
   if(! velocityPrecSIN )

@@ -1,18 +1,18 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST,
 #                 Florent Lamiraux (CNRS/LAAS)
 #
-# This file is part of sot-dynamic.
-# sot-dynamic is free software: you can redistribute it and/or
+# This file is part of sot-dynamic-pinocchio.
+# sot-dynamic-pinocchio is free software: you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
 # as published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# sot-dynamic is distributed in the hope that it will be useful, but
+# sot-dynamic-pinocchio is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
-# sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
+# sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 INCLUDE(../custom_cmake/python.cmake)
 INCLUDE(../cmake/python.cmake)
@@ -56,12 +56,12 @@ FOREACH(lib ${plugins})
 
   SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics/${PYTHON_LIBRARY_NAME}"
     ${lib}
-    sot-dynamics-${PYTHON_LIBRARY_NAME}-wrap
+    sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
     )
 ENDFOREACH(lib)
 
 # Main Library
-ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic.cpp)
+ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic-pinocchio.cpp)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} pinocchio)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} sot-core)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph)
