@@ -21,7 +21,7 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
 
-SET(PROJECT_NAME sot-dynamic)
+SET(PROJECT_NAME sot-dynamic-pinocchio)
 
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/proyan/sot-dynamic/tree/topic/sot-pinocchio")

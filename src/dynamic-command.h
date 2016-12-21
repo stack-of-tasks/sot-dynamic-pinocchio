@@ -41,14 +41,14 @@ namespace dynamicgraph { namespace sot {
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
-      DisplayModel(Dynamic& entity, const std::string& docstring) :
+      DisplayModel(DynamicPinocchio& entity, const std::string& docstring) :
 	Command(entity, std::vector<Value::Type>(),
 		docstring)
       {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
+	DynamicPinocchio& robot = static_cast<DynamicPinocchio&>(owner());
 	robot.displayModel();
 	return Value();
       }
@@ -64,14 +64,14 @@ namespace dynamicgraph { namespace sot {
       /// Create command and store it in Entity
       /// \param entity instance of Entity owning this command
       /// \param docstring documentation of the command
-      GetDimension(Dynamic& entity, const std::string& docstring) :
+      GetDimension(DynamicPinocchio& entity, const std::string& docstring) :
 	Command(entity, std::vector<Value::Type>(),
 		docstring)
       {
       }
       virtual Value doExecute()
       {
-	Dynamic& robot = static_cast<Dynamic&>(owner());
+	DynamicPinocchio& robot = static_cast<DynamicPinocchio&>(owner());
 	unsigned int dimension = robot.m_model->nv;
 	return Value(dimension);
       }

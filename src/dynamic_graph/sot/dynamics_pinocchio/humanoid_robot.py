@@ -22,8 +22,8 @@ from dynamic_graph.sot.core import OpPointModifier
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core import RobotSimu
 
-from dynamic_graph.sot.dynamics.parser import Parser
-from dynamic_graph.sot.dynamics import AngleEstimator
+from dynamic_graph.sot.dynamics_pinocchio.parser import Parser
+from dynamic_graph.sot.dynamics_pinocchio import AngleEstimator
 
 from dynamic_graph import plug
 
@@ -156,7 +156,7 @@ class AbstractHumanoidRobot (object):
         """
         Load a model from a kxml file and return the parsed model.
         This uses the Python parser class implement in
-        dynamic_graph.sot.dynamics.parser.
+        dynamic_graph.sot.dynamics_pinocchio.parser.
 
         kxml is an extensible file format used by KineoWorks to store
         both the robot mesh and its kinematic chain.

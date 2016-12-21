@@ -14,7 +14,7 @@
 # sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
 
 SET(${PROJECT_NAME}_HEADERS
-	dynamic.h
+	dynamic-pinocchio.h
 	integrator-force-exact.h
 	zmpreffromcom.h
 	integrator-force.h

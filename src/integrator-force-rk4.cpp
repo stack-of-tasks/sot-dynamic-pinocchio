@@ -5,20 +5,20 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic.
- * sot-dynamic is free software: you can redistribute it and/or
+ * This file is part of sot-dynamic-pinocchio.
+ * sot-dynamic-pinocchio is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * sot-dynamic is distributed in the hope that it will be
+ * sot-dynamic-pinocchio is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.  You should
  * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
+ * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sot-dynamic/integrator-force-rk4.h>
+#include <sot-dynamic-pinocchio/integrator-force-rk4.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 
@@ -69,7 +69,7 @@ computeDerivativeRK4( dynamicgraph::Vector& res,
   const dynamicgraph::Vector & force = forceSIN( time );
   const dynamicgraph::Matrix & massInverse = massInverseSIN( time );
   const dynamicgraph::Matrix & friction = frictionSIN( time );
-  unsigned int nf = force.size(), nv = friction.cols();
+  long int nf = force.size(), nv = friction.cols();
   res.resize(nv); res.fill(0);
 
   if(! velocityPrecSIN )

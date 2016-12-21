@@ -1,20 +1,20 @@
 // Copyright (C) 2008-2016 LAAS-CNRS, JRL AIST-CNRS.
 //
-// This file is part of sot-dynamic.
-// sot-dynamic is free software: you can redistribute it and/or modify
+// This file is part of sot-dynamic-pinocchio.
+// sot-dynamic-pinocchio is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// sot-dynamic is distributed in the hope that it will be useful,
+// sot-dynamic-pinocchio is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
 // You should have received a copy of the GNU Lesser General Public License
-// along with sot-dynamic.  If not, see <http://www.gnu.org/licenses/>.
+// along with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Python.h>
-#include <sot-dynamic/dynamic.h>
+#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
 #include <boost/python.hpp>
 #include <typeinfo>
 #include <cstdio>
@@ -41,7 +41,7 @@ namespace dynamicgraph{
       }
 
       pointer1 = PyCObject_AsVoidPtr(object);
-      Dynamic* dyn_entity = (Dynamic*) pointer1;
+      DynamicPinocchio* dyn_entity = (DynamicPinocchio*) pointer1;
 
       try {
 	boost::python::extract<se3::Model&> cppHandle(pyPinocchioObject);
@@ -79,7 +79,7 @@ namespace dynamicgraph{
       }
 
       pointer1 = PyCObject_AsVoidPtr(object);
-      Dynamic* dyn_entity = (Dynamic*) pointer1;
+      DynamicPinocchio* dyn_entity = (DynamicPinocchio*) pointer1;
 
       try {
 	boost::python::extract<se3::Data&> cppHandle(pyPinocchioObject);
