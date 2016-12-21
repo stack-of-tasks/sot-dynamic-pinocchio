@@ -376,7 +376,7 @@ class AbstractHumanoidRobot (object):
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
             self.dynamic.signal('J'+self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
 
-from dynamic_graph.sot.dynamics import Dynamic
+from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
 class HumanoidRobot(AbstractHumanoidRobot):
     def __init__(self, name, pinocchio_model, pinocchio_data, initialConfig, OperationalPointsMap = None, tracer = None):
         AbstractHumanoidRobot.__init__(self, name, tracer)
@@ -385,7 +385,7 @@ class HumanoidRobot(AbstractHumanoidRobot):
         self.OperationalPoints.append('chest')
         self.OperationalPointsMap = OperationalPointsMap
 
-        self.dynamic = Dynamic(self.name + "_dynamic")
+        self.dynamic = DynamicPinocchio(self.name + "_dynamic")
         self.dynamic.setModel(pinocchio_model)
         self.dynamic.setData(pinocchio_data)
         self.dimension = self.dynamic.getDimension()

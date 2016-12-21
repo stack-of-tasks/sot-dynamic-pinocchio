@@ -7,7 +7,7 @@
 #
 
 import xml.dom.minidom as dom
-from dynamic_graph.sot.dynamics_pinocchio.dynamic import Dynamic
+from dynamic_graph.sot.dynamics_pinocchio.dynamic import DynamicPinocchio
 from dynamic_graph.sot.tools.se3 import SE3, R3, SO3
 
 class Parser (object):
@@ -56,7 +56,7 @@ class Parser (object):
     robotTag = "HPP_HUMANOID_ROBOT"
 
     def __init__(self, entityName, filename):
-        self.entity = Dynamic(entityName)
+        self.entity = DynamicPinocchio(entityName)
         self.filename = filename
 
     def parse (self):
