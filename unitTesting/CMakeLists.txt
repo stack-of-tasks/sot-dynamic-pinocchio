@@ -1,17 +1,17 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 #
-# This file is part of sot-dynamic.
-# sot-dynamic is free software: you can redistribute it and/or
+# This file is part of sot-dynamic-pinocchio.
+# sot-dynamic-pinocchio is free software: you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
 # as published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# sot-dynamic is distributed in the hope that it will be useful, but
+# sot-dynamic-pinocchio is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
-# sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
+# sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 ADD_DEFINITIONS(-DDEBUG=2)
 

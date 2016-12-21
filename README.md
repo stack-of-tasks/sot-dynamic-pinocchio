@@ -2,8 +2,8 @@ sot-dynamic-pinocchio
 Encapsulate Pinocchio in SoT
 ===========
 
-[![Build Status](https://travis-ci.org/proyan/sot-dynamic.png?branch=master)](https://travis-ci.org/proyan/sot-dynamic)
-[![Coverage Status](https://coveralls.io/repos/proyan/sot-dynamic/badge.png)](https://coveralls.io/r/proyan/sot-dynamic)
+[![Build Status](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio.png?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio)
+[![Coverage Status](https://coveralls.io/repos/stack-of-tasks/sot-dynamic-pinocchio/badge.png)](https://coveralls.io/r/stack-of-tasks/sot-dynamic-pinocchio)
 
 This software provides robot dynamic computation for dynamic-graph
 by using pinocchio.
@@ -38,7 +38,7 @@ have to be available on your machine.
    - usual compilation tools (GCC/G++, make, etc.)
 
 
-[dynamic-graph]: http://github.com/proyan/dynamic-graph
+[dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
 [pinocchio]: http://github.com/stack-of-tasks/pinocchio
-[sot-core]: http://github.com/proyan/sot-core
+[sot-core]: http://github.com/stack-of-tasks/sot-core
 >>>>>>> devel

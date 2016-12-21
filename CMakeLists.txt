@@ -1,17 +1,17 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 #
-# This file is part of sot-dynamic.
-# sot-dynamic is free software: you can redistribute it and/or
+# This file is part of sot-dynamic-pinocchio.
+# sot-dynamic-pinocchio is free software: you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
 # as published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
 #
-# sot-dynamic is distributed in the hope that it will be useful, but
+# sot-dynamic-pinocchio is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
-# sot-dynamic. If not, see <http://www.gnu.org/licenses/>.
+# sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -24,7 +24,7 @@ INCLUDE(cmake/cpack.cmake)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
-SET(PROJECT_URL "https://github.com/proyan/sot-dynamic/tree/topic/sot-pinocchio")
+SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 
@@ -64,7 +64,7 @@ LIST(APPEND plugins dynamic)
 
 LIST(APPEND LOGGING_WATCHED_TARGETS ${plugins})
 
-# Add dependency toward sot-dynamic library in pkg-config file.
+# Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
 # Search for dependencies.
