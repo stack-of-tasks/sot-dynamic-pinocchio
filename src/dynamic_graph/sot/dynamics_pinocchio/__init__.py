@@ -1,4 +1,4 @@
-from dynamic import Dynamic as DynamicOld
+from dynamic import DynamicPinocchio as DynamicCpp
 from angle_estimator import AngleEstimator
 from zmp_from_forces import ZmpFromForces
 import numpy as np
@@ -6,9 +6,9 @@ from numpy import arctan2, arcsin, sin, cos, sqrt
 
 #DynamicOld = Dynamic
 
-class Dynamic (DynamicOld):
+class DynamicPinocchio (DynamicCpp):
     def __init__(self, name):
-        DynamicOld.__init__(self, name)
+        DynamicCpp.__init__(self, name)
         self.model = None
         self.data = None
 
