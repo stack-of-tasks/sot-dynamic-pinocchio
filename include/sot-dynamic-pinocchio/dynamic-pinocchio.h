@@ -137,15 +137,19 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::SignalPtr<dg::Vector,int> jointAccelerationSIN;
   dg::SignalPtr<dg::Vector,int> freeFlyerAccelerationSIN;
   
+  dg::SignalTimeDependent<dg::Vector,int> pinocchioPosSINTERN;
+  dg::SignalTimeDependent<dg::Vector,int> pinocchioVelSINTERN;
+  dg::SignalTimeDependent<dg::Vector,int> pinocchioAccSINTERN;
+
   dg::SignalTimeDependent<Dummy,int> newtonEulerSINTERN;
   dg::SignalTimeDependent<Dummy,int> jacobiansSINTERN;
   dg::SignalTimeDependent<Dummy,int> forwardKinematicsSINTERN;
   dg::SignalTimeDependent<Dummy,int> ccrbaSINTERN;
 
-  int& computeNewtonEuler( int& dummy,int time );
-  int& computeForwardKinematics( int& dummy,int time );
-  int& computeCcrba( int& dummy,int time );
-  int& computeJacobians( int& dummy,int time );
+  int& computeNewtonEuler(int& dummy,const int& time );
+  int& computeForwardKinematics(int& dummy,const int& time );
+  int& computeCcrba( int& dummy,const int& time );
+  int& computeJacobians( int& dummy,const int& time );
   
   dg::SignalTimeDependent<dg::Vector,int> zmpSOUT;
   dg::SignalTimeDependent<dg::Matrix,int> JcomSOUT;
@@ -193,50 +197,50 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getLowerPositionLimits(dg::Vector& res,const int&);
+  dg::Vector& getLowerPositionLimits(dg::Vector& res,const int&) const ;
 
   /// \brief Get joint position upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getUpperPositionLimits(dg::Vector& res,const int&);
+  dg::Vector& getUpperPositionLimits(dg::Vector& res,const int&) const;
 
   /// \brief Get joint velocity upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getUpperVelocityLimits(dg::Vector& res,const int&);
+  dg::Vector& getUpperVelocityLimits(dg::Vector& res,const int&) const;
 
   /// \brief Get joint effort upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getMaxEffortLimits(dg::Vector& res,const int&);
+  dg::Vector& getMaxEffortLimits(dg::Vector& res,const int&) const;
 
 
   //  dg::Vector& getAnklePositionInFootFrame() const;
 
     protected:
-  dg::Matrix& computeGenericJacobian(bool isFrame,
-				     int jointId,
-				     dg::Matrix& res,int time );
-  dg::Matrix& computeGenericEndeffJacobian(bool isFrame,
-					   int jointId,
-					   dg::Matrix& res,int time );
-  MatrixHomogeneous& computeGenericPosition(bool isFrame, 
-					    int jointId,
-					    MatrixHomogeneous& res,int time );
-  dg::Vector& computeGenericVelocity(int jointId,dg::Vector& res,int time );
-  dg::Vector& computeGenericAcceleration(int jointId,dg::Vector& res,int time );
+  dg::Matrix& computeGenericJacobian(const bool isFrame,
+				     const int jointId,
+				     dg::Matrix& res,const int& time );
+  dg::Matrix& computeGenericEndeffJacobian(const bool isFrame,
+					   const int jointId,
+					   dg::Matrix& res,const int& time );
+  MatrixHomogeneous& computeGenericPosition(const bool isFrame, 
+					    const int jointId,
+					    MatrixHomogeneous& res,const int& time );
+  dg::Vector& computeGenericVelocity(const int jointId,dg::Vector& res,const int& time );
+  dg::Vector& computeGenericAcceleration(const int jointId,dg::Vector& res,const int& time );
 
-  dg::Vector& computeZmp( dg::Vector& res,int time );
-  dg::Vector& computeMomenta( dg::Vector &res, int time);
-  dg::Vector& computeAngularMomentum( dg::Vector &res, int time);
-  dg::Matrix& computeJcom( dg::Matrix& res,int time );
-  dg::Vector& computeCom( dg::Vector& res,int time );
-  dg::Matrix& computeInertia( dg::Matrix& res,int time );
-  dg::Matrix& computeInertiaReal( dg::Matrix& res,int time );
-  double& computeFootHeight( double& res,int time );
+  dg::Vector& computeZmp( dg::Vector& res,const int& time );
+  dg::Vector& computeMomenta( dg::Vector &res,const  int& time);
+  dg::Vector& computeAngularMomentum( dg::Vector &res,const  int& time);
+  dg::Matrix& computeJcom( dg::Matrix& res,const int& time );
+  dg::Vector& computeCom( dg::Vector& res,const int& time );
+  dg::Matrix& computeInertia( dg::Matrix& res,const int& time );
+  dg::Matrix& computeInertiaReal( dg::Matrix& res,const int& time );
+  double& computeFootHeight( double& res,const int& time );
 
   dg::Vector& computeTorqueDrift( dg::Vector& res,const int& time );
 
@@ -252,9 +256,9 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
  private:
   /// \brief map of joints in construction.
   /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr to pinocchio Joint) 
-  dg::Vector getPinocchioPos(int);
-  dg::Vector getPinocchioVel(int);
-  dg::Vector getPinocchioAcc(int);
+  dg::Vector& getPinocchioPos(dg::Vector& q,const int& time);
+  dg::Vector& getPinocchioVel(dg::Vector& v, const int& time);
+  dg::Vector& getPinocchioAcc(dg::Vector& a, const int&time);
   
   //\brief Index list for the first dof of (spherical joints)/ (spherical part of free-flyer joint).
   std::vector<int> sphericalJoints;
