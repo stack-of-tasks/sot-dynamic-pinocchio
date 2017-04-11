@@ -138,8 +138,14 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::SignalPtr<dg::Vector,int> freeFlyerAccelerationSIN;
   
   dg::SignalTimeDependent<Dummy,int> newtonEulerSINTERN;
+  dg::SignalTimeDependent<Dummy,int> jacobiansSINTERN;
+  dg::SignalTimeDependent<Dummy,int> forwardKinematicsSINTERN;
+  dg::SignalTimeDependent<Dummy,int> ccrbaSINTERN;
 
   int& computeNewtonEuler( int& dummy,int time );
+  int& computeForwardKinematics( int& dummy,int time );
+  int& computeCcrba( int& dummy,int time );
+  int& computeJacobians( int& dummy,int time );
   
   dg::SignalTimeDependent<dg::Vector,int> zmpSOUT;
   dg::SignalTimeDependent<dg::Matrix,int> JcomSOUT;

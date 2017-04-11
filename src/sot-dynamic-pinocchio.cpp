@@ -59,23 +59,33 @@ DynamicPinocchio( const std::string & name)
 		       <<jointVelocitySIN<<freeFlyerVelocitySIN
 		       <<jointAccelerationSIN<<freeFlyerAccelerationSIN,
 		       "sotDynamic("+name+")::intern(dummy)::newtoneuler" )
-   
+  ,jacobiansSINTERN( boost::bind(&DynamicPinocchio::computeJacobians,this,_1, _2),
+                     jointPositionSIN<<freeFlyerPositionSIN,
+                     "sotDynamic("+name+")::intern(dummy)::computeJacobians" )
+  ,forwardKinematicsSINTERN( boost::bind(&DynamicPinocchio::computeForwardKinematics,this,_1, _2),
+                             jointPositionSIN<<freeFlyerPositionSIN
+                             <<jointVelocitySIN<<freeFlyerVelocitySIN
+                             <<jointAccelerationSIN<<freeFlyerAccelerationSIN,
+                             "sotDynamic("+name+")::intern(dummy)::computeForwardKinematics" )
+  ,ccrbaSINTERN( boost::bind(&DynamicPinocchio::computeCcrba,this,_1,_2),
+                 jointPositionSIN<<freeFlyerPositionSIN
+                 <<jointVelocitySIN<<freeFlyerVelocitySIN,
+                 "sotDynamic("+name+")::intern(dummy)::computeCcrba" )
   ,zmpSOUT( boost::bind(&DynamicPinocchio::computeZmp,this,_1,_2),
 	    newtonEulerSINTERN,
 	    "sotDynamic("+name+")::output(vector)::zmp" )
   ,JcomSOUT( boost::bind(&DynamicPinocchio::computeJcom,this,_1,_2),
-	     newtonEulerSINTERN,
+	     jointPositionSIN<<freeFlyerPositionSIN,
 	     "sotDynamic("+name+")::output(matrix)::Jcom" )
   ,comSOUT( boost::bind(&DynamicPinocchio::computeCom,this,_1,_2),
-	    newtonEulerSINTERN,
+	    forwardKinematicsSINTERN,
 	    "sotDynamic("+name+")::output(vector)::com" )
   ,inertiaSOUT( boost::bind(&DynamicPinocchio::computeInertia,this,_1,_2),
-		newtonEulerSINTERN,
+		jointPositionSIN<<freeFlyerPositionSIN,
 		"sotDynamic("+name+")::output(matrix)::inertia" )
   ,footHeightSOUT( boost::bind(&DynamicPinocchio::computeFootHeight,this,_1,_2),
-		   newtonEulerSINTERN,
+		   jointPositionSIN<<freeFlyerPositionSIN,
 		   "sotDynamic("+name+")::output(double)::footHeight" )
-   
   ,upperJlSOUT( boost::bind(&DynamicPinocchio::getUpperPositionLimits,this,_1,_2),
 		sotNOSIGNAL,
 		"sotDynamic("+name+")::output(vector)::upperJl" )
@@ -98,10 +108,10 @@ DynamicPinocchio( const std::string & name)
 		    inertiaSOUT << gearRatioSOUT << inertiaRotorSOUT,
 		    "sotDynamic("+name+")::output(matrix)::inertiaReal" )
   ,MomentaSOUT( boost::bind(&DynamicPinocchio::computeMomenta,this,_1,_2),
-		inertiaSOUT,
+		ccrbaSINTERN,
 		"sotDynamic("+name+")::output(vector)::momenta" )
   ,AngularMomentumSOUT( boost::bind(&DynamicPinocchio::computeAngularMomentum,this,_1,_2),
-			inertiaSOUT,
+			ccrbaSINTERN,
 			"sotDynamic("+name+")::output(vector)::angularmomentum" )
   ,dynamicDriftSOUT( boost::bind(&DynamicPinocchio::computeTorqueDrift,this,_1,_2),
 		     newtonEulerSINTERN,
@@ -433,14 +443,14 @@ createJacobianSignal( const std::string& signame, const std::string& jointName )
     long int frameId = m_model->getFrameId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericJacobian,this,true,frameId,_1,_2),
-	newtonEulerSINTERN,
+	jacobiansSINTERN,
 	"sotDynamic("+name+")::output(matrix)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericJacobian,this,false,jointId,_1,_2),
-	newtonEulerSINTERN,
+	jacobiansSINTERN,
 	"sotDynamic("+name+")::output(matrix)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
@@ -462,14 +472,14 @@ createEndeffJacobianSignal( const std::string& signame, const std::string& joint
     long int frameId = m_model->getFrameId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,true,frameId,_1,_2),
-	newtonEulerSINTERN,
+	jacobiansSINTERN,
 	"sotDynamic("+name+")::output(matrix)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName); 
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,false,jointId,_1,_2),
-	newtonEulerSINTERN,
+	jacobiansSINTERN,
 	"sotDynamic("+name+")::output(matrix)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
@@ -490,14 +500,14 @@ createPositionSignal( const std::string& signame, const std::string& jointName)
     long int frameId = m_model->getFrameId(jointName);
     sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
       ( boost::bind(&DynamicPinocchio::computeGenericPosition,this,true,frameId,_1,_2),
-	newtonEulerSINTERN,
+	forwardKinematicsSINTERN,
 	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName); 
     sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
       ( boost::bind(&DynamicPinocchio::computeGenericPosition,this,false,jointId,_1,_2),
-	newtonEulerSINTERN,
+	forwardKinematicsSINTERN,
 	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
@@ -519,7 +529,7 @@ createVelocitySignal( const std::string& signame,const std::string& jointName )
   SignalTimeDependent< dg::Vector,int > * sig
     = new SignalTimeDependent< dg::Vector,int >
     ( boost::bind(&DynamicPinocchio::computeGenericVelocity,this,jointId,_1,_2),
-      newtonEulerSINTERN,
+      forwardKinematicsSINTERN,
       "sotDynamic("+name+")::output(dg::Vector)::"+signame );
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
@@ -537,7 +547,7 @@ createAccelerationSignal( const std::string& signame, const std::string& jointNa
   dg::SignalTimeDependent< dg::Vector,int > * sig
     = new dg::SignalTimeDependent< dg::Vector,int >
     ( boost::bind(&DynamicPinocchio::computeGenericAcceleration,this,jointId,_1,_2),
-      newtonEulerSINTERN,
+      forwardKinematicsSINTERN,
       "sotDynamic("+name+")::output(matrixHomo)::"+signame );
 
   genericSignalRefs.push_back( sig );
@@ -546,9 +556,6 @@ createAccelerationSignal( const std::string& signame, const std::string& jointNa
   sotDEBUGOUT(15);
   return *sig;
 }
-
-
-
 
 void DynamicPinocchio::
 destroyJacobianSignal( const std::string& signame )
@@ -680,24 +687,57 @@ dg::Vector& DynamicPinocchio::computeZmp( dg::Vector& res,int time )
 }
 
 //In world coordinates
+
+
+//Updates the jacobian matrix in m_data
+int& DynamicPinocchio::computeJacobians(int& dummy, int time) {
+  sotDEBUGIN(25);
+  se3::computeJacobians(*m_model,*m_data, this->getPinocchioPos(time));
+  sotDEBUG(25)<<"Jacobians updated"<<std::endl;
+  sotDEBUGOUT(25);
+  return dummy;
+}
+
+int& DynamicPinocchio::computeForwardKinematics(int& dummy, int time) {
+  sotDEBUGIN(25);
+  se3::forwardKinematics(*m_model, *m_data,
+                         this->getPinocchioPos(time),
+                         this->getPinocchioVel(time),
+                         this->getPinocchioAcc(time));
+  sotDEBUG(25)<<"Kinematics updated"<<std::endl;
+  sotDEBUGOUT(25);
+  return dummy;
+}
+
+int& DynamicPinocchio::computeCcrba(int& dummy, int time) {
+  sotDEBUGIN(25);
+  se3::ccrba(*m_model,*m_data,
+             this->getPinocchioPos(time),
+             this->getPinocchioVel(time));
+  sotDEBUG(25)<<"Inertia and Momentum updated"<<std::endl;
+  sotDEBUGOUT(25);
+  return dummy;
+}
+
 dg::Matrix& DynamicPinocchio::
 computeGenericJacobian(bool isFrame, int jointId, dg::Matrix& res,int time )
 {
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
-  newtonEulerSINTERN(time);
-  res.resize(6,m_model->nv);
-  se3::computeJacobians(*m_model,*m_data,this->getPinocchioPos(time));
+  if(res.rows()!=6 && res.cols()!=m_model->nv)
+    res.resize(6,m_model->nv);
+  jacobiansSINTERN(time);
 
-  se3::Data::Matrix6x m_output = Eigen::MatrixXd::Zero(6,m_model->nv);
-  //Computes Jacobian in world coordinates. 
+  //TODO: Find a way to remove tmp object
+  se3::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
+  //Computes Jacobian in world coordinates.
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
+    //se3::framesForwardKinematics(*m_model,*m_data);
+    se3::getFrameJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
   }
-  else se3::getJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
-  res = m_output;
+  else se3::getJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+  res = tmp;
   sotDEBUGOUT(25);
   return res;
 }
@@ -708,23 +748,29 @@ computeGenericEndeffJacobian(bool isFrame, int jointId,dg::Matrix& res,int time 
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
-  newtonEulerSINTERN(time);
-  res.resize(6,m_model->nv);
-  //In local coordinates.
-  se3::computeJacobians(*m_model,*m_data,this->getPinocchioPos(time));
-  se3::Data::Matrix6x m_output = Eigen::MatrixXd::Zero(6,m_model->nv);
-  std::string temp;
+  if(res.rows()!=6 && res.cols()!=m_model->nv)
+    res.resize(6,m_model->nv);
+  jacobiansSINTERN(time);
+
+  //TODO: Find a way to remove tmp object
+  se3::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
+  //std::string temp;
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
-    temp = m_model->frames.at((se3::Model::Index)jointId).name;
+    //se3::framesForwardKinematics(*m_model,*m_data);
+    se3::getFrameJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    sotDEBUG(25) << "EndEffJacobian for "
+                 << m_model->frames.at((se3::Model::Index)jointId).name
+                 <<" is "<<tmp<<std::endl;
   }
   else {
-    temp = m_model->getJointName((se3::Model::Index)jointId);
-    se3::getJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,m_output);
+    //temp = m_model->getJointName((se3::Model::Index)jointId);
+    se3::getJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    sotDEBUG(25) << "EndEffJacobian for "
+                 << m_model->getJointName((se3::Model::Index)jointId)
+                 <<" is "<<tmp<<std::endl;
   }
-  res = m_output;
-  sotDEBUG(25) << "EndEffJacobian for "<<temp<<" is "<<m_output<<std::endl;
+  res = tmp;
+
   sotDEBUGOUT(25);
   return res;
 }
@@ -734,8 +780,8 @@ computeGenericPosition(bool isFrame, int jointId, MatrixHomogeneous& res, int ti
 {
   sotDEBUGIN(25);
   assert(m_data);
-  newtonEulerSINTERN(time);
   std::string temp;
+  forwardKinematicsSINTERN(time);
   if(isFrame){
     se3::framesForwardKinematics(*m_model,*m_data);
     res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
@@ -755,9 +801,9 @@ computeGenericVelocity( int jointId, dg::Vector& res,int time )
 {
   sotDEBUGIN(25);
   assert(m_data);
-  newtonEulerSINTERN(time);
   res.resize(6);
-  se3::Motion aRV = m_data->v[jointId];
+  forwardKinematicsSINTERN(time);
+  const se3::Motion& aRV = m_data->v[jointId];
   res<<aRV.linear(),aRV.angular();
   sotDEBUGOUT(25);
   return res;
@@ -768,9 +814,9 @@ computeGenericAcceleration( int jointId ,dg::Vector& res,int time )
 {
   sotDEBUGIN(25);
   assert(m_data);
-  newtonEulerSINTERN(time);
   res.resize(6);
-  se3::Motion aRA = m_data->a[jointId];
+  forwardKinematicsSINTERN(time);
+  const se3::Motion& aRA = m_data->a[jointId];
   res<<aRA.linear(),aRA.angular();
   sotDEBUGOUT(25);
   return res;
@@ -783,10 +829,9 @@ computeNewtonEuler( int& dummy,int time )
   assert(m_model);
   assert(m_data);
 
-  
-  const Eigen::VectorXd q=getPinocchioPos(time);
-  const Eigen::VectorXd v=getPinocchioVel(time);
-  const Eigen::VectorXd a=getPinocchioAcc(time);
+  const Eigen::VectorXd& q=getPinocchioPos(time);
+  const Eigen::VectorXd& v=getPinocchioVel(time);
+  const Eigen::VectorXd& a=getPinocchioAcc(time);
   se3::rnea(*m_model,*m_data,q,v,a);
   
   sotDEBUG(1)<< "pos = " <<q <<std::endl;
@@ -802,8 +847,7 @@ computeJcom( dg::Matrix& Jcom,int time )
 {
   
   sotDEBUGIN(25);
-  newtonEulerSINTERN(time);
-  const Eigen::VectorXd q=getPinocchioPos(time);
+  const Eigen::VectorXd& q=getPinocchioPos(time);
 
   Jcom = se3::jacobianCenterOfMass(*m_model, *m_data,
 				   q, false);
@@ -816,9 +860,9 @@ computeCom( dg::Vector& com,int time )
 {
 
   sotDEBUGIN(25);
-  newtonEulerSINTERN(time);
-  const Eigen::VectorXd q=getPinocchioPos(time);
-  com = se3::centerOfMass(*m_model,*m_data,q,false,true);
+  const Eigen::VectorXd& q=getPinocchioPos(time);
+  forwardKinematicsSINTERN(time);
+  com = se3::centerOfMass(*m_model,*m_data,q,false,false);
   sotDEBUGOUT(25);
   return com;
 }
@@ -827,12 +871,10 @@ dg::Matrix& DynamicPinocchio::
 computeInertia( dg::Matrix& res,int time )
 {
     sotDEBUGIN(25);
-    newtonEulerSINTERN(time);
-    //TODO: USE CCRBA
-    dg::Matrix upperInertiaMatrix = se3::crba(*m_model,
-					      *m_data,this->getPinocchioPos(time)); 
-    res = upperInertiaMatrix;
-    res.triangularView<Eigen::StrictlyLower>() = upperInertiaMatrix.transpose().triangularView<Eigen::StrictlyLower>();
+    res = se3::crba(*m_model,
+                    *m_data,this->getPinocchioPos(time)); 
+    res.triangularView<Eigen::StrictlyLower>() =
+      res.transpose().triangularView<Eigen::StrictlyLower>();
     sotDEBUGOUT(25);
     return res;
 }
@@ -860,7 +902,6 @@ computeFootHeight (double &res , int time)
   //Ankle position in local foot frame
   //TODO: Confirm that it is in the foot frame
   sotDEBUGIN(25);
-  newtonEulerSINTERN(time);
   if(!m_model->existJointName("r_sole_joint")) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
 			       "Robot has no joint corresponding to rigthFoot");
@@ -887,7 +928,7 @@ dg::Vector& DynamicPinocchio::
 computeMomenta(dg::Vector & Momenta, int time)
 {
   sotDEBUGIN(25);
-  inertiaSOUT(time);
+  ccrbaSINTERN(time);
   if (Momenta.size()!=6)
     Momenta.resize(6);
 
@@ -901,7 +942,7 @@ dg::Vector& DynamicPinocchio::
 computeAngularMomentum(dg::Vector & Momenta, int time)
 {
   sotDEBUGIN(25);
-  inertiaSOUT(time);
+  ccrbaSINTERN(time);
 
   if (Momenta.size()!=3)
     Momenta.resize(3);
