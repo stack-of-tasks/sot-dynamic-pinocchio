@@ -209,7 +209,7 @@ class AbstractHumanoidRobot (object):
 
     def initializeOpPoints(self):
         for op in self.OperationalPoints:
-            self.dynamic.createOpPoint(self.OperationalPointsMap[op], self.OperationalPointsMap[op])
+            self.dynamic.createOpPoint(op, self.OperationalPointsMap[op])
 
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
