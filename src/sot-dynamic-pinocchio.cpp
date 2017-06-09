@@ -870,9 +870,9 @@ computeCom( dg::Vector& com,const int& time )
 {
 
   sotDEBUGIN(25);
-  const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   forwardKinematicsSINTERN(time);
-  com = se3::centerOfMass(*m_model,*m_data,q,false,false);
+  se3::centerOfMass(*m_model,*m_data,false);
+  com = m_data->com[0];
   sotDEBUGOUT(25);
   return com;
 }
