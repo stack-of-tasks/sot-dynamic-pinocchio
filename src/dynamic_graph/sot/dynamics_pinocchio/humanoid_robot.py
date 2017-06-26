@@ -263,7 +263,7 @@ class AbstractHumanoidRobot (object):
         else:
             self.dynamic.acceleration.value = self.dimension*(0.,)
 
-        self.initializeOpPoints()
+        #self.initializeOpPoints()
 
         #TODO: hand parameters through srdf --- additional frames ---
         #self.frames = dict()
