@@ -47,80 +47,80 @@ DynamicPinocchio( const std::string & name)
   ,m_model(NULL)
   ,m_data(NULL)
 
-  ,jointPositionSIN(NULL,"sotDynamic("+name+")::input(vector)::position")
-  ,freeFlyerPositionSIN(NULL,"sotDynamic("+name+")::input(vector)::ffposition")
-  ,jointVelocitySIN(NULL,"sotDynamic("+name+")::input(vector)::velocity")
-  ,freeFlyerVelocitySIN(NULL,"sotDynamic("+name+")::input(vector)::ffvelocity")
-  ,jointAccelerationSIN(NULL,"sotDynamic("+name+")::input(vector)::acceleration")
-  ,freeFlyerAccelerationSIN(NULL,"sotDynamic("+name+")::input(vector)::ffacceleration")
+  ,jointPositionSIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::position")
+  ,freeFlyerPositionSIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::ffposition")
+  ,jointVelocitySIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::velocity")
+  ,freeFlyerVelocitySIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::ffvelocity")
+  ,jointAccelerationSIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::acceleration")
+  ,freeFlyerAccelerationSIN(NULL,"sotDynamicPinocchio("+name+")::input(vector)::ffacceleration")
 
   ,pinocchioPosSINTERN( boost::bind(&DynamicPinocchio::getPinocchioPos,this,_1, _2),
                         jointPositionSIN<<freeFlyerPositionSIN,
-                        "sotDynamic("+name+")::intern(dummy)::pinocchioPos" )
+                        "sotDynamicPinocchio("+name+")::intern(dummy)::pinocchioPos" )
   ,pinocchioVelSINTERN( boost::bind(&DynamicPinocchio::getPinocchioVel,this,_1, _2),
                          jointVelocitySIN<<freeFlyerVelocitySIN,
-                         "sotDynamic("+name+")::intern(dummy)::pinocchioVel" )   
+                         "sotDynamicPinocchio("+name+")::intern(dummy)::pinocchioVel" )   
   ,pinocchioAccSINTERN( boost::bind(&DynamicPinocchio::getPinocchioAcc,this,_1, _2),
                         jointAccelerationSIN<<freeFlyerAccelerationSIN,
-                        "sotDynamic("+name+")::intern(dummy)::pinocchioAcc" )
+                        "sotDynamicPinocchio("+name+")::intern(dummy)::pinocchioAcc" )
 
   ,newtonEulerSINTERN( boost::bind(&DynamicPinocchio::computeNewtonEuler,this,_1,_2),
                        pinocchioPosSINTERN<<pinocchioVelSINTERN<<pinocchioAccSINTERN,
-		       "sotDynamic("+name+")::intern(dummy)::newtoneuler" )
+		       "sotDynamicPinocchio("+name+")::intern(dummy)::newtoneuler" )
   ,jacobiansSINTERN( boost::bind(&DynamicPinocchio::computeJacobians,this,_1, _2),
                      pinocchioPosSINTERN,
-                     "sotDynamic("+name+")::intern(dummy)::computeJacobians" )
+                     "sotDynamicPinocchio("+name+")::intern(dummy)::computeJacobians" )
   ,forwardKinematicsSINTERN( boost::bind(&DynamicPinocchio::computeForwardKinematics,this,_1, _2),
                              pinocchioPosSINTERN<<pinocchioVelSINTERN<<pinocchioAccSINTERN,
-                             "sotDynamic("+name+")::intern(dummy)::computeForwardKinematics" )
+                             "sotDynamicPinocchio("+name+")::intern(dummy)::computeForwardKinematics" )
   ,ccrbaSINTERN( boost::bind(&DynamicPinocchio::computeCcrba,this,_1,_2),
                  pinocchioPosSINTERN<<pinocchioVelSINTERN,
-                 "sotDynamic("+name+")::intern(dummy)::computeCcrba" )
+                 "sotDynamicPinocchio("+name+")::intern(dummy)::computeCcrba" )
   ,zmpSOUT( boost::bind(&DynamicPinocchio::computeZmp,this,_1,_2),
 	    newtonEulerSINTERN,
-	    "sotDynamic("+name+")::output(vector)::zmp" )
+	    "sotDynamicPinocchio("+name+")::output(vector)::zmp" )
   ,JcomSOUT( boost::bind(&DynamicPinocchio::computeJcom,this,_1,_2),
              pinocchioPosSINTERN,
-	     "sotDynamic("+name+")::output(matrix)::Jcom" )
+	     "sotDynamicPinocchio("+name+")::output(matrix)::Jcom" )
   ,comSOUT( boost::bind(&DynamicPinocchio::computeCom,this,_1,_2),
 	    forwardKinematicsSINTERN,
-	    "sotDynamic("+name+")::output(vector)::com" )
+	    "sotDynamicPinocchio("+name+")::output(vector)::com" )
   ,inertiaSOUT( boost::bind(&DynamicPinocchio::computeInertia,this,_1,_2),
                 pinocchioPosSINTERN,
-		"sotDynamic("+name+")::output(matrix)::inertia" )
+		"sotDynamicPinocchio("+name+")::output(matrix)::inertia" )
   ,footHeightSOUT( boost::bind(&DynamicPinocchio::computeFootHeight,this,_1,_2),
                    pinocchioPosSINTERN,
-		   "sotDynamic("+name+")::output(double)::footHeight" )
+		   "sotDynamicPinocchio("+name+")::output(double)::footHeight" )
   ,upperJlSOUT( boost::bind(&DynamicPinocchio::getUpperPositionLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::upperJl" )
+		"sotDynamicPinocchio("+name+")::output(vector)::upperJl" )
    
   ,lowerJlSOUT( boost::bind(&DynamicPinocchio::getLowerPositionLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::lowerJl" )
+		"sotDynamicPinocchio("+name+")::output(vector)::lowerJl" )
    
   ,upperVlSOUT( boost::bind(&DynamicPinocchio::getUpperVelocityLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::upperVl" )
+		"sotDynamicPinocchio("+name+")::output(vector)::upperVl" )
    
   ,upperTlSOUT( boost::bind(&DynamicPinocchio::getMaxEffortLimits,this,_1,_2),
 		sotNOSIGNAL,
-		"sotDynamic("+name+")::output(vector)::upperTl" )
+		"sotDynamicPinocchio("+name+")::output(vector)::upperTl" )
    
-  ,inertiaRotorSOUT( "sotDynamic("+name+")::output(matrix)::inertiaRotor" )
-  ,gearRatioSOUT( "sotDynamic("+name+")::output(matrix)::gearRatio" )
+  ,inertiaRotorSOUT( "sotDynamicPinocchio("+name+")::output(matrix)::inertiaRotor" )
+  ,gearRatioSOUT( "sotDynamicPinocchio("+name+")::output(matrix)::gearRatio" )
   ,inertiaRealSOUT( boost::bind(&DynamicPinocchio::computeInertiaReal,this,_1,_2),
 		    inertiaSOUT << gearRatioSOUT << inertiaRotorSOUT,
-		    "sotDynamic("+name+")::output(matrix)::inertiaReal" )
+		    "sotDynamicPinocchio("+name+")::output(matrix)::inertiaReal" )
   ,MomentaSOUT( boost::bind(&DynamicPinocchio::computeMomenta,this,_1,_2),
 		ccrbaSINTERN,
-		"sotDynamic("+name+")::output(vector)::momenta" )
+		"sotDynamicPinocchio("+name+")::output(vector)::momenta" )
   ,AngularMomentumSOUT( boost::bind(&DynamicPinocchio::computeAngularMomentum,this,_1,_2),
 			ccrbaSINTERN,
-			"sotDynamic("+name+")::output(vector)::angularmomentum" )
+			"sotDynamicPinocchio("+name+")::output(vector)::angularmomentum" )
   ,dynamicDriftSOUT( boost::bind(&DynamicPinocchio::computeTorqueDrift,this,_1,_2),
                      newtonEulerSINTERN,
-                     "sotDynamic("+name+")::output(vector)::dynamicDrift" )
+                     "sotDynamicPinocchio("+name+")::output(vector)::dynamicDrift" )
 {
 
   sotDEBUGIN(5);
@@ -455,14 +455,14 @@ createJacobianSignal( const std::string& signame, const std::string& jointName )
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericJacobian,this,true,frameId,_1,_2),
 	jacobiansSINTERN,
-	"sotDynamic("+name+")::output(matrix)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericJacobian,this,false,jointId,_1,_2),
 	jacobiansSINTERN,
-	"sotDynamic("+name+")::output(matrix)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
 				  "Robot has no joint corresponding to " + jointName);
@@ -484,14 +484,14 @@ createEndeffJacobianSignal( const std::string& signame, const std::string& joint
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,true,frameId,_1,_2),
 	jacobiansSINTERN,
-	"sotDynamic("+name+")::output(matrix)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName); 
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
       ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,false,jointId,_1,_2),
 	jacobiansSINTERN,
-	"sotDynamic("+name+")::output(matrix)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
 				  "Robot has no joint corresponding to " + jointName);
@@ -512,14 +512,14 @@ createPositionSignal( const std::string& signame, const std::string& jointName)
     sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
       ( boost::bind(&DynamicPinocchio::computeGenericPosition,this,true,frameId,_1,_2),
 	forwardKinematicsSINTERN,
-	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrixHomo)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName); 
     sig = new dg::SignalTimeDependent< MatrixHomogeneous,int >
       ( boost::bind(&DynamicPinocchio::computeGenericPosition,this,false,jointId,_1,_2),
 	forwardKinematicsSINTERN,
-	"sotDynamic("+name+")::output(matrixHomo)::"+signame );
+	"sotDynamicPinocchio("+name+")::output(matrixHomo)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
 				  "Robot has no joint corresponding to " + jointName);
@@ -541,7 +541,7 @@ createVelocitySignal( const std::string& signame,const std::string& jointName )
     = new SignalTimeDependent< dg::Vector,int >
     ( boost::bind(&DynamicPinocchio::computeGenericVelocity,this,jointId,_1,_2),
       forwardKinematicsSINTERN,
-      "sotDynamic("+name+")::output(dg::Vector)::"+signame );
+      "sotDynamicPinocchio("+name+")::output(dg::Vector)::"+signame );
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
 
@@ -559,7 +559,7 @@ createAccelerationSignal( const std::string& signame, const std::string& jointNa
     = new dg::SignalTimeDependent< dg::Vector,int >
     ( boost::bind(&DynamicPinocchio::computeGenericAcceleration,this,jointId,_1,_2),
       forwardKinematicsSINTERN,
-      "sotDynamic("+name+")::output(matrixHomo)::"+signame );
+      "sotDynamicPinocchio("+name+")::output(matrixHomo)::"+signame );
 
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
