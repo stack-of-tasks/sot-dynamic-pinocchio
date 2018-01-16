@@ -62,14 +62,14 @@ FOREACH(test ${tests})
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
   
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
-    zmpreffromcom
-    force-compensation
+    dp-zmpreffromcom
+    dp-force-compensation
     #integrator-force-exact
-    mass-apparent
-    integrator-force-rk4
-    integrator-force
-    angle-estimator
-    waist-attitude-from-sensor
+    dp-mass-apparent
+    dp-integrator-force-rk4
+    dp-integrator-force
+    dp-angle-estimator
+    dp-waist-attitude-from-sensor
     ${LIBRARY_NAME}
     )
 
