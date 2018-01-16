@@ -745,9 +745,9 @@ computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res,co
   //Computes Jacobian in world coordinates.
   if(isFrame){
     //se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    se3::getJacobian<se3::LOCAL>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
   }
-  else se3::getJacobian<false>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+  else se3::getJacobian<se3::WORLD>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
   res = tmp;
   sotDEBUGOUT(25);
   return res;
@@ -768,14 +768,15 @@ computeGenericEndeffJacobian(const bool isFrame, const int jointId,dg::Matrix& r
   //std::string temp;
   if(isFrame){
     //se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    se3::getJacobian<se3::LOCAL>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
                  << m_model->frames.at((se3::Model::Index)jointId).name
                  <<" is "<<tmp<<std::endl;
   }
   else {
     //temp = m_model->getJointName((se3::Model::Index)jointId);
-    se3::getJacobian<true>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    se3::getJacobian<se3::WORLD>
+      (*m_model,*m_data,(se3::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
                  << m_model->getJointName((se3::Model::Index)jointId)
                  <<" is "<<tmp<<std::endl;

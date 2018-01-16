@@ -45,6 +45,7 @@
 #include <sot/core/matrix-geometry.hh>
 
 /* PINOCCHIO */
+#include <pinocchio/macros.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/joint/joint-variant.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
