@@ -12,6 +12,7 @@
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
+INCLUDE(../cmake/python.cmake)
 
 ADD_DEFINITIONS(-DDEBUG=2)
 
@@ -49,13 +50,17 @@ ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 #SET(sampleinitconfig
 #  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
+FINDPYTHON()
+
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
 FOREACH(test ${tests})
   SET(EXECUTABLE_NAME "${test}_exe")
   ADD_EXECUTABLE(${EXECUTABLE_NAME}
     ${test}.cpp)
-
+  MESSAGE("PYTHON_INCLUDE_PATH: ${PYTHON_INCLUDE_PATH}")
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+  
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
     zmpreffromcom
     force-compensation
@@ -71,7 +76,8 @@ FOREACH(test ${tests})
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} pinocchio)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
-
+  PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph-python)
+  
   IF(${test}_plugins_dependencies)
     ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
     TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
