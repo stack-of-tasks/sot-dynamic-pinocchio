@@ -18,7 +18,7 @@ ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
 test_constructor
-test_config
+#test_config
 #  dummy
 #  test_djj
 #  test_dyn
