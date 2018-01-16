@@ -39,7 +39,7 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 
 SETUP_PROJECT()
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.0")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.6")
 ADD_REQUIRED_DEPENDENCY("eigenpy")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
