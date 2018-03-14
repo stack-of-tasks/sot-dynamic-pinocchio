@@ -215,6 +215,12 @@ DynamicPinocchio( const std::string & name)
 				"string (signal name)","string (joint name)");
     addCommand("createVelocity",
 	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createVelocitySignal,docstring));
+ 
+    docstring = docCommandVoid2("Create an acceleration (vector) signal only for one joint.",
+				"string (signal name)","string (joint name)");
+    addCommand("createAcceleration",
+	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createAccelerationSignal,docstring));
+
   }
 
 
@@ -564,7 +570,7 @@ createAccelerationSignal( const std::string& signame, const std::string& jointNa
     = new dg::SignalTimeDependent< dg::Vector,int >
     ( boost::bind(&DynamicPinocchio::computeGenericAcceleration,this,jointId,_1,_2),
       forwardKinematicsSINTERN,
-      "sotDynamicPinocchio("+name+")::output(matrixHomo)::"+signame );
+      "sotDynamicPinocchio("+name+")::output(dg::Vector)::"+signame );
 
   genericSignalRefs.push_back( sig );
   signalRegistration( *sig );
@@ -1181,4 +1187,9 @@ void DynamicPinocchio::cmd_createVelocitySignal( const std::string& signalName,
           				const std::string& jointName )
 {
     createVelocitySignal(signalName, jointName);
+}
+void DynamicPinocchio::cmd_createAccelerationSignal( const std::string& signalName,
+          				const std::string& jointName )
+{
+    createAccelerationSignal(signalName, jointName);
 }
