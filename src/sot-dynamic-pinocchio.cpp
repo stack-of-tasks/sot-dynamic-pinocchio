@@ -210,6 +210,11 @@ DynamicPinocchio( const std::string & name)
 				"string (signal name)","string (joint name)");
     addCommand("createPosition",
 	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createPositionSignal,docstring));
+	  
+    docstring = docCommandVoid2("Create a velocity (vector) signal only for one joint.",
+				"string (signal name)","string (joint name)");
+    addCommand("createVelocity",
+	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createVelocitySignal,docstring));
   }
 
 
@@ -1171,4 +1176,9 @@ void DynamicPinocchio::cmd_createPositionSignal( const std::string& signalName,
 					const std::string& jointName )
 {
     createPositionSignal(signalName, jointName);
+}
+void DynamicPinocchio::cmd_createVelocitySignal( const std::string& signalName,
+          				const std::string& jointName )
+{
+    createVelocitySignal(signalName, jointName);
 }

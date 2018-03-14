@@ -253,6 +253,7 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   void cmd_createJacobianWorldSignal      ( const std::string& sig,const std::string& j );
   void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
   void cmd_createPositionSignal           ( const std::string& sig,const std::string& j );
+  void cmd_createVelocitySignal           ( const std::string& sig,const std::string& j );
 
  private:
   /// \brief map of joints in construction.
