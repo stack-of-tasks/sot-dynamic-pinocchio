@@ -14,8 +14,6 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
-INCLUDE(../custom_cmake/python.cmake)
-INCLUDE(../cmake/python.cmake)
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 # Verbosity level

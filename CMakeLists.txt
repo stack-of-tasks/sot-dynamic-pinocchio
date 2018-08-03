@@ -20,6 +20,8 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
+INCLUDE(custom_cmake/python.cmake)
+INCLUDE(cmake/python.cmake)
 
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 
@@ -71,6 +73,7 @@ PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 # Search for dependencies.
 # Boost
 SET(BOOST_COMPONENTS filesystem system unit_test_framework python)
+FINDPYTHON()
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
