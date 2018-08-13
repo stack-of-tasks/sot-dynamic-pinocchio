@@ -12,7 +12,6 @@
 # General Lesser Public License for more details.  You should have
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
-INCLUDE(../cmake/python.cmake)
 
 ADD_DEFINITIONS(-DDEBUG=2)
 
@@ -29,9 +28,6 @@ test_constructor
 #----------------------------------------------------
 # Install procedure for the urdf files
 #----------------------------------------------------
-
-FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/two_link.urdf
-  DESTINATION urdf)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
@@ -50,8 +46,6 @@ ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 #SET(sampleinitconfig
 #  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
-FINDPYTHON()
-
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
 FOREACH(test ${tests})
@@ -60,7 +54,7 @@ FOREACH(test ${tests})
     ${test}.cpp)
   MESSAGE("PYTHON_INCLUDE_PATH: ${PYTHON_INCLUDE_PATH}")
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-  
+
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME}
     dp-zmpreffromcom
     dp-force-compensation
@@ -77,7 +71,7 @@ FOREACH(test ${tests})
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph-python)
-  
+
   IF(${test}_plugins_dependencies)
     ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
     TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
@@ -89,7 +83,7 @@ FOREACH(test ${tests})
 
   IF (UNIX)
     SET(EXTRA_LD_LIBRARY_PATH $ENV{LD_LIBRARY_PATH})
-    SET_PROPERTY(TEST ${test} PROPERTY 
+    SET_PROPERTY(TEST ${test} PROPERTY
       ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}:${CMAKE_BINARY_DIR}/src:${BOOST_ROOT}/lib:${EXTRA_LD_LIBRARY_PATH}")
   ENDIF(UNIX)
 

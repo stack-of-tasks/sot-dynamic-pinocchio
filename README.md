@@ -2,8 +2,10 @@ sot-dynamic-pinocchio
 Encapsulate Pinocchio in SoT
 ===========
 
-[![Build Status](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio.png?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio)
-[![Coverage Status](https://coveralls.io/repos/stack-of-tasks/sot-dynamic-pinocchio/badge.png)](https://coveralls.io/r/stack-of-tasks/sot-dynamic-pinocchio)
+[![Building Status](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio.svg?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio)
+[![Pipeline status](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/commits/master)
+[![Coverage report](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/sot-dynamic-pinocchio/master/coverage/)
+
 
 This software provides robot dynamic computation for dynamic-graph
 by using pinocchio.
@@ -41,4 +43,3 @@ have to be available on your machine.
 [dynamic-graph]: http://github.com/stack-of-tasks/dynamic-graph
 [pinocchio]: http://github.com/stack-of-tasks/pinocchio
 [sot-core]: http://github.com/stack-of-tasks/sot-core
->>>>>>> devel

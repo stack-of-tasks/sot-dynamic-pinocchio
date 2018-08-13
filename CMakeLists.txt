@@ -20,6 +20,7 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
+INCLUDE(cmake/python.cmake)
 
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 
@@ -27,6 +28,7 @@ SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+SET(DOXYGEN_USE_MATHJAX YES)
 
 # Disable -Werror on Unix for now.
 SET(CXX_DISABLE_WERROR True)
@@ -62,15 +64,13 @@ SET(plugins
 SET(LIBRARY_NAME ${PROJECT_NAME})
 LIST(APPEND plugins dynamic)
 
-
-LIST(APPEND LOGGING_WATCHED_TARGETS ${plugins})
-
 # Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
 # Search for dependencies.
 # Boost
 SET(BOOST_COMPONENTS filesystem system unit_test_framework python)
+FINDPYTHON()
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 

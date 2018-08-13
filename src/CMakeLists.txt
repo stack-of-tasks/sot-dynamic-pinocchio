@@ -14,8 +14,6 @@
 # received a copy of the GNU Lesser General Public License along with
 # sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
-INCLUDE(../custom_cmake/python.cmake)
-INCLUDE(../cmake/python.cmake)
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 # Verbosity level
@@ -54,7 +52,7 @@ FOREACH(lib ${plugins})
   # build python submodule
   STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
-  SOT_DYNAMIC_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
+  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
     ${libname}
     sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
     )
