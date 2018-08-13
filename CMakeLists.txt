@@ -64,9 +64,6 @@ SET(plugins
 SET(LIBRARY_NAME ${PROJECT_NAME})
 LIST(APPEND plugins dynamic)
 
-
-LIST(APPEND LOGGING_WATCHED_TARGETS ${plugins})
-
 # Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
