@@ -42,12 +42,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (zmpreffromcom_EXPORTS)
 #    define SOTZMPREFFROMCOM_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTZMPREFFROMCOM_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTZMPREFFROMCOM_EXPORT
 #endif
@@ -69,7 +69,7 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
   double dt;
   const static double DT_DEFAULT; // = 5e-3; // 5ms
   double footHeight;
-  const static double FOOT_HEIGHT_DEFAULT; // = .105; 
+  const static double FOOT_HEIGHT_DEFAULT; // = .105;
 
  public: /* --- CONSTRUCTION --- */
 
@@ -85,13 +85,6 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
   dg::SignalPtr<dynamicgraph::Vector,int> comPositionSIN;
   dg::SignalPtr<dynamicgraph::Vector,int> dcomSIN;
   dg::SignalTimeDependent<dynamicgraph::Vector,int> zmprefSOUT;
-
-
- public: /* --- PARAMS --- */
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
-    
 
 };
 

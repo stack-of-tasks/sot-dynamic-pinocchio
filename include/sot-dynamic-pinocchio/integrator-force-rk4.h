@@ -44,12 +44,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (integrator_force_rk4_EXPORTS)
 #    define SOTINTEGRATORFORCERK4_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTINTEGRATORFORCERK4_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTINTEGRATORFORCERK4_EXPORT
 #endif
@@ -81,12 +81,6 @@ class SOTINTEGRATORFORCERK4_EXPORT IntegratorForceRK4
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeDerivativeRK4( dynamicgraph::Vector& res,
 				    const int& time );
-  
-/*  public: /\* --- PARAMS --- *\/ */
-/*   virtual void commandLine( const std::string& cmdLine, */
-/* 			    std::istringstream& cmdArgs, */
-/* 			    std::ostream& os ); */
-    
 
 };
 

@@ -331,7 +331,7 @@ computeHandXworld( const MatrixRotation & worldRhand,
   sotDEBUG(25) << "wRrh = " << worldRhand <<std::endl;
   sotDEBUG(25) << "SC = " << transSensorCom <<std::endl;
 
-  MatrixHomogeneous scRw; 
+  MatrixHomogeneous scRw;
   scRw.linear()=worldRhand.transpose();  scRw.translation()=transSensorCom;
   sotDEBUG(25) << "scMw = " << scRw <<std::endl;
 
@@ -344,7 +344,7 @@ computeHandXworld( const MatrixRotation & worldRhand,
     _t(2), 0, -_t(0),
     -_t(1), _t(0), 0;
   Eigen::Matrix3d sk; sk = Tx*R;
-  
+
   res.block<3,3>(0,0) = R;
   res.block<3,3>(0,3).setZero();
   res.block<3,3>(3,0) = sk;
@@ -395,7 +395,7 @@ computeSensorXhand( const MatrixRotation & /*handRsensor*/,
   Tx << 0, -transJointSensor(2), transJointSensor(1),
     transJointSensor(2), 0, -transJointSensor(0),
     -transJointSensor(1), transJointSensor(0), 0;
-  
+
   res.block<3,3>(0,0).setIdentity();
   res.block<3,3>(0,3).setZero();
   res.block<3,3>(3,0) = Tx;
@@ -444,7 +444,7 @@ computeTorsorCompensated( const dynamicgraph::Vector& torqueInput,
   sotDEBUG(25) << "t_nc = " << torqueInput;
   dynamicgraph::Vector torquePrecompensated(6);
   //if( usingPrecompensation )
-  torquePrecompensated = torqueInput+torquePrecompensation; 
+  torquePrecompensated = torqueInput+torquePrecompensation;
   //else { torquePrecompensated = torqueInput; }
   sotDEBUG(25) << "t_pre = " << torquePrecompensated;
 
@@ -496,7 +496,7 @@ crossProduct_V_F( const dynamicgraph::Vector& velocity,
     }
   return res;
 }
-				
+
 
 dynamicgraph::Vector& ForceCompensation::
 computeMomentum( const dynamicgraph::Vector& velocity,
@@ -553,115 +553,3 @@ calibrationTriger( ForceCompensationPlugin::sotDummyType& dummy,int /*time*/ )
   //   sotDEBUGOUT(45);
   return dummy=1;
 }
-
-/* --- COMMANDLINE ---------------------------------------------------------- */
-/* --- COMMANDLINE ---------------------------------------------------------- */
-/* --- COMMANDLINE ---------------------------------------------------------- */
-
-void ForceCompensationPlugin::
-commandLine( const std::string& cmdLine,
-	     std::istringstream& cmdArgs,
-	     std::ostream& os )
-{
-  if( "help"==cmdLine )
-    {
-      os << "ForceCompensation: "
-	 << "  - clearCalibration" << std::endl
-	 << "  - {start|stop}Calibration [wait <time_sec>]" << std::endl
-	 << "  - calibrateGravity\t[only {x|y|z}]" << std::endl
-	 << "  - calibratePosition" << std::endl
-	 << "  - precomp [{true|false}]:  get/set the "
-	 << "precompensation due to sensor calib." << std::endl;
-    }
-  //   else if( "clearCalibration" == cmdLine )
-  //     {
-  //       clearCalibration();
-  //     }
-  //   else if( "startCalibration" == cmdLine )
-  //     {
-  //       calibrationStarted = true;
-  //       cmdArgs >> std::ws;
-  //       if( cmdArgs.good() )
-  // 	{
-  // 	  std::string cmdWait; cmdArgs>>cmdWait>>std::ws;
-  // 	  if( (cmdWait == "wait")&&(cmdArgs.good()) )
-  // 	    {
-  // 	      double timeSec; cmdArgs >> timeSec;
-  // 	      unsigned int timeMSec= (unsigned int)(round(timeSec*1000*1000));
-  // 	      sotDEBUG(15) << "Calibration: wait for " << timeMSec << "us."<<std::endl;
-  // 	      usleep( timeMSec );
-  // 	      calibrationStarted = false;
-  // 	    }
-  // 	}
-  //     }
-  //   else if( "stopCalibration" == cmdLine )
-  //     {
-  //       calibrationStarted = false;
-  //     }
-  //   else if( "calibrateGravity" == cmdLine )
-  //     {
-  //       if( calibrationStarted )
-  // 	{
-  // 	  os<< "Calibration phase is on, stop it first."<<std::endl;
-  // 	  return;
-  // 	}
-  //       dynamicgraph::Vector grav = calibrateGravity( handRsensorSIN.accessCopy(),
-  // 					  usingPrecompensation );
-
-  //       cmdArgs >> std::ws;
-  //       if( cmdArgs.good() )
-  // 	{
-  // 	  std::string cmdOnly; cmdArgs>>cmdOnly>>std::ws;
-  // 	  if( (cmdOnly == "only")&&(cmdArgs.good()) )
-  // 	    {
-  // 	      std::string xyz; cmdArgs >> xyz;
-  // 	      if( "x"==xyz ) { grav(1)=grav(2)=0.; }
-  // 	      else if( "y"==xyz ) { grav(0)=grav(2)=0.; }
-  // 	      else if( "z"==xyz ) { grav(0)=grav(1)=0.; }
-  // 	    }
-  // 	}
-
-  //       gravitySIN = grav;
-  //     }
-  //   else if( "calibratePosition" == cmdLine )
-  //     {
-  //       if( calibrationStarted )
-  // 	{
-  // 	  return;
-  //       	  os<< "Calibration phase is on, stop it first."<<std::endl;
-  // 	}
-  //       dynamicgraph::Vector position(3);
-  //       position = calibrateTransSensorCom( gravitySIN.accessCopy(),
-  // 					  handRsensorSIN.accessCopy() );
-  //       transSensorComSIN = position;
-  //     }
-  else if( "precomp" == cmdLine )
-    {
-      cmdArgs>>std::ws;
-      if( cmdArgs.good() )
-	{  cmdArgs >>  usingPrecompensation; }
-      else { os << "precompensation = " << usingPrecompensation <<std::endl; }
-    }
-  else if( "compensateMomentum" == cmdLine )
-    {
-      cmdArgs>>std::ws;
-      if( cmdArgs.good() )
-	{
-	  bool use;  cmdArgs >> use;
-	  if( use ) momentumSIN.plug( &momentumSOUT );
-	  else
-	    {
-	      dynamicgraph::Vector m(6); m.resize(0); momentumSIN = m;
-	    }
-	}
-      else
-	{
-	  os << "compensateMomentum = " << (momentumSIN.getPtr()!=&momentumSIN)
-	     <<std::endl;
-	}
-    }
-  else{ Entity::commandLine( cmdLine,cmdArgs,os ); }
-
-
-}
-

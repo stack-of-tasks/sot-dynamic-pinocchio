@@ -315,7 +315,7 @@ computeWaistWorldPosition( MatrixHomogeneous& res,
   if( fromSensor_ )
     {
       const MatrixRotation & Rflex = flexibilitySOUT( time ); // footRleg
-      MatrixHomogeneous footMleg; 
+      MatrixHomogeneous footMleg;
       footMleg.linear() = Rflex; footMleg.translation().setZero();
 
       tmpRes = footMleg*legMwaist;
@@ -384,31 +384,3 @@ compute_qdotSOUT( dynamicgraph::Vector& res,
 
   return res;
 }
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-void AngleEstimator::
-commandLine( const std::string& cmdLine,
-	     std::istringstream& cmdArgs,
-	     std::ostream& os )
-{
-  sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-  if( cmdLine == "help" )
-    {
-      Entity::commandLine(cmdLine,cmdArgs,os);
-    }
-  else if( cmdLine == "fromSensor" )
-    {
-      std::string val; cmdArgs>>val;
-      if( ("true"==val)||("false"==val) )
-	{
-	  fromSensor_ = ( val=="true" );
-	} else {
-	  os << "fromSensor = " << (fromSensor_?"true":"false") << std::endl;
-	}
-    }
-  else { Entity::commandLine( cmdLine,cmdArgs,os); }
-}
-

@@ -28,15 +28,15 @@ using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceRK4,"IntegratorForceRK4");
 
 IntegratorForceRK4::
-IntegratorForceRK4( const std::string & name ) 
+IntegratorForceRK4( const std::string & name )
   :IntegratorForce(name)
 {
   sotDEBUGIN(5);
-  
+
   velocityDerivativeSOUT.
     setFunction( boost::bind(&IntegratorForceRK4::computeDerivativeRK4,
 			     this,_1,_2));
-  
+
   sotDEBUGOUT(5);
 }
 
@@ -73,10 +73,10 @@ computeDerivativeRK4( dynamicgraph::Vector& res,
   res.resize(nv); res.fill(0);
 
   if(! velocityPrecSIN )
-    { 
+    {
       dynamicgraph::Vector zero( nv ); zero.fill(0);
       velocityPrecSIN = zero;
-    } 
+    }
   const dynamicgraph::Vector & vel = velocityPrecSIN( time );
   double & dt = this->IntegratorForce::timeStep; // this is &
 
@@ -99,39 +99,20 @@ computeDerivativeRK4( dynamicgraph::Vector& res,
       sotDEBUG(35) << "f"<<i<<" = " << fi;
       ki = massInverse*fi;
       sotDEBUG(35) << "k"<<i<<" = " << ki;
-      if( i+1<4 ) 
+      if( i+1<4 )
 	{
 	  v[i+1] = ki;  v[i+1] *= (dt/rk_fact[i+1]);
-	  v[i+1] += vel; 
+	  v[i+1] += vel;
 	}
       ki *= rk_fact[i];
       res += ki;
       sotDEBUG(35) << "sum_k"<<i<<" = " << res;
       sumFact += rk_fact[i];
     }
-  
+
   sotDEBUG(35) << "sum_ki = " << res;
   res *= (1/sumFact);
-  
+
   sotDEBUGOUT(15);
   return res;
 }
-
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-// void IntegratorForceRK4::
-// commandLine( const std::string& cmdLine,
-// 	     std::istringstream& cmdArgs,
-// 	     std::ostream& os )
-// {
-//   sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-//   if( cmdLine == "help" )
-//     {
-//       os << "IntegratorForceRK4: " << std::endl;
-//     }
-//   else { IntegratorForce::commandLine( cmdLine,cmdArgs,os); }
-// }
-

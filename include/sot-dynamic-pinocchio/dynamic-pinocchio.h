@@ -67,10 +67,10 @@
 #endif
 
 
-namespace dynamicgraph { 
+namespace dynamicgraph {
   namespace sot {
     namespace dg = dynamicgraph;
-    
+
     namespace command {
       class SetFile;
       class CreateOpPoint;
@@ -78,9 +78,9 @@ namespace dynamicgraph {
     /* --------------------------------------------------------------------- */
     /* --- CLASS ----------------------------------------------------------- */
     /* --------------------------------------------------------------------- */
-    
-    
-    
+
+
+
     /*! @ingroup signals
       \brief This class provides an inverse dynamic model of the robot.
       More precisely it wraps the newton euler algorithm implemented
@@ -92,8 +92,8 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   friend class sot::command::SetFile;
   friend class sot::command::CreateOpPoint;
   //  friend class sot::command::InitializeRobot;
-  
-    public: 
+
+    public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   DYNAMIC_GRAPH_ENTITY_DECL();
 
@@ -110,15 +110,15 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::SignalTimeDependent< dg::Matrix,int >&
     createJacobianSignal( const std::string& signame, const std::string& );
   void destroyJacobianSignal( const std::string& signame );
-  
+
   dg::SignalTimeDependent< MatrixHomogeneous,int >&
     createPositionSignal( const std::string&,const std::string& );
   void destroyPositionSignal( const std::string& signame );
-  
+
   dg::SignalTimeDependent< dg::Vector,int >&
     createVelocitySignal( const std::string&,const std::string& );
   void destroyVelocitySignal( const std::string& signame );
-  
+
   dg::SignalTimeDependent< dg::Vector,int >&
     createAccelerationSignal( const std::string&, const std::string& );
   void destroyAccelerationSignal( const std::string& signame );
@@ -137,7 +137,7 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::SignalPtr<dg::Vector,int> freeFlyerVelocitySIN;
   dg::SignalPtr<dg::Vector,int> jointAccelerationSIN;
   dg::SignalPtr<dg::Vector,int> freeFlyerAccelerationSIN;
-  
+
   dg::SignalTimeDependent<dg::Vector,int> pinocchioPosSINTERN;
   dg::SignalTimeDependent<dg::Vector,int> pinocchioVelSINTERN;
   dg::SignalTimeDependent<dg::Vector,int> pinocchioAccSINTERN;
@@ -151,17 +151,17 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   int& computeForwardKinematics(int& dummy,const int& time );
   int& computeCcrba( int& dummy,const int& time );
   int& computeJacobians( int& dummy,const int& time );
-  
+
   dg::SignalTimeDependent<dg::Vector,int> zmpSOUT;
   dg::SignalTimeDependent<dg::Matrix,int> JcomSOUT;
   dg::SignalTimeDependent<dg::Vector,int> comSOUT;
   dg::SignalTimeDependent<dg::Matrix,int> inertiaSOUT;
-  
+
   dg::SignalTimeDependent<dg::Matrix,int>& jacobiansSOUT( const std::string& name );
   dg::SignalTimeDependent<MatrixHomogeneous,int>& positionsSOUT( const std::string& name );
   dg::SignalTimeDependent<dg::Vector,int>& velocitiesSOUT( const std::string& name );
   dg::SignalTimeDependent<dg::Vector,int>& accelerationsSOUT( const std::string& name );
-  
+
   dg::SignalTimeDependent<double,int> footHeightSOUT;
   dg::SignalTimeDependent<dg::Vector,int> upperJlSOUT;
   dg::SignalTimeDependent<dg::Vector,int> lowerJlSOUT;
@@ -184,14 +184,14 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
 
   /* --- MODEL CREATION --- */
 
-  
-  void displayModel() const 
+
+  void displayModel() const
   { assert(m_model); std::cout<<(*m_model)<<std::endl; };
 
   void setModel(se3::Model*);
 
   void setData(se3::Data*);
-  
+
   /* --- GETTERS --- */
 
   /// \brief Get joint position lower limits
@@ -228,7 +228,7 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::Matrix& computeGenericEndeffJacobian(const bool isFrame,
 					   const int jointId,
 					   dg::Matrix& res,const int& time );
-  MatrixHomogeneous& computeGenericPosition(const bool isFrame, 
+  MatrixHomogeneous& computeGenericPosition(const bool isFrame,
 					    const int jointId,
 					    MatrixHomogeneous& res,const int& time );
   dg::Vector& computeGenericVelocity(const int jointId,dg::Vector& res,const int& time );
@@ -246,9 +246,6 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   dg::Vector& computeTorqueDrift( dg::Vector& res,const int& time );
 
  public: /* --- PARAMS --- */
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
   void cmd_createOpPointSignals           ( const std::string& sig,const std::string& j );
   void cmd_createJacobianWorldSignal      ( const std::string& sig,const std::string& j );
   void cmd_createJacobianEndEffectorSignal( const std::string& sig,const std::string& j );
@@ -258,11 +255,11 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
 
  private:
   /// \brief map of joints in construction.
-  /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr to pinocchio Joint) 
+  /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr to pinocchio Joint)
   dg::Vector& getPinocchioPos(dg::Vector& q,const int& time);
   dg::Vector& getPinocchioVel(dg::Vector& v, const int& time);
   dg::Vector& getPinocchioAcc(dg::Vector& a, const int&time);
-  
+
   //\brief Index list for the first dof of (spherical joints)/ (spherical part of free-flyer joint).
   std::vector<int> sphericalJoints;
 

@@ -42,12 +42,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (waist_attitude_from_sensor_EXPORTS)
 #    define SOTWAISTATTITUDEFROMSENSOR_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTWAISTATTITUDEFROMSENSOR_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTWAISTATTITUDEFROMSENSOR_EXPORT
 #endif
@@ -81,13 +81,6 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistAttitudeFromSensor
   dg::SignalPtr<MatrixHomogeneous,int> positionSensorSIN;
   dg::SignalTimeDependent<VectorRollPitchYaw,int> attitudeWaistSOUT;
 
-
- public: /* --- PARAMS --- */
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
-    
-
 };
 
 
@@ -119,13 +112,6 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
 
   dg::SignalPtr<MatrixHomogeneous,int> positionContactSIN;
   dg::SignalTimeDependent<dynamicgraph::Vector,int> positionWaistSOUT;
-
-
- public: /* --- PARAMS --- */
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
-    
 
 };
 

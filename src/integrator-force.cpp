@@ -29,14 +29,14 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForce,"IntegratorForce");
 const double IntegratorForce:: TIME_STEP_DEFAULT = 5e-3;
 
 IntegratorForce::
-IntegratorForce( const std::string & name ) 
+IntegratorForce( const std::string & name )
   :Entity(name)
    ,timeStep( TIME_STEP_DEFAULT )
    ,forceSIN(NULL,"sotIntegratorForce("+name+")::input(vector)::force")
    ,massInverseSIN(NULL,"sotIntegratorForce("+name+")::input(matrix)::massInverse")
    ,frictionSIN(NULL,"sotIntegratorForce("+name+")::input(matrix)::friction")
    ,velocityPrecSIN(NULL,"sotIntegratorForce("+name+")::input(matrix)::vprec")
-  
+
    ,velocityDerivativeSOUT
   ( boost::bind(&IntegratorForce::computeDerivative,this,_1,_2),
     velocityPrecSIN<<forceSIN<<massInverseSIN<<frictionSIN,
@@ -51,7 +51,7 @@ IntegratorForce( const std::string & name )
 		    "sotIntegratorForce("+name+")::input(matrix)::massInverseOUT")
 {
   sotDEBUGIN(5);
-  
+
   signalRegistration(forceSIN);
   signalRegistration(massInverseSIN);
   signalRegistration(frictionSIN);
@@ -98,15 +98,15 @@ computeDerivative( dynamicgraph::Vector& res,
   dynamicgraph::Vector f_bv( force.size() );
 
   if( velocityPrecSIN )
-    { 
+    {
       const dynamicgraph::Vector & vel = velocityPrecSIN( time );
       sotDEBUG(15) << "vel = " << vel << std::endl;
-      f_bv = friction*vel; f_bv *= -1; 
+      f_bv = friction*vel; f_bv *= -1;
     } else { f_bv.fill(0) ; } // vel is not set yet.
-      
+
   f_bv+=force;
   res = massInverse*f_bv;
-  
+
   sotDEBUGOUT(15);
   return res;
 }
@@ -123,8 +123,8 @@ computeIntegral( dynamicgraph::Vector& res,
   if( velocityPrecSIN )
     {
       const dynamicgraph::Vector & vel = velocityPrecSIN( time );
-      res += vel; 
-    } 
+      res += vel;
+    }
   else { /* vprec not set yet. */ }
   velocityPrecSIN = res ;
 
@@ -144,33 +144,3 @@ computeMassInverse( dynamicgraph::Matrix& res,
   sotDEBUGOUT(15);
   return res;
 }
-
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-void IntegratorForce::
-commandLine( const std::string& cmdLine,
-	     std::istringstream& cmdArgs,
-	     std::ostream& os )
-{
-  sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-  if( cmdLine == "help" )
-    {
-      os << "IntegratorForce: " 
-	 << "  - dt [<time>]: get/set the timestep value. " << std::endl;
-    }
-  else if( cmdLine == "dt" )
-    {
-      cmdArgs >>std::ws; 
-      if( cmdArgs.good() )
-	{
-	  double val; cmdArgs>>val; 
-	  if( val >0. ) timeStep = val;
-	}
-      else { os << "TimeStep = " << timeStep << std::endl;}
-    }
-  else { Entity::commandLine( cmdLine,cmdArgs,os); }
-}
-
