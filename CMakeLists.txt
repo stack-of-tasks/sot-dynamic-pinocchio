@@ -28,6 +28,7 @@ SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+SET(DOXYGEN_USE_MATHJAX YES)
 
 # Disable -Werror on Unix for now.
 SET(CXX_DISABLE_WERROR True)
