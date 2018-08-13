@@ -20,7 +20,6 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
-INCLUDE(custom_cmake/python.cmake)
 INCLUDE(cmake/python.cmake)
 
 SET(PROJECT_NAME sot-dynamic-pinocchio)
