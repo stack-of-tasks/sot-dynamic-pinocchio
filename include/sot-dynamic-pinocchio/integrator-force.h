@@ -43,12 +43,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (integrator_force_EXPORTS)
 #    define SOTINTEGRATORFORCE_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTINTEGRATORFORCE_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTINTEGRATORFORCE_EXPORT
 #endif
@@ -80,18 +80,18 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce
 
  public: /* --- SIGNAL --- */
 
-  dg::SignalPtr<dynamicgraph::Vector,int> forceSIN; 
-  dg::SignalPtr<dynamicgraph::Matrix,int> massInverseSIN; 
-  dg::SignalPtr<dynamicgraph::Matrix,int> frictionSIN; 
+  dg::SignalPtr<dynamicgraph::Vector,int> forceSIN;
+  dg::SignalPtr<dynamicgraph::Matrix,int> massInverseSIN;
+  dg::SignalPtr<dynamicgraph::Matrix,int> frictionSIN;
 
   /* Memory of the previous iteration. The sig is fed by the previous
    * computations. */
-  dg::SignalPtr<dynamicgraph::Vector,int> velocityPrecSIN; 
-  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocityDerivativeSOUT; 
-  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocitySOUT; 
+  dg::SignalPtr<dynamicgraph::Vector,int> velocityPrecSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocityDerivativeSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector,int> velocitySOUT;
 
-  dg::SignalPtr<dynamicgraph::Matrix,int> massSIN; 
-  dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT; 
+  dg::SignalPtr<dynamicgraph::Matrix,int> massSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT;
 
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeDerivative( dynamicgraph::Vector& res,
@@ -101,13 +101,6 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce
 
   dynamicgraph::Matrix& computeMassInverse( dynamicgraph::Matrix& res,
 				  const int& time );
-
-  
- public: /* --- PARAMS --- */
-  virtual void commandLine( const std::string& cmdLine,
-			    std::istringstream& cmdArgs,
-			    std::ostream& os );
-    
 
 };
 

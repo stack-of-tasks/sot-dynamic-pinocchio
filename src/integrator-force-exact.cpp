@@ -28,11 +28,11 @@ using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceExact,"IntegratorForceExact");
 
 IntegratorForceExact::
-IntegratorForceExact( const std::string & name ) 
+IntegratorForceExact( const std::string & name )
   :IntegratorForce(name)
 {
   sotDEBUGIN(5);
-  
+
   velocitySOUT.
     setFunction( boost::bind(&IntegratorForceExact::computeVelocityExact,
 			     this,_1,_2));
@@ -73,38 +73,38 @@ int geev(Matrix &a,
   char jobvl='V';
   char jobvr='V';
   int const n = (int)a.rows();
-  
+
   Vector wr(n);
   Vector wi(n);
   double* vl_real = MRAWDATA(vl2);
   const int ldvl = (int)vl2.rows();
   double* vr_real = MRAWDATA(vr2);
   const int ldvr = (int)vr2.rows();
-  
+
   // workspace query
   int lwork = -1;
   double work_temp;
   int result=0;
   dgeev_(&jobvl, &jobvr, &n,
-	 MRAWDATA(a), &n, 
-	 MRAWDATA(wr), MRAWDATA(wi), 
+	 MRAWDATA(a), &n,
+	 MRAWDATA(wr), MRAWDATA(wi),
 	 vl_real, &ldvl, vr_real, &ldvr,
 	 &work_temp, &lwork, &result);
   if (result != 0)
     return result;
-  
+
   lwork = (int) work_temp;
   Vector work(lwork);
   dgeev_(&jobvl, &jobvr, &n,
-	 MRAWDATA(a), &n, 
-	 MRAWDATA(wr), MRAWDATA(wi), 
+	 MRAWDATA(a), &n,
+	 MRAWDATA(wr), MRAWDATA(wi),
 	 vl_real, &ldvl, vr_real, &ldvr,
 	 MRAWDATA(work), &lwork,
 	 &result);
 
   for (int i = 0; i < n; i++)
     w[i] = std::complex<double>(wr[i], wi[i]);
-  
+
   return result;
 }
 
@@ -117,7 +117,7 @@ static void eigenDecomp( const dynamicgraph::Matrix& M,
   Eigen::VectorXcd evals(SIZE);
   Matrix vl(SIZE,SIZE);
   Matrix vr(SIZE,SIZE);
-  
+
   //  const int errCode = lapack::geev(Y, evals, &vl, &vr, lapack::optimal_workspace());
   const int errCode = geev(Y,evals,vl,vr);
   if( errCode<0 )
@@ -126,14 +126,14 @@ static void eigenDecomp( const dynamicgraph::Matrix& M,
   else if( errCode>0 )
     { SOT_THROW ExceptionDynamic( ExceptionDynamic::INTEGRATION,
 				     "No convergence for given matrix",""); }
-  
+
   P.resize(SIZE,SIZE);   eig.resize(SIZE);
   for( unsigned int i=0;i<SIZE;++i )
     {
       for( unsigned int j=0;j<SIZE;++j ){ P(i,j)=vr(i,j); }
       eig(i)=evals(i).real();
-      if( fabsf(static_cast<float>(evals(i).imag()))>1e-5 ) 
-	{ 
+      if( fabsf(static_cast<float>(evals(i).imag()))>1e-5 )
+	{
 	  SOT_THROW ExceptionDynamic( ExceptionDynamic::INTEGRATION,
 					 "Error imaginary part not null. ",
 					 "(at position %d: %f)",i,evals(i).imag() );
@@ -161,7 +161,7 @@ static void expMatrix( const dynamicgraph::Matrix& MiB,
     for( unsigned int j=0;j<SIZE;++j )
       Pmib(i,j)*= exp( eig_mib(j) );
   Mexp = Pmib*Pinv;
-  
+
   sotDEBUG(45) << "expMiB = " << Mexp;
   return ;
 }
@@ -172,7 +172,7 @@ static void expMatrix( const dynamicgraph::Matrix& MiB,
 
 /* The derivative of the signal is such that: M v_dot + B v = f. We deduce:
  * v_dot =  M^-1 (f - Bv)
- * Using Exact method: 
+ * Using Exact method:
  * dv = exp( M^-1.B.t) ( v0-B^-1.f ) + B^-1.f
  */
 
@@ -189,10 +189,10 @@ computeVelocityExact( dynamicgraph::Vector& res,
   res.resize(nv); res.setZero();
 
   if(! velocityPrecSIN )
-    { 
+    {
       dynamicgraph::Vector zero( nv ); zero.fill(0);
       velocityPrecSIN = zero;
-    } 
+    }
   const dynamicgraph::Vector & vel = velocityPrecSIN( time );
   double & dt = this->IntegratorForce::timeStep; // this is &
 
@@ -205,7 +205,7 @@ computeVelocityExact( dynamicgraph::Vector& res,
   dynamicgraph::Matrix MiB( nv,nv );
   MiB = massInverse*friction;
   sotDEBUG(25) << "MiB = " << MiB;
-  
+
   dynamicgraph::Matrix MiBexp( nv,nv );
   MiB*=-dt; expMatrix(MiB,MiBexp);
   sotDEBUG(25) << "expMiB = " << MiBexp;
@@ -214,38 +214,19 @@ computeVelocityExact( dynamicgraph::Vector& res,
   dynamicgraph::Vector Bif( nf ); Bif = Binv*force;
   sotDEBUG(25) << "Binv = " << Binv;
   sotDEBUG(25) << "Bif = " << Bif;
-  
+
   dynamicgraph::Vector v0_bif = vel;
   v0_bif -= Bif;
   sotDEBUG(25) << "Kst = " << v0_bif;
-  
+
   res.resize( MiBexp.rows() );
   res = MiBexp*v0_bif;
 
   res += Bif;
   velocityPrecSIN = res ;
   sotDEBUG(25) << "vfin = " << res;
- 
+
 
   sotDEBUGOUT(15);
   return res;
 }
-
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-// void IntegratorForceExact::
-// commandLine( const std::string& cmdLine,
-// 	     std::istringstream& cmdArgs,
-// 	     std::ostream& os )
-// {
-//   sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-//   if( cmdLine == "help" )
-//     {
-//       os << "IntegratorForceExact: " << std::endl;
-//     }
-//   else { IntegratorForce::commandLine( cmdLine,cmdArgs,os); }
-// }
-

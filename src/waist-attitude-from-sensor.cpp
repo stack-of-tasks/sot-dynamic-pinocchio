@@ -31,13 +31,13 @@ using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistAttitudeFromSensor,"WaistAttitudeFromSensor");
 
 WaistAttitudeFromSensor::
-WaistAttitudeFromSensor( const std::string & name ) 
+WaistAttitudeFromSensor( const std::string & name )
   :Entity(name)
   ,attitudeSensorSIN(NULL,"sotWaistAttitudeFromSensor("+name+")::input(MatrixRotation)::attitudeIN")
   ,positionSensorSIN(NULL,"sotWaistAttitudeFromSensor("+name+")::input(matrixHomo)::position")
   ,attitudeWaistSOUT( boost::bind(&WaistAttitudeFromSensor::computeAttitudeWaist,this,_1,_2),
 		      attitudeSensorSIN<<positionSensorSIN,
-		      "sotWaistAttitudeFromSensor("+name+")::output(RPY)::attitude" ) 
+		      "sotWaistAttitudeFromSensor("+name+")::output(RPY)::attitude" )
 {
   sotDEBUGIN(5);
 
@@ -66,7 +66,7 @@ computeAttitudeWaist( VectorRollPitchYaw & res,
 		      const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const MatrixHomogeneous & waistMchest = positionSensorSIN( time );
   const MatrixRotation & worldRchest = attitudeSensorSIN( time );
 
@@ -80,26 +80,6 @@ computeAttitudeWaist( VectorRollPitchYaw & res,
   return res;
 }
 
-
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-void WaistAttitudeFromSensor::
-commandLine( const std::string& cmdLine,
-	     std::istringstream& cmdArgs,
-	     std::ostream& os )
-{
-  sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-  if( cmdLine == "help" )
-    {
-      Entity::commandLine(cmdLine,cmdArgs,os);
-    }
-  else { Entity::commandLine( cmdLine,cmdArgs,os); }
-}
-
-
 /* === WaistPoseFromSensorAndContact ===================================== */
 /* === WaistPoseFromSensorAndContact ===================================== */
 /* === WaistPoseFromSensorAndContact ===================================== */
@@ -108,13 +88,13 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistPoseFromSensorAndContact,
 			  "WaistPoseFromSensorAndContact");
 
 WaistPoseFromSensorAndContact::
-WaistPoseFromSensorAndContact( const std::string & name ) 
+WaistPoseFromSensorAndContact( const std::string & name )
   :WaistAttitudeFromSensor(name)
    ,fromSensor_(false)
    ,positionContactSIN(NULL,"sotWaistPoseFromSensorAndContact("+name+")::input(matrixHomo)::contact")
    ,positionWaistSOUT( boost::bind(&WaistPoseFromSensorAndContact::computePositionWaist,this,_1,_2),
 		       attitudeWaistSOUT<<positionContactSIN,
-		       "sotWaistPoseFromSensorAndContact("+name+")::output(RPY+T)::positionWaist" ) 
+		       "sotWaistPoseFromSensorAndContact("+name+")::output(RPY+T)::positionWaist" )
 {
   sotDEBUGIN(5);
 
@@ -166,64 +146,32 @@ computePositionWaist( dynamicgraph::Vector& res,
 		      const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const MatrixHomogeneous&  waistMcontact = positionContactSIN( time );
   MatrixHomogeneous contactMwaist; contactMwaist = waistMcontact.inverse();
 
   res.resize(6);
-  for( unsigned int i=0;i<3;++i ) 
+  for( unsigned int i=0;i<3;++i )
     { res(i)=contactMwaist(i,3); }
 
   if(fromSensor_)
     {
       const VectorRollPitchYaw & worldrwaist = attitudeWaistSOUT( time );
-      for( unsigned int i=0;i<3;++i ) 
+      for( unsigned int i=0;i<3;++i )
 	{ res(i+3)=worldrwaist(i); }
     }
   else
     {
-      VectorRollPitchYaw contactrwaist; 
+      VectorRollPitchYaw contactrwaist;
       contactrwaist = contactMwaist.linear().eulerAngles(2,1,0).reverse();
-      
-      for( unsigned int i=0;i<3;++i ) 
+
+      for( unsigned int i=0;i<3;++i )
 	{ res(i+3)=contactrwaist(i); }
     }
 
-  
+
 
 
   sotDEBUGOUT(15);
   return res;
 }
-
-
-
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-/* --- PARAMS --------------------------------------------------------------- */
-void WaistPoseFromSensorAndContact::
-commandLine( const std::string& cmdLine,
-	     std::istringstream& cmdArgs,
-	     std::ostream& os )
-{
-  sotDEBUG(25) << "Cmd " << cmdLine <<std::endl;
-
-  if( cmdLine == "help" )
-    {
-      os <<"WaistPoseFromSensorAndContact:"<<std::endl
-	 <<"  - fromSensor [true|false]: get/set the flag." << std::endl;
-      WaistAttitudeFromSensor::commandLine(cmdLine,cmdArgs,os);
-    }
-  else if( cmdLine == "fromSensor" )
-    {
-      std::string val; cmdArgs>>val; 
-      if( ("true"==val)||("false"==val) )
-	{
-	  fromSensor_ = ( val=="true" ); 
-	} else {
-	  os << "fromSensor = " << (fromSensor_?"true":"false") << std::endl;
-	}
-    }
-  else { WaistAttitudeFromSensor::commandLine( cmdLine,cmdArgs,os); }
-}
-

@@ -41,15 +41,15 @@ int main(int argc, char * argv[])
       cerr << " PATH_TO_LINK2JOINT_FILE: Path to the file describing the relationship of the joint and the state vector."  << endl;
     }
   Dynamic * dyn = new Dynamic("tot");
-  try 
+  try
     {
       dyn->setVrmlDirectory(argv[1]);
       dyn->setXmlSpecificityFile(argv[3]);
       dyn->setXmlRankFile(argv[4]);
       dyn->setVrmlMainFile(argv[2]);
-      
+
       dyn->parseConfigFiles();
-    } 
+    }
   catch (ExceptionDynamic& e)
     {
       if ( !strcmp(e.what(), "Error while parsing." )) {
@@ -60,11 +60,9 @@ int main(int argc, char * argv[])
 	// rethrow
 	throw e;
     }
-  
+
   istringstream iss;
   string help("help");
-  // Commented out to make this sample a unit test
-  // dyn->commandLine(help,iss,cout);
 
   delete dyn;
   return 0;
