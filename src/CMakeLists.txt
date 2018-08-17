@@ -50,12 +50,14 @@ FOREACH(lib ${plugins})
   INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
 
   # build python submodule
-  STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
+  IF(BUILD_PYTHON_INTERFACE)
+    STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
-  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
-    ${libname}
-    sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
-    )
+    DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
+      ${libname}
+      sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
+      )
+  ENDIF(BUILD_PYTHON_INTERFACE)
   UNSET({libname})
 ENDFOREACH(lib)
 
@@ -73,10 +75,12 @@ INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 TARGET_LINK_LIBRARIES(dp-dynamic ${LIBRARY_NAME})
 
 # Install empty __init__.py files in intermediate directories.
-INSTALL(FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/__init__.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/humanoid_robot.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/tools.py
-  ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/parser.py
-  DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics_pinocchio
-  )
+IF(BUILD_PYTHON_INTERFACE)
+  INSTALL(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/__init__.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/humanoid_robot.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/tools.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/parser.py
+    DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics_pinocchio
+    )
+ENDIF(BUILD_PYTHON_INTERFACE)
