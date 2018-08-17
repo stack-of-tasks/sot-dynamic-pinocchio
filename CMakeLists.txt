@@ -41,12 +41,22 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 
 SETUP_PROJECT()
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.6")
 ADD_REQUIRED_DEPENDENCY("eigenpy")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.6")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
+
+SET(BOOST_COMPONENTS filesystem system unit_test_framework)
+
+OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
+IF(BUILD_PYTHON_INTERFACE)
+  FINDPYTHON()
+  ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
+  SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
+  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+ENDIF(BUILD_PYTHON_INTERFACE)
+
 
 # List plug-ins that will be compiled.
 SET(plugins
@@ -67,10 +77,6 @@ LIST(APPEND plugins dynamic)
 # Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
 
-# Search for dependencies.
-# Boost
-SET(BOOST_COMPONENTS filesystem system unit_test_framework python)
-FINDPYTHON()
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 

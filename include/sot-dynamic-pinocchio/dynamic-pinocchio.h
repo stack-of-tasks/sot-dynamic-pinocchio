@@ -27,13 +27,10 @@
 
 
 /* STD */
-#include <Python.h>
 #include <string>
 #include <map>
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
-
-/*Python API*/
 
 /* SOT */
 #include <sot/core/flags.hh>
