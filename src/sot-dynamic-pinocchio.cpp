@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 
 #include <pinocchio/algorithm/kinematics.hpp>
+#include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
