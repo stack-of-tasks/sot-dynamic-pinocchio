@@ -43,7 +43,6 @@ FOREACH(lib ${plugins})
   TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${libname} pinocchio)
-  PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
   PKG_CONFIG_USE_DEPENDENCY(${libname} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${libname} dynamic-graph)
 
@@ -51,6 +50,7 @@ FOREACH(lib ${plugins})
 
   # build python submodule
   IF(BUILD_PYTHON_INTERFACE)
+    PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
     STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
 
     DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
