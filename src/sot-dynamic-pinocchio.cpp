@@ -26,7 +26,6 @@
 #include <boost/format.hpp>
 
 #include <pinocchio/algorithm/kinematics.hpp>
-#include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
@@ -923,7 +922,7 @@ computeInertiaReal( dg::Matrix& res,const int& time )
 }
 
 double& DynamicPinocchio::
-computeFootHeight (double &res , const int& time)
+computeFootHeight (double &res , const int& )
 {
   //Ankle position in local foot frame
   //TODO: Confirm that it is in the foot frame
