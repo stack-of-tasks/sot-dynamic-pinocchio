@@ -56,21 +56,14 @@ FOREACH(lib ${plugins})
     DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
       ${libname}
       sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
+      1
+      "src/python-module-py.cpp"
       )
+    PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap pinocchio)
   ENDIF(BUILD_PYTHON_INTERFACE)
+
   UNSET({libname})
 ENDFOREACH(lib)
-
-IF(BUILD_PYTHON_INTERFACE)
-  DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/dynamic"
-    ""
-    dynamic-wrap-python
-    1
-    "src/python-module-py.cpp"
-    )
-  PKG_CONFIG_USE_DEPENDENCY(dynamic-wrap-python pinocchio)
-ENDIF(BUILD_PYTHON_INTERFACE)
-
 
 # Main Library
 ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic-pinocchio.cpp)
