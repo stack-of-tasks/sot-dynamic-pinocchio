@@ -26,6 +26,7 @@ SET(PROJECT_NAME sot-dynamic-pinocchio)
 
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
+SET(PROJECT_SUFFIX "-v3")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 SET(DOXYGEN_USE_MATHJAX YES)
