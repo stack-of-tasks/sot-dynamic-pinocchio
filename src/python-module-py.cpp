@@ -13,8 +13,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <Python.h>
+#include <sot/core/debug.hh>
+
 #include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <Python.h>
 #include <boost/python.hpp>
 #include <typeinfo>
 #include <cstdio>

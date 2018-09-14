@@ -29,8 +29,6 @@
 /* STD */
 #include <string>
 #include <map>
-/* Matrix */
-#include <dynamic-graph/linear-algebra.h>
 
 /* SOT */
 #include <sot/core/flags.hh>
@@ -40,6 +38,8 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot/core/exception-dynamic.hh>
 #include <sot/core/matrix-geometry.hh>
+/* Matrix */
+#include <dynamic-graph/linear-algebra.h>
 
 /* PINOCCHIO */
 #include <pinocchio/macros.hpp>
