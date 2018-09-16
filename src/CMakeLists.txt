@@ -43,6 +43,10 @@ FOREACH(lib ${plugins})
   TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${libname} pinocchio)
+  IF(BUILD_PYTHON_INTERFACE)
+    PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
+  ENDIF(BUILD_PYTHON_INTERFACE)
+
   PKG_CONFIG_USE_DEPENDENCY(${libname} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${libname} dynamic-graph)
 
