@@ -65,89 +65,89 @@ class AbstractHumanoidRobot (object):
     """
 
 
-
-    OperationalPoints = ['left-wrist', 'right-wrist',
-                         'left-ankle', 'right-ankle',
-                         'gaze']
-
-
-    """
-    Operational points are specific interesting points of the robot
-    used to control it.
-
-    When an operational point is defined, signals corresponding to the
-    point position and jacobian are created.
-
-    For instance if creating an operational point for the left-wrist,
-    the associated signals will be called "left-wrist" and
-    "Jleft-wrist" for respectively the position and the jacobian.
-    """
-
-    AdditionalFrames = []
-    """
-    Additional frames are frames which are defined w.r.t an operational point
-    and provides an interesting transformation.
-
-    It can be used, for instance, to store the sensor location.
-
-    The contained elements must be triplets matching:
-    - additional frame name,
-    - transformation w.r.t to the operational point,
-    - operational point file.
-    """
+    def _initialize (self):
+        self.OperationalPoints = ['left-wrist', 'right-wrist',
+                             'left-ankle', 'right-ankle',
+                             'gaze']
 
 
-    frames = dict()
-    """
-    Additional frames defined by using OpPointModifier.
-    """
+        """
+        Operational points are specific interesting points of the robot
+        used to control it.
 
-    #FIXME: the following options are /not/ independent.
-    # zmp requires acceleration which requires velocity.
-    """
-    Enable velocity computation.
-    """
-    enableVelocityDerivator = False
-    """
-    Enable acceleration computation.
-    """
-    enableAccelerationDerivator = False
-    """
-    Enable ZMP computation
-    """
-    enableZmpComputation = False
+        When an operational point is defined, signals corresponding to the
+        point position and jacobian are created.
 
-    """
-    Tracer used to log data.
-    """
-    tracer = None
+        For instance if creating an operational point for the left-wrist,
+        the associated signals will be called "left-wrist" and
+        "Jleft-wrist" for respectively the position and the jacobian.
+        """
 
-    """
-    How much data will be logged.
-    """
-    tracerSize = 2**20
+        self.AdditionalFrames = []
+        """
+        Additional frames are frames which are defined w.r.t an operational point
+        and provides an interesting transformation.
 
-    """
-    Automatically recomputed signals through the use
-    of device.after.
-    This list is maintained in order to clean the
-    signal list device.after before exiting.
-    """
-    autoRecomputedSignals = []
+        It can be used, for instance, to store the sensor location.
 
-    """
-    Which signals should be traced.
-    """
-    tracedSignals = {
-        'dynamic': ["com", "zmp", "angularmomentum",
-                  "position", "velocity", "acceleration"],
-        'device': ['zmp', 'control', 'state']
-        }
+        The contained elements must be triplets matching:
+        - additional frame name,
+        - transformation w.r.t to the operational point,
+        - operational point file.
+        """
 
-    """
-    Robot timestep
-    """
-    timeStep = 0.005
+
+        self.frames = dict()
+        """
+        Additional frames defined by using OpPointModifier.
+        """
+
+        #FIXME: the following options are /not/ independent.
+        # zmp requires acceleration which requires velocity.
+        """
+        Enable velocity computation.
+        """
+        self.enableVelocityDerivator = False
+        """
+        Enable acceleration computation.
+        """
+        self.enableAccelerationDerivator = False
+        """
+        Enable ZMP computation
+        """
+        self.enableZmpComputation = False
+
+        """
+        Tracer used to log data.
+        """
+        self.tracer = None
+
+        """
+        How much data will be logged.
+        """
+        self.tracerSize = 2**20
+
+        """
+        Automatically recomputed signals through the use
+        of device.after.
+        This list is maintained in order to clean the
+        signal list device.after before exiting.
+        """
+        self.autoRecomputedSignals = []
+
+        """
+        Which signals should be traced.
+        """
+        self.tracedSignals = {
+            'dynamic': ["com", "zmp", "angularmomentum",
+                      "position", "velocity", "acceleration"],
+            'device': ['zmp', 'control', 'state']
+            }
+
+        """
+        Robot timestep
+        """
+        self.timeStep = 0.005
 
     def help (self):
         print (AbstractHumanoidRobot.__doc__)
@@ -325,6 +325,8 @@ class AbstractHumanoidRobot (object):
 
 
     def __init__(self, name, tracer = None):
+        self._initialize()
+
         self.name = name
 
         # Initialize tracer if necessary.
