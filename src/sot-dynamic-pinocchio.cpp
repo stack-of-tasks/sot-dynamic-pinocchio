@@ -233,11 +233,12 @@ DynamicPinocchio( const std::string & name)
 
 DynamicPinocchio::~DynamicPinocchio( void ) {
   sotDEBUGIN(15);
-    //  if (0!=m_model){ delete m_model; m_model=NULL;}
-  if (0!=m_data)
-    { delete m_data; m_data=NULL; }
-  if (0!=m_model)
-    { delete m_model; m_model=NULL; }
+  // TODO currently, m_model and m_data are pointers owned by the Python interpreter
+  // so we should not delete them.
+  // I (Joseph Mirabel) think it would be wiser to make them belong to this class but
+  // I do not know the impact it has.
+  //if (0!=m_data ) { delete m_data ; m_data =NULL; }
+  //if (0!=m_model) { delete m_model; m_model=NULL; }
 
   for( std::list< SignalBase<int>* >::iterator iter = genericSignalRefs.begin();
        iter != genericSignalRefs.end();
