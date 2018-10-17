@@ -29,6 +29,7 @@
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
+#include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/multibody/model.hpp>
 
 #include <dynamic-graph/all-commands.h>
