@@ -207,6 +207,13 @@ DynamicPinocchio( const std::string & name)
 	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createJacobianEndEffectorSignal,
 				docstring));
 
+    docstring = docCommandVoid2("Create a jacobian (endeff frame) signal only for one joint. "
+        "The returned jacobian is placed at the joint position, but oriented with the world axis.",
+				"string (signal name)","string (joint name)");
+    addCommand("createJacobianEndEffWorld",
+	       makeCommandVoid2(*this,&DynamicPinocchio::cmd_createJacobianEndEffectorWorldSignal,
+				docstring));
+
     docstring = docCommandVoid2("Create a position (matrix homo) signal only for one joint.",
 				"string (signal name)","string (joint name)");
     addCommand("createPosition",
@@ -487,24 +494,25 @@ createJacobianSignal( const std::string& signame, const std::string& jointName )
 }
 
 dg::SignalTimeDependent< dg::Matrix,int > & DynamicPinocchio::
-createEndeffJacobianSignal( const std::string& signame, const std::string& jointName )
+createEndeffJacobianSignal( const std::string& signame, const std::string& jointName, const bool isLocal)
 {
   sotDEBUGIN(15);
   assert(m_model);
   dg::SignalTimeDependent< dg::Matrix,int > * sig;
+
   if(m_model->existFrame(jointName)) {
     long int frameId = m_model->getFrameId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
-      ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,true,frameId,_1,_2),
-	jacobiansSINTERN,
-	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
+      ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,true,isLocal,frameId,_1,_2),
+	    jacobiansSINTERN << forwardKinematicsSINTERN,
+	    "sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else if(m_model->existJointName(jointName)) {
     long int jointId = m_model->getJointId(jointName);
     sig = new dg::SignalTimeDependent< dg::Matrix,int >
-      ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,false,jointId,_1,_2),
-	jacobiansSINTERN,
-	"sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
+      ( boost::bind(&DynamicPinocchio::computeGenericEndeffJacobian,this,false,isLocal,jointId,_1,_2),
+	    jacobiansSINTERN << forwardKinematicsSINTERN,
+	    "sotDynamicPinocchio("+name+")::output(matrix)::"+signame );
   }
   else SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
 				  "Robot has no joint corresponding to " + jointName);
@@ -769,7 +777,7 @@ computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res,co
 }
 
 dg::Matrix& DynamicPinocchio::
-computeGenericEndeffJacobian(const bool isFrame, const int jointId,dg::Matrix& res,const int& time )
+computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int jointId,dg::Matrix& res,const int& time )
 {
   sotDEBUGIN(25);
   assert(m_model);
@@ -777,6 +785,7 @@ computeGenericEndeffJacobian(const bool isFrame, const int jointId,dg::Matrix& r
   if(res.rows()!=6 && res.cols()!=m_model->nv)
     res.resize(6,m_model->nv);
   jacobiansSINTERN(time);
+  forwardKinematicsSINTERN(time);
 
   //TODO: Find a way to remove tmp object
   se3::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
@@ -798,6 +807,13 @@ computeGenericEndeffJacobian(const bool isFrame, const int jointId,dg::Matrix& r
                  <<" is "<<tmp<<std::endl;
   }
   res = tmp;
+
+  if (!isLocal) {
+    Eigen::Matrix3d rotation = (isFrame ? m_data->oMf : m_data->oMi)[jointId].rotation();
+    Eigen::Vector3d translation = Eigen::Vector3d::Zero();
+
+    res = (se3::SE3(rotation, translation).toActionMatrix() * res);
+  }
 
   sotDEBUGOUT(25);
   return res;
@@ -1056,7 +1072,7 @@ accelerationsSOUT( const std::string& name )
 void DynamicPinocchio::cmd_createOpPointSignals( const std::string& opPointName,
 					const std::string& jointName )
 {
-    createEndeffJacobianSignal(std::string("J")+opPointName,jointName);
+    createEndeffJacobianSignal(std::string("J")+opPointName, jointName, true);
     createPositionSignal(opPointName,jointName);
 }
 void DynamicPinocchio::cmd_createJacobianWorldSignal( const std::string& signalName,
@@ -1067,8 +1083,15 @@ void DynamicPinocchio::cmd_createJacobianWorldSignal( const std::string& signalN
 void DynamicPinocchio::cmd_createJacobianEndEffectorSignal( const std::string& signalName,
 					     const std::string& jointName )
 {
-    createEndeffJacobianSignal(signalName, jointName);
+    createEndeffJacobianSignal(signalName, jointName, true);
 }
+
+void DynamicPinocchio::cmd_createJacobianEndEffectorWorldSignal( const std::string& signalName,
+					     const std::string& jointName )
+{
+    createEndeffJacobianSignal(signalName, jointName, false);
+}
+
 void DynamicPinocchio::cmd_createPositionSignal( const std::string& signalName,
 					const std::string& jointName )
 {
