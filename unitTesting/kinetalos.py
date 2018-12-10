@@ -42,9 +42,9 @@ initialConfig = (0., 0., 0.648702, 0., 0. , 0.,                  # Free flyer
 #---- DYN --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
 from pinocchio.robot_wrapper import RobotWrapper
-import pinocchio as se3
+import pinocchio as pin
 from dynamic_graph.sot.dynamics_pinocchio import fromSotToPinocchio
-pinocchioRobot = RobotWrapper(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+pinocchioRobot = RobotWrapper(urdfPath, urdfDir, pin.JointModelFreeFlyer())
 pinocchioRobot.initDisplay(loadModel=True)
 pinocchioRobot.display(fromSotToPinocchio(initialConfig))
 

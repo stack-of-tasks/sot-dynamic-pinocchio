@@ -44,7 +44,6 @@
 /* PINOCCHIO */
 #include <pinocchio/macros.hpp>
 #include <pinocchio/multibody/model.hpp>
-#include <pinocchio/multibody/joint/joint-variant.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/frames.hpp>
@@ -95,8 +94,8 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   DYNAMIC_GRAPH_ENTITY_DECL();
 
   /*  --- MODEL ATRIBUTES --- */
-  se3::Model*  m_model;
-  se3::Data*   m_data;
+  pinocchio::Model*  m_model;
+  pinocchio::Data*   m_data;
 
   /*  --- MODEL ATRIBUTES --- */
 
@@ -185,9 +184,9 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   void displayModel() const
   { assert(m_model); std::cout<<(*m_model)<<std::endl; };
 
-  void setModel(se3::Model*);
+  void setModel(pinocchio::Model*);
 
-  void setData(se3::Data*);
+  void setData(pinocchio::Data*);
 
   /* --- GETTERS --- */
 
