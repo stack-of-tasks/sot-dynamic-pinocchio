@@ -246,22 +246,22 @@ DynamicPinocchio::~DynamicPinocchio( void ) {
 }
 
 void
-DynamicPinocchio::setModel(se3::Model* modelPtr){
+DynamicPinocchio::setModel(pinocchio::Model* modelPtr){
   this->m_model = modelPtr;
 
   if (this->m_model->nq > m_model->nv) {
-    if (se3::nv(this->m_model->joints[1]) == 6)
+    if (pinocchio::nv(this->m_model->joints[1]) == 6)
       sphericalJoints.push_back(3);  //FreeFlyer Orientation
 
     for(int i = 1; i<this->m_model->njoints; i++)  //0: universe
-      if(se3::nq(this->m_model->joints[i]) == 4) //Spherical Joint Only
-	sphericalJoints.push_back(se3::idx_v(this->m_model->joints[i]));
+      if(pinocchio::nq(this->m_model->joints[i]) == 4) //Spherical Joint Only
+	sphericalJoints.push_back(pinocchio::idx_v(this->m_model->joints[i]));
   }
 }
 
 
 void
-DynamicPinocchio::setData(se3::Data* dataPtr){
+DynamicPinocchio::setData(pinocchio::Data* dataPtr){
   this->m_data = dataPtr;
 
 }
@@ -696,9 +696,9 @@ dg::Vector& DynamicPinocchio::computeZmp( dg::Vector& res,const int& time )
         res.resize(3);
     newtonEulerSINTERN(time);
 
-    const se3::Force& ftau = m_data->oMi[1].act(m_data->f[1]);
-    const se3::Force::Vector3& tau = ftau.angular();
-    const se3::Force::Vector3& f = ftau.linear();
+    const pinocchio::Force& ftau = m_data->oMi[1].act(m_data->f[1]);
+    const pinocchio::Force::Vector3& tau = ftau.angular();
+    const pinocchio::Force::Vector3& f = ftau.linear();
     res(0) = -tau[1]/f[2];
     res(1) = tau[0]/f[2];
     res(2) = 0;
@@ -715,7 +715,7 @@ dg::Vector& DynamicPinocchio::computeZmp( dg::Vector& res,const int& time )
 int& DynamicPinocchio::computeJacobians(int& dummy, const int& time) {
   sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  se3::computeJacobians(*m_model,*m_data, q);
+  pinocchio::computeJacobians(*m_model,*m_data, q);
   sotDEBUG(25)<<"Jacobians updated"<<std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -725,7 +725,7 @@ int& DynamicPinocchio::computeForwardKinematics(int& dummy, const int& time)  {
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   const Eigen::VectorXd& v = pinocchioVelSINTERN.access(time);
   const Eigen::VectorXd& a = pinocchioAccSINTERN.access(time);
-  se3::forwardKinematics(*m_model, *m_data, q, v, a);
+  pinocchio::forwardKinematics(*m_model, *m_data, q, v, a);
   sotDEBUG(25)<<"Kinematics updated"<<std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -735,7 +735,7 @@ int& DynamicPinocchio::computeCcrba(int& dummy, const int& time) {
   sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   const Eigen::VectorXd& v = pinocchioVelSINTERN.access(time);
-  se3::ccrba(*m_model,*m_data, q, v);
+  pinocchio::ccrba(*m_model,*m_data, q, v);
   sotDEBUG(25)<<"Inertia and Momentum updated"<<std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -752,15 +752,15 @@ computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res,co
   jacobiansSINTERN(time);
 
   //TODO: Find a way to remove tmp object
-  se3::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
+  pinocchio::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
 
   //Computes Jacobian in world coordinates.
   if(isFrame){
-    se3::getJacobian<se3::WORLD>(*m_model,*m_data,
-                                 m_model->frames[(se3::Model::Index)jointId].parent,tmp);
+    pinocchio::getJacobian<pinocchio::WORLD>(*m_model,*m_data,
+                                 m_model->frames[(pinocchio::Model::Index)jointId].parent,tmp);
   }
   else
-    se3::getJacobian<se3::WORLD>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    pinocchio::getJacobian<pinocchio::WORLD>(*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
   res = tmp;
   sotDEBUGOUT(25);
   return res;
@@ -778,22 +778,22 @@ computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int j
   forwardKinematicsSINTERN(time);
 
   //TODO: Find a way to remove tmp object
-  se3::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
+  pinocchio::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6,m_model->nv);
   //std::string temp;
   //Computes Jacobian in end-eff coordinates.
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    pinocchio::framesForwardKinematics(*m_model,*m_data);
+    pinocchio::getFrameJacobian(*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
-                 << m_model->frames.at((se3::Model::Index)jointId).name
+                 << m_model->frames.at((pinocchio::Model::Index)jointId).name
                  <<" is "<<tmp<<std::endl;
   }
   else {
-    //temp = m_model->getJointName((se3::Model::Index)jointId);
-    se3::getJacobian<se3::LOCAL>
-      (*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    //temp = m_model->getJointName((pinocchio::Model::Index)jointId);
+    pinocchio::getJacobian<pinocchio::LOCAL>
+      (*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
-                 << m_model->getJointName((se3::Model::Index)jointId)
+                 << m_model->getJointName((pinocchio::Model::Index)jointId)
                  <<" is "<<tmp<<std::endl;
   }
   res = tmp;
@@ -817,13 +817,13 @@ computeGenericPosition(const bool isFrame, const int jointId, MatrixHomogeneous&
   std::string temp;
   forwardKinematicsSINTERN(time);
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
+    pinocchio::framesForwardKinematics(*m_model,*m_data);
     res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
-    temp = m_model->frames.at((se3::Model::Index)jointId).name;
+    temp = m_model->frames.at((pinocchio::Model::Index)jointId).name;
   }
   else{
     res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
-    temp = m_model->getJointName((se3::Model::Index)jointId);
+    temp = m_model->getJointName((pinocchio::Model::Index)jointId);
   }
   sotDEBUG(25)<<"For "<<temp<<" with id: "<<jointId<<" position is "<<res<<std::endl;
   sotDEBUGOUT(25);
@@ -837,7 +837,7 @@ computeGenericVelocity( const int jointId, dg::Vector& res,const int& time )
   assert(m_data);
   res.resize(6);
   forwardKinematicsSINTERN(time);
-  const se3::Motion& aRV = m_data->v[jointId];
+  const pinocchio::Motion& aRV = m_data->v[jointId];
   res<<aRV.linear(),aRV.angular();
   sotDEBUGOUT(25);
   return res;
@@ -850,7 +850,7 @@ computeGenericAcceleration( const int jointId ,dg::Vector& res,const int& time )
   assert(m_data);
   res.resize(6);
   forwardKinematicsSINTERN(time);
-  const se3::Motion& aRA = m_data->a[jointId];
+  const pinocchio::Motion& aRA = m_data->a[jointId];
   res<<aRA.linear(),aRA.angular();
   sotDEBUGOUT(25);
   return res;
@@ -865,7 +865,7 @@ computeNewtonEuler(int& dummy,const int& time )
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   const Eigen::VectorXd& v = pinocchioVelSINTERN.access(time);
   const Eigen::VectorXd& a = pinocchioAccSINTERN.access(time);
-  se3::rnea(*m_model,*m_data,q,v,a);
+  pinocchio::rnea(*m_model,*m_data,q,v,a);
 
   sotDEBUG(1)<< "pos = " <<q <<std::endl;
   sotDEBUG(1)<< "vel = " <<v <<std::endl;
@@ -882,7 +882,7 @@ computeJcom( dg::Matrix& Jcom,const int& time )
   sotDEBUGIN(25);
 
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  Jcom = se3::jacobianCenterOfMass(*m_model, *m_data,
+  Jcom = pinocchio::jacobianCenterOfMass(*m_model, *m_data,
 				   q, false);
   sotDEBUGOUT(25);
   return Jcom;
@@ -894,7 +894,7 @@ computeCom( dg::Vector& com,const int& time )
 
   sotDEBUGIN(25);
   forwardKinematicsSINTERN(time);
-  se3::centerOfMass(*m_model,*m_data,false);
+  pinocchio::centerOfMass(*m_model,*m_data,false);
   com = m_data->com[0];
   sotDEBUGOUT(25);
   return com;
@@ -905,7 +905,7 @@ computeInertia( dg::Matrix& res,const int& time )
 {
     sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-    res = se3::crba(*m_model, *m_data, q);
+    res = pinocchio::crba(*m_model, *m_data, q);
     res.triangularView<Eigen::StrictlyLower>() =
       res.transpose().triangularView<Eigen::StrictlyLower>();
     sotDEBUGOUT(25);

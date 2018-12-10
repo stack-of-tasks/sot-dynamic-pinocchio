@@ -16,7 +16,7 @@ namespace dynamicgraph{
       PyObject* object = NULL;
       PyObject* pyPinocchioObject;
       void* pointer1 = NULL;
-      se3::Model* pointer2 = NULL;
+      pinocchio::Model* pointer2 = NULL;
       if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject))
 	return NULL;
 
@@ -30,8 +30,8 @@ namespace dynamicgraph{
       DynamicPinocchio* dyn_entity = (DynamicPinocchio*) pointer1;
 
       try {
-	boost::python::extract<se3::Model&> cppHandle(pyPinocchioObject);
-	pointer2 = (se3::Model*) &cppHandle();
+	boost::python::extract<pinocchio::Model&> cppHandle(pyPinocchioObject);
+	pointer2 = (pinocchio::Model*) &cppHandle();
 	dyn_entity->setModel(pointer2);
       }
       catch (const std::exception& exc) {
@@ -54,7 +54,7 @@ namespace dynamicgraph{
       PyObject* object = NULL;
       PyObject* pyPinocchioObject;
       void* pointer1 = NULL;
-      se3::Data* pointer2 = NULL;
+      pinocchio::Data* pointer2 = NULL;
       if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject))
 	return NULL;
 
@@ -68,8 +68,8 @@ namespace dynamicgraph{
       DynamicPinocchio* dyn_entity = (DynamicPinocchio*) pointer1;
 
       try {
-	boost::python::extract<se3::Data&> cppHandle(pyPinocchioObject);
-	pointer2 = (se3::Data*) &cppHandle();
+	boost::python::extract<pinocchio::Data&> cppHandle(pyPinocchioObject);
+	pointer2 = (pinocchio::Data*) &cppHandle();
 	dyn_entity->setData(pointer2);
       }
       catch (const std::exception& exc) {
