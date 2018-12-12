@@ -758,11 +758,13 @@ computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res,co
 
   //Computes Jacobian in world coordinates.
   if(isFrame){
-    pinocchio::getJacobian<pinocchio::WORLD>(*m_model,*m_data,
-                                 m_model->frames[(pinocchio::Model::Index)jointId].parent,tmp);
+    pinocchio::getJacobian(*m_model,*m_data,
+        m_model->frames[(pinocchio::Model::Index)jointId].parent,
+        pinocchio::WORLD, tmp);
   }
   else
-    pinocchio::getJacobian<pinocchio::WORLD>(*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
+    pinocchio::getJacobian(*m_model,*m_data,(pinocchio::Model::Index)jointId,
+        pinocchio::WORLD, tmp);
   res = tmp;
   sotDEBUGOUT(25);
   return res;
@@ -791,8 +793,8 @@ computeGenericEndeffJacobian(const bool isFrame, const int jointId,dg::Matrix& r
   }
   else {
     //temp = m_model->getJointName((pinocchio::Model::Index)jointId);
-    pinocchio::getJacobian<pinocchio::LOCAL>
-      (*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
+    pinocchio::getJacobian(*m_model,*m_data,(pinocchio::Model::Index)jointId,
+        pinocchio::LOCAL, tmp);
     sotDEBUG(25) << "EndEffJacobian for "
                  << m_model->getJointName((pinocchio::Model::Index)jointId)
                  <<" is "<<tmp<<std::endl;
