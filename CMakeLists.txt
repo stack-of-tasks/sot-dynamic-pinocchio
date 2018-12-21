@@ -46,6 +46,7 @@ ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
+ADD_OPTIONAL_DEPENDENCY("yaml-cpp")
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
@@ -70,6 +71,7 @@ SET(plugins
   angle-estimator
   waist-attitude-from-sensor
   zmp-from-forces
+  pinocchio-device
   )
 
 SET(LIBRARY_NAME ${PROJECT_NAME})

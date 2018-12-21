@@ -16,7 +16,8 @@
 ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
-test_constructor
+  test_constructor
+  test_pinocchio_device
 #test_config
 #  dummy
 #  test_djj
@@ -24,12 +25,17 @@ test_constructor
 #  test_results
 )
 
+SET(test_pinocchio_device_PKG_CONFIG
+  yaml-cpp
+  )
+
 
 #----------------------------------------------------
 # Install procedure for the urdf files
 #----------------------------------------------------
 
 SET(test_dyn_plugins_dependencies dynamic)
+
 
 # Make Boost.Test generates the main function in test cases.
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
@@ -62,15 +68,24 @@ FOREACH(test ${tests})
     dp-integrator-force
     dp-angle-estimator
     dp-waist-attitude-from-sensor
+    dp-pinocchio-device
     ${LIBRARY_NAME}
     )
 
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} pinocchio)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph)
+
+  # Check if the test needs to use python interface.
   IF(BUILD_PYTHON_INTERFACE)
     PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} dynamic-graph-python)
   ENDIF(BUILD_PYTHON_INTERFACE)
+
+  # Uses PKG config additional option
+  MESSAGE("DISPLAY ${test}_PKG_CONFIG: ${${test}_PKG_CONFIG}")
+  IF( ${test}_PKG_CONFIG )
+    PKG_CONFIG_USE_DEPENDENCY(${EXECUTABLE_NAME} ${${test}_PKG_CONFIG})    
+  ENDIF( ${test}_PKG_CONFIG )
 
   IF(${test}_plugins_dependencies)
     ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
