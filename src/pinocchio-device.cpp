@@ -29,6 +29,30 @@ using namespace std;
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
+#define DBGFILE "/tmp/sot-talos-device.txt"
+
+#if 0
+#define RESETDEBUG5() { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::out);		\
+    DebugFile.close();}
+#define ODEBUG5FULL(x) { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::app);		\
+    DebugFile << __FILE__ << ":"			\
+	      << __FUNCTION__ << "(#"			\
+	      << __LINE__ << "):" << x << std::endl;	\
+    DebugFile.close();}
+#define ODEBUG5(x) { std::ofstream DebugFile;	\
+    DebugFile.open(DBGFILE,std::ofstream::app); \
+    DebugFile << x << std::endl;		\
+    DebugFile.close();}
+
+#else
+// Void the macro
+#define RESETDEBUG5()
+#define ODEBUG5FULL(x)
+#define ODEBUG5(x)
+#endif
+
 const std::string PinocchioDevice::CLASS_NAME = "PinocchioDevice";
 
 
@@ -66,18 +90,28 @@ PinocchioDevice::
 
 }
 
+const double PinocchioDevice::TIMESTEP_DEFAULT = 0.001;
+
 PinocchioDevice::
 PinocchioDevice( const std::string& n )
   :Entity(n)
+  ,timestep_(TIMESTEP_DEFAULT)
   ,position_(6)
   ,sanityCheck_(true)
   ,controlSIN( NULL,"PinocchioDevice("+n+")::input(double)::control" )   
   ,stateSOUT_( "PinocchioDevice("+n+")::output(vector)::state" )   
-  ,velocitySOUT_( "PinocchioDevice("+n+")::output(vector)::velocity"  )
+  ,velocitySOUT_("PinocchioDevice("+n+")::output(vector)::velocity"  )
   ,motorcontrolSOUT_   ( "PinocchioDevice("+n+")::output(vector)::motorcontrol" )
   ,previousControlSOUT_( "PinocchioDevice("+n+")::output(vector)::previousControl" )
   ,robotState_     ("PinocchioDevice("+n+")::output(vector)::robotState")
   ,robotVelocity_  ("PinocchioDevice("+n+")::output(vector)::robotVelocity")
+  ,forcesSOUT_(0)
+  ,imuSOUT_(0)
+  ,pseudoTorqueSOUT_(0)
+  ,temperatureSOUT_(0)
+  ,currentsSOUT_(0)
+  ,motor_anglesSOUT_(0)
+  ,joint_anglesSOUT_(0)
   ,ffPose_()
   ,forceZero6 (6)
   ,debug_mode_(5)
@@ -85,8 +119,8 @@ PinocchioDevice( const std::string& n )
   ,velocity_index_(0)
   ,current_index_(0)
   ,torque_index_(0)
-  ,joint_angles_index_(0)
-  ,motor_angles_index_(0)
+  ,joint_angle_index_(0)
+  ,motor_angle_index_(0)
    
 {
   forceZero6.fill (0);
@@ -516,13 +550,13 @@ ParseYAMLJointSensor(std::string & joint_name,
 	}
       else if (aSensor=="joint_angles")
 	{
-	  aJointSoTHWControlType.joint_angle_index = joint_angles_index_;
-	  joint_angles_index_++;
+	  aJointSoTHWControlType.joint_angle_index = joint_angle_index_;
+	  joint_angle_index_++;
 	}
       else if (aSensor=="motor_angles")
 	{
-	  aJointSoTHWControlType.motor_angle_index = motor_angles_index_;
-	  motor_angles_index_++;
+	  aJointSoTHWControlType.motor_angle_index = motor_angle_index_;
+	  motor_angle_index_++;
 	}
  
     }
@@ -672,13 +706,13 @@ void PinocchioDevice::CreateAForceSignal(const std::string & force_sensor_name)
 
 void PinocchioDevice::CreateAnImuSignal(const std::string &imu_sensor_name)
 {
-  dynamicgraph::Signal<dg::Vector, int> * anImuSOUT_;
+  IMUSOUT * anImuSOUT_;
   /* --- SIGNALS --- */
-  anImuSOUT_ =
-    new Signal<Vector, int>("PinocchioDevice("+getName()+")::output(vector6)::" +
-			    imu_sensor_name);
+  anImuSOUT_ = new IMUSOUT(imu_sensor_name,getName());
   imuSOUT_.push_back(anImuSOUT_);
-  signalRegistration(*anImuSOUT_);
+  signalRegistration(anImuSOUT_->attitudeSOUT
+		     << anImuSOUT_->accelerometerSOUT
+		     << anImuSOUT_->gyrometerSOUT);
 }
 
 
@@ -700,9 +734,8 @@ UpdateSignals()
 
   joint_anglesSOUT_ = new Signal<Vector, int>
     ("PinocchioDevice("+getName()+")::output(vector)::joint_angles");
-
-  velocitySOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::joint_velocities");
+  
+  return 0;
 }
 
 
@@ -713,9 +746,12 @@ void PinocchioDevice::display ( std::ostream& os ) const
 {os <<name<<": "<<position_<<endl; }
 
 /* Helpers for the controller */
-void PinocchioDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn,
-				      int t)
+void PinocchioDevice::
+setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn,
+		int t)
 {
+  Eigen::Matrix<double, 6, 1> dgforces;
+  
   sotDEBUGIN(15);
   map<string,dgsot::SensorValues>::iterator it;
   it = SensorsIn.find("forces");
@@ -724,38 +760,43 @@ void PinocchioDevice::setSensorsForce(map<string,dgsot::SensorValues> &SensorsIn
 
     // Implements force recollection.
     const vector<double>& forcesIn = it->second.getValues();
-    for(int i=0;i<forcesSOUT_.size();++i)
+    for(std::size_t i=0;i<forcesSOUT_.size();++i)
     {
       sotDEBUG(15) << "Force sensor " << i << std::endl;
       for(int j=0;j<6;++j)
 	{
-	  dgforces_(j) = forcesIn[i*6+j];
-	  sotDEBUG(15) << "Force value " << j << ":" << dgforces_(j) << std::endl;
+	  dgforces(j) = forcesIn[i*6+j];
+	  sotDEBUG(15) << "Force value " << j << ":" << dgforces(j) << std::endl;
 	}
-      forcesSOUT_[i]->setConstant(dgforces_);
+      forcesSOUT_[i]->setConstant(dgforces);
       forcesSOUT_[i]->setTime (t);
     }
   }
   sotDEBUGIN(15);
 }
 
-void PinocchioDevice::setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn,
-				    int t)
+void PinocchioDevice::
+setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn,
+	      int t)
 {
+  Eigen::Matrix<double,3, 1> aVector3d;
+  
   map<string,dgsot::SensorValues>::iterator it;
 
   //TODO: Confirm if this can be made quaternion
-  for(int i=0;i<imuSOUT_.size();++i)
+  for(std::size_t k=0;k<imuSOUT_.size();++k)
     {
       it = SensorsIn.find("attitude");
       if (it!=SensorsIn.end())
 	{
 	  const vector<double>& attitude = it->second.getValues ();
+	  Eigen::Matrix<double, 3, 3> pose;
+	  
 	  for (unsigned int i = 0; i < 3; ++i)
 	    for (unsigned int j = 0; j < 3; ++j)
 	      pose (i, j) = attitude [i * 3 + j];
-	  imuSOUT_[i].attitudeSOUT_.setConstant (pose);
-	  imuSOUT_[i].attitudeSOUT_.setTime (t);
+	  imuSOUT_[k]->attitudeSOUT.setConstant (pose);
+	  imuSOUT_[k]->attitudeSOUT.setTime (t);
 	}
 
       it = SensorsIn.find("accelerometer_0");
@@ -764,9 +805,9 @@ void PinocchioDevice::setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn,
 	  const vector<double>& accelerometer =
 	    SensorsIn ["accelerometer_0"].getValues ();
 	  for (std::size_t i=0; i<3; ++i)
-	    accelerometer_ (i) = accelerometer [i];
-	  imuSOUT_[i].accelerometerSOUT_.setConstant (accelerometer_);
-	  imuSOUT_[i].accelerometerSOUT_.setTime (t);
+	    aVector3d(i) = accelerometer [i];
+	  imuSOUT_[k]->accelerometerSOUT.setConstant (aVector3d);
+	  imuSOUT_[k]->accelerometerSOUT.setTime (t);
 	}
       
       it = SensorsIn.find("gyrometer_0");
@@ -774,49 +815,55 @@ void PinocchioDevice::setSensorsIMU(map<string,dgsot::SensorValues> &SensorsIn,
 	{
 	  const vector<double>& gyrometer = SensorsIn ["gyrometer_0"].getValues ();
 	  for (std::size_t i=0; i<3; ++i)
-	    gyrometer_ (i) = gyrometer [i];
-	  imuSOUT_[i].gyrometerSOUT_.setConstant (gyrometer_);
-	  imuSOUT_[i].gyrometerSOUT_.setTime (t);
+	    aVector3d(i) = gyrometer [i];
+	  imuSOUT_[k]->gyrometerSOUT.setConstant (aVector3d);
+	  imuSOUT_[k]->gyrometerSOUT.setTime (t);
 	}
     }
-  }
 }
 
 void PinocchioDevice::
 setSensorsEncoders(map<string,dgsot::SensorValues> &SensorsIn,
 		   int t)
 {
+  dg::Vector dgRobotState, motor_angles, joint_angles;
   map<string,dgsot::SensorValues>::iterator it;
-  
-  it = SensorsIn.find("motor-angles");
-  if (it!=SensorsIn.end())
-  {
-    const vector<double>& anglesIn = it->second.getValues();
-    dgRobotState_.resize (anglesIn.size () + 6);
-    motor_angles_.resize(anglesIn.size ());
-    for (unsigned i = 0; i < 6; ++i)
-      dgRobotState_ (i) = 0.;
-    for (unsigned i = 0; i < anglesIn.size(); ++i)
-      {
-	dgRobotState_ (i + 6) = anglesIn[i];
-	motor_angles_(i)= anglesIn[i];
-      }
-    robotState_.setConstant(dgRobotState_);
-    robotState_.setTime(t);
-    motor_anglesSOUT_.setConstant(motor_angles_);
-    motor_anglesSOUT_.setTime(t);
-  }
 
-  it = SensorsIn.find("joint-angles");
-  if (it!=SensorsIn.end())
-  {
-    const vector<double>& joint_anglesIn = it->second.getValues();
-    joint_angles_.resize (joint_anglesIn.size () );
-    for (unsigned i = 0; i < joint_anglesIn.size(); ++i)
-      joint_angles_ (i) = joint_anglesIn[i];
-    joint_anglesSOUT_.setConstant(joint_angles_);
-    joint_anglesSOUT_.setTime(t);
-  }
+  if (motor_anglesSOUT_!=0)
+    {
+      it = SensorsIn.find("motor-angles");
+      if (it!=SensorsIn.end())
+	{
+	  const vector<double>& anglesIn = it->second.getValues();
+	  dgRobotState.resize (anglesIn.size () + 6);
+	  motor_angles.resize(anglesIn.size ());
+	  for (unsigned i = 0; i < 6; ++i)
+	    dgRobotState (i) = 0.;
+	  for (unsigned i = 0; i < anglesIn.size(); ++i)
+	    {
+	      dgRobotState (i + 6) = anglesIn[i];
+	      motor_angles(i)= anglesIn[i];
+	    }
+	  robotState_.setConstant(dgRobotState);
+	  robotState_.setTime(t);
+	  motor_anglesSOUT_->setConstant(motor_angles);
+	  motor_anglesSOUT_->setTime(t);
+	}
+    }
+
+  if (joint_anglesSOUT_!=0)
+    {
+      it = SensorsIn.find("joint-angles");
+      if (it!=SensorsIn.end())
+	{
+	  const vector<double>& joint_anglesIn = it->second.getValues();
+	  joint_angles.resize (joint_anglesIn.size () );
+	  for (unsigned i = 0; i < joint_anglesIn.size(); ++i)
+	    joint_angles (i) = joint_anglesIn[i];
+	  joint_anglesSOUT_->setConstant(joint_angles);
+	  joint_anglesSOUT_->setTime(t);
+	}
+    }
 
 }
 
@@ -824,20 +871,22 @@ void PinocchioDevice::
 setSensorsVelocities(map<string,dgsot::SensorValues> &SensorsIn,
 		     int t)
 {
+  dg::Vector dgRobotVelocity;
+  
   map<string,dgsot::SensorValues>::iterator it;
   
   it = SensorsIn.find("velocities");
   if (it!=SensorsIn.end())
   {
     const vector<double>& velocitiesIn = it->second.getValues();
-    dgRobotVelocity_.resize (velocitiesIn.size () + 6);
+    dgRobotVelocity.resize (velocitiesIn.size () + 6);
     for (unsigned i = 0; i < 6; ++i)
-      dgRobotVelocity_ (i) = 0.;
+      dgRobotVelocity (i) = 0.;
     for (unsigned i = 0; i < velocitiesIn.size(); ++i)
       {
-	dgRobotVelocity_ (i + 6) = velocitiesIn[i];
+	dgRobotVelocity (i + 6) = velocitiesIn[i];
       }
-    robotVelocity_.setConstant(dgRobotVelocity_);
+    robotVelocity_.setConstant(dgRobotVelocity);
     robotVelocity_.setTime(t);
   }
   
@@ -845,55 +894,72 @@ setSensorsVelocities(map<string,dgsot::SensorValues> &SensorsIn,
 
 void PinocchioDevice::setSensorsTorquesCurrents(map<string,dgsot::SensorValues> &SensorsIn, int t)
 {
-  map<string,dgsot::SensorValues>::iterator it;
-  it = SensorsIn.find("torques");
-  if (it!=SensorsIn.end())
-  {
-    const std::vector<double>& torques = SensorsIn["torques"].getValues();
-    torques_.resize(torques.size());
-    for(std::size_t i = 0; i < torques.size(); ++i)
-      torques_ (i) = torques [i];
-    pseudoTorqueSOUT_.setConstant(torques_);
-    pseudoTorqueSOUT_.setTime(t);
-  }
+  dg::Vector torques,currents;
   
-  it = SensorsIn.find("currents");
-  if (it!=SensorsIn.end())
-  {
-    const std::vector<double>& currents = SensorsIn["currents"].getValues();
-    currents_.resize(currents.size());
-    for(std::size_t i = 0; i < currents.size(); ++i)
-      currents_ (i) = currents[i];
-    currentsSOUT_.setConstant(currents_);
-    currentsSOUT_.setTime(t);
-  }
+  map<string,dgsot::SensorValues>::iterator it;
+
+  if (pseudoTorqueSOUT_!=0)
+    {
+      it = SensorsIn.find("torques");
+      if (it!=SensorsIn.end())
+	{
+	  const std::vector<double>& vtorques = SensorsIn["torques"].getValues();
+	  torques.resize(vtorques.size());
+	  for(std::size_t i = 0; i < vtorques.size(); ++i)
+	    torques (i) = vtorques [i];
+	  pseudoTorqueSOUT_->setConstant(torques);
+	  pseudoTorqueSOUT_->setTime(t);
+	}
+    }
+
+  if (currentsSOUT_!=0)
+    {
+      it = SensorsIn.find("currents");
+      if (it!=SensorsIn.end())
+	{
+	  const std::vector<double>& vcurrents = SensorsIn["currents"].getValues();
+	  currents.resize(vcurrents.size());
+	  for(std::size_t i = 0; i < vcurrents.size(); ++i)
+	    currents (i) = vcurrents[i];
+	  currentsSOUT_->setConstant(currents);
+	  currentsSOUT_->setTime(t);
+	}
+    }
 }
 
 void PinocchioDevice::setSensorsGains(map<string,dgsot::SensorValues> &SensorsIn,
 				     int t)
 {
+  dg::Vector p_gains, d_gains;
+  
   map<string,dgsot::SensorValues>::iterator it;
-  it = SensorsIn.find("p_gains");
-  if (it!=SensorsIn.end())
-  {
-    const std::vector<double>& p_gains = SensorsIn["p_gains"].getValues();
-    p_gains_.resize(p_gains.size());
-    for(std::size_t i = 0; i < p_gains.size(); ++i)
-      p_gains_ (i) = p_gains[i];
-    p_gainsSOUT_.setConstant(p_gains_);
-    p_gainsSOUT_.setTime(t);
-  }
+  if (p_gainsSOUT_!=0)
+    {
+      it = SensorsIn.find("p_gains");
+      if (it!=SensorsIn.end())
+	{
+	  const std::vector<double>& vp_gains = SensorsIn["p_gains"].getValues();
+	  p_gains.resize(vp_gains.size());
+	  for(std::size_t i = 0; i < vp_gains.size(); ++i)
+	    p_gains (i) = vp_gains[i];
+	  p_gainsSOUT_->setConstant(p_gains);
+	  p_gainsSOUT_->setTime(t);
+	}
+    }
 
-  it = SensorsIn.find("d_gains");
-  if (it!=SensorsIn.end())
-  {
-    const std::vector<double>& d_gains = SensorsIn["d_gains"].getValues();
-    d_gains_.resize(d_gains.size());
-    for(std::size_t i = 0; i < d_gains.size(); ++i)
-      d_gains_ (i) = d_gains[i];
-    d_gainsSOUT_.setConstant(d_gains_);
-    d_gainsSOUT_.setTime(t);
-  }
+  if (d_gainsSOUT_!=0)
+    {
+      it = SensorsIn.find("d_gains");
+      if (it!=SensorsIn.end())
+	{
+	  const std::vector<double>& vd_gains = SensorsIn["d_gains"].getValues();
+	  d_gains.resize(vd_gains.size());
+	  for(std::size_t i = 0; i < vd_gains.size(); ++i)
+	    d_gains (i) = vd_gains[i];
+	  d_gainsSOUT_->setConstant(d_gains);
+	  d_gainsSOUT_->setTime(t);
+	}
+    }
 
 }
 
@@ -940,13 +1006,8 @@ void PinocchioDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   // Integrate control
   increment(timestep_);
   sotDEBUG (25) << "state = " << state_ << std::endl;
-  sotDEBUG (25) << "diff  = " << ((previousState_.size() == state_.size())?
-				  (state_ - previousState_) : state_ ) 
-		<< std::endl;
+
   ODEBUG5FULL("state = "<< state_);
-  ODEBUG5FULL("diff  = " << ((previousState_.size() == state_.size())?
-			     (state_ - previousState_) : state_ ) );
-  previousState_ = state_;
 
   // Specify the joint values for the controller.
   if ((int)anglesOut.size()!=state_.size()-6)
@@ -956,20 +1017,6 @@ void PinocchioDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
     anglesOut[i-6] = state_(i);
   controlOut["control"].setValues(anglesOut);
 
-  // Update position of freeflyer in global frame
-  Eigen::Vector3d transq_(freeFlyerPose().translation());
-  dg::sot::VectorQuaternion qt_(freeFlyerPose().linear());
-
-  //translation
-  for(int i=0; i<3; i++) baseff_[i] = transq_(i);
-  
-  //rotation: quaternion
-  baseff_[3] = qt_.w();
-  baseff_[4] = qt_.x();
-  baseff_[5] = qt_.y();
-  baseff_[6] = qt_.z();
-
-  controlOut["baseff"].setValues(baseff_);
   ODEBUG5FULL("end");
   sotDEBUGOUT(25) ;
 }

@@ -101,9 +101,20 @@ namespace dynamicgraph {
 
     struct IMUSOUT
     {
+      std::string imu_sensor_name;
       dg::Signal<MatrixRotation, int> attitudeSOUT;
       dg::Signal<dg::Vector,int> accelerometerSOUT;
       dg::Signal<dg::Vector,int> gyrometerSOUT;
+      IMUSOUT(const std::string &limu_sensor_name,
+	      const std::string &device_name):
+	imu_sensor_name(limu_sensor_name)
+	,attitudeSOUT("PinocchioDevice("+device_name+
+		     ")::output(vector6)::"+imu_sensor_name+"_attitudeSOUT")
+	,accelerometerSOUT("PinocchioDevice("+device_name+
+			   ")::output(vector3)::"+imu_sensor_name+"_accelerometerSOUT")
+	,gyrometerSOUT("PinocchioDevice("+device_name+
+		       ")::output(vector3)::"+imu_sensor_name+"_gyrometerSOUT")
+      {}
     };
     typedef std::map<std::string,JointSoTHWControlType>::iterator
     JointSHWControlType_iterator;
@@ -119,8 +130,11 @@ namespace dynamicgraph {
       virtual const std::string& getClassName(void) const {
         return CLASS_NAME;
       }
-
+      static const double TIMESTEP_DEFAULT;
+      
     protected:
+      /// \brief Current integration step.
+      double timestep_;
 
       /// \name Vectors related to the state.
       ///@{
@@ -202,7 +216,7 @@ namespace dynamicgraph {
       /// \brief Output integrated state from control.
       dg::Signal<dg::Vector,int> stateSOUT_;
       /// \brief Output integrated velocity from control
-      dg::Signal<dg::Vector,int> *velocitySOUT_;
+      dg::Signal<dg::Vector,int> velocitySOUT_;
       /// \brief Output attitude provided by the hardware
       /*! \brief The current state of the robot from the command viewpoint. */
       dg::Signal<dg::Vector,int> motorcontrolSOUT_;
@@ -221,17 +235,21 @@ namespace dynamicgraph {
       /// The force torque sensors
       std::vector<dg::Signal<dg::Vector,int>*> forcesSOUT_;
       /// The imu sensors
-      std::vector<dg::Signal<dg::Vector, int>*> imuSOUT_;
+      std::vector<IMUSOUT *> imuSOUT_;
       /// Motor or pseudo torques (estimated or build from PID)
       dg::Signal<dg::Vector,int> * pseudoTorqueSOUT_;
       /// Temperature signal
       dg::Signal<dg::Vector,int> * temperatureSOUT_;
       /// Current signal
       dg::Signal<dg::Vector,int> * currentsSOUT_;
-      /// Motor angles signal;
+      /// Motor angles signal
       dg::Signal<dg::Vector, int> * motor_anglesSOUT_;
-      /// Joint angles signal;
+      /// Joint angles signal
       dg::Signal<dg::Vector, int> * joint_anglesSOUT_;
+      /// P gains signal
+      dg::Signal<dg::Vector,int> * p_gainsSOUT_;
+      /// D gains signal
+      dg::Signal<dg::Vector,int> * d_gainsSOUT_;
       /// \}
 
       /// Parse a YAML string for configuration.
@@ -251,6 +269,8 @@ namespace dynamicgraph {
       void getControl(std::map<std::string, dgsot::ControlValues> &anglesOut);
       ///@}
     protected:
+
+
       void setControlType(const std::string &strCtrlType,
 			  ControlType &aCtrlType);
       
@@ -316,6 +336,7 @@ namespace dynamicgraph {
       virtual void setRoot( const MatrixHomogeneous & worldMwaist );
 
     private:
+      
       // Intermediate variable to avoid dynamic allocation
       dg::Vector forceZero6;
 
@@ -328,8 +349,8 @@ namespace dynamicgraph {
       // Intermediate index when parsing YAML file.
       int temperature_index_,velocity_index_,
 	current_index_,torque_index_,
-	joint_angles_index_,
-	motor_angles_index_
+	joint_angle_index_,
+	motor_angle_index_
 	;
     public:
       const se3::Model & getModel()

@@ -28,7 +28,7 @@ using namespace std;
 void CreateYAMLFILE()
 {
   YAML::Emitter yaml_out;
-  YAML::Node aNode,yn_map_hw_sot_cm,yn_map_sensors;
+  YAML::Node aNode,yn_map_hw_sot_c,yn_map_sensors;
   unsigned int index_vec_ctl=0;
   yn_map_hw_sot_c = aNode["map_hardware_sot_control"];
   yn_map_sensors = aNode["sensors"];
@@ -394,7 +394,7 @@ int main(int, char **)
 
   const se3::Model & aModel = aDevice.getModel();
 
-  const dg::Vector & aPosition = aDevice.stateSOUT(2001);
+  const dg::Vector & aPosition = aDevice.stateSOUT_(2001);
   double diff=0;
   for (unsigned int j=0;j<aPosition.size();j++)
     {
