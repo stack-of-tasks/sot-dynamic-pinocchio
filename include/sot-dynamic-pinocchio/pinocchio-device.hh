@@ -131,7 +131,10 @@ namespace dynamicgraph {
         return CLASS_NAME;
       }
       static const double TIMESTEP_DEFAULT;
-      
+
+      /// Maps of joint devices.
+      std::map<std::string,dgsot::JointSoTHWControlType> jointPinocchioDevices_;
+
     protected:
       /// \brief Current integration step.
       double timestep_;
@@ -159,8 +162,6 @@ namespace dynamicgraph {
       std::map<std::string,ControlType> sotControlType_;
       std::map<std::string,ControlType> hwControlType_;
 
-      /// Maps of joint devices.
-      std::map<std::string,JointSoTHWControlType> jointPinocchioDevices_;
       /// 
       PeriodicCall periodicCallBefore_;
       PeriodicCall periodicCallAfter_;

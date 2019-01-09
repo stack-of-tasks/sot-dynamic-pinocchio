@@ -29,7 +29,7 @@ using namespace std;
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 
-#define DBGFILE "/tmp/sot-talos-device.txt"
+#define DBGFILE "/tmp/pinocchio-device.txt"
 
 #if 0
 #define RESETDEBUG5() { std::ofstream DebugFile;	\
@@ -295,8 +295,17 @@ setURDFModel(const std::string &aURDFModel)
 
   /// Build the map between pinocchio and the alphabetical order.
   for(unsigned int i=0;i<model_.names.size();i++)
-    jointPinocchioDevices_[model_.names[i]].pinocchio_index=i;
-
+    {
+      if (model_.joints[i].id()<model_.nq)
+	{
+	  jointPinocchioDevices_[model_.names[i]].pinocchio_index=i;
+	  std::cout << "jointPinocchioDevices_ index: " << i
+		    << " model_.joints[i].id(): " << model_.joints[i].id()
+		    << " model_.names[i]: " << model_.names[i]
+		    << " model_.joints[i].shortname() : "<< model_.joints[i].shortname()
+		    << std::endl;
+	}
+    }
   // Initialize pinocchio vector.
   position_.resize(model_.nq);
   velocity_.resize(model_.nv);
@@ -400,6 +409,14 @@ void PinocchioDevice::integrate( const double & dt )
       int lctl_index = it_control_type->second.control_index;
       int pino_index = it_control_type->second.pinocchio_index;
 
+      if (lctl_index==-1)
+	{
+	  if (debug_mode_>1)
+	    std::cerr << "No control index for joint "
+		      << model_.names[pino_index] << std::endl;
+	  break;
+	}
+      
       if (pino_index!=-1)
 	{
 	  int lpos_index = model_.joints[pino_index].idx_q();
@@ -410,6 +427,8 @@ void PinocchioDevice::integrate( const double & dt )
 	  double lvelocityLimit = model_.velocityLimit[lvel_index];
 	  	  
 	  // Integration.
+
+	  // Set acceleration from control and integrates to find velocity.
 	  if (it_control_type->second.SoTcontrol==ACCELERATION)
 	    {
 	      acceleration_[lvel_index] = controlIN[lctl_index];
@@ -423,6 +442,7 @@ void PinocchioDevice::integrate( const double & dt )
 	      
 	      shouldIntegrateVelocity=true;
 	    }
+	  // Set velocity from control and set boolean to perform velocity integration later on.
 	  else if (it_control_type->second.SoTcontrol==VELOCITY)
 	    {
 	      acceleration_[lvel_index]=0;
@@ -434,6 +454,7 @@ void PinocchioDevice::integrate( const double & dt )
 	      
 	      shouldIntegrateVelocity=true;
 	    }
+	  // Position from control is directly provided.
 	  else if (it_control_type->second.SoTcontrol==POSITION)
 	    {
 	      acceleration_[lvel_index]=0;
@@ -509,6 +530,7 @@ ParseYAMLString(const std::string & aYamlString)
 	  if (r<0) return r;
 	}
     }
+  UpdateSignals();
   return 0;
 }
 
@@ -720,20 +742,25 @@ void PinocchioDevice::CreateAnImuSignal(const std::string &imu_sensor_name)
 int PinocchioDevice::
 UpdateSignals()
 {
-  pseudoTorqueSOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::ptorque" );
+  if ((torque_index_!=0) && (pseudoTorqueSOUT_!=0))
+    pseudoTorqueSOUT_ = new Signal<Vector, int>
+      ("PinocchioDevice("+getName()+")::output(vector)::ptorque" );
   
-  currentsSOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::currents" );
-  
-  temperatureSOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::temperatures");
+  if ((current_index_!=0) && (currentsSOUT_!=0))
+    currentsSOUT_ = new Signal<Vector, int>
+      ("PinocchioDevice("+getName()+")::output(vector)::currents" );
 
-  motor_anglesSOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::motor_angles");
+  if ((temperature_index_!=0) && (temperatureSOUT_!=0))
+    temperatureSOUT_ = new Signal<Vector, int>
+      ("PinocchioDevice("+getName()+")::output(vector)::temperatures");
 
-  joint_anglesSOUT_ = new Signal<Vector, int>
-    ("PinocchioDevice("+getName()+")::output(vector)::joint_angles");
+  if ((motor_angle_index_!=0) && (motor_anglesSOUT_!=0))
+    motor_anglesSOUT_ = new Signal<Vector, int>
+      ("PinocchioDevice("+getName()+")::output(vector)::motor_angles");
+
+  if ((joint_angle_index_!=0) && (joint_anglesSOUT_!=0))
+    joint_anglesSOUT_ = new Signal<Vector, int>
+      ("PinocchioDevice("+getName()+")::output(vector)::joint_angles");
   
   return 0;
 }
@@ -1000,8 +1027,9 @@ void PinocchioDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
 {
   ODEBUG5FULL("start");
   sotDEBUGIN(25) ;
-  vector<double> anglesOut;
-  anglesOut.resize(state_.size());
+  const Vector & controlIN = controlSIN.accessCopy();
+  vector<double> lcontrolOut;
+  lcontrolOut.resize(controlIN.size());
   
   // Integrate control
   increment(timestep_);
@@ -1010,13 +1038,24 @@ void PinocchioDevice::getControl(map<string,dgsot::ControlValues> &controlOut)
   ODEBUG5FULL("state = "<< state_);
 
   // Specify the joint values for the controller.
-  if ((int)anglesOut.size()!=state_.size()-6)
-    anglesOut.resize(state_.size()-6);
-
-  for(unsigned int i=6; i < state_.size();++i)
-    anglesOut[i-6] = state_(i);
-  controlOut["control"].setValues(anglesOut);
-
+  JointSHWControlType_iterator it_control_type;
+  for(it_control_type  = jointPinocchioDevices_.begin();
+      it_control_type != jointPinocchioDevices_.end();
+      it_control_type++)
+    {
+      int lctl_index = it_control_type->second.control_index;
+      if (it_control_type->second.HWcontrol==TORQUE)
+	lcontrolOut[lctl_index] = controlIN[lctl_index];
+      else if (it_control_type->second.HWcontrol==POSITION)
+	{
+	  int pino_index = it_control_type->second.pinocchio_index;
+	  int lpos_index = model_.joints[pino_index].idx_q();
+	  lcontrolOut[lctl_index] = position_[lpos_index];
+	}
+    }
+  
+  controlOut["control"].setValues(lcontrolOut);
+  
   ODEBUG5FULL("end");
   sotDEBUGOUT(25) ;
 }

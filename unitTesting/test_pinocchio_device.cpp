@@ -29,220 +29,188 @@ void CreateYAMLFILE()
 {
   YAML::Emitter yaml_out;
   YAML::Node aNode,yn_map_hw_sot_c,yn_map_sensors;
-  unsigned int index_vec_ctl=0;
   yn_map_hw_sot_c = aNode["map_hardware_sot_control"];
   yn_map_sensors = aNode["sensors"];
+  /*
   yn_map_hw_sot_c["waist"];
   yn_map_hw_sot_c["waist"]["hw"] = "POSITION";
   yn_map_hw_sot_c["waist"]["sot"] = "POSITION";
-  yn_map_hw_sot_c["waist"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["waist"]["controlPos"] = 0;
   yn_map_hw_sot_c["waist"]["sensors"] = "";
-  index_vec_ctl+=6;
-  
-  yn_map_hw_sot_c["RLEG_HIP_P"];
-  yn_map_hw_sot_c["RLEG_HIP_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_HIP_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RLEG_HIP_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RLEG_HIP_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-  
-  yn_map_hw_sot_c["RLEG_HIP_R"];
-  yn_map_hw_sot_c["RLEG_HIP_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_HIP_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RLEG_HIP_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RLEG_HIP_Y"];
-  yn_map_hw_sot_c["RLEG_HIP_Y"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_HIP_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RLEG_HIP_Y"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RLEG_HIP_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-
-  yn_map_hw_sot_c["RLEG_KNEE"];
-  yn_map_hw_sot_c["RLEG_KNEE"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_KNEE"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RLEG_KNEE"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RLEG_KNEE"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RLEG_ANKLE_P"];
-  yn_map_hw_sot_c["RLEG_ANKLE_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_ANKLE_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RLEG_ANKLE_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RLEG_ANKLE_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-  
-  yn_map_hw_sot_c["RLEG_ANKLE_R"];
-  yn_map_hw_sot_c["RLEG_ANKLE_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RLEG_ANKLE_R"]["sot"] = "VELOCITY";  
-  yn_map_hw_sot_c["RLEG_ANKLE_R"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RLEG_ANKLE_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
+  */
   yn_map_hw_sot_c["LLEG_HIP_P"];
   yn_map_hw_sot_c["LLEG_HIP_P"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_HIP_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_HIP_P"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_HIP_P"]["controlPos"] = 6;
   yn_map_hw_sot_c["LLEG_HIP_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-  
   
   yn_map_hw_sot_c["LLEG_HIP_R"];
   yn_map_hw_sot_c["LLEG_HIP_R"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_HIP_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_HIP_R"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_HIP_R"]["controlPos"] = 7;
   yn_map_hw_sot_c["LLEG_HIP_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
   
   yn_map_hw_sot_c["LLEG_HIP_Y"];
   yn_map_hw_sot_c["LLEG_HIP_Y"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_HIP_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_HIP_Y"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_HIP_Y"]["controlPos"] = 8;
   yn_map_hw_sot_c["LLEG_HIP_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
-  index_vec_ctl+=1;
   
   yn_map_hw_sot_c["LLEG_KNEE"];
   yn_map_hw_sot_c["LLEG_KNEE"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_KNEE"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_KNEE"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_KNEE"]["controlPos"] = 9;
   yn_map_hw_sot_c["LLEG_KNEE"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
-  index_vec_ctl+=1;
   
   yn_map_hw_sot_c["LLEG_ANKLE_P"];
   yn_map_hw_sot_c["LLEG_ANKLE_P"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_ANKLE_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_ANKLE_P"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_ANKLE_P"]["controlPos"] = 10;
   yn_map_hw_sot_c["LLEG_ANKLE_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
 
   yn_map_hw_sot_c["LLEG_ANKLE_R"];
   yn_map_hw_sot_c["LLEG_ANKLE_R"]["hw"] = "POSITION";
   yn_map_hw_sot_c["LLEG_ANKLE_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LLEG_ANKLE_R"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["LLEG_ANKLE_R"]["controlPos"] = 11;
   yn_map_hw_sot_c["LLEG_ANKLE_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RARM_SHOULDER_P"];
-  yn_map_hw_sot_c["RARM_SHOULDER_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_SHOULDER_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_SHOULDER_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_SHOULDER_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RARM_SHOULDER_R"];
-  yn_map_hw_sot_c["RARM_SHOULDER_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_SHOULDER_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_SHOULDER_R"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_SHOULDER_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]"; 
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RARM_SHOULDER_Y"];
-  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["RARM_ELBOW"];
-  yn_map_hw_sot_c["RARM_ELBOW"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_ELBOW"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_ELBOW"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_ELBOW"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
   
-  yn_map_hw_sot_c["RARM_WRIST_Y"];
-  yn_map_hw_sot_c["RARM_WRIST_Y"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_WRIST_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_WRIST_Y"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_WRIST_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
+  yn_map_hw_sot_c["RLEG_HIP_P"];
+  yn_map_hw_sot_c["RLEG_HIP_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_HIP_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RLEG_HIP_P"]["controlPos"] = 12;
+  yn_map_hw_sot_c["RLEG_HIP_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
   
-  yn_map_hw_sot_c["RARM_WRIST_P"];
-  yn_map_hw_sot_c["RARM_WRIST_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_WRIST_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_WRIST_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_WRIST_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
+  yn_map_hw_sot_c["RLEG_HIP_R"];
+  yn_map_hw_sot_c["RLEG_HIP_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_HIP_R"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RLEG_HIP_R"]["controlPos"] = 13;
+  yn_map_hw_sot_c["RLEG_HIP_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
 
-  yn_map_hw_sot_c["RARM_WRIST_R"];
-  yn_map_hw_sot_c["RARM_WRIST_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["RARM_WRIST_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["RARM_WRIST_R"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["RARM_WRIST_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current]";   
-  index_vec_ctl+=1;
+  yn_map_hw_sot_c["RLEG_HIP_Y"];
+  yn_map_hw_sot_c["RLEG_HIP_Y"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_HIP_Y"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RLEG_HIP_Y"]["controlPos"] = 14;
+  yn_map_hw_sot_c["RLEG_HIP_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
 
-  yn_map_hw_sot_c["LARM_SHOULDER_P"];
-  yn_map_hw_sot_c["LARM_SHOULDER_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_SHOULDER_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_SHOULDER_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_SHOULDER_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
+  yn_map_hw_sot_c["RLEG_KNEE"];
+  yn_map_hw_sot_c["RLEG_KNEE"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_KNEE"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RLEG_KNEE"]["controlPos"] = 15;
+  yn_map_hw_sot_c["RLEG_KNEE"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
 
-  yn_map_hw_sot_c["LARM_SHOULDER_R"];
-  yn_map_hw_sot_c["LARM_SHOULDER_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_SHOULDER_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_SHOULDER_R"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_SHOULDER_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["LARM_SHOULDER_Y"];
-  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
+  yn_map_hw_sot_c["RLEG_ANKLE_P"];
+  yn_map_hw_sot_c["RLEG_ANKLE_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_ANKLE_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RLEG_ANKLE_P"]["controlPos"] = 16;
+  yn_map_hw_sot_c["RLEG_ANKLE_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
   
-  yn_map_hw_sot_c["LARM_ELBOW"];
-  yn_map_hw_sot_c["LARM_ELBOW"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_ELBOW"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_ELBOW"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_ELBOW"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["LARM_WRIST_Y"];
-  yn_map_hw_sot_c["LARM_WRIST_Y"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_WRIST_Y"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_WRIST_Y"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_WRIST_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
-
-  yn_map_hw_sot_c["LARM_WRIST_P"];
-  yn_map_hw_sot_c["LARM_WRIST_P"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_WRIST_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_WRIST_P"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_WRIST_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
-  index_vec_ctl+=1;  
-
-  yn_map_hw_sot_c["LARM_WRIST_R"];
-  yn_map_hw_sot_c["LARM_WRIST_R"]["hw"] = "POSITION";
-  yn_map_hw_sot_c["LARM_WRIST_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["LARM_WRIST_R"]["controlPos"] = index_vec_ctl;
-  yn_map_hw_sot_c["LARM_WRIST_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current]";
-  index_vec_ctl+=1;
+  yn_map_hw_sot_c["RLEG_ANKLE_R"];
+  yn_map_hw_sot_c["RLEG_ANKLE_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RLEG_ANKLE_R"]["sot"] = "VELOCITY";  
+  yn_map_hw_sot_c["RLEG_ANKLE_R"]["controlPos"] = 17;
+  yn_map_hw_sot_c["RLEG_ANKLE_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
 
   yn_map_hw_sot_c["WAIST_P"];
   yn_map_hw_sot_c["WAIST_P"]["hw"] = "POSITION";
   yn_map_hw_sot_c["WAIST_P"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["WAIST_P"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["WAIST_P"]["controlPos"] = 18;
   yn_map_hw_sot_c["WAIST_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;  
 
   yn_map_hw_sot_c["WAIST_R"];
   yn_map_hw_sot_c["WAIST_R"]["hw"] = "POSITION";
   yn_map_hw_sot_c["WAIST_R"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["WAIST_R"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["WAIST_R"]["controlPos"] = 19;
   yn_map_hw_sot_c["WAIST_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
   
   yn_map_hw_sot_c["CHEST"];
   yn_map_hw_sot_c["CHEST"]["hw"] = "POSITION";
   yn_map_hw_sot_c["CHEST"]["sot"] = "VELOCITY";
-  yn_map_hw_sot_c["CHEST"]["controlPos"] = index_vec_ctl;
+  yn_map_hw_sot_c["CHEST"]["controlPos"] = 20;
   yn_map_hw_sot_c["CHEST"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
-  index_vec_ctl+=1;
+
+  yn_map_hw_sot_c["RARM_SHOULDER_P"];
+  yn_map_hw_sot_c["RARM_SHOULDER_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_SHOULDER_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_SHOULDER_P"]["controlPos"] = 21;
+  yn_map_hw_sot_c["RARM_SHOULDER_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["RARM_SHOULDER_R"];
+  yn_map_hw_sot_c["RARM_SHOULDER_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_SHOULDER_R"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_SHOULDER_R"]["controlPos"] = 22;
+  yn_map_hw_sot_c["RARM_SHOULDER_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]"; 
+
+  yn_map_hw_sot_c["RARM_SHOULDER_Y"];
+  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["controlPos"] = 23;
+  yn_map_hw_sot_c["RARM_SHOULDER_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["RARM_ELBOW"];
+  yn_map_hw_sot_c["RARM_ELBOW"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_ELBOW"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_ELBOW"]["controlPos"] = 24;
+  yn_map_hw_sot_c["RARM_ELBOW"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+  
+  yn_map_hw_sot_c["RARM_WRIST_Y"];
+  yn_map_hw_sot_c["RARM_WRIST_Y"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_WRIST_Y"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_WRIST_Y"]["controlPos"] = 25;
+  yn_map_hw_sot_c["RARM_WRIST_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+  
+  yn_map_hw_sot_c["RARM_WRIST_P"];
+  yn_map_hw_sot_c["RARM_WRIST_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_WRIST_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_WRIST_P"]["controlPos"] = 26;
+  yn_map_hw_sot_c["RARM_WRIST_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["RARM_WRIST_R"];
+  yn_map_hw_sot_c["RARM_WRIST_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["RARM_WRIST_R"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["RARM_WRIST_R"]["controlPos"] = 27;
+  yn_map_hw_sot_c["RARM_WRIST_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current]";   
+
+  yn_map_hw_sot_c["LARM_SHOULDER_P"];
+  yn_map_hw_sot_c["LARM_SHOULDER_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_SHOULDER_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_SHOULDER_P"]["controlPos"] = 28;
+  yn_map_hw_sot_c["LARM_SHOULDER_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["LARM_SHOULDER_R"];
+  yn_map_hw_sot_c["LARM_SHOULDER_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_SHOULDER_R"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_SHOULDER_R"]["controlPos"] = 29;
+  yn_map_hw_sot_c["LARM_SHOULDER_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["LARM_SHOULDER_Y"];
+  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["controlPos"] = 30;
+  yn_map_hw_sot_c["LARM_SHOULDER_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+  
+  yn_map_hw_sot_c["LARM_ELBOW"];
+  yn_map_hw_sot_c["LARM_ELBOW"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_ELBOW"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_ELBOW"]["controlPos"] = 31;
+  yn_map_hw_sot_c["LARM_ELBOW"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
+
+  yn_map_hw_sot_c["LARM_WRIST_Y"];
+  yn_map_hw_sot_c["LARM_WRIST_Y"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_WRIST_Y"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_WRIST_Y"]["controlPos"] = 32;
+  yn_map_hw_sot_c["LARM_WRIST_Y"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";
+
+  yn_map_hw_sot_c["LARM_WRIST_P"];
+  yn_map_hw_sot_c["LARM_WRIST_P"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_WRIST_P"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_WRIST_P"]["controlPos"] = 33;
+  yn_map_hw_sot_c["LARM_WRIST_P"]["sensors"] = "[motor_angle,joint_angle,temperature,current,torque]";  
+
+  yn_map_hw_sot_c["LARM_WRIST_R"];
+  yn_map_hw_sot_c["LARM_WRIST_R"]["hw"] = "POSITION";
+  yn_map_hw_sot_c["LARM_WRIST_R"]["sot"] = "VELOCITY";
+  yn_map_hw_sot_c["LARM_WRIST_R"]["controlPos"] = 34;
+  yn_map_hw_sot_c["LARM_WRIST_R"]["sensors"] = "[motor_angle,joint_angle,temperature,current]";
 
   yn_map_sensors["force_torque"];
   yn_map_sensors["force_torque"]["left_ankle_ft"];
@@ -353,7 +321,7 @@ int ReadYAMLFILE(dg::sot::PinocchioDevice &aDevice, unsigned int debug_mode)
 namespace dg = dynamicgraph;
 int main(int, char **)
 {
-  unsigned int debug_mode=0;
+  unsigned int debug_mode=5;
     
   std::string robot_description;
   ifstream urdfFile;
@@ -395,16 +363,33 @@ int main(int, char **)
   const se3::Model & aModel = aDevice.getModel();
 
   const dg::Vector & aPosition = aDevice.stateSOUT_(2001);
-  double diff=0;
-  for (unsigned int j=0;j<aPosition.size();j++)
+  double diff=0,ldiff;
+
+  dgsot::JointSHWControlType_iterator it_control_type;
+  for(it_control_type  = aDevice.jointPinocchioDevices_.begin();
+      it_control_type != aDevice.jointPinocchioDevices_.end();
+      it_control_type++)
     {
-      diff += fabs(aPosition(j) - aModel.lowerPositionLimit[j]);
-      if (debug_mode>1)
-	std::cout << diff << " " << aModel.names[j] << " " 
-		  << aPosition(j) << " "<<  aModel.lowerPositionLimit[j]
-		  << std::endl;
+      int lctl_index = it_control_type->second.control_index;
+      if (it_control_type->second.HWcontrol==dgsot::POSITION)
+	{
+	  int pino_index = it_control_type->second.pinocchio_index;
+	  if (pino_index!=-1)
+	    {
+	      int lpos_index = aModel.joints[pino_index].idx_q();
+	      int lvel_index = aModel.joints[pino_index].idx_v();
+	      ldiff = (aPosition[lpos_index] - aModel.lowerPositionLimit[lpos_index]);
+	      diff += ldiff;
+	      std::cout << ldiff << " " << aModel.names[pino_index] << " "
+			<< aPosition[lpos_index]  << " "
+			<< aModel.lowerPositionLimit[lpos_index] << " "
+			<< -aModel.velocityLimit[lvel_index]
+			<< std::endl;
+	    }
+	}
     }
+
   if (diff>1e-3)
     return -1;
-  return 1;
+  return 0;
 }
