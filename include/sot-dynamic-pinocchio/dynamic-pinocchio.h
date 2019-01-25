@@ -103,7 +103,7 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
     public:
   /* --- SIGNAL ACTIVATION --- */
   dg::SignalTimeDependent< dg::Matrix,int >&
-    createEndeffJacobianSignal( const std::string& signame, const std::string&, const bool isLocal);
+    createEndeffJacobianSignal( const std::string& signame, const std::string&, const bool isLocal = true);
   dg::SignalTimeDependent< dg::Matrix,int >&
     createJacobianSignal( const std::string& signame, const std::string& );
   void destroyJacobianSignal( const std::string& signame );
