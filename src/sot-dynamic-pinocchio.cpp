@@ -494,7 +494,8 @@ createJacobianSignal( const std::string& signame, const std::string& jointName )
 }
 
 dg::SignalTimeDependent< dg::Matrix,int > & DynamicPinocchio::
-createEndeffJacobianSignal( const std::string& signame, const std::string& jointName, const bool isLocal)
+createEndeffJacobianSignal( const std::string& signame, const std::string& jointName,
+                            const bool isLocal)
 {
   sotDEBUGIN(15);
   assert(m_model);
