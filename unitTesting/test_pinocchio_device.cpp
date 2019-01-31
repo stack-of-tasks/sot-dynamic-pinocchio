@@ -284,7 +284,7 @@ int ReadYAMLFILE(dg::sot::PinocchioDevice &aDevice, unsigned int debug_mode)
       
       for (YAML::const_iterator it2=aNode.begin();
 	   it2!=aNode.end();
-	   it2++)
+  	   it2++)
 	
 	{
 	  std::string aKey = it2->first.as<string>();
