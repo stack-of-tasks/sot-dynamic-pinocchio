@@ -25,7 +25,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-  dg::sot::SotPinocchioController aSotPinocchioController("SimpleHumanoid");
+  dgsot::SoTPinocchioController aSotPinocchioController("SimpleHumanoid");
   
   
 }

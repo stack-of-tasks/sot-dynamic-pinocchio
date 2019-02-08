@@ -296,7 +296,7 @@ setURDFModel(const std::string &aURDFModel)
   /// Build the map between pinocchio and the alphabetical order.
   for(unsigned int i=0;i<model_.names.size();i++)
     {
-      if (model_.joints[i].id()<model_.nq)
+      if ((unsigned int)model_.joints[i].id()<model_.nq)
 	{
 	  jointPinocchioDevices_[model_.names[i]].pinocchio_index=i;
 	  std::cout << "jointPinocchioDevices_ index: " << i

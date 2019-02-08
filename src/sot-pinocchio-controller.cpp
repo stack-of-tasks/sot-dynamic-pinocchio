@@ -13,12 +13,13 @@
 #include <dynamic_graph_bridge/ros_init.hh>
 #include <dynamic_graph_bridge/ros_interpreter.hh>
 
-#include "sot-pinocchio-controller.hh"
+#include "sot-dynamic-pinocchio/sot-pinocchio-controller.hh"
 
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
 
 #include <ros/console.h>
+using namespace dynamicgraph::sot;
 
 const std::string SoTPinocchioController::LOG_PYTHON="/tmp/PinocchioController_python.out";
 
@@ -36,34 +37,36 @@ SoTPinocchioController::SoTPinocchioController(const char robotName[]):
   init();
 }
 
-void SoTPinocchioController::readActuator(rosNodeHandle &nh,
-					  std::string &actuator_name);
+void SoTPinocchioController::
+readActuator(ros::NodeHandle &nh,
+	     std::string &actuator_name)
 {
-  std::astring aparameterName("/map_hardware_sot_control/"+actuator_name);
+  std::string aparameterName("/map_hardware_sot_control/"+actuator_name);
   if (nh.hasParam(aparameterName))
     {
       // Getting HW Control type.
-      std::string control_type_title=aparameterName+"/hw";
-      std::string control_type;
-      if (nh.hasParam(control_type_title))
+      std::string param_title=aparameterName+"/hw";
+      std::string param_value;
+      if (nh.hasParam(param_title))
 	{
-	  nh.getParam(control_type_title,control_type);
-	  device_.setHWControlType(actuator_name,control_type);
+	  nh.getParam(param_title,param_value);
+	  device_->setHWControlType(actuator_name,param_value);
 	}
       
-      control_type_title=aparameterName+"/sot";
-      if (nh.hasParam(sot_control_type_title))
+      param_title=aparameterName+"/sot";
+      if (nh.hasParam(param_title))
 	{
-	  nh.getParam(sot_control_type_title,hw_control_type);
-	  device_.setSoTControlType(actuator_name,control_type);
+	  nh.getParam(param_title,param_value);
+	  device_->setSoTControlType(actuator_name,param_value);
 	}
 
-      control_type_title=aparameterName+"/controlPos";
-      unsigned int index;
-      if (nh.hasParam(sot_control_type_title))
+      param_title=aparameterName+"/controlPos";
+      double aDouble;
+      if (nh.hasParam(param_title))
 	{
-	  nh.getParam(sot_control_type_title,index);
-	  device_.setSoTControlType(actuator_name,index);
+	  nh.getParam(param_title,aDouble);
+	  unsigned int index = (unsigned int) aDouble;
+	  device_->setControlPos(actuator_name,index);
 	}
 
     }
@@ -82,9 +85,10 @@ void SoTPinocchioController::init()
     {
       nh.getParam("/robot_description",robot_description);
       device_->setURDFModel(robot_description);
-
+      std::vector<std::string> alist_of_actuators;
+      
       if (nh.getParam("/map_hardware_sot_control/",
-		      std::vector<std::string> &alist_of_actuators))
+		      alist_of_actuators))
 	{
 	  for(unsigned int i=0;i<alist_of_actuators.size();i++)
 	    {
@@ -103,7 +107,8 @@ void SoTPinocchioController::init()
 	       << __FUNCTION__ <<"(#" 
 	       << __LINE__ << " )" << std::endl;
 
-  double ts = ros::param::param<double> ("/sot_controller/dt", SoTPinocchioDevice::TIMESTEP_DEFAULT);
+  double ts = ros::param::param<double> ("/sot_controller/dt",
+					 PinocchioDevice::TIMESTEP_DEFAULT);
   device_->timeStep(ts);
 }
 
@@ -151,6 +156,16 @@ getControl(map<string,dgsot::ControlValues> &controlOut)
 		<<  endl;
       throw err;
     }
+}
+
+void SoTPinocchioController::
+setNoIntegration(void)
+{
+}
+
+void SoTPinocchioController::
+setSecondOrderIntegration(void)
+{
 }
 
 void SoTPinocchioController::

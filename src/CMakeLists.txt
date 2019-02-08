@@ -25,6 +25,10 @@ IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
   ADD_DEFINITIONS(-DDEBUG=2)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 
+ADD_LIBRARY(sot-pinocchio-controller SHARED sot-pinocchio-controller.cpp )
+TARGET_LINK_LIBRARIES(sot-pinocchio-controller dp-pinocchio-device)
+TARGET_LINK_LIBRARIES(sot-pinocchio-controller yaml-cpp)
+
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
@@ -39,6 +43,11 @@ FOREACH(lib ${plugins})
     ADD_DEPENDENCIES(${libname} "dp-${${lib}_plugins_dependencies}")
     TARGET_LINK_LIBRARIES(${libname} "dp-${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
+
+  IF(${lib}_inde_plugins_dependencies)
+    ADD_DEPENDENCIES(${libname} "${${lib}_inde_plugins_dependencies}")
+    TARGET_LINK_LIBRARIES(${libname} "${${lib}_inde_plugins_dependencies}")
+  ENDIF(${lib}_inde_plugins_dependencies)
 
   TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 

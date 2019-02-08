@@ -24,22 +24,12 @@ SET(test_pinocchio_device_PKG_CONFIG
 #----------------------------------------------------
 
 SET(test_dyn_plugins_dependencies dynamic)
+SET(test_sot_pinocchio_controller_plugins_dependencies  sot-pinocchio-controller dp-pinocchio-device)
 
 
 # Make Boost.Test generates the main function in test cases.
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 
-
-# getting the information for the robot.
-#SET(samplemodelpath ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/)
-#SET(samplespec
-#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleSpecificities.xml
-#  )
-#SET(sampleljr
-#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleLinkJointRank.xml
-#  )
-#SET(sampleinitconfig
-#  ${JRL_DYNAMICS_PKGDATAROOTDIR}/jrl-dynamics/examples/data/sampleInitConfig.dat)
 
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
@@ -77,8 +67,10 @@ FOREACH(test ${tests})
   ENDIF( ${test}_PKG_CONFIG )
 
   IF(${test}_plugins_dependencies)
-    ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
-    TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
+    FOREACH(test_pd ${${test}_plugins_dependencies})
+      ADD_DEPENDENCIES(${EXECUTABLE_NAME} ${test_pd})
+      TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${test_pd})
+    ENDFOREACH(test_pd)
   ENDIF(${test}_plugins_dependencies)
 
   TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})

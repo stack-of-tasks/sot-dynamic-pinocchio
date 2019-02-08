@@ -135,6 +135,9 @@ namespace dynamicgraph {
       /// Maps of joint devices.
       std::map<std::string,dgsot::JointSoTHWControlType> jointPinocchioDevices_;
 
+      /// Set integration time.
+      void timeStep(double ts) { timestep_ = ts;}
+      
     protected:
       /// \brief Current integration step.
       double timestep_;

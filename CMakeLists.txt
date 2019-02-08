@@ -21,6 +21,9 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/cpack.cmake)
 INCLUDE(cmake/python.cmake)
+SET(CATKIN_REQUIRED_COMPONENTS roscpp std_msgs message_generation std_srvs geometry_msgs sensor_msgs tf)
+SET(CATKIN_DEPENDS_LIBRARIES ros_bridge sot_loader)
+
 
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 
@@ -75,7 +78,7 @@ SET(plugins
   )
 
 IF (YAML_CPP_FOUND)
-  SET(plugins ${plugins} pinocchio-device )
+  SET(plugins ${plugins} pinocchio-device  )
 ENDIF (YAML_CPP_FOUND)
 
 SET(LIBRARY_NAME ${PROJECT_NAME})

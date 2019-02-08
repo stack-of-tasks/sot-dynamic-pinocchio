@@ -726,7 +726,7 @@ dg::Vector& DynamicPinocchio::computeZmp( dg::Vector& res,const int& time )
 int& DynamicPinocchio::computeJacobians(int& dummy, const int& time) {
   sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  se3::computeJacobians(*m_model,*m_data, q);
+  se3::computeJointJacobians(*m_model,*m_data, q);
   sotDEBUG(25)<<"Jacobians updated"<<std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -767,11 +767,13 @@ computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res,co
 
   //Computes Jacobian in world coordinates.
   if(isFrame){
-    se3::getJacobian<se3::WORLD>(*m_model,*m_data,
-                                 m_model->frames[(se3::Model::Index)jointId].parent,tmp);
+    se3::getJointJacobian<se3::WORLD>(*m_model,*m_data,
+				      m_model->frames[(se3::Model::Index)jointId].parent,
+				      tmp);
   }
   else
-    se3::getJacobian<se3::WORLD>(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    se3::getJointJacobian<se3::WORLD>(*m_model,
+				      *m_data,(se3::Model::Index)jointId,tmp);
   res = tmp;
   sotDEBUGOUT(25);
   return res;
@@ -793,18 +795,20 @@ computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int j
   //std::string temp;
   //Computes Jacobian in end-eff coordinates.
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
-    se3::getFrameJacobian(*m_model,*m_data,(se3::Model::Index)jointId,tmp);
+    //se3::framesForwardKinematics(*m_model,*m_data);
+    updateFramePlacements(*m_model,*m_data);
+    se3::getFrameJacobian<se3::LOCAL>
+      (*m_model,*m_data,(se3::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
                  << m_model->frames.at((se3::Model::Index)jointId).name
                  <<" is "<<tmp<<std::endl;
   }
   else {
     //temp = m_model->getJointName((se3::Model::Index)jointId);
-    se3::getJacobian<se3::LOCAL>
+    se3::getJointJacobian<se3::LOCAL>
       (*m_model,*m_data,(se3::Model::Index)jointId,tmp);
     sotDEBUG(25) << "EndEffJacobian for "
-                 << m_model->getJointName((se3::Model::Index)jointId)
+                 << m_model->names[(se3::Model::Index)jointId]
                  <<" is "<<tmp<<std::endl;
   }
   res = tmp;
@@ -828,13 +832,13 @@ computeGenericPosition(const bool isFrame, const int jointId, MatrixHomogeneous&
   std::string temp;
   forwardKinematicsSINTERN(time);
   if(isFrame){
-    se3::framesForwardKinematics(*m_model,*m_data);
+    se3::updateFramePlacements(*m_model,*m_data);
     res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
     temp = m_model->frames.at((se3::Model::Index)jointId).name;
   }
   else{
     res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
-    temp = m_model->getJointName((se3::Model::Index)jointId);
+    temp = m_model->names[(se3::Model::Index)jointId];
   }
   sotDEBUG(25)<<"For "<<temp<<" with id: "<<jointId<<" position is "<<res<<std::endl;
   sotDEBUGOUT(25);
