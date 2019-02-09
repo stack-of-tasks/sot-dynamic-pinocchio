@@ -28,6 +28,8 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 ADD_LIBRARY(sot-pinocchio-controller SHARED sot-pinocchio-controller.cpp )
 TARGET_LINK_LIBRARIES(sot-pinocchio-controller dp-pinocchio-device)
 TARGET_LINK_LIBRARIES(sot-pinocchio-controller yaml-cpp)
+TARGET_LINK_LIBRARIES(sot-pinocchio-controller ros_interpreter)
+TARGET_LINK_LIBRARIES(sot-pinocchio-controller ros_bridge)
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
