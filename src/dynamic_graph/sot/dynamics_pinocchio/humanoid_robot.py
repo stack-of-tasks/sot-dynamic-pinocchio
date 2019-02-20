@@ -144,10 +144,6 @@ class AbstractHumanoidRobot (object):
             'device': ['zmp', 'control', 'state']
             }
 
-        """
-        Robot timestep
-        """
-        self.timeStep = 0.005
 
     def help (self):
         print (AbstractHumanoidRobot.__doc__)
@@ -238,6 +234,10 @@ class AbstractHumanoidRobot (object):
         if not self.device:
             self.device = RobotSimu(self.name + '_device')
 
+        """
+        Robot timestep
+        """
+        self.timeStep = self.device.getTimeStep()
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to

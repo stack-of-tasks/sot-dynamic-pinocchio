@@ -172,5 +172,4 @@ if 'argv' in sys.__dict__:
         raise RuntimeError (
             "invalid robot name (should by Hrp2Laas or Hrp2Jrl)")
     robot = robots[options.robot]("robot")
-    timeStep = .005
     solver = Solver(robot)
