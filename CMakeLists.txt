@@ -5,14 +5,12 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/lapack.cmake)
-INCLUDE(cmake/cpack.cmake)
 INCLUDE(cmake/python.cmake)
 
+SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
-
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
-SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
+SET(PROJECT_URL "https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 SET(PROJECT_SUFFIX "-v3")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
@@ -76,4 +74,3 @@ ADD_SUBDIRECTORY(python)
 ADD_SUBDIRECTORY(unitTesting)
 
 SETUP_PROJECT_FINALIZE()
-SETUP_PROJECT_CPACK()
