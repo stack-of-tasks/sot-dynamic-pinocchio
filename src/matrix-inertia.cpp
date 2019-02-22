@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <fstream>
@@ -109,18 +98,18 @@ initParents( void )
       if(joints_[i]->parentJoint() == 0x0)
 	{
 	  parentIndex_[i] = -1;
-	  sotDEBUG(15) << "parent of\t" << i << "\t(" 
-		       << static_cast<Joint*>(joints_[i])->getName() 
+	  sotDEBUG(15) << "parent of\t" << i << "\t("
+		       << static_cast<Joint*>(joints_[i])->getName()
 		       << "):\t" << -1 << std::endl;
 	}
       else
 	{
 	  parentIndex_[i] = m[joints_[i]->parentJoint()];
-	  sotDEBUG(15) << "parent of\t" << i << ":\t(" 
-		       << static_cast<Joint*>(joints_[i])->getName() 
+	  sotDEBUG(15) << "parent of\t" << i << ":\t("
+		       << static_cast<Joint*>(joints_[i])->getName()
 		       << "):\t" << m[joints_[i]->parentJoint()]
 		       << "\t(" << static_cast<Joint*>
-	    (joints_[m[joints_[i]->parentJoint()]])->getName() 
+	    (joints_[m[joints_[i]->parentJoint()]])->getName()
 		       << ")" << std::endl;
 	}
     }
@@ -159,12 +148,12 @@ void MatrixInertia::update( void )
   const size_t SIZE = joints_.size();
   for(size_t i = 0; i < SIZE; ++i)
     {
-      sotDEBUG(25) << "Joint " << i << ": rank = " 
+      sotDEBUG(25) << "Joint " << i << ": rank = "
 		   << joints_[i]->rankInConfiguration() <<endl;
       Joint* j = static_cast<Joint*>(joints_[i]);
 
       /* iRpi: Rotation from joint i to parent of i. */
-      MatrixRotation piRi; 
+      MatrixRotation piRi;
       {
 	/* phi_[1] = phi_(1:3) is the rotation axis of the joint. */
 	matrix3d Ri; j->getStaticRotation(Ri);
@@ -174,16 +163,16 @@ void MatrixInertia::update( void )
 	matrix3d piRi_tmp;
 	j->RodriguesRotation(axeJ,q,piRi_tmp);
 	for( unsigned int loopi=0;loopi<3;++loopi )
-	  for( unsigned int loopj=0;loopj<3;++loopj ) 
+	  for( unsigned int loopj=0;loopj<3;++loopj )
 	    piRi( loopi,loopj ) = piRi_tmp(loopi,loopj);
       }
-      dynamicgraph::Vector piTi(3); 
+      dynamicgraph::Vector piTi(3);
       {
-	vector3d piTi_tmp; 
+	vector3d piTi_tmp;
 	j->getStaticTranslation( piTi_tmp );
 	for( unsigned int loopi=0;loopi<3;++loopi ) piTi(loopi) = piTi_tmp(loopi);
       }
-      /* Twist matrix iXpi: transfo of the velocities between i en pi (parent i). 
+      /* Twist matrix iXpi: transfo of the velocities between i en pi (parent i).
        * iXpi = [   iRpi     Skew( iRpi.t )*iRpi  ]
        *        [     0        iRpi               ]  */
       MatrixHomogeneous piMi; piMi.buildFrom( piRi,piTi );
@@ -213,13 +202,13 @@ void MatrixInertia::computeInertiaMatrix()
       matrix3d Sc = skewSymmetric(com);
       /* Inertia of the link. */
       matrix3d Icm = joints_[i]->linkedBody()->inertiaMatrix();
-      
+
       double m = joints_[i]->linkedBody()->mass();
 
-      
-      /* Ic_ is the inertia 6D matrix of the joint in the joint frame. 
+
+      /* Ic_ is the inertia 6D matrix of the joint in the joint frame.
        *   Ic = [  Ai+mSc.Sc'   mSc   ]
-       *        [     mSc'      mId   ]   
+       *        [     mSc'      mId   ]
        */
       sotDEBUG(45) << "com"<<i<<" = [ " << com <<"]"<<endl;
       sotDEBUG(45) << "Sc"<<i<<" = [ " << Sc<<"]"<<endl;
@@ -230,34 +219,34 @@ void MatrixInertia::computeInertiaMatrix()
       for( unsigned int loopi=0;loopi<3;++loopi )
 	for( unsigned int loopj=0;loopj<3;++loopj )
 	  {
-	    /*TT*/if( loopi==loopj ) Ici( loopi,loopj ) = m; 
+	    /*TT*/if( loopi==loopj ) Ici( loopi,loopj ) = m;
 	    else Ici( loopi,loopj ) = 0.;
 	    /*TR*/Ici( loopi,loopj+3 ) = m*Sct( loopi,loopj );
 	    /*RT*/Ici( loopi+3,loopj ) = m*Sc( loopi,loopj );
 	    /*RR*/Ici( loopi+3,loopj+3 ) = m*Irr( loopi,loopj )+ Icm( loopi,loopj );
 	  }
-      
+
       sotDEBUG(25) << "Ic" << i << " = " << Ici;
     }
-  
+
   dynamicgraph::Vector Fi(6);
   dynamicgraph::Matrix iVpiT_Ici(6,6);
   dynamicgraph::Matrix iVpiT_Ici_iVpi(6,6);
 
-  for( int i=SIZE-1;i>=1;--i ) 
+  for( int i=SIZE-1;i>=1;--i )
     {
       const unsigned int iRank = joints_[i]->rankInConfiguration();
 
-      dynamicgraph::Matrix & Ici = Ic[i]; 
-      sotMatrixTwist & iVpii = iVpi[i]; 
-      MatrixForce & iVpiiT = iVpiT[i]; 
+      dynamicgraph::Matrix & Ici = Ic[i];
+      sotMatrixTwist & iVpii = iVpi[i];
+      MatrixForce & iVpiiT = iVpiT[i];
       dynamicgraph::Vector & phii = phi[i];
       /* F = Ic_i . phi_i */
-      Fi = Ici*phii;  
+      Fi = Ici*phii;
       /* H_ii = phi_i' . F */
       /*DEBUGinertia_(i + 5, i + 5) = phii.scalarProduct(Fi);*/
-   
- 
+
+
       inertia_(iRank,iRank) = phii.scalarProduct(Fi);
       sotDEBUG(30) << "phi"<<i<<" = " << phii;
       sotDEBUG(35) << "Fi"<<i<<" =  " << Fi << endl;
@@ -282,8 +271,8 @@ void MatrixInertia::computeInertiaMatrix()
 	  /* j = pj */
 	  j = parentIndex_[j];
 	  /* Hij = Hji = F' phi_j */
-	  inertia_(iRank,joints_[j]->rankInConfiguration()) 
-	    = inertia_(joints_[j]->rankInConfiguration(),iRank) 
+	  inertia_(iRank,joints_[j]->rankInConfiguration())
+	    = inertia_(joints_[j]->rankInConfiguration(),iRank)
 	    = Fi.scalarProduct( phi[j]);
 	  sotDEBUG(35) << "Fi =  " << Fi << endl;
 	  sotDEBUG(35) << "FiXphi =  " <<  inertia_(j + 5, i + 5) << endl;

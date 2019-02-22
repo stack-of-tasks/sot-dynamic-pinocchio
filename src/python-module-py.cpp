@@ -1,17 +1,4 @@
 // Copyright (C) 2008-2016 LAAS-CNRS, JRL AIST-CNRS.
-//
-// This file is part of sot-dynamic-pinocchio.
-// sot-dynamic-pinocchio is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// sot-dynamic-pinocchio is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
-// You should have received a copy of the GNU Lesser General Public License
-// along with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <sot/core/debug.hh>
 
@@ -50,16 +37,16 @@ namespace dynamicgraph{
       catch (const std::exception& exc) {
 	//PyErr_SetString(dgpyError, exc.what());
 	return NULL;
-      }								
-      catch (const char* s) {								
+      }
+      catch (const char* s) {
 	//PyErr_SetString(dgpyError, s);
 	return NULL;
       }
       catch (...) {
 	//PyErr_SetString(dgpyError, "Unknown exception");
-	return NULL;						
+	return NULL;
       }
-      
+
       return Py_BuildValue("");
     }
 
@@ -86,16 +73,16 @@ namespace dynamicgraph{
 	dyn_entity->setData(pointer2);
       }
       catch (const std::exception& exc) {
-	//	PyErr_SetString(dgpyError, exc.what());			
+	//	PyErr_SetString(dgpyError, exc.what());
 	return NULL;
-      }								
-      catch (const char* s) {								
+      }
+      catch (const char* s) {
 	//	PyErr_SetString(dgpyError, s);
 	return NULL;
       }
       catch (...) {
-	//	PyErr_SetString(dgpyError, "Unknown exception");		
-	return NULL;						
+	//	PyErr_SetString(dgpyError, "Unknown exception");
+	return NULL;
       }
 
       return Py_BuildValue("");

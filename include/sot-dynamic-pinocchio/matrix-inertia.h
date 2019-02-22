@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __SOT_SOTMATRIXINERTIA_H__
@@ -34,12 +23,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (matrix_inertia_EXPORTS)
 #    define SOTMATRIXINERTIA_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTMATRIXINERTIA_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTMATRIXINERTIA_EXPORT
 #endif
@@ -80,7 +69,7 @@ private:
   dynamicsJRLJapan::HumanoidDynamicMultiBody*          aHDMB_;
   std::vector<CjrlJoint*>                              joints_;
   std::vector<int>                                     parentIndex_;
- 
+
   std::vector< dynamicgraph::Matrix >  Ic;
   std::vector< dynamicgraph::Vector >      phi;
   std::vector< MatrixTwist >  iVpi;

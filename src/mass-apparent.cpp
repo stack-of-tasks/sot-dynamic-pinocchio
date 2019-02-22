@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <sot-dynamic-pinocchio/mass-apparent.h>
@@ -28,7 +17,7 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(MassApparent,"MassApparent");
 
 
 MassApparent::
-MassApparent( const std::string & name ) 
+MassApparent( const std::string & name )
   :Entity(name)
    ,jacobianSIN(NULL,"sotMassApparent("+name+")::input(vector)::jacobian")
    ,inertiaInverseSIN(NULL,"sotMassApparent("+name+")::input(vector)::inertiaInverse")
@@ -45,7 +34,7 @@ MassApparent( const std::string & name )
 		       "sotMassApparent("+name+")::input(vector)::inertiaInverseOUT")
 {
   sotDEBUGIN(5);
-  
+
   signalRegistration(jacobianSIN);
   signalRegistration(inertiaInverseSIN);
   signalRegistration(massInverseSOUT);
@@ -72,7 +61,7 @@ computeMassInverse( dynamicgraph::Matrix& res,
 		   const int& time )
 {
   sotDEBUGIN(15);
-  
+
   const dynamicgraph::Matrix & J = jacobianSIN( time );
   const dynamicgraph::Matrix & A = inertiaInverseSIN( time );
 
