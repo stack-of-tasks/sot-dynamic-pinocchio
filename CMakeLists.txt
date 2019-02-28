@@ -29,7 +29,7 @@ SETUP_PROJECT()
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
+ADD_REQUIRED_DEPENDENCY("sot-core >= 4.1.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
