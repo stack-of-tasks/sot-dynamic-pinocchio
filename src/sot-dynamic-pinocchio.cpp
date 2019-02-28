@@ -804,7 +804,7 @@ computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int j
     Eigen::Matrix3d rotation = (isFrame ? m_data->oMf : m_data->oMi)[jointId].rotation();
     Eigen::Vector3d translation = Eigen::Vector3d::Zero();
 
-    res = (se3::SE3(rotation, translation).toActionMatrix() * res);
+    res = (pinocchio::SE3(rotation, translation).toActionMatrix() * res);
   }
 
   sotDEBUGOUT(25);
