@@ -990,7 +990,6 @@ computeAngularMomentum(dg::Vector & Momenta, const int& time)
 
   if (Momenta.size()!=3)
     Momenta.resize(3);
-  return Momenta;
   Momenta = m_data->hg.angular_impl();
 
   sotDEBUGOUT(25) << "AngularMomenta :" << Momenta ;
