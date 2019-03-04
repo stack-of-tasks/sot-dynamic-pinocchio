@@ -16,6 +16,7 @@
 
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/spatial/motion.hpp>
 #include <pinocchio/algorithm/crba.hpp>
 #include <pinocchio/algorithm/centroidal.hpp>
@@ -715,7 +716,7 @@ dg::Vector& DynamicPinocchio::computeZmp( dg::Vector& res,const int& time )
 int& DynamicPinocchio::computeJacobians(int& dummy, const int& time) {
   sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  pinocchio::computeJacobians(*m_model,*m_data, q);
+  pinocchio::computeJointJacobians(*m_model,*m_data, q);
   sotDEBUG(25)<<"Jacobians updated"<<std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -785,7 +786,10 @@ computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int j
   //Computes Jacobian in end-eff coordinates.
   if(isFrame){
     pinocchio::framesForwardKinematics(*m_model,*m_data);
-    pinocchio::getFrameJacobian(*m_model,*m_data,(pinocchio::Model::Index)jointId,tmp);
+    pinocchio::getFrameJacobian(*m_model,*m_data,
+				(pinocchio::Model::Index)jointId,
+				pinocchio::LOCAL,
+				tmp);
     sotDEBUG(25) << "EndEffJacobian for "
                  << m_model->frames.at((pinocchio::Model::Index)jointId).name
                  <<" is "<<tmp<<std::endl;
@@ -795,7 +799,7 @@ computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int j
     pinocchio::getJointJacobian(*m_model,*m_data,(pinocchio::Model::Index)jointId,
         pinocchio::LOCAL, tmp);
     sotDEBUG(25) << "EndEffJacobian for "
-                 << m_model->getJointName((pinocchio::Model::Index)jointId)
+                 << m_model->names[(pinocchio::Model::Index)jointId]
                  <<" is "<<tmp<<std::endl;
   }
   res = tmp;
@@ -818,15 +822,17 @@ computeGenericPosition(const bool isFrame, const int jointId, MatrixHomogeneous&
   assert(m_data);
   std::string temp;
   forwardKinematicsSINTERN(time);
-  if(isFrame){
-    pinocchio::framesForwardKinematics(*m_model,*m_data);
-    res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
-    temp = m_model->frames.at((pinocchio::Model::Index)jointId).name;
-  }
-  else{
-    res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
-    temp = m_model->getJointName((pinocchio::Model::Index)jointId);
-  }
+  if(isFrame)
+    {
+      pinocchio::framesForwardKinematics(*m_model,*m_data);
+      res.matrix()= m_data->oMf[jointId].toHomogeneousMatrix();
+      temp = m_model->frames.at((pinocchio::Model::Index)jointId).name;
+    }
+  else
+    {
+      res.matrix()= m_data->oMi[jointId].toHomogeneousMatrix();
+      temp = m_model->names[(pinocchio::Model::Index)jointId];
+    }
   sotDEBUG(25)<<"For "<<temp<<" with id: "<<jointId<<" position is "<<res<<std::endl;
   sotDEBUGOUT(25);
   return res;
