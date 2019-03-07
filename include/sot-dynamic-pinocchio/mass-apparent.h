@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __SOT_SOTMASSAPPARENT_H__
@@ -43,12 +32,12 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32) 
+#if defined (WIN32)
 #  if defined (mass_apparent_EXPORTS)
 #    define SOTMASSAPPARENT_EXPORT __declspec(dllexport)
-#  else  
+#  else
 #    define SOTMASSAPPARENT_EXPORT __declspec(dllimport)
-#  endif 
+#  endif
 #else
 #  define SOTMASSAPPARENT_EXPORT
 #endif
@@ -74,13 +63,13 @@ namespace dynamicgraph { namespace sot {
 
       public: /* --- SIGNAL --- */
 
-	dg::SignalPtr<dynamicgraph::Matrix,int> jacobianSIN; 
-	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaInverseSIN; 
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT; 
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massSOUT; 
+	dg::SignalPtr<dynamicgraph::Matrix,int> jacobianSIN;
+	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaInverseSIN;
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT;
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massSOUT;
 
-	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaSIN; 
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaInverseSOUT; 
+	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaSIN;
+	dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaInverseSOUT;
 
       public: /* --- FUNCTIONS --- */
 	dynamicgraph::Matrix& computeMassInverse( dynamicgraph::Matrix& res,const int& time );
@@ -93,4 +82,3 @@ namespace dynamicgraph { namespace sot {
 } // namespace dynamicgraph
 
 #endif // #ifndef __SOT_SOTMASSAPPARENT_H__
-

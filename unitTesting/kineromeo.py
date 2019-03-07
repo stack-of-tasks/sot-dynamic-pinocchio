@@ -25,12 +25,12 @@ set_printoptions(suppress=True, precision=7)
 
 #Taking input from pinocchio
 from pinocchio.romeo_wrapper import RomeoWrapper
-import pinocchio as se3
+import pinocchio as pin
 
 #SET THE PATH TO THE URDF AND MESHES
 urdfPath = "~/git/sot/pinocchio/models/romeo.urdf"
 urdfDir = ["~/git/sot/pinocchio/models"]
-pinocchioRobot = RomeoWrapper(urdfPath, urdfDir, se3.JointModelFreeFlyer())
+pinocchioRobot = RomeoWrapper(urdfPath, urdfDir, pin.JointModelFreeFlyer())
 robotName = 'romeo'
 pinocchioRobot.initDisplay(loadModel=True)
 pinocchioRobot.display(pinocchioRobot.q0)
@@ -47,7 +47,7 @@ initialConfig = (0, 0, .840252, 0, 0, 0,                                 # FF
 #-----------------------------------------------------------------------------
 #---- PINOCCHIO MODEL AND DATA --------------------------------------------------------------------
 #-----------------------------------------------------------------------------
-#pinocchioModel = se3.buildModelFromUrdf(urdfpath, se3.JointModelFreeFlyer())
+#pinocchioModel = pin.buildModelFromUrdf(urdfpath, pin.JointModelFreeFlyer())
 #pinocchioData = pinocchioModel.createData()
 
 #-----------------------------------------------------------------------------

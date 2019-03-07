@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* --------------------------------------------------------------------- */
@@ -47,7 +36,7 @@ int main(int argc, char * argv[])
       cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE VRML_FILE_NAME "<< endl;
       cerr << " PATH_TO_SPECIFICITIES_XML PATH PATH_TO_MAP_JOINT_2_RANK INITIAL_CONFIGURATION_FILE" << endl;
       exit(0);
-    }	
+    }
 
   string aSpecificitiesFileName = argv[3];
   string aPath=argv[1];
@@ -96,7 +85,7 @@ int main(int argc, char * argv[])
 
   MAL_VECTOR_DIM(m_ReferenceStateData,double,100);
   MAL_VECTOR_DIM(m_ActualStateData,double,131);
-  
+
   unsigned int NbIterations=0;
 
   const CjrlJoint *ActualLeftFoot, *ActualRightFoot, *ActualRightHand;
@@ -110,7 +99,7 @@ int main(int argc, char * argv[])
   ActualRightFoot = aHDR2->rightFoot()->associatedAnkle();
   ActualLeftFoot = aHDR2->leftFoot()->associatedAnkle();
   ActualRightHand = aHDR2->rightWrist();
-  
+
   matrix4d ReferenceSupportFootPosition;
   matrix4d ReferenceRightHandPosition;
   matrix4d ReferenceLeftHandPosition;
@@ -130,11 +119,11 @@ int main(int argc, char * argv[])
     {
       for(unsigned int i=0;i<100;i++)
 	ReferenceStateFile >> m_ReferenceStateData[i];
-     
+
       for(unsigned int i=0;i<40;i++)
 	m_ReferenceStateConf[i+6] = m_ReferenceStateData[i];
-	
-      
+
+
       if (NbIterations>0)
 	{
 	  for(unsigned int i=0;i<46;i++)
@@ -145,7 +134,7 @@ int main(int argc, char * argv[])
 	  for(unsigned int i=0;i<46;i++)
 	    m_ReferenceStateSpeed[i] = 0.0;
 	}
-      
+
       //      cout << "ReferenceStateConf: " << m_ReferenceStateConf << endl;
       /* Update the current configuration vector */
       aHDR->currentConfiguration(m_ReferenceStateConf);
@@ -167,7 +156,7 @@ int main(int argc, char * argv[])
       FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition,0,3) << " ";
       FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition,1,3) << " " ;
       FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition,2,3) << endl;
-      
+
 
       FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition,0,3) << " ";
       FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition,1,3) << " " ;
@@ -189,8 +178,8 @@ int main(int argc, char * argv[])
 	}
       for(unsigned int i=0;i<40;i++)
 	m_ActualStateConf[i+6] = m_ActualStateData[i];
-	
-      
+
+
       if (NbIterations>0)
 	{
 	  for(unsigned int i=6;i<46;i++)
@@ -211,7 +200,7 @@ int main(int argc, char * argv[])
 	{
 	  m_ActualStateConfPrev[i] = m_ActualStateConf[i];
 	}
-      
+
       aHDR2->computeForwardKinematics();
 
       ActualRightHandPosition = ActualRightHand->currentTransformation();
@@ -227,5 +216,5 @@ int main(int argc, char * argv[])
   FileActualRHPos.close();
   FileRefRHPos.close();
   FileRefLHPos.close();
-  
+
 }

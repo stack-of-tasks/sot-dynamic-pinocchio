@@ -1,31 +1,16 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
-#
-# This file is part of sot-dynamic-pinocchio.
-# sot-dynamic-pinocchio is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# sot-dynamic-pinocchio is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# sot-dynamic-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/lapack.cmake)
-INCLUDE(cmake/cpack.cmake)
 INCLUDE(cmake/python.cmake)
 
+SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
-
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
-SET(PROJECT_URL "https://github.com/stack-of-tasks/sot-dynamic-pinocchio/")
+SET(PROJECT_URL "https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 SET(PROJECT_SUFFIX "-v3")
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
@@ -42,9 +27,9 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
 
 SETUP_PROJECT()
 # Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.3.0")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-core >= 3.0.0")
+ADD_REQUIRED_DEPENDENCY("sot-core >= 4.1.0")
 ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
@@ -89,4 +74,3 @@ ADD_SUBDIRECTORY(python)
 ADD_SUBDIRECTORY(unitTesting)
 
 SETUP_PROJECT_FINALIZE()
-SETUP_PROJECT_CPACK()

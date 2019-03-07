@@ -1,9 +1,0 @@
-Document: sot-dynamic
-Title: Debian sot-dynamic Manual
-Author: Thomas Moulard <thomas.moulard@gmail.com>
-Abstract: Doxygen documentation of sot-dynamic.
-Section: Programming
-
-Format: HTML
-Index: /usr/share/doc/sot-dynamic/html/index.html
-Files: /usr/share/doc/sot-dynamic/html/*.html

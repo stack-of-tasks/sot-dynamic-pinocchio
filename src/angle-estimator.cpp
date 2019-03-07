@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <sot-dynamic-pinocchio/angle-estimator.h>
@@ -351,7 +340,7 @@ compute_xff_dotSOUT( dynamicgraph::Vector& res,
   const dynamicgraph::Matrix & J = jacobianSIN( time );
   const dynamicgraph::Vector & dq = qdotSIN( time );
 
-  const int nr=J.rows(), nc=J.cols()-6;
+  const Eigen::Index nr=J.rows(), nc=J.cols()-6;
   assert( nr==6 );
   dynamicgraph::Matrix Ja( nr,nc ); dynamicgraph::Vector dqa(nc);
   for( int j=0;j<nc;++j )
@@ -378,7 +367,7 @@ compute_qdotSOUT( dynamicgraph::Vector& res,
 
   assert( dx.size()==6 );
 
-  const int nr=dq.size();
+  const Eigen::Index nr=dq.size();
   res.resize( nr ); res=dq;
   for( int i=0;i<6;++i ) res(i)=dx(i);
 

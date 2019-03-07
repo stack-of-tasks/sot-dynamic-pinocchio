@@ -5,17 +5,6 @@
  *
  * CNRS/AIST
  *
- * This file is part of sot-dynamic-pinocchio.
- * sot-dynamic-pinocchio is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- * sot-dynamic-pinocchio is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.  You should
- * have received a copy of the GNU Lesser General Public License along
- * with sot-dynamic-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __SOT_DYNAMIC_PINOCCHIO_H__
@@ -44,7 +33,6 @@
 /* PINOCCHIO */
 #include <pinocchio/macros.hpp>
 #include <pinocchio/multibody/model.hpp>
-#include <pinocchio/multibody/joint/joint-variant.hpp>
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/frames.hpp>
@@ -95,8 +83,8 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   DYNAMIC_GRAPH_ENTITY_DECL();
 
   /*  --- MODEL ATRIBUTES --- */
-  se3::Model*  m_model;
-  se3::Data*   m_data;
+  pinocchio::Model*  m_model;
+  pinocchio::Data*   m_data;
 
   /*  --- MODEL ATRIBUTES --- */
 
@@ -185,9 +173,9 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio
   void displayModel() const
   { assert(m_model); std::cout<<(*m_model)<<std::endl; };
 
-  void setModel(se3::Model*);
+  void setModel(pinocchio::Model*);
 
-  void setData(se3::Data*);
+  void setData(pinocchio::Data*);
 
   /* --- GETTERS --- */
 
