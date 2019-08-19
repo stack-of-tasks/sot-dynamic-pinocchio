@@ -55,6 +55,7 @@ SET(plugins
   angle-estimator
   waist-attitude-from-sensor
   zmp-from-forces
+  state-integrator
   )
 
 SET(LIBRARY_NAME ${PROJECT_NAME})

@@ -11,6 +11,7 @@ SET(${PROJECT_NAME}_HEADERS
 	matrix-inertia.h
 	integrator-force-rk4.h
 	angle-estimator.h
+	state-integrator.h
 )
 
 # Recreate correct path for the headers
