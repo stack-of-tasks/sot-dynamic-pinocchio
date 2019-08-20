@@ -227,13 +227,13 @@ void StateIntegrator::setSanityCheck(const bool & enableCheck)
   sanityCheck_ = enableCheck;
 }
 
-int StateIntegrator::getControlType(const int &ctrlType, ControlType &aCtrlType) 
+int StateIntegrator::getControlType(const int &ctrlType, SoTControlType &aCtrlType) 
 {
   for (int j = 0; j < 2; j++) 
   {
     if (ctrlType == j)
     {
-      aCtrlType = (ControlType)j;
+      aCtrlType = (SoTControlType)j;
       return 0;
     }
   }
@@ -293,7 +293,7 @@ void StateIntegrator::integrate( const double & dt )
   // Integration of the joints
   for (int i=0;i<control.size(); i++) 
   {
-    ControlType type;    
+    SoTControlType type;    
     if (getControlType(int(controlType[i]), type) > 0) 
     {
       if (debug_mode_ > 1)
@@ -305,13 +305,13 @@ void StateIntegrator::integrate( const double & dt )
       break;
     }
     // Set acceleration from control and integrates to find velocity.
-    if (type == ACCELERATION) 
+    if (type == ACC) 
     {
       acceleration_[i] = control[i];
       velocity_[i] = velocity_[i] + acceleration_[i] * (0.5)*dt;
     }
     // Set velocity from control.
-    else if (type == VELOCITY) 
+    else if (type == VEL) 
     {
       acceleration_[i] = 0;
       velocity_[i] = control[i];
@@ -326,7 +326,7 @@ void StateIntegrator::integrate( const double & dt )
   // Freeflyer integration 
   if (hasFreeFlyer) 
   {
-    ControlType ffType;    
+    SoTControlType ffType;    
     if (getControlType(int(controlFreeFlyerType[0]), ffType) > 0) 
     {
       if (debug_mode_ > 1)
@@ -336,12 +336,12 @@ void StateIntegrator::integrate( const double & dt )
       }
       return;
     }
-    if (ffType == ACCELERATION) 
+    if (ffType == ACC) 
     {
       // Integrate once to obtain velocity -> update ffVel_ and signal freeFlyerVelocitySOUT_
       integrateRollPitchYaw(ffVel_, freeFlyerVelocitySOUT_, controlFreeFlyer, dt);
     }
-    else if (ffType == VELOCITY)
+    else if (ffType == VEL)
     {
       // Set ffVel_ from control for the integration in position and update freeFlyerVelocitySOUT_ 
       ffVel_ = controlFreeFlyer;

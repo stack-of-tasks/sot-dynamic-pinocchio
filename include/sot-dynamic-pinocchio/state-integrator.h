@@ -51,13 +51,13 @@ namespace dg = dynamicgraph;
 namespace dynamicgraph {
 namespace sot {
 
-/// Specifies the nature of one joint control
-enum ControlType {
-  VELOCITY = 0,
-  ACCELERATION = 1
+/// Specifies the nature of one joint control from SoT side
+enum SoTControlType {
+  VEL = 0,
+  ACC = 1
 };
 
-const std::string ControlType_s[] = {
+const std::string SoTControlType_s[] = {
   "VELOCITY", "ACCELERATION"
 };
 
@@ -95,9 +95,6 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   Eigen::VectorXd ffPose_;
   /// Store Velocity of free flyer joint
   Eigen::VectorXd ffVel_;
-
-  /// Torque vector of each actuator.
-  dg::Vector torque_;
   ///@}
 
   bool sanityCheck_;
@@ -131,7 +128,7 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// \name Get the control type from an int (of the controlTypeSIN signal) as in the enum
   /// Check the types: velocity = 0 or acceleration = 1
   /// \{  
-  int getControlType(const int &ctrlType, ControlType &aCtrlType);
+  int getControlType(const int &ctrlType, SoTControlType &aCtrlType);
   /// \}
   
  public: /* --- DISPLAY --- */
@@ -149,7 +146,6 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// It can be velocity or acceleration.
   /// It depends on each of the actuator
   dg::SignalPtr<dg::Vector, int> controlTypeSIN;
-
 
   /// \name StateIntegrator current state.
   /// \{
@@ -177,11 +173,11 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// Store Position of free flyer joint as MatrixHomogeneous
   MatrixHomogeneous freeFlyerPose_;
 
-  /// Get freeflyer pose
-  const MatrixHomogeneous& freeFlyerPose();
+
 
  public:
-
+  /// Get freeflyer pose
+  const MatrixHomogeneous& freeFlyerPose();
   virtual void setRoot( const dg::Matrix & root );
   virtual void setRoot( const MatrixHomogeneous & worldMwaist );
 
