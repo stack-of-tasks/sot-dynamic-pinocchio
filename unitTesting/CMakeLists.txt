@@ -4,6 +4,7 @@ ADD_DEFINITIONS(-DDEBUG=2)
 
 SET(tests
 test_constructor
+test_state_integrator
 #test_config
 #  dummy
 #  test_djj
@@ -49,6 +50,7 @@ FOREACH(test ${tests})
     dp-integrator-force
     dp-angle-estimator
     dp-waist-attitude-from-sensor
+    dp-state-integrator
     ${LIBRARY_NAME}
     )
 
