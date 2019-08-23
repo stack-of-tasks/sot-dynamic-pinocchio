@@ -53,7 +53,8 @@ using namespace dynamicgraph;
 #define ODEBUG5(x)
 #endif
 
-const std::string StateIntegrator::CLASS_NAME = "StateIntegrator";
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(StateIntegrator, "StateIntegrator");
+//const std::string StateIntegrator::CLASS_NAME = "StateIntegrator";
 const double StateIntegrator::TIMESTEP_DEFAULT = 0.001;
 
 /* --------------------------------------------------------------------- */
@@ -67,36 +68,47 @@ StateIntegrator::StateIntegrator( const std::string& n )
   , ffPose_(6)
   , sanityCheck_(true)
   , controlSIN( NULL, "StateIntegrator(" + n + ")::input(double)::control" )
-  , controlTypeSIN(NULL, "StateIntegrator(" + n + ")::input(double)::controlType" ) 
-  , stateSOUT_( "StateIntegrator(" + n + ")::output(vector)::state" )
-  , velocitySOUT_("StateIntegrator(" + n + ")::output(vector)::velocity"  )
-  , freeFlyerPositionOdomSOUT_("StateIntegrator(" + n + ")::output(vector)::freeFlyerPositionOdom")
-  , freeFlyerVelocitySOUT_("StateIntegrator(" + n + ")::output(vector)::freeFlyerVelocity")
+  , stateSOUT_(boost::bind(&StateIntegrator::getPosition,this,_1,_2),
+    controlSIN,
+    "StateIntegrator(" + n + ")::output(vector)::state" )
+  , velocitySOUT_(boost::bind(&StateIntegrator::getVelocity,this,_1,_2),
+    controlSIN,
+    "StateIntegrator(" + n + ")::output(vector)::velocity"  )
+  , freeFlyerPositionOdomSOUT_(boost::bind(&StateIntegrator::getFreeFlyerPosition,this,_1,_2),
+    controlSIN,
+    "StateIntegrator(" + n + ")::output(vector)::freeFlyerPositionOdom")
+  , freeFlyerVelocitySOUT_(boost::bind(&StateIntegrator::getFreeFlyerVelocity,this,_1,_2),
+    controlSIN,
+    "StateIntegrator(" + n + ")::output(vector)::freeFlyerVelocity")
   , debug_mode_(5)
+  , last_integration_(-1)
 {
   signalRegistration( controlSIN
-                      << controlTypeSIN
                       << stateSOUT_
                       << velocitySOUT_
                       << freeFlyerPositionOdomSOUT_
                       << freeFlyerVelocitySOUT_);
   position_.fill(.0);
-  stateSOUT_.setConstant( position_ );
 
   velocity_.resize(position_.size());
   velocity_.setZero();
-  velocitySOUT_.setConstant( velocity_ );
 
   ffPose_.fill(.0);
-  freeFlyerPositionOdomSOUT_.setConstant( ffPose_ );
 
   ffVel_.resize(ffPose_.size());
   ffVel_.setZero();
-  freeFlyerVelocitySOUT_.setConstant( ffVel_ );
 
   /* --- Commands --- */
   {
     std::string docstring;
+
+    docstring =
+      "\n"
+      "    Set integration timestep value\n"
+      "\n";
+    addCommand("init",
+               new command::Setter<StateIntegrator, double>(*this, &StateIntegrator::init, docstring));
+
     docstring =
       "\n"
       "    Set state vector value\n"
@@ -110,6 +122,14 @@ StateIntegrator::StateIntegrator( const std::string& n )
       "\n";
     addCommand("setVelocity",
                new command::Setter<StateIntegrator, Vector>(*this, &StateIntegrator::setVelocity, docstring));
+
+    docstring =
+      "\n"
+      "    Set control type vector value (for each joint).\n"
+      "    Vector of types (int): qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3\n"
+      "\n";
+    addCommand("setControlType",
+               new command::Setter<StateIntegrator, Vector>(*this, &StateIntegrator::setControlTypeInt, docstring));
     
     void(StateIntegrator::*setRootPtr)(const Matrix&) = &StateIntegrator::setRoot;
     docstring = command::docCommandVoid1("Set the root position.",
@@ -130,7 +150,11 @@ StateIntegrator::~StateIntegrator( ) {
   return;
 }
 
-void StateIntegrator::integrateRollPitchYaw(Vector& state, Signal<Vector, int>& signal, const Vector& control, double dt) 
+void StateIntegrator::init(const double& step){
+  timestep_ = step;
+}
+
+void StateIntegrator::integrateRollPitchYaw(Vector& state, const Vector& control, double dt) 
 {
   using Eigen::AngleAxisd;
   using Eigen::Vector3d;
@@ -147,10 +171,9 @@ void StateIntegrator::integrateRollPitchYaw(Vector& state, Signal<Vector, int>& 
 
   SE3().integrate (qin, control*dt, qout);
 
-  // Update freeflyer pose/vel and signal
+  // Update freeflyer state (pose|vel)
   state.head<3>() = qout.head<3>();
   state.segment<3>(3) = QuaternionMapd(qout.tail<4>().data()).toRotationMatrix().eulerAngles(0, 1, 2);
-  signal.setConstant(state);
 }
 
 const MatrixHomogeneous& StateIntegrator::freeFlyerPose() 
@@ -169,6 +192,32 @@ const MatrixHomogeneous& StateIntegrator::freeFlyerPose()
   return freeFlyerPose_;
 }
 
+void StateIntegrator::setControlType(const StringVector& controlTypeVector) 
+{
+  controlTypeVector_ = controlTypeVector;
+}
+
+void StateIntegrator::setControlTypeInt(const Vector& controlTypeVector) 
+{
+  std::string type;
+  controlTypeVector_.resize(controlTypeVector.size());
+
+  for (unsigned int i=0; i<controlTypeVector.size(); i++){
+    try 
+    {
+      type = SoTControlType_s[int(controlTypeVector[i])];
+    }
+    catch (...)
+    {
+      dgRTLOG () << "StateIntegrator::setControlTypeInt: The controlType at position "
+                 << i << " is not valid: " << controlTypeVector[i] << "\n"
+                 << "Expected values are (int): qVEL = 0 | qACC = 1 | ffVEL = 2 | ffACC = 3"
+                 << '\n';
+    }
+    controlTypeVector_[i] = type;
+  }
+}
+
 void StateIntegrator::setURDFModel(const std::string &aURDFModel) 
 {
   pinocchio::urdf::buildModelFromXML(aURDFModel, model_, false);
@@ -183,13 +232,12 @@ void StateIntegrator::setState( const Vector& st )
   {
     position_ = st;
   }
-  else if (st.size() == model_.nq+6)
+  else 
   {
     position_ = st.tail(model_.nq);
-    ffPose_ = st.head<6>();
-    freeFlyerPositionOdomSOUT_.setConstant( ffPose_);
+    int size = int(st.size() - model_.nq);
+    ffPose_ = st.head(size);
   }  
-  stateSOUT_ .setConstant( position_ );
 }
 
 void StateIntegrator::setVelocity( const Vector& vel ) 
@@ -198,13 +246,12 @@ void StateIntegrator::setVelocity( const Vector& vel )
   {
     velocity_ = vel;
   }
-  else if (vel.size() == model_.nv+6)
+  else 
   {
     velocity_ = vel.tail(model_.nv);
-    ffVel_ = vel.head<6>();
-    freeFlyerVelocitySOUT_.setConstant( ffVel_ );
+    int size = int(vel.size() - model_.nq);
+    ffVel_ = vel.head(size);
   }
-  velocitySOUT_ .setConstant( velocity_ );
 }
 
 void StateIntegrator::setRoot( const Matrix & root ) 
@@ -219,7 +266,6 @@ void StateIntegrator::setRoot( const MatrixHomogeneous & worldMwaist )
   freeFlyerPose_ = worldMwaist;
   ffPose_.head<3>() = worldMwaist.translation();
   ffPose_.segment<3>(3) = worldMwaist.linear().eulerAngles(0,1,2);
-  freeFlyerPositionOdomSOUT_.setConstant( ffPose_);
 }
 
 void StateIntegrator::setSanityCheck(const bool & enableCheck) 
@@ -227,11 +273,11 @@ void StateIntegrator::setSanityCheck(const bool & enableCheck)
   sanityCheck_ = enableCheck;
 }
 
-int StateIntegrator::getControlType(const int &ctrlType, SoTControlType &aCtrlType) 
+int StateIntegrator::getControlType(const std::string &strCtrlType, SoTControlType &aCtrlType) 
 {
-  for (int j = 0; j < 2; j++) 
+  for (int j = 0; j < 4; j++) 
   {
-    if (ctrlType == j)
+    if (strCtrlType==SoTControlType_s[j])
     {
       aCtrlType = (SoTControlType)j;
       return 0;
@@ -240,34 +286,23 @@ int StateIntegrator::getControlType(const int &ctrlType, SoTControlType &aCtrlTy
   if (debug_mode_ > 1)
   {
     std::cerr << "Control type not allowed/recognized: "
-              << ctrlType 
+              << strCtrlType 
               << "\n Authorized control types: "
-              << "VELOCITY = 0 | ACCELERATION = 1"
+              << "qVEL | qACC | ffVEL | ffACC"
               << std::endl;
   }
   return 1;
 }
 
-void StateIntegrator::integrate( const double & dt ) 
+void StateIntegrator::integrate(int t, const double & dt) 
 {
+  controlSIN(t);
   const Vector & controlIN = controlSIN.accessCopy();
-  const Vector & controlTypeIN = controlTypeSIN.accessCopy();
 
-  if (controlIN.size() != controlTypeIN.size())
-  {
-    if (debug_mode_ > 1)
-    {
-      std::cerr << "Signals controlSIN and controlTypeSIN must have the same size: "
-                << "\n controlIN.size(): " << controlIN.size() 
-                << "\n controlTypeIN.size(): " << controlTypeIN.size()
-                << std::endl;
-    }
+  if (controlTypeVector_.size() == 0){
+    dgRTLOG () << "StateIntegrator::integrate: The controlType vector cannot be empty" << '\n';
     return;
   }
-
-  Vector controlFreeFlyer(6), controlFreeFlyerType(6);
-  Vector control(model_.nv), controlType(model_.nv);
-  bool hasFreeFlyer = false;
 
   if (sanityCheck_ && controlIN.hasNaN()) 
   {
@@ -275,81 +310,68 @@ void StateIntegrator::integrate( const double & dt )
                << controlIN.transpose() << '\n';
     return;
   }
-  // Check size to separate freeFlyer
-  if (controlIN.size() == model_.nv+6)
-  {
-    controlFreeFlyer = controlIN.head<6>();
-    control = controlIN.tail(model_.nv);
-    controlFreeFlyerType = controlTypeIN.head<6>();
-    controlType = controlTypeIN.tail(model_.nv);
-    hasFreeFlyer = true;
-  }
-  else
-  {
-    control = controlIN; 
-    controlType = controlTypeIN;
-  }
 
-  // Integration of the joints
-  for (int i=0;i<control.size(); i++) 
+  // Integration 
+  unsigned int indexControlVector = 0, indexComputedVector = 0;
+  for (unsigned int indexTypeVector = 0; indexTypeVector<controlTypeVector_.size(); indexTypeVector++) 
   {
     SoTControlType type;    
-    if (getControlType(int(controlType[i]), type) > 0) 
+    if (getControlType(controlTypeVector_[indexTypeVector], type) > 0) 
     {
       if (debug_mode_ > 1)
       {
-        std::cerr << "No control type for joint at position " << i
-                  << " in the controlSIN vector"
+        std::cerr << "No control type for joint at position " << indexTypeVector
+                  << " in the controlType vector"
                   << std::endl;
       }
       break;
     }
-    // Set acceleration from control and integrates to find velocity.
-    if (type == ACC) 
+
+    // Control of the freeflyer in acceleration
+    if (type == ffACC) 
     {
-      acceleration_[i] = control[i];
-      velocity_[i] = velocity_[i] + acceleration_[i] * (0.5)*dt;
+      // Set controlFreeFlyer from control (size 6 because derivative of twist)
+      Vector controlFreeFlyer = controlIN.segment<6>(indexControlVector);
+      // Integrate once to obtain velocity -> update ffVel_ 
+      integrateRollPitchYaw(ffVel_, controlFreeFlyer, dt);
+      indexControlVector = indexControlVector + 6;
     }
-    // Set velocity from control.
-    else if (type == VEL) 
+    // Control of the freeflyer in velocity    
+    else if (type == ffVEL)
     {
-      acceleration_[i] = 0;
-      velocity_[i] = control[i];
+      // Set ffVel_ (twist) from control for the integration in position 
+      ffVel_ = controlIN.segment<6>(indexControlVector);
+      indexControlVector = indexControlVector + 6;
     }
-    // Velocity integration to get position
-    position_[i] = position_[i] + velocity_[i] * dt;
+
+    // Control of a joint in acceleration    
+    else if (type == qACC) 
+    {
+      // Set acceleration from control and integrate to find velocity.
+      acceleration_[indexComputedVector] = controlIN[indexControlVector];
+      velocity_[indexComputedVector] = velocity_[indexComputedVector] + acceleration_[indexComputedVector] * (0.5)*dt;
+      indexControlVector++;
+    }
+    // Control of a joint in velocity    
+    else if (type == qVEL) 
+    {
+      // Set velocity from control.
+      acceleration_[indexComputedVector] = 0;
+      velocity_[indexComputedVector] = controlIN[indexControlVector];
+      indexControlVector++;
+    }
+
+    // Velocity integration
+    if (type == ffVEL || type == ffACC){
+      // Integrate freeflyer velocity to obtain position -> update ffPose_ from ffVel_
+      integrateRollPitchYaw(ffPose_, ffVel_, dt);
+    }
+    else if (type == qVEL || type == qACC){
+      // Velocity integration of the joint to get position
+      position_[indexComputedVector] = position_[indexComputedVector] + velocity_[indexComputedVector] * dt;
+      indexComputedVector++;
+    }
   }  
-
-  stateSOUT_ .setConstant( position_ );
-  velocitySOUT_ .setConstant( velocity_ );
-
-  // Freeflyer integration 
-  if (hasFreeFlyer) 
-  {
-    SoTControlType ffType;    
-    if (getControlType(int(controlFreeFlyerType[0]), ffType) > 0) 
-    {
-      if (debug_mode_ > 1)
-      {
-        std::cerr << "No valid control type for freeflyer in the controlTypeSIN signal"
-                  << std::endl;
-      }
-      return;
-    }
-    if (ffType == ACC) 
-    {
-      // Integrate once to obtain velocity -> update ffVel_ and signal freeFlyerVelocitySOUT_
-      integrateRollPitchYaw(ffVel_, freeFlyerVelocitySOUT_, controlFreeFlyer, dt);
-    }
-    else if (ffType == VEL)
-    {
-      // Set ffVel_ from control for the integration in position and update freeFlyerVelocitySOUT_ 
-      ffVel_ = controlFreeFlyer;
-      freeFlyerVelocitySOUT_.setConstant(ffVel_);
-    }
-    // Integrate to obtain position -> update ffPose_ and signal freeFlyerPositionOdomSOUT_
-    integrateRollPitchYaw(ffPose_, freeFlyerPositionOdomSOUT_, ffVel_, dt);
-  }
 }
 
 
@@ -361,24 +383,90 @@ void StateIntegrator::display ( std::ostream& os ) const
 }
 
 
-void StateIntegrator::getControl(map<string, dgsot::ControlValues> &controlOut) 
+Vector& StateIntegrator::getPosition(Vector &controlOut, const int& t) 
 {
   ODEBUG5FULL("start");
   sotDEBUGIN(25) ;
 
   // Integrate control
-  integrate(timestep_);
+  if (last_integration_ != t){
+    integrate(t, timestep_);
+    last_integration_ = t;
+  }
   sotDEBUG (25) << "position_ = " << position_ << std::endl;
 
   ODEBUG5FULL("position_ = " << position_);
 
-  vector<double> lcontrolOut;
-  lcontrolOut.resize(position_.size());
-  Eigen::VectorXd::Map(&lcontrolOut[0], position_.size()) = position_;
+  controlOut = position_;
 
-  controlOut["control"].setValues(lcontrolOut);
+  return controlOut;
 
   ODEBUG5FULL("end");
   sotDEBUGOUT(25) ;
 }
 
+Vector& StateIntegrator::getVelocity(Vector &controlOut, const int& t) 
+{
+  ODEBUG5FULL("start");
+  sotDEBUGIN(25) ;
+
+  // Integrate control
+  if (last_integration_ != t){
+    integrate(t, timestep_);
+    last_integration_ = t;
+  }
+  sotDEBUG (25) << "velocity_ = " << velocity_ << std::endl;
+
+  ODEBUG5FULL("velocity_ = " << velocity_);
+
+  controlOut = velocity_;
+
+  return controlOut;
+
+  ODEBUG5FULL("end");
+  sotDEBUGOUT(25) ;
+}
+
+Vector& StateIntegrator::getFreeFlyerPosition(Vector &ffPose, const int& t) 
+{
+  ODEBUG5FULL("start");
+  sotDEBUGIN(25);
+
+  // Integrate control
+  if (last_integration_ != t){
+    integrate(t, timestep_);
+    last_integration_ = t;
+  }
+  sotDEBUG (25) << "ffPose_ = " << ffPose_ << std::endl;
+
+  ODEBUG5FULL("ffPose_ = " << ffPose_);
+
+  ffPose = ffPose_;
+
+  return ffPose;
+
+  ODEBUG5FULL("end");
+  sotDEBUGOUT(25) ;
+}
+
+Vector& StateIntegrator::getFreeFlyerVelocity(Vector &ffVel, const int& t) 
+{
+  ODEBUG5FULL("start");
+  sotDEBUGIN(25);
+
+  // Integrate control
+  if (last_integration_ != t){
+    integrate(t, timestep_);
+    last_integration_ = t;
+  }
+  sotDEBUG (25) << "ffVel_ = " << ffVel_ << std::endl;
+
+  ODEBUG5FULL("ffVel_ = " << ffVel_);
+
+  ffVel = ffVel_;
+
+  return ffVel;
+
+  ODEBUG5FULL("end");
+  sotDEBUGOUT(25);
+}

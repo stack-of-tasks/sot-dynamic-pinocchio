@@ -71,6 +71,7 @@ int main(int, char **) {
     return -1;
 
   dg::sot::StateIntegrator aIntegrator(std::string("integrator"));
+  aIntegrator.init(0.005);
   aIntegrator.setURDFModel(robot_description);
 
   dg::Vector aState(29); // without freeFlyer
@@ -78,24 +79,40 @@ int main(int, char **) {
     aState(j) = 0.0;
   aIntegrator.setState(aState);
 
-  /// Fix constant vector for the control entry and type
-  dg::Vector aControlVector(35); // with freeFlyer
-  dg::Vector aControlTypeVector(35); // with freeFlyer
-  double dt = 0.005;
+  /// Fix constant vector for the control entry 
+  dg::Vector aControlVector(35); // with freeFlyer  
   for (unsigned int i = 0; i < 35; i++)
   {
-    aControlVector[i] = -0.5;
-    aControlTypeVector[i] = 0; //velocity
+    aControlVector[i] = -0.5; // in velocity
   }
-  aIntegrator.controlSIN.setConstant(aControlVector);
-  aIntegrator.controlTypeSIN.setConstant(aControlTypeVector);
 
-  std::cout << "Size of the integrator stateSOUT_ control vector: " << aIntegrator.stateSOUT_(0).size() << std::endl;
+  // Set the type vector defining the type of control for each joint and the freeflyer
+  // With strings
+  // Eigen::Matrix<std::string,30,1> aControlTypeVector;
+  // aControlTypeVector[0] = "ffVEL"; // with freeFlyer in velocity
+  // for (unsigned int i = 1; i < 30; i++)
+  // {
+  //   aControlTypeVector[i] = "qVEL"; //velocity
+  // }
+  // With int -> for addCommand
+  dg::Vector aControlTypeVector(30);
+  // Types in int qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
+  aControlTypeVector[0] = 2.0; // with freeFlyer in velocity
+  for (unsigned int i = 1; i < 30; i++)
+  {
+    aControlTypeVector[i] = 0.0; //velocity
+  }
+
+  aIntegrator.controlSIN.setConstant(aControlVector);
+  // aIntegrator.setControlType(aControlTypeVector);
+  aIntegrator.setControlTypeInt(aControlTypeVector);
+
   aDevice.controlSIN.plug(&aIntegrator.stateSOUT_);
   for (unsigned int i = 0; i < 2000; i++)
-  {
-    aIntegrator.integrate(dt);
-    aDevice.increment();
+  { 
+    aDevice.motorcontrolSOUT_.recompute(i);
+    aDevice.motorcontrolSOUT_.setReady();
+    aIntegrator.stateSOUT_.setReady();
   }
   const dg::Vector & poseFF = aIntegrator.freeFlyerPositionOdomSOUT_(2001);
   std::cout << "\n ########### \n " << std::endl;
@@ -108,13 +125,8 @@ int main(int, char **) {
 
   std::cout << "Final integrator stateSOUT_ :  " << aIntegrator.stateSOUT_(2001) << std::endl;
 
-
-  const urdf::ModelInterfaceSharedPtr aModel = aDevice.getModel();
-
   const dg::Vector & aControl = aDevice.motorcontrolSOUT_(2001);
-  map<string,dgsot::ControlValues> controlOut;
-  aDevice.getControl(controlOut);
-  double diff = 0, diffCont = 0, ldiff, ldiffCont;
+  double diff = 0, ldiff;
 
   vector< ::urdf::JointSharedPtr > urdf_joints = aDevice.getURDFJoints();
 
@@ -134,27 +146,21 @@ int main(int, char **) {
       {        
         double lowerLim = urdf_joints[u_index]->limits->lower;
         ldiff = (aControl[lctl_index] - lowerLim);
-        ldiffCont = controlOut["control"].getValues()[lctl_index] - lowerLim;
         diff += ldiff;
-        diffCont += ldiffCont;
         std::cout << "Position lowerLim: " << lowerLim << "\n"
                   << "motorcontrolSOUT: " << aControl[lctl_index]  << " -- "
                   << "diff: " << ldiff << "\n" 
-                  << "controlOut: " << controlOut["control"].getValues()[lctl_index] << " -- "
-                  << "diff: " << ldiffCont << " \n"
                   << "Velocity limit: " << urdf_joints[u_index]->limits->velocity
                   << std::endl;
       }
     }
     else
     {
-      std::cout << "motorcontrolSOUT: " << aControl[lctl_index]<< "\n" 
-                << "controlOut: " << controlOut["control"].getValues()[lctl_index] << std::endl;
+      std::cout << "motorcontrolSOUT: " << aControl[lctl_index] << std::endl; 
     }
   }
   std::cout << "\n ########### \n " << std::endl;
   std::cout << "totalDiff: " << diff << std::endl;
-  std::cout << "totalDiffCont: " << diffCont << std::endl;
 
   return 0;
 }

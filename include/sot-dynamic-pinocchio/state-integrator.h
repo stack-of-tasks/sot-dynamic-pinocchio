@@ -15,6 +15,7 @@
 /* --- INCLUDE --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
+#include <vector>
 /* SOT */
 /// dg
 #include <dynamic-graph/entity.h>
@@ -51,14 +52,18 @@ namespace dg = dynamicgraph;
 namespace dynamicgraph {
 namespace sot {
 
+typedef Eigen::Matrix<std::string,Eigen::Dynamic,1> StringVector;
+
 /// Specifies the nature of one joint control from SoT side
 enum SoTControlType {
-  VEL = 0,
-  ACC = 1
+  qVEL = 0,
+  qACC = 1,
+  ffVEL = 2,
+  ffACC = 3
 };
 
 const std::string SoTControlType_s[] = {
-  "VELOCITY", "ACCELERATION"
+  "qVEL", "qACC", "ffVEL", "ffACC"
 };
 
 
@@ -76,7 +81,7 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   static const double TIMESTEP_DEFAULT;
 
   /// Set integration time.
-  void timeStep(double ts) { timestep_ = ts;}
+  void init(const double& step);
 
  protected:
   /// \brief Current integration step.
@@ -90,6 +95,10 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   Eigen::VectorXd velocity_;
   /// Acceleration vector of each actuator.
   dg::Vector acceleration_;
+
+  /// Type of the control vector 
+  /// It can be velocity or acceleration for the actuators or the Freeflyer.
+  StringVector controlTypeVector_;
 
   /// Store Position of free flyer joint
   Eigen::VectorXd ffPose_;
@@ -110,13 +119,6 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   void setVelocitySize(const unsigned int& size);
   virtual void setVelocity(const dg::Vector & vel);
 
-  /// Compute the new position, from the current control.
-  /// When sanity checks are enabled, this checks that the control has no NAN value.
-  /// There are two cases, depending on what the control is:
-  /// - velocity: integrate once to obtain the future position 
-  /// - acceleration: integrate two times to obtain the future position 
-  virtual void integrate( const double & dt = 5e-2 );
-
   /// Read directly the URDF model
   void setURDFModel(const std::string &aURDFModel);
 
@@ -125,12 +127,20 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   void setSanityCheck(const bool & enableCheck);
   /// \}
 
-  /// \name Get the control type from an int (of the controlTypeSIN signal) as in the enum
-  /// Check the types: velocity = 0 or acceleration = 1
+  /// \name Set the control types of the controlled joints/freeflyer
+  /// Allowed types (string): qVEL | qACC | ffVEL | ffACC
+  void setControlType(const StringVector& controlTypeVector);
+
+  /// \name Set the control types of the controlled joints/freeflyer
+  /// Allowed types (int): qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
+  void setControlTypeInt(const Vector& controlTypeVector);
+
+  /// \name Get the control type from a string (of the controlTypeVector) as in the enum
+  /// Check the types: qVEL | qACC | ffVEL | ffACC
   /// \{  
-  int getControlType(const int &ctrlType, SoTControlType &aCtrlType);
+  int getControlType(const std::string &strCtrlType, SoTControlType &aCtrlType);
   /// \}
-  
+    
  public: /* --- DISPLAY --- */
   virtual void display(std::ostream& os) const;
   SOT_CORE_EXPORT friend std::ostream& operator<<(std::ostream& os, const StateIntegrator& r) {
@@ -142,38 +152,44 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// Input signal handling the control vector 
   /// This entity needs a control vector to be send to the device.
   dg::SignalPtr<dg::Vector, int> controlSIN;
-  /// Input signal handling the type of the control vector 
-  /// It can be velocity or acceleration.
-  /// It depends on each of the actuator
-  dg::SignalPtr<dg::Vector, int> controlTypeSIN;
 
   /// \name StateIntegrator current state.
   /// \{
   /// \brief Output integrated state from control.
-  dg::Signal<dg::Vector, int> stateSOUT_;
+  dg::SignalTimeDependent<dg::Vector, int> stateSOUT_;
   /// \brief Output integrated velocity from control.
-  dg::Signal<dg::Vector, int> velocitySOUT_;
+  dg::SignalTimeDependent<dg::Vector, int> velocitySOUT_;
   /// \brief Output integrated freeFlyer position from control (odometry predictive system).
-  dg::Signal<dg::Vector, int> freeFlyerPositionOdomSOUT_;
+  dg::SignalTimeDependent<dg::Vector, int> freeFlyerPositionOdomSOUT_;
   /// \brief Output integrated freeFlyer velocity from control.
-  dg::Signal<dg::Vector, int> freeFlyerVelocitySOUT_;
+  dg::SignalTimeDependent<dg::Vector, int> freeFlyerVelocitySOUT_;
   /// \}
-
-  /// \brief Provides the itegrated control information.
-  void getControl(std::map<std::string, dgsot::ControlValues> &anglesOut);
   ///@}
 
  protected:
 
   /// Integrate the freeflyer state (to obtain position or velocity).
   /// Compute roll pitch yaw angles
-  /// Publish the result on the dedicated signal.
-  void integrateRollPitchYaw(dg::Vector& state, dg::Signal<dg::Vector, int>& signal, const dg::Vector& control, double dt);
+  void integrateRollPitchYaw(dg::Vector& state, const dg::Vector& control, double dt);
 
   /// Store Position of free flyer joint as MatrixHomogeneous
   MatrixHomogeneous freeFlyerPose_;
 
+  /// Compute the new position, from the current control.
+  /// When sanity checks are enabled, this checks that the control has no NAN value.
+  /// There are two cases, depending on what the control is:
+  /// - velocity: integrate once to obtain the future position 
+  /// - acceleration: integrate two times to obtain the future position 
+  virtual void integrate(int t, const double & dt = 5e-2);
 
+  /// \brief Provides the itegrated control information in position (callback signal stateSOUT_).
+  dg::Vector& getPosition(dg::Vector &controlOut, const int& t);
+  /// \brief Provides the itegrated control information in velocity (callback signal velocitySOUT_).
+  dg::Vector& getVelocity(dg::Vector &controlOut, const int& t);
+  /// \brief Provides the itegrated control information of the freeflyer in position (callback signal freeFlyerPositionOdomSOUT_).
+  dg::Vector& getFreeFlyerPosition(dg::Vector &ffPose, const int& t);
+  /// \brief Provides the itegrated control information of the freeflyer in velocity (callback signal freeFlyerVelocitySOUT_).
+  dg::Vector& getFreeFlyerVelocity(dg::Vector &ffVel, const int& t);
 
  public:
   /// Get freeflyer pose
@@ -187,6 +203,8 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   pinocchio::Model model_;
   // Debug mode
   int debug_mode_;
+  // Last integration iteration
+  int last_integration_;
 
  public:
 
