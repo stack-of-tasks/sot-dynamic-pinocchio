@@ -16,6 +16,7 @@
 /* --------------------------------------------------------------------- */
 
 #include <vector>
+#include <math.h> 
 /* SOT */
 /// dg
 #include <dynamic-graph/entity.h>
@@ -97,8 +98,10 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   dg::Vector acceleration_;
 
   /// Type of the control vector 
-  /// It can be velocity or acceleration for the actuators or the Freeflyer.
+  /// It can be velocity or acceleration for the actuators.
   StringVector controlTypeVector_;
+  /// Type of the control for the Freeflyer (velocity/acceleration).
+  std::string controlTypeFF_;
 
   /// Store Position of free flyer joint
   Eigen::VectorXd ffPose_;
@@ -119,6 +122,9 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   void setVelocitySize(const unsigned int& size);
   virtual void setVelocity(const dg::Vector & vel);
 
+  virtual void setStateFreeflyer( const dg::Vector& st);
+  virtual void setVelocityFreeflyer(const dg::Vector & vel);
+
   /// Read directly the URDF model
   void setURDFModel(const std::string &aURDFModel);
 
@@ -127,10 +133,13 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   void setSanityCheck(const bool & enableCheck);
   /// \}
 
-  /// \name Set the control types of the controlled joints/freeflyer
-  /// Allowed types (string): qVEL | qACC | ffVEL | ffACC
+  /// \name Set the control types of the controlled joints
+  /// Allowed types (string): qVEL | qACC 
   void setControlType(const StringVector& controlTypeVector);
-
+  /// \name Set the control types of the controlled freeflyer
+  /// Allowed types (string): ffVEL | ffACC
+  void setControlTypeFreeFlyer(const std::string& controlTypeFF);
+  
   /// \name Set the control types of the controlled joints/freeflyer
   /// Allowed types (int): qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
   void setControlTypeInt(const Vector& controlTypeVector);
@@ -152,6 +161,8 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// Input signal handling the control vector 
   /// This entity needs a control vector to be send to the device.
   dg::SignalPtr<dg::Vector, int> controlSIN;
+  /// Input signal handling the control vector of the freeflyer
+  dg::SignalPtr<dg::Vector, int> freeFlyerSIN;
 
   /// \name StateIntegrator current state.
   /// \{
@@ -159,8 +170,10 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   dg::SignalTimeDependent<dg::Vector, int> stateSOUT_;
   /// \brief Output integrated velocity from control.
   dg::SignalTimeDependent<dg::Vector, int> velocitySOUT_;
-  /// \brief Output integrated freeFlyer position from control (odometry predictive system).
-  dg::SignalTimeDependent<dg::Vector, int> freeFlyerPositionOdomSOUT_;
+  /// \brief Output integrated freeFlyer position from control (odometry predictive system) with euler angles.
+  dg::SignalTimeDependent<dg::Vector, int> freeFlyerPositionEulerSOUT_;
+  /// \brief Output integrated freeFlyer position from control (odometry predictive system) with quaternions.
+  dg::SignalTimeDependent<dg::Vector, int> freeFlyerPositionQuatSOUT_;
   /// \brief Output integrated freeFlyer velocity from control.
   dg::SignalTimeDependent<dg::Vector, int> freeFlyerVelocitySOUT_;
   /// \}
@@ -180,14 +193,24 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// There are two cases, depending on what the control is:
   /// - velocity: integrate once to obtain the future position 
   /// - acceleration: integrate two times to obtain the future position 
-  virtual void integrate(int t, const double & dt = 5e-2);
+  virtual void integrateControl(int t, const double & dt = 5e-2);
+  /// Compute the new freeflyer position, from the current control.
+  /// When sanity checks are enabled, this checks that the control has no NAN value.
+  /// There are two cases, depending on what the control is:
+  /// - velocity: integrate once to obtain the future position 
+  /// - acceleration: integrate two times to obtain the future position 
+  virtual void integrateFreeFlyer(int t, const double & dt = 5e-2);
 
   /// \brief Provides the itegrated control information in position (callback signal stateSOUT_).
   dg::Vector& getPosition(dg::Vector &controlOut, const int& t);
   /// \brief Provides the itegrated control information in velocity (callback signal velocitySOUT_).
   dg::Vector& getVelocity(dg::Vector &controlOut, const int& t);
-  /// \brief Provides the itegrated control information of the freeflyer in position (callback signal freeFlyerPositionOdomSOUT_).
-  dg::Vector& getFreeFlyerPosition(dg::Vector &ffPose, const int& t);
+  /// \brief Provides the itegrated control information of the freeflyer in position with euler angles
+  ///  (callback signal freeFlyerPositionEulerSOUT_).
+  dg::Vector& getFreeFlyerPositionEuler(dg::Vector &ffPose, const int& t);
+  /// \brief Provides the itegrated control information of the freeflyer in position with quaternions
+  ///  (callback signal freeFlyerPositionQuatSOUT_).
+  dg::Vector& getFreeFlyerPositionQuat(dg::Vector &ffPose, const int& t);
   /// \brief Provides the itegrated control information of the freeflyer in velocity (callback signal freeFlyerVelocitySOUT_).
   dg::Vector& getFreeFlyerVelocity(dg::Vector &ffVel, const int& t);
 
@@ -205,6 +228,8 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   int debug_mode_;
   // Last integration iteration
   int last_integration_;
+  // Last integration iteration for freeflyer
+  int last_integration_FF_;
 
  public:
 

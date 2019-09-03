@@ -45,7 +45,6 @@ int ReadYAMLFILE(dg::sot::Device &aDevice) {
   return 0;
 }
 
-
 int main(int, char **) {
 
   unsigned int debug_mode = 2;
@@ -79,50 +78,66 @@ int main(int, char **) {
     aState(j) = 0.0;
   aIntegrator.setState(aState);
 
-  /// Fix constant vector for the control entry 
-  dg::Vector aControlVector(35); // with freeFlyer  
-  for (unsigned int i = 0; i < 35; i++)
+  /// Fix constant vector for the control entry of the integrator
+  dg::Vector aControlVector(29); 
+  for (unsigned int i = 0; i < 29; i++)
   {
     aControlVector[i] = -0.5; // in velocity
   }
-
-  // Set the type vector defining the type of control for each joint and the freeflyer
-  // With strings
-  // Eigen::Matrix<std::string,30,1> aControlTypeVector;
-  // aControlTypeVector[0] = "ffVEL"; // with freeFlyer in velocity
-  // for (unsigned int i = 1; i < 30; i++)
-  // {
-  //   aControlTypeVector[i] = "qVEL"; //velocity
-  // }
-  // With int -> for addCommand
-  dg::Vector aControlTypeVector(30);
-  // Types in int qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
-  aControlTypeVector[0] = 2.0; // with freeFlyer in velocity
-  for (unsigned int i = 1; i < 30; i++)
-  {
-    aControlTypeVector[i] = 0.0; //velocity
-  }
-
   aIntegrator.controlSIN.setConstant(aControlVector);
-  // aIntegrator.setControlType(aControlTypeVector);
-  aIntegrator.setControlTypeInt(aControlTypeVector);
 
-  aDevice.controlSIN.plug(&aIntegrator.stateSOUT_);
+  // Fix FreeFlyer control entry of the integrator
+  dg::Vector aFFControlVector(6); //TWIST
+  for (unsigned int i = 0; i < 6; i++)
+  {
+    aFFControlVector[i] = -0.5; // in velocity
+  }
+  aIntegrator.freeFlyerSIN.setConstant(aFFControlVector);
+
+  // Set the type vector defining the type of control for each joint 
+  // With strings
+  Eigen::Matrix<std::string,29,1> aControlTypeVector;
+  for (unsigned int i = 0; i < 29; i++)
+  {
+    aControlTypeVector[i] = "qVEL"; //velocity
+  }
+  aIntegrator.setControlType(aControlTypeVector); 
+  // Set type of control for the FreeFlyer
+  aIntegrator.setControlTypeFreeFlyer("ffVEL"); //in velocity  
+  
+  // With int -> for addCommand
+  // dg::Vector aControlTypeVector(29);
+  // Types in int qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
+  // aIntegrator.setControlTypeFreeFlyer("ffVEL"); // with freeFlyer in velocity
+  // for (unsigned int i = 0; i < 29; i++)
+  // {
+  //   aControlTypeVector[i] = 0.0; //velocity
+  // }
+  // aIntegrator.setControlTypeInt(aControlTypeVector);
+
+  // PLUG the output signal of the integrator to the entry of the device 
+  aDevice.stateSIN.plug(&aIntegrator.stateSOUT_);
   for (unsigned int i = 0; i < 2000; i++)
   { 
     aDevice.motorcontrolSOUT_.recompute(i);
     aDevice.motorcontrolSOUT_.setReady();
     aIntegrator.stateSOUT_.setReady();
   }
-  const dg::Vector & poseFF = aIntegrator.freeFlyerPositionOdomSOUT_(2001);
+  const dg::Vector & poseFF = aIntegrator.freeFlyerPositionEulerSOUT_(2001);
   std::cout << "\n ########### \n " << std::endl;
-  std::cout << "Final freeFlyerPositionOdomSOUT_:  " << poseFF << std::endl;
+  std::cout << "Final freeFlyerPositionEulerSOUT_:  " << poseFF << std::endl;
 
-  const dg::sot::MatrixHomogeneous & ffpose = aIntegrator.freeFlyerPose();
+  std::cout << "\n ########### \n " << std::endl;
+  const dg::Vector & poseFFQ = aIntegrator.freeFlyerPositionQuatSOUT_(2001);
+  std::cout << "Final freeFlyerPositionQuatSOUT_:  " << poseFFQ << std::endl;
+
+  std::cout << "\n ########### \n " << std::endl;
+  const dg::sot::MatrixHomogeneous & ffposeMat = aIntegrator.freeFlyerPose();
   std::cout << "Final freeFlyerPosition MatrixHomogeneous:  " 
-  << ffpose.translation() << "\n" 
-  << ffpose.linear() << std::endl;
+  << ffposeMat.translation() << "\n" 
+  << ffposeMat.linear() << std::endl;
 
+  std::cout << "\n ########### \n " << std::endl;
   std::cout << "Final integrator stateSOUT_ :  " << aIntegrator.stateSOUT_(2001) << std::endl;
 
   const dg::Vector & aControl = aDevice.motorcontrolSOUT_(2001);
