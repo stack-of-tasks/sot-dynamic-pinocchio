@@ -77,8 +77,8 @@ StateIntegrator::StateIntegrator( const std::string& n )
                   controlSIN,
                   "StateIntegrator(" + n + ")::output(vector)::velocity"  )
   , freeFlyerPositionEulerSOUT_(boost::bind(&StateIntegrator::getFreeFlyerPositionEuler, this, _1, _2),
-                               freeFlyerSIN,
-                               "StateIntegrator(" + n + ")::output(vector)::freeFlyerPositionEuler")
+                                freeFlyerSIN,
+                                "StateIntegrator(" + n + ")::output(vector)::freeFlyerPositionEuler")
   , freeFlyerPositionQuatSOUT_(boost::bind(&StateIntegrator::getFreeFlyerPositionQuat, this, _1, _2),
                                freeFlyerSIN,
                                "StateIntegrator(" + n + ")::output(vector)::freeFlyerPositionQuat")
@@ -202,12 +202,12 @@ void StateIntegrator::integrateRollPitchYaw(Vector& state, const Vector& control
   // Create the Euler angles in good range : [-pi:pi]x[-pi/2:pi/2]x[-pi:pi]
   Matrix3d rotationMatrix = QuaternionMapd(qout.tail<4>().data()).normalized().toRotationMatrix();
   double m = sqrt(pow(rotationMatrix(2, 1), 2.0) + pow(rotationMatrix(2, 2), 2.0));
-  double p = atan2(-rotationMatrix(2,0), m);
+  double p = atan2(-rotationMatrix(2, 0), m);
   double r, y;
-  if (abs(abs(p) - M_PI / 2) < 0.001){
+  if (abs(abs(p) - M_PI / 2) < 0.001) {
     r = 0;
     y = -atan2(rotationMatrix(0, 1), rotationMatrix(1, 1));
-  } else { 
+  } else {
     y = atan2(rotationMatrix(1, 0), rotationMatrix(0, 0));  // alpha
     r = atan2(rotationMatrix(2, 1), rotationMatrix(2, 2)); // gamma
   }
@@ -356,7 +356,7 @@ void StateIntegrator::integrateControl(int t, const double & dt) {
                   << std::endl;
       }
       break;
-    }    
+    }
     // Control of a joint in acceleration
     if (type == qACC) {
       // Set acceleration from control and integrate to find velocity.
@@ -375,7 +375,7 @@ void StateIntegrator::integrateControl(int t, const double & dt) {
   }
 }
 
-void StateIntegrator::integrateFreeFlyer(int t, const double & dt){
+void StateIntegrator::integrateFreeFlyer(int t, const double & dt) {
   freeFlyerSIN(t);
   const Vector & freeFlyerIN = freeFlyerSIN.accessCopy();
 
@@ -487,7 +487,7 @@ Vector& StateIntegrator::getFreeFlyerPositionQuat(Vector &ffPose, const int& t) 
   using Eigen::Vector3d;
   ODEBUG5FULL("start");
   sotDEBUGIN(25);
-  
+
   ffPose.resize(7);
   // Integrate control
   if (last_integration_FF_ != t) {

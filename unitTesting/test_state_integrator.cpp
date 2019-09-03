@@ -31,13 +31,13 @@ namespace dg = dynamicgraph;
 
 int ReadYAMLFILE(dg::sot::Device &aDevice) {
   // Reflect how the data are splitted in two yaml files in the sot
-  std::ifstream yaml_file_controller("../../unitTesting/sot_controller.yaml"); 
+  std::ifstream yaml_file_controller("../../unitTesting/sot_controller.yaml");
   std::string yaml_string_controller;
   yaml_string_controller.assign((std::istreambuf_iterator<char>(yaml_file_controller) ),
                                 (std::istreambuf_iterator<char>()    ) );
   aDevice.ParseYAMLString(yaml_string_controller);
 
-  std::ifstream yaml_file_params("../../unitTesting/sot_params.yaml"); 
+  std::ifstream yaml_file_params("../../unitTesting/sot_params.yaml");
   std::string yaml_string_params;
   yaml_string_params.assign((std::istreambuf_iterator<char>(yaml_file_params) ),
                             (std::istreambuf_iterator<char>()    ) );
@@ -74,37 +74,34 @@ int main(int, char **) {
   aIntegrator.setURDFModel(robot_description);
 
   dg::Vector aState(29); // without freeFlyer
-  for(unsigned j=0;j<aState.size();j++)
+  for (unsigned j = 0; j < aState.size(); j++)
     aState(j) = 0.0;
   aIntegrator.setState(aState);
 
   /// Fix constant vector for the control entry of the integrator
-  dg::Vector aControlVector(29); 
-  for (unsigned int i = 0; i < 29; i++)
-  {
+  dg::Vector aControlVector(29);
+  for (unsigned int i = 0; i < 29; i++) {
     aControlVector[i] = -0.5; // in velocity
   }
   aIntegrator.controlSIN.setConstant(aControlVector);
 
   // Fix FreeFlyer control entry of the integrator
   dg::Vector aFFControlVector(6); //TWIST
-  for (unsigned int i = 0; i < 6; i++)
-  {
+  for (unsigned int i = 0; i < 6; i++) {
     aFFControlVector[i] = -0.5; // in velocity
   }
   aIntegrator.freeFlyerSIN.setConstant(aFFControlVector);
 
-  // Set the type vector defining the type of control for each joint 
+  // Set the type vector defining the type of control for each joint
   // With strings
-  Eigen::Matrix<std::string,29,1> aControlTypeVector;
-  for (unsigned int i = 0; i < 29; i++)
-  {
+  Eigen::Matrix<std::string, 29, 1> aControlTypeVector;
+  for (unsigned int i = 0; i < 29; i++) {
     aControlTypeVector[i] = "qVEL"; //velocity
   }
-  aIntegrator.setControlType(aControlTypeVector); 
+  aIntegrator.setControlType(aControlTypeVector);
   // Set type of control for the FreeFlyer
-  aIntegrator.setControlTypeFreeFlyer("ffVEL"); //in velocity  
-  
+  aIntegrator.setControlTypeFreeFlyer("ffVEL"); //in velocity
+
   // With int -> for addCommand
   // dg::Vector aControlTypeVector(29);
   // Types in int qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
@@ -115,10 +112,9 @@ int main(int, char **) {
   // }
   // aIntegrator.setControlTypeInt(aControlTypeVector);
 
-  // PLUG the output signal of the integrator to the entry of the device 
+  // PLUG the output signal of the integrator to the entry of the device
   aDevice.stateSIN.plug(&aIntegrator.stateSOUT_);
-  for (unsigned int i = 0; i < 2000; i++)
-  { 
+  for (unsigned int i = 0; i < 2000; i++) {
     aDevice.motorcontrolSOUT_.recompute(i);
     aDevice.motorcontrolSOUT_.setReady();
     aIntegrator.stateSOUT_.setReady();
@@ -133,9 +129,9 @@ int main(int, char **) {
 
   std::cout << "\n ########### \n " << std::endl;
   const dg::sot::MatrixHomogeneous & ffposeMat = aIntegrator.freeFlyerPose();
-  std::cout << "Final freeFlyerPosition MatrixHomogeneous:  " 
-  << ffposeMat.translation() << "\n" 
-  << ffposeMat.linear() << std::endl;
+  std::cout << "Final freeFlyerPosition MatrixHomogeneous:  "
+            << ffposeMat.translation() << "\n"
+            << ffposeMat.linear() << std::endl;
 
   std::cout << "\n ########### \n " << std::endl;
   std::cout << "Final integrator stateSOUT_ :  " << aIntegrator.stateSOUT_(2001) << std::endl;
@@ -148,30 +144,25 @@ int main(int, char **) {
   dgsot::JointSHWControlType_iterator it_control_type;
   for (it_control_type  = aDevice.jointDevices_.begin();
        it_control_type != aDevice.jointDevices_.end();
-       it_control_type++) 
-  {
+       it_control_type++) {
     int lctl_index = it_control_type->second.control_index;
     int u_index = it_control_type->second.urdf_index;
     std::cout << "\n ########### \n " << std::endl;
     std::cout << "urdf_joints: " << urdf_joints[u_index]->name << std::endl;
 
-    if (it_control_type->second.SoTcontrol == dgsot::POSITION) 
-    {
-      if (u_index != -1 && (urdf_joints[u_index]->limits)) 
-      {        
+    if (it_control_type->second.SoTcontrol == dgsot::POSITION) {
+      if (u_index != -1 && (urdf_joints[u_index]->limits)) {
         double lowerLim = urdf_joints[u_index]->limits->lower;
         ldiff = (aControl[lctl_index] - lowerLim);
         diff += ldiff;
         std::cout << "Position lowerLim: " << lowerLim << "\n"
                   << "motorcontrolSOUT: " << aControl[lctl_index]  << " -- "
-                  << "diff: " << ldiff << "\n" 
+                  << "diff: " << ldiff << "\n"
                   << "Velocity limit: " << urdf_joints[u_index]->limits->velocity
                   << std::endl;
       }
-    }
-    else
-    {
-      std::cout << "motorcontrolSOUT: " << aControl[lctl_index] << std::endl; 
+    } else {
+      std::cout << "motorcontrolSOUT: " << aControl[lctl_index] << std::endl;
     }
   }
   std::cout << "\n ########### \n " << std::endl;

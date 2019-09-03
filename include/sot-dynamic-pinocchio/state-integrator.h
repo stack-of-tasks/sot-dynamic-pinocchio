@@ -16,7 +16,7 @@
 /* --------------------------------------------------------------------- */
 
 #include <vector>
-#include <math.h> 
+#include <math.h>
 /* SOT */
 /// dg
 #include <dynamic-graph/entity.h>
@@ -53,7 +53,7 @@ namespace dg = dynamicgraph;
 namespace dynamicgraph {
 namespace sot {
 
-typedef Eigen::Matrix<std::string,Eigen::Dynamic,1> StringVector;
+typedef Eigen::Matrix<std::string, Eigen::Dynamic, 1> StringVector;
 
 /// Specifies the nature of one joint control from SoT side
 enum SoTControlType {
@@ -73,8 +73,7 @@ const std::string SoTControlType_s[] = {
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity 
-{
+class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity {
  public:
 
   static const std::string CLASS_NAME;
@@ -97,7 +96,7 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// Acceleration vector of each actuator.
   dg::Vector acceleration_;
 
-  /// Type of the control vector 
+  /// Type of the control vector
   /// It can be velocity or acceleration for the actuators.
   StringVector controlTypeVector_;
   /// Type of the control for the Freeflyer (velocity/acceleration).
@@ -134,22 +133,22 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// \}
 
   /// \name Set the control types of the controlled joints
-  /// Allowed types (string): qVEL | qACC 
+  /// Allowed types (string): qVEL | qACC
   void setControlType(const StringVector& controlTypeVector);
   /// \name Set the control types of the controlled freeflyer
   /// Allowed types (string): ffVEL | ffACC
   void setControlTypeFreeFlyer(const std::string& controlTypeFF);
-  
+
   /// \name Set the control types of the controlled joints/freeflyer
   /// Allowed types (int): qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
   void setControlTypeInt(const Vector& controlTypeVector);
 
   /// \name Get the control type from a string (of the controlTypeVector) as in the enum
   /// Check the types: qVEL | qACC | ffVEL | ffACC
-  /// \{  
+  /// \{
   int getControlType(const std::string &strCtrlType, SoTControlType &aCtrlType);
   /// \}
-    
+
  public: /* --- DISPLAY --- */
   virtual void display(std::ostream& os) const;
   SOT_CORE_EXPORT friend std::ostream& operator<<(std::ostream& os, const StateIntegrator& r) {
@@ -158,7 +157,7 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
 
  public: /* --- SIGNALS --- */
 
-  /// Input signal handling the control vector 
+  /// Input signal handling the control vector
   /// This entity needs a control vector to be send to the device.
   dg::SignalPtr<dg::Vector, int> controlSIN;
   /// Input signal handling the control vector of the freeflyer
@@ -191,14 +190,14 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
   /// Compute the new position, from the current control.
   /// When sanity checks are enabled, this checks that the control has no NAN value.
   /// There are two cases, depending on what the control is:
-  /// - velocity: integrate once to obtain the future position 
-  /// - acceleration: integrate two times to obtain the future position 
+  /// - velocity: integrate once to obtain the future position
+  /// - acceleration: integrate two times to obtain the future position
   virtual void integrateControl(int t, const double & dt = 5e-2);
   /// Compute the new freeflyer position, from the current control.
   /// When sanity checks are enabled, this checks that the control has no NAN value.
   /// There are two cases, depending on what the control is:
-  /// - velocity: integrate once to obtain the future position 
-  /// - acceleration: integrate two times to obtain the future position 
+  /// - velocity: integrate once to obtain the future position
+  /// - acceleration: integrate two times to obtain the future position
   virtual void integrateFreeFlyer(int t, const double & dt = 5e-2);
 
   /// \brief Provides the itegrated control information in position (callback signal stateSOUT_).
@@ -233,8 +232,7 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity
 
  public:
 
-  const pinocchio::Model & getModel()
-  { 
+  const pinocchio::Model & getModel() {
     return model_;
   }
 
