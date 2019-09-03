@@ -118,23 +118,24 @@ int main(int, char **) {
     aDevice.motorcontrolSOUT_.recompute(i);
     aDevice.motorcontrolSOUT_.setReady();
     aIntegrator.stateSOUT_.setReady();
+    
   }
   const dg::Vector & poseFF = aIntegrator.freeFlyerPositionEulerSOUT_(2001);
   std::cout << "\n ########### \n " << std::endl;
-  std::cout << "Final freeFlyerPositionEulerSOUT_:  " << poseFF << std::endl;
+  std::cout << "Final freeFlyerPositionEulerSOUT_: \n" << poseFF << std::endl;
 
   std::cout << "\n ########### \n " << std::endl;
   const dg::Vector & poseFFQ = aIntegrator.freeFlyerPositionQuatSOUT_(2001);
-  std::cout << "Final freeFlyerPositionQuatSOUT_:  " << poseFFQ << std::endl;
+  std::cout << "Final freeFlyerPositionQuatSOUT_: \n" << poseFFQ << std::endl;
 
   std::cout << "\n ########### \n " << std::endl;
   const dg::sot::MatrixHomogeneous & ffposeMat = aIntegrator.freeFlyerPose();
-  std::cout << "Final freeFlyerPosition MatrixHomogeneous:  "
+  std::cout << "Final freeFlyerPosition MatrixHomogeneous: \n"
             << ffposeMat.translation() << "\n"
             << ffposeMat.linear() << std::endl;
 
   std::cout << "\n ########### \n " << std::endl;
-  std::cout << "Final integrator stateSOUT_ :  " << aIntegrator.stateSOUT_(2001) << std::endl;
+  std::cout << "Final integrator stateSOUT_ :  \n" << aIntegrator.stateSOUT_(2001) << std::endl;
 
   const dg::Vector & aControl = aDevice.motorcontrolSOUT_(2001);
   double diff = 0, ldiff;

@@ -65,7 +65,6 @@ StateIntegrator::StateIntegrator( const std::string& n )
   : Entity(n)
   , timestep_(TIMESTEP_DEFAULT)
   , position_(6)
-  , controlTypeFF_("")
   , ffPose_(6)
   , sanityCheck_(true)
   , controlSIN( NULL, "StateIntegrator(" + n + ")::input(double)::control" )
@@ -151,6 +150,16 @@ StateIntegrator::StateIntegrator( const std::string& n )
       "\n";
     addCommand("setControlType",
                new command::Setter<StateIntegrator, Vector>(*this, &StateIntegrator::setControlTypeInt, docstring));
+
+    docstring =
+      "\n"
+      "    Set control type value for a joint.\n"
+      "    Joint position (int) \n"
+      "    Type (int): qVEL:0 | qACC:1 \n"
+      "\n";
+    addCommand("setControlTypeJoint",
+               command::makeCommandVoid2(*this, &StateIntegrator::setControlTypeJointInt, docstring));
+
     docstring =
       "\n"
       "    Set control type value (for freeflyer).\n"
@@ -199,9 +208,18 @@ void StateIntegrator::integrateRollPitchYaw(Vector& state, const Vector& control
 
   SE3().integrate (qin, control * dt, qout);
 
+  Matrix3d rotationMatrix = QuaternionMapd(qout.tail<4>().data()).toRotationMatrix();
   // Create the Euler angles in good range : [-pi:pi]x[-pi/2:pi/2]x[-pi:pi]
-  Matrix3d rotationMatrix = QuaternionMapd(qout.tail<4>().data()).normalized().toRotationMatrix();
-  double m = sqrt(pow(rotationMatrix(2, 1), 2.0) + pow(rotationMatrix(2, 2), 2.0));
+  Vector3d rollPitchYaw;
+  rotationMatrixToEuler(rotationMatrix, rollPitchYaw);
+  // Update freeflyer state (pose)
+  state.head<3>() = qout.head<3>();
+  state.segment<3>(3) << rollPitchYaw;
+ 
+}
+
+void StateIntegrator::rotationMatrixToEuler(Eigen::Matrix3d& rotationMatrix, Eigen::Vector3d& rollPitchYaw){
+  double m = sqrt(rotationMatrix(2, 1) * rotationMatrix(2, 1) + rotationMatrix(2, 2) * rotationMatrix(2, 2));
   double p = atan2(-rotationMatrix(2, 0), m);
   double r, y;
   if (abs(abs(p) - M_PI / 2) < 0.001) {
@@ -211,9 +229,7 @@ void StateIntegrator::integrateRollPitchYaw(Vector& state, const Vector& control
     y = atan2(rotationMatrix(1, 0), rotationMatrix(0, 0));  // alpha
     r = atan2(rotationMatrix(2, 1), rotationMatrix(2, 2)); // gamma
   }
-  // Update freeflyer state (pose|vel)
-  state.head<3>() = qout.head<3>();
-  state.segment<3>(3) << r, p, y;
+  rollPitchYaw << r, p, y;
 }
 
 const MatrixHomogeneous& StateIntegrator::freeFlyerPose() {
@@ -226,33 +242,57 @@ const MatrixHomogeneous& StateIntegrator::freeFlyerPose() {
   quat = AngleAxisd(ffPose_(5), Vector3d::UnitZ())
          * AngleAxisd(ffPose_(4), Vector3d::UnitY())
          * AngleAxisd(ffPose_(3), Vector3d::UnitX());
-  freeFlyerPose_.linear() = quat.normalized().toRotationMatrix();
+  freeFlyerPose_.linear() = quat.toRotationMatrix();
 
   return freeFlyerPose_;
 }
 
 void StateIntegrator::setControlType(const StringVector& controlTypeVector) {
-  controlTypeVector_ = controlTypeVector;
+  SoTControlType type;
+  controlTypeVector_.resize(controlTypeVector.size());
+
+  for (unsigned int j = 0; j < controlTypeVector.size(); j++) {    
+    if (getControlType(controlTypeVector[j], type) > 0) {
+      if (debug_mode_ > 1) {
+        std::cerr << "No control type for joint at position " << j
+                  << " in the controlType vector"
+                  << std::endl;
+      }
+      break;
+    }
+  controlTypeVector_[j] = type;
+  }
 }
 
 void StateIntegrator::setControlTypeFreeFlyer(const std::string& controlTypeFF) {
-  controlTypeFF_ = controlTypeFF;
+  SoTControlType typeFF;
+  if (getControlType(controlTypeFF, typeFF) > 0) {
+    if (debug_mode_ > 1) {
+      std::cerr << "No control type for Freeflyer." << std::endl;
+    }
+  return;
+  }
+  controlTypeFF_ = typeFF;
+}
+
+void StateIntegrator::setControlTypeJointInt(const int& jointNumber, const int& intType){
+  SoTControlType type;
+  try {
+    type = (SoTControlType)intType;
+  } catch (...) {
+    dgRTLOG () << "StateIntegrator::setControlTypeJointInt: The controlType at position "
+               << jointNumber << " is not valid: " << intType << "\n"
+               << "Expected values are (int): qVEL = 0 | qACC = 1"
+               << '\n';
+    return;
+  }
+  controlTypeVector_[jointNumber] = type;
 }
 
 void StateIntegrator::setControlTypeInt(const Vector& controlTypeVector) {
-  std::string type;
   controlTypeVector_.resize(controlTypeVector.size());
-
   for (unsigned int i = 0; i < controlTypeVector.size(); i++) {
-    try {
-      type = SoTControlType_s[int(controlTypeVector[i])];
-    } catch (...) {
-      dgRTLOG () << "StateIntegrator::setControlTypeInt: The controlType at position "
-                 << i << " is not valid: " << controlTypeVector[i] << "\n"
-                 << "Expected values are (int): qVEL = 0 | qACC = 1 | ffVEL = 2 | ffACC = 3"
-                 << '\n';
-    }
-    controlTypeVector_[i] = type;
+    setControlTypeJointInt(i, int(controlTypeVector[i]));
   }
 }
 
@@ -300,7 +340,7 @@ void StateIntegrator::setVelocityFreeflyer( const Vector& vel ) {
 }
 
 void StateIntegrator::setRoot( const Matrix & root ) {
-  Eigen::Matrix4d _matrix4d(root);
+  Eigen::Matrix4d _matrix4d(root); // needed to define type of root for transformation to MatrixHomogeneous
   MatrixHomogeneous _root(_matrix4d);
   setRoot( _root );
 }
@@ -308,7 +348,10 @@ void StateIntegrator::setRoot( const Matrix & root ) {
 void StateIntegrator::setRoot( const MatrixHomogeneous & worldMwaist ) {
   freeFlyerPose_ = worldMwaist;
   ffPose_.head<3>() = worldMwaist.translation();
-  ffPose_.segment<3>(3) = worldMwaist.linear().eulerAngles(0, 1, 2);
+  Eigen::Vector3d rollPitchYaw;
+  Eigen::Matrix3d rot(worldMwaist.linear());
+  rotationMatrixToEuler(rot, rollPitchYaw);
+  ffPose_.segment<3>(3) << rollPitchYaw;
 }
 
 void StateIntegrator::setSanityCheck(const bool & enableCheck) {
@@ -348,23 +391,14 @@ void StateIntegrator::integrateControl(int t, const double & dt) {
   }
   // Integration joints
   for (unsigned int j = 0; j < controlTypeVector_.size(); j++) {
-    SoTControlType type;
-    if (getControlType(controlTypeVector_[j], type) > 0) {
-      if (debug_mode_ > 1) {
-        std::cerr << "No control type for joint at position " << j
-                  << " in the controlType vector"
-                  << std::endl;
-      }
-      break;
-    }
     // Control of a joint in acceleration
-    if (type == qACC) {
+    if (controlTypeVector_[j] == qACC) {
       // Set acceleration from control and integrate to find velocity.
       acceleration_[j] = controlIN[j];
       velocity_[j] = velocity_[j] + acceleration_[j] * (0.5) * dt;
     }
     // Control of a joint in velocity
-    else if (type == qVEL) {
+    else if (controlTypeVector_[j] == qVEL) {
       // Set velocity from control.
       acceleration_[j] = 0;
       velocity_[j] = controlIN[j];
@@ -379,8 +413,8 @@ void StateIntegrator::integrateFreeFlyer(int t, const double & dt) {
   freeFlyerSIN(t);
   const Vector & freeFlyerIN = freeFlyerSIN.accessCopy();
 
-  if (controlTypeFF_ == "") {
-    dgRTLOG () << "StateIntegrator::integrate: The controlType of the freeflyer cannot be empty" << '\n';
+  if (controlTypeFF_ != ffACC && controlTypeFF_ != ffVEL) {
+    dgRTLOG () << "StateIntegrator::integrate: The controlType of the freeflyer is not properly set (empty?)" << '\n';
     return;
   }
 
@@ -390,20 +424,13 @@ void StateIntegrator::integrateFreeFlyer(int t, const double & dt) {
     return;
   }
 
-  SoTControlType typeFF;
-  if (getControlType(controlTypeFF_, typeFF) > 0) {
-    if (debug_mode_ > 1) {
-      std::cerr << "No control type for the Freeflyer " << std::endl;
-    }
-    return;
-  }
   // Control of the freeflyer in acceleration
-  if (typeFF == ffACC) {
+  if (controlTypeFF_ == ffACC) {
     // Integrate once to obtain velocity -> update ffVel_
-    integrateRollPitchYaw(ffVel_, freeFlyerIN, dt);
+    ffVel_ = ffVel_ + freeFlyerIN * (0.5) * dt;
   }
   // Control of the freeflyer in velocity
-  else if (typeFF == ffVEL) {
+  else if (controlTypeFF_ == ffVEL) {
     // Set ffVel_ (twist) from control for the integration in position
     ffVel_ = freeFlyerIN;
   }
@@ -500,7 +527,7 @@ Vector& StateIntegrator::getFreeFlyerPositionQuat(Vector &ffPose, const int& t) 
   quat = AngleAxisd(ffPose_(5), Vector3d::UnitZ())
          * AngleAxisd(ffPose_(4), Vector3d::UnitY())
          * AngleAxisd(ffPose_(3), Vector3d::UnitX());
-  ffPose.segment<4>(3) = quat.normalized().coeffs();
+  ffPose.segment<4>(3) = quat.coeffs();
 
   sotDEBUG (25) << "ffPose = " << ffPose << std::endl;
 

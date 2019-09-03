@@ -98,9 +98,9 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity {
 
   /// Type of the control vector
   /// It can be velocity or acceleration for the actuators.
-  StringVector controlTypeVector_;
+  std::vector<SoTControlType> controlTypeVector_;
   /// Type of the control for the Freeflyer (velocity/acceleration).
-  std::string controlTypeFF_;
+  SoTControlType controlTypeFF_;
 
   /// Store Position of free flyer joint
   Eigen::VectorXd ffPose_;
@@ -139,8 +139,11 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity {
   /// Allowed types (string): ffVEL | ffACC
   void setControlTypeFreeFlyer(const std::string& controlTypeFF);
 
-  /// \name Set the control types of the controlled joints/freeflyer
-  /// Allowed types (int): qVEL:0 | qACC:1 | ffVEL:2 | ffACC:3
+  /// \name Set the control type of a specific joint 
+  /// Allowed types (int): qVEL:0 | qACC:1 
+  void setControlTypeJointInt(const int& jointNumber, const int& intType);
+  /// \name Set the control types of the controlled joints
+  /// Allowed types (int): qVEL:0 | qACC:1 
   void setControlTypeInt(const Vector& controlTypeVector);
 
   /// \name Get the control type from a string (of the controlTypeVector) as in the enum
@@ -180,9 +183,11 @@ class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity {
 
  protected:
 
-  /// Integrate the freeflyer state (to obtain position or velocity).
+  /// Integrate the freeflyer state (to obtain position).
   /// Compute roll pitch yaw angles
   void integrateRollPitchYaw(dg::Vector& state, const dg::Vector& control, double dt);
+  // Computes Euler angles in good range : [-pi:pi]x[-pi/2:pi/2]x[-pi:pi]
+  void rotationMatrixToEuler(Eigen::Matrix3d& rotationMatrix, Eigen::Vector3d& rollPitchYaw);
 
   /// Store Position of free flyer joint as MatrixHomogeneous
   MatrixHomogeneous freeFlyerPose_;
