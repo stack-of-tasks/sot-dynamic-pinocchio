@@ -20,6 +20,7 @@
 #include <map>
 
 /* SOT */
+#include <pinocchio/fwd.hpp>
 #include <sot/core/flags.hh>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/pool.h>

@@ -6,6 +6,7 @@
  * CNRS/AIST
  *
  */
+#include <pinocchio/fwd.hpp>
 #include <sot/core/debug.hh>
 
 #include <sot-dynamic-pinocchio/dynamic-pinocchio.h>

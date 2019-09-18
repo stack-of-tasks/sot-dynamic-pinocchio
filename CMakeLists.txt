@@ -6,6 +6,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/test.cmake)
 
 SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
@@ -35,6 +36,8 @@ ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
 OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
+OPTION (INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
+
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
   ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
@@ -43,31 +46,16 @@ IF(BUILD_PYTHON_INTERFACE)
   ADD_REQUIRED_DEPENDENCY("eigenpy")
 ENDIF(BUILD_PYTHON_INTERFACE)
 
-
-# List plug-ins that will be compiled.
-SET(plugins
-  zmpreffromcom
-  force-compensation
-  integrator-force-exact
-  mass-apparent
-  integrator-force-rk4
-  integrator-force
-  angle-estimator
-  waist-attitude-from-sensor
-  zmp-from-forces
-  )
-
-SET(LIBRARY_NAME ${PROJECT_NAME})
-LIST(APPEND plugins dynamic)
-
 # Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
-PKG_CONFIG_APPEND_LIBS(${LIBRARY_NAME})
+PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
 # Add subdirectories.
-ADD_SUBDIRECTORY(include)
+IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+  ADD_SUBDIRECTORY(include/${CUSTOM_HEADER_DIR})
+ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(python)

@@ -340,7 +340,7 @@ compute_xff_dotSOUT( dynamicgraph::Vector& res,
   const dynamicgraph::Matrix & J = jacobianSIN( time );
   const dynamicgraph::Vector & dq = qdotSIN( time );
 
-  const Eigen::Index nr=J.rows(), nc=J.cols()-6;
+  const Eigen::DenseIndex nr=J.rows(), nc=J.cols()-6;
   assert( nr==6 );
   dynamicgraph::Matrix Ja( nr,nc ); dynamicgraph::Vector dqa(nc);
   for( int j=0;j<nc;++j )
@@ -367,7 +367,7 @@ compute_qdotSOUT( dynamicgraph::Vector& res,
 
   assert( dx.size()==6 );
 
-  const Eigen::Index nr=dq.size();
+  const Eigen::DenseIndex nr=dq.size();
   res.resize( nr ); res=dq;
   for( int i=0;i<6;++i ) res(i)=dx(i);
 

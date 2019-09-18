@@ -1,23 +1,37 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST,
 #                 Florent Lamiraux (CNRS/LAAS)
 
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-# Verbosity level
-IF (NOT (\"${CMAKE_VERBOSITY_LEVEL}\" STREQUAL \"\"))
-  ADD_DEFINITIONS(-DVP_DEBUG_MODE=${CMAKE_VERBOSITY_LEVEL} -DVP_DEBUG)
-ENDIF (NOT (\"${CMAKE_VERBOSITY_LEVEL}\" STREQUAL \"\"))
+# Main Library
+ADD_LIBRARY(${PROJECT_NAME} SHARED sot-dynamic-pinocchio)
+PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} pinocchio)
+PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} sot-core)
+PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} dynamic-graph)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES})
+IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+  INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 
-IF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-  ADD_DEFINITIONS(-DDEBUG=2)
-ENDIF(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+# List plug-ins that will be compiled.
+SET(plugins
+  zmpreffromcom
+  force-compensation
+  integrator-force-exact
+  mass-apparent
+  integrator-force-rk4
+  integrator-force
+  angle-estimator
+  waist-attitude-from-sensor
+  zmp-from-forces
+  dynamic
+  )
 
 SET(integrator-force-rk4_plugins_dependencies integrator-force)
 SET(integrator-force-exact_plugins_dependencies integrator-force)
 
 FOREACH(lib ${plugins})
   SET(libname dp-${lib})
-  ADD_LIBRARY(${libname} SHARED ${lib}.cpp)
+  ADD_LIBRARY(${libname} SHARED ${lib})
   SET_TARGET_PROPERTIES(${libname} PROPERTIES
     PREFIX ""
     SOVERSION ${PROJECT_VERSION})
@@ -27,17 +41,16 @@ FOREACH(lib ${plugins})
     TARGET_LINK_LIBRARIES(${libname} "dp-${${lib}_plugins_dependencies}")
   ENDIF(${lib}_plugins_dependencies)
 
+  TARGET_LINK_LIBRARIES(${libname} ${PROJECT_NAME})
   TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 
   PKG_CONFIG_USE_DEPENDENCY(${libname} pinocchio)
-  IF(BUILD_PYTHON_INTERFACE)
-    PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
-  ENDIF(BUILD_PYTHON_INTERFACE)
-
   PKG_CONFIG_USE_DEPENDENCY(${libname} sot-core)
   PKG_CONFIG_USE_DEPENDENCY(${libname} dynamic-graph)
 
-  INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
+  IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+    INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
+  ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 
   # build python submodule
   IF(BUILD_PYTHON_INTERFACE)
@@ -52,22 +65,7 @@ FOREACH(lib ${plugins})
       )
     PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap pinocchio)
   ENDIF(BUILD_PYTHON_INTERFACE)
-
-  UNSET({libname})
 ENDFOREACH(lib)
-
-# Main Library
-ADD_LIBRARY(${LIBRARY_NAME} SHARED sot-dynamic-pinocchio.cpp)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} pinocchio)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} sot-core)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} dynamic-graph)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} pinocchio)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} sot-core)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} dynamic-graph)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
-INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-TARGET_LINK_LIBRARIES(dp-dynamic ${LIBRARY_NAME})
 
 # Install empty __init__.py files in intermediate directories.
 IF(BUILD_PYTHON_INTERFACE)
