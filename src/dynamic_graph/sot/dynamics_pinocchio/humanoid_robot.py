@@ -3,21 +3,21 @@
 
 from __future__ import print_function
 
-from dynamic_graph.tracer_real_time import TracerRealTime
-from dynamic_graph.tools import addTrace
-from dynamic_graph.sot.core import OpPointModifier
-from dynamic_graph.sot.core.derivator import Derivator_of_Vector
-from dynamic_graph.sot.core import RobotSimu
-
-from dynamic_graph.sot.dynamics_pinocchio.parser import Parser
-from dynamic_graph.sot.dynamics_pinocchio import AngleEstimator
+from functools import reduce
 
 from dynamic_graph import plug
+from dynamic_graph.sot.core import OpPointModifier, RobotSimu
+from dynamic_graph.sot.core.derivator import Derivator_of_Vector
+from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
+from dynamic_graph.sot.dynamics_pinocchio.parser import Parser
+from dynamic_graph.tools import addTrace
+from dynamic_graph.tracer_real_time import TracerRealTime
 
-I3 = reduce(lambda m, i: m + (i*(0.,)+(1.,)+ (2-i)*(0.,),), range(3), ())
-I4 = reduce(lambda m, i: m + (i*(0.,)+(1.,)+ (3-i)*(0.,),), range(4), ())
+I3 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (2 - i) * (0., ), ), range(3), ())
+I4 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (3 - i) * (0., ), ), range(4), ())
 
-class AbstractHumanoidRobot (object):
+
+class AbstractHumanoidRobot(object):
     """
     This class instantiates all the entities required to get a consistent
     representation of a humanoid robot, mainly:
@@ -50,14 +50,8 @@ class AbstractHumanoidRobot (object):
 
         - dimension: The configuration size.
     """
-
-
-    def _initialize (self):
-        self.OperationalPoints = ['left-wrist', 'right-wrist',
-                             'left-ankle', 'right-ankle',
-                             'gaze']
-
-
+    def _initialize(self):
+        self.OperationalPoints = ['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze']
         """
         Operational points are specific interesting points of the robot
         used to control it.
@@ -83,13 +77,12 @@ class AbstractHumanoidRobot (object):
         - operational point file.
         """
 
-
         self.frames = dict()
         """
         Additional frames defined by using OpPointModifier.
         """
 
-        #FIXME: the following options are /not/ independent.
+        # FIXME: the following options are /not/ independent.
         # zmp requires acceleration which requires velocity.
         """
         Enable velocity computation.
@@ -103,17 +96,14 @@ class AbstractHumanoidRobot (object):
         Enable ZMP computation
         """
         self.enableZmpComputation = False
-
         """
         Tracer used to log data.
         """
         self.tracer = None
-
         """
         How much data will be logged.
         """
         self.tracerSize = 2**20
-
         """
         Automatically recomputed signals through the use
         of device.after.
@@ -121,19 +111,16 @@ class AbstractHumanoidRobot (object):
         signal list device.after before exiting.
         """
         self.autoRecomputedSignals = []
-
         """
         Which signals should be traced.
         """
         self.tracedSignals = {
-            'dynamic': ["com", "zmp", "angularmomentum",
-                      "position", "velocity", "acceleration"],
+            'dynamic': ["com", "zmp", "angularmomentum", "position", "velocity", "acceleration"],
             'device': ['zmp', 'control', 'state']
-            }
+        }
 
-
-    def help (self):
-        print (AbstractHumanoidRobot.__doc__)
+    def help(self):
+        print(AbstractHumanoidRobot.__doc__)
 
     def loadModelFromKxml(self, name, filename):
         """
@@ -151,8 +138,7 @@ class AbstractHumanoidRobot (object):
         self.setProperties(model)
         return model
 
-    def loadModelFromUrdf(self, name, urdfPath,
-                          dynamicType):
+    def loadModelFromUrdf(self, name, urdfPath, dynamicType):
         """
         Load a model using the pinocchio urdf parser. This parser looks
         for urdf files in which kinematics and dynamics information
@@ -161,14 +147,14 @@ class AbstractHumanoidRobot (object):
         Additional information are located in two different XML files.
         """
         model = dynamicType(name)
-        #TODO: setproperty flags in sot-pinocchio
-        #self.setProperties(model)
+        # TODO: setproperty flags in sot-pinocchio
+        # self.setProperties(model)
         model.setFile(urdfPath)
         model.parse()
         return model
 
-    #TODO: put these flags in sot-pinocchio
-    #def setProperties(self, model):
+    # TODO: put these flags in sot-pinocchio
+    # def setProperties(self, model):
     #    model.setProperty('TimeStep', str(self.timeStep))
     #
     #    model.setProperty('ComputeAcceleration', 'false')
@@ -189,7 +175,6 @@ class AbstractHumanoidRobot (object):
     #        model.setProperty('ComputeAcceleration', 'true')
     #        model.setProperty('ComputeMomentum', 'true')
 
-
     def initializeOpPoints(self):
         for op in self.OperationalPoints:
             self.dynamic.createOpPoint(op, self.OperationalPointsMap[op])
@@ -197,10 +182,8 @@ class AbstractHumanoidRobot (object):
     def createFrame(self, frameName, transformation, operationalPoint):
         frame = OpPointModifier(frameName)
         frame.setTransformation(transformation)
-        plug(self.dynamic.signal(operationalPoint),
-             frame.positionIN)
-        plug(self.dynamic.signal("J{0}".format(operationalPoint)),
-             frame.jacobianIN)
+        plug(self.dynamic.signal(operationalPoint), frame.positionIN)
+        plug(self.dynamic.signal("J{0}".format(operationalPoint)), frame.jacobianIN)
         frame.position.recompute(frame.position.time + 1)
         frame.jacobian.recompute(frame.jacobian.time + 1)
         return frame
@@ -216,11 +199,10 @@ class AbstractHumanoidRobot (object):
         - one task per operational point to ease robot control
         """
         if not self.dynamic:
-            raise RunTimeError("robots models have to be initialized first")
+            raise RuntimeError("robots models have to be initialized first")
 
         if not self.device:
             self.device = RobotSimu(self.name + '_device')
-
         """
         Robot timestep
         """
@@ -238,37 +220,36 @@ class AbstractHumanoidRobot (object):
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = self.dimension*(0.,)
+            self.dynamic.velocity.value = self.dimension * (0., )
 
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
             self.accelerationDerivator.dt.value = self.timeStep
-            plug(self.velocityDerivator.sout,
-                 self.accelerationDerivator.sin)
+            plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = self.dimension*(0.,)
+            self.dynamic.acceleration.value = self.dimension * (0., )
 
-        #self.initializeOpPoints()
+        # self.initializeOpPoints()
 
-        #TODO: hand parameters through srdf --- additional frames ---
-        #self.frames = dict()
-        #frameName = 'rightHand'
-        #self.frames [frameName] = self.createFrame (
+        # TODO: hand parameters through srdf --- additional frames ---
+        # self.frames = dict()
+        # frameName = 'rightHand'
+        # self.frames [frameName] = self.createFrame (
         #    "{0}_{1}".format (self.name, frameName),
         #    self.dynamic.getHandParameter (True), "right-wrist")
         # rightGripper is an alias for the rightHand:
-        #self.frames ['rightGripper'] = self.frames [frameName]
+        # self.frames ['rightGripper'] = self.frames [frameName]
 
-        #frameName = 'leftHand'
-        #self.frames [frameName] = self.createFrame (
+        # frameName = 'leftHand'
+        # self.frames [frameName] = self.createFrame (
         #    "{0}_{1}".format (self.name, frameName),
         #    self.dynamic.getHandParameter (False), "left-wrist")
         # leftGripper is an alias for the leftHand:
-        #self.frames ["leftGripper"] = self.frames [frameName]
+        # self.frames ["leftGripper"] = self.frames [frameName]
 
-        #for (frameName, transformation, signalName) in self.AdditionalFrames:
+        # for (frameName, transformation, signalName) in self.AdditionalFrames:
         #    self.frames[frameName] = self.createFrame(
         #        "{0}_{1}".format(self.name, frameName),
         #        transformation,
@@ -276,19 +257,18 @@ class AbstractHumanoidRobot (object):
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
-            self.autoRecomputedSignals.append(
-                '{0}.{1}'.format(entityName, signalName))
+            self.autoRecomputedSignals.append('{0}.{1}'.format(entityName, signalName))
             addTrace(self, self.tracer, entityName, signalName)
 
     def initializeTracer(self):
         if not self.tracer:
             self.tracer = TracerRealTime('trace')
             self.tracer.setBufferSize(self.tracerSize)
-            self.tracer.open('/tmp/','dg_','.dat')
+            self.tracer.open('/tmp/', 'dg_', '.dat')
             # Recompute trace.triger at each iteration to enable tracing.
             self.device.after.addSignal('{0}.triger'.format(self.tracer.name))
 
-    def traceDefaultSignals (self):
+    def traceDefaultSignals(self):
         # Geometry / operational points
         for s in self.OperationalPoints + self.tracedSignals['dynamic']:
             self.addTrace(self.dynamic.name, s)
@@ -310,8 +290,7 @@ class AbstractHumanoidRobot (object):
         if self.enableAccelerationDerivator:
             self.addTrace(self.accelerationDerivator.name, 'sout')
 
-
-    def __init__(self, name, tracer = None):
+    def __init__(self, name, tracer=None):
         self._initialize()
 
         self.name = name
@@ -344,7 +323,7 @@ class AbstractHumanoidRobot (object):
                 self.device.after.rmSignal(s)
             self.tracer = None
 
-    def reset(self, posture = None):
+    def reset(self, posture=None):
         """
         Restart the control from another position.
 
@@ -358,16 +337,16 @@ class AbstractHumanoidRobot (object):
             posture = self.halfSitting
         self.device.set(posture)
 
-        self.dynamic.com.recompute(self.device.state.time+1)
-        self.dynamic.Jcom.recompute(self.device.state.time+1)
+        self.dynamic.com.recompute(self.device.state.time + 1)
+        self.dynamic.Jcom.recompute(self.device.state.time + 1)
 
         for op in self.OperationalPoints:
-            self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
-            self.dynamic.signal('J'+self.OperationalPointsMap[op]).recompute(self.device.state.time+1)
+            self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
+            self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
 
-from dynamic_graph.sot.dynamics_pinocchio import DynamicPinocchio
+
 class HumanoidRobot(AbstractHumanoidRobot):
-    def __init__(self, name, pinocchio_model, pinocchio_data, initialConfig, OperationalPointsMap = None, tracer = None):
+    def __init__(self, name, pinocchio_model, pinocchio_data, initialConfig, OperationalPointsMap=None, tracer=None):
         AbstractHumanoidRobot.__init__(self, name, tracer)
 
         self.OperationalPoints.append('waist')
@@ -392,16 +371,15 @@ class HumanoidRobot(AbstractHumanoidRobot):
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = self.dimension*(0.,)
+            self.dynamic.velocity.value = self.dimension * (0., )
 
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
                 Derivator_of_Vector('accelerationDerivator')
             self.accelerationDerivator.dt.value = self.timeStep
-            plug(self.velocityDerivator.sout,
-                 self.accelerationDerivator.sin)
+            plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = self.dimension*(0.,)
+            self.dynamic.acceleration.value = self.dimension * (0., )
         if self.OperationalPointsMap is not None:
             self.initializeOpPoints()
