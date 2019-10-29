@@ -1,18 +1,18 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/python.cmake)
-INCLUDE(cmake/test.cmake)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(PROJECT_NAMESPACE stack-of-tasks)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
 SET(PROJECT_SUFFIX "-v3")
+
+INCLUDE(cmake/base.cmake)
+INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/eigen.cmake)
+INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/test.cmake)
 
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 SET(DOXYGEN_USE_MATHJAX YES)
@@ -26,7 +26,9 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   plugindir
   )
 
-SETUP_PROJECT()
+CMAKE_POLICY(SET CMP0048 OLD)
+PROJECT(${PROJECT_NAME} CXX)
+
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
 ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
@@ -42,7 +44,7 @@ IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
   ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
   SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_PATH})
   ADD_REQUIRED_DEPENDENCY("eigenpy")
 ENDIF(BUILD_PYTHON_INTERFACE)
 
@@ -60,5 +62,3 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(python)
 ADD_SUBDIRECTORY(unitTesting)
-
-SETUP_PROJECT_FINALIZE()
