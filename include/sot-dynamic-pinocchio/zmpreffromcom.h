@@ -17,7 +17,6 @@
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
 
-
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
@@ -31,54 +30,49 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32)
-#  if defined (zmpreffromcom_EXPORTS)
-#    define SOTZMPREFFROMCOM_EXPORT __declspec(dllexport)
-#  else
-#    define SOTZMPREFFROMCOM_EXPORT __declspec(dllimport)
-#  endif
+#if defined(WIN32)
+#if defined(zmpreffromcom_EXPORTS)
+#define SOTZMPREFFROMCOM_EXPORT __declspec(dllexport)
 #else
-#  define SOTZMPREFFROMCOM_EXPORT
+#define SOTZMPREFFROMCOM_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SOTZMPREFFROMCOM_EXPORT
 #endif
 
-namespace dynamicgraph { namespace sot {
+namespace dynamicgraph {
+namespace sot {
 namespace dg = dynamicgraph;
 
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom
-:public dg::Entity
-{
+class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom : public dg::Entity {
  public:
   static const std::string CLASS_NAME;
-  virtual const std::string& getClassName( void ) const { return CLASS_NAME; }
+  virtual const std::string& getClassName(void) const { return CLASS_NAME; }
+
  public:
   double dt;
-  const static double DT_DEFAULT; // = 5e-3; // 5ms
+  const static double DT_DEFAULT;  // = 5e-3; // 5ms
   double footHeight;
-  const static double FOOT_HEIGHT_DEFAULT; // = .105;
+  const static double FOOT_HEIGHT_DEFAULT;  // = .105;
 
  public: /* --- CONSTRUCTION --- */
-
-  ZmprefFromCom( const std::string& name );
-  virtual ~ZmprefFromCom( void );
+  ZmprefFromCom(const std::string& name);
+  virtual ~ZmprefFromCom(void);
 
  public: /* --- SIGNAL --- */
+  dynamicgraph::Vector& computeZmpref(dynamicgraph::Vector& res, const int& time);
 
-  dynamicgraph::Vector& computeZmpref( dynamicgraph::Vector& res,
-					       const int& time );
-
-  dg::SignalPtr<MatrixHomogeneous,int> waistPositionSIN;
-  dg::SignalPtr<dynamicgraph::Vector,int> comPositionSIN;
-  dg::SignalPtr<dynamicgraph::Vector,int> dcomSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector,int> zmprefSOUT;
-
+  dg::SignalPtr<MatrixHomogeneous, int> waistPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector, int> comPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector, int> dcomSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector, int> zmprefSOUT;
 };
 
+} /* namespace sot */
+} /* namespace dynamicgraph */
 
-} /* namespace sot */} /* namespace dynamicgraph */
-
-
-#endif // #ifndef __SOT_ZMPREFFROMCOM_H__
+#endif  // #ifndef __SOT_ZMPREFFROMCOM_H__

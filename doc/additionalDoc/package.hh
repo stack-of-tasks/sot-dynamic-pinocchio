@@ -28,7 +28,8 @@ install these packages at https://github.com/jrl-umi3218.
 \section python_bindings Python bindings
 
 As most packages based on the dynamic-graph framework (see https://github.com/jrl-umi3218/dynamic-graph),
-the functionnality is exposed through entities. Hence python sub-modules of dynamic_graph  are generated. See <a href="../sphinx-html/index.html">sphinx documentation</a> for more details.
+the functionnality is exposed through entities. Hence python sub-modules of dynamic_graph  are generated. See <a
+href="../sphinx-html/index.html">sphinx documentation</a> for more details.
 
 The following entities are created by this package:\n
 (all entites are placed in the namespace sot::)
