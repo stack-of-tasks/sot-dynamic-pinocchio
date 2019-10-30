@@ -18,12 +18,12 @@ PyObject* setPinocchioModel(PyObject* /* self */, PyObject* args) {
   pinocchio::Model* pointer2 = NULL;
   if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject)) return NULL;
 
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
 
-  pointer1 = PyCObject_AsVoidPtr(object);
+  pointer1 = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   DynamicPinocchio* dyn_entity = (DynamicPinocchio*)pointer1;
 
   try {
@@ -51,12 +51,12 @@ PyObject* setPinocchioData(PyObject* /* self */, PyObject* args) {
   pinocchio::Data* pointer2 = NULL;
   if (!PyArg_ParseTuple(args, "OO", &object, &pyPinocchioObject)) return NULL;
 
-  if (!PyCObject_Check(object)) {
-    PyErr_SetString(PyExc_TypeError, "function takes a PyCObject as argument");
+  if (!PyCapsule_CheckExact(object)) {
+    PyErr_SetString(PyExc_TypeError, "function takes a PyCapsule as argument");
     return NULL;
   }
 
-  pointer1 = PyCObject_AsVoidPtr(object);
+  pointer1 = PyCapsule_GetPointer(object, "dynamic_graph.Entity");
   DynamicPinocchio* dyn_entity = (DynamicPinocchio*)pointer1;
 
   try {
