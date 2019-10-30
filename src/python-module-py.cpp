@@ -1,4 +1,6 @@
-// Copyright (C) 2008-2016 LAAS-CNRS, JRL AIST-CNRS.
+// Copyright (C) 2008-2016, 2019 LAAS-CNRS, JRL AIST-CNRS.
+
+#define PY_SSIZE_T_CLEAN
 
 #include <sot/core/debug.hh>
 
@@ -92,9 +94,46 @@ static PyMethodDef functions[] = {
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
-PyMODINIT_FUNC initwrap(void) {
-  PyObject* m;
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef SotDynamicPinocchioModuleDef = {
+    PyModuleDef_HEAD_INIT,
+    "wrap",
+    NULL,
+    0,
+    functions,
+    NULL,
+    NULL,
+    NULL,
+    NULL};
+#define INITERROR return NULL
+#else
+#define INITERROR return
+#endif
 
-  m = Py_InitModule("wrap", functions);
-  if (m == NULL) return;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+PyMODINIT_FUNC PyInit_wrap(void)
+#else
+void initwrap(void)
+#endif
+{
+#if PY_MAJOR_VERSION >= 3
+  PyObject* module = PyModule_Create(&SotDynamicPinocchioModuleDef);
+#else
+  PyObject* module = Py_InitModule("wrap", functions);
+#endif
+
+  if (module == NULL) INITERROR;
+
+#if PY_MAJOR_VERSION >= 3
+  return module;
+#endif
 }
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
+
