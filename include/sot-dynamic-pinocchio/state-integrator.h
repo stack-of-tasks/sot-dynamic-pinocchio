@@ -75,7 +75,8 @@ const std::string SoTControlType_s[] = {
 
 class SOTSTATEINTEGRATOR_EXPORT StateIntegrator: public Entity {
  public:
-
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  
   static const std::string CLASS_NAME;
   virtual const std::string& getClassName(void) const {return CLASS_NAME;}
   static const double TIMESTEP_DEFAULT;

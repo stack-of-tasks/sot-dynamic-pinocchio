@@ -19,7 +19,7 @@ using namespace std;
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/entity.h>
 #include <sot/core/matrix-geometry.hh>
-#include <sot/core/device.hh>
+#include <sot/core/generic-device.hh>
 #include "sot-dynamic-pinocchio/state-integrator.h"
 
 #include <sstream>
@@ -29,7 +29,7 @@ namespace dg = dynamicgraph;
 
 #define BOOST_TEST_MODULE test-state-integrator
 
-int ReadYAMLFILE(dg::sot::Device &aDevice) {
+int ReadYAMLFILE(dg::sot::GenericDevice &aDevice) {
   // Reflect how the data are splitted in two yaml files in the sot
   std::ifstream yaml_file_controller("../../unitTesting/sot_controller.yaml");
   std::string yaml_string_controller;
@@ -62,7 +62,7 @@ int main(int, char **) {
   robot_description = strStream.str();
 
   /// Test reading the URDF file.
-  dg::sot::Device aDevice(std::string("simple_humanoid"));
+  dg::sot::GenericDevice aDevice(std::string("simple_humanoid"));
   aDevice.setDebugMode(debug_mode);
   aDevice.setURDFModel(robot_description);
 
