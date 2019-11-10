@@ -43,8 +43,8 @@ FOREACH(test ${tests})
     )
 
   PKG_CONFIG_USE_DEPENDENCY(${test} pinocchio)
-  PKG_CONFIG_USE_DEPENDENCY(${test} sot-core)
-  PKG_CONFIG_USE_DEPENDENCY(${test} dynamic-graph)
+  target_link_libraries(${test} sot-core::sot-core)
+  target_link_libraries(${test} dynamic-graph::dynamic-graph)
 
   IF(${test}_plugins_dependencies)
     ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")

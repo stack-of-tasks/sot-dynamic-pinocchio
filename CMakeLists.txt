@@ -2,23 +2,38 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/python.cmake)
-INCLUDE(cmake/test.cmake)
-
-SET(PROJECT_NAMESPACE stack-of-tasks)
+SET(PROJECT_ORG stack-of-tasks)
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
-SET(PROJECT_URL "https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME}")
+SET(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 SET(PROJECT_SUFFIX "-v3")
 
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
-SET(DOXYGEN_USE_MATHJAX YES)
+# Export CMake Target
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
 # Disable -Werror on Unix for now.
 SET(CXX_DISABLE_WERROR True)
+
+INCLUDE(cmake/base.cmake)
+
+# Specify the project.
+cmake_policy(SET CMP0048 NEW)
+PROJECT(${PROJECT_NAME}
+  LANGUAGES
+  CXX
+  VERSION
+  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+  )
+
+find_package (Boost REQUIRED
+  python filesystem system thread program_options unit_test_framework)
+find_package (Eigen3 REQUIRED NO_MODULE)
+
+INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/test.cmake)
+
+SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+SET(DOXYGEN_USE_MATHJAX YES)
 
 SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   ${PKG_CONFIG_ADDITIONAL_VARIABLES}
@@ -26,12 +41,11 @@ SET(PKG_CONFIG_ADDITIONAL_VARIABLES
   plugindir
   )
 
-SETUP_PROJECT()
 # Search for dependencies.
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
-ADD_REQUIRED_DEPENDENCY("dynamic-graph >= 3.0.0")
-ADD_REQUIRED_DEPENDENCY("sot-core >= 4.1.0")
-ADD_REQUIRED_DEPENDENCY("sot-tools >= 2.0.0")
+ADD_PROJECT_DEPENDENCY(dynamic-graph REQUIRED )
+ADD_PROJECT_DEPENDENCY(sot-core REQUIRED )
+#ADD_PROJECT_DEPENDENCY(sot-tools REQUIRED )
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
@@ -40,7 +54,7 @@ OPTION (INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
-  ADD_REQUIRED_DEPENDENCY("dynamic-graph-python >= 3.0.0")
+  ADD_PROJECT_DEPENDENCY(dynamic-graph-python REQUIRED)
   SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
   ADD_REQUIRED_DEPENDENCY("eigenpy")
@@ -49,8 +63,8 @@ ENDIF(BUILD_PYTHON_INTERFACE)
 # Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 
-SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
+#SEARCH_FOR_BOOST()
+#SEARCH_FOR_EIGEN()
 
 # Add subdirectories.
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -61,4 +75,4 @@ ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(python)
 ADD_SUBDIRECTORY(unitTesting)
 
-SETUP_PROJECT_FINALIZE()
+SETUP_PROJECT_PACKAGE_FINALIZE()

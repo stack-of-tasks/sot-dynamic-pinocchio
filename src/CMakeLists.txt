@@ -5,11 +5,14 @@
 # Main Library
 ADD_LIBRARY(${PROJECT_NAME} SHARED sot-dynamic-pinocchio)
 PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} pinocchio)
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} sot-core)
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} dynamic-graph)
+target_link_libraries(${PROJECT_NAME} sot-core::sot-core)
+target_link_libraries(${PROJECT_NAME} dynamic-graph::dynamic-graph)
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES})
+
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-  INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  INSTALL(TARGETS ${PROJECT_NAME}
+    EXPORT ${TARGETS_EXPORT_NAME}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
 ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 
 # List plug-ins that will be compiled.
@@ -44,9 +47,9 @@ FOREACH(lib ${plugins})
   TARGET_LINK_LIBRARIES(${libname} ${PROJECT_NAME})
   TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
 
-  PKG_CONFIG_USE_DEPENDENCY(${libname} pinocchio)
-  PKG_CONFIG_USE_DEPENDENCY(${libname} sot-core)
-  PKG_CONFIG_USE_DEPENDENCY(${libname} dynamic-graph)
+  target_link_libraries(${libname} pinocchio)
+  target_link_libraries(${libname} sot-core::sot-core)
+  target_link_libraries(${libname} dynamic-graph::dynamic-graph)
 
   IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
     INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
