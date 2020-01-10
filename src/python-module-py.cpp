@@ -96,15 +96,7 @@ static PyMethodDef functions[] = {
 
 #if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef SotDynamicPinocchioModuleDef = {
-    PyModuleDef_HEAD_INIT,
-    "wrap",
-    NULL,
-    0,
-    functions,
-    NULL,
-    NULL,
-    NULL,
-    NULL};
+    PyModuleDef_HEAD_INIT, "wrap", NULL, 0, functions, NULL, NULL, NULL, NULL};
 #define INITERROR return NULL
 #else
 #define INITERROR return
@@ -136,4 +128,3 @@ void initwrap(void)
 #ifdef __cplusplus
 }  // extern "C"
 #endif
-
