@@ -64,6 +64,7 @@ FOREACH(lib ${plugins})
       "src/python-module-py.cpp"
       )
     PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap pinocchio)
+    PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap sot-core)
   ENDIF(BUILD_PYTHON_INTERFACE)
 ENDFOREACH(lib)
 
