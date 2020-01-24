@@ -678,38 +678,41 @@ dg::Matrix& DynamicPinocchio::computeGenericJacobian(const bool isFrame, const i
   return res;
 }
 
-dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int jointId,
+dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int id,
                                                            dg::Matrix& res, const int& time) {
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
-  if (res.rows() != 6 && res.cols() != m_model->nv) res.resize(6, m_model->nv);
-  jacobiansSINTERN(time);
-  forwardKinematicsSINTERN(time);
+  if (res.rows() != 6 || res.cols() != m_model->nv) res = Matrix::Zero(6, m_model->nv);
 
-  // TODO: Find a way to remove tmp object
-  pinocchio::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6, m_model->nv);
-  // std::string temp;
+  jacobiansSINTERN(time);
+
+  pinocchio::FrameIndex fid;
+  pinocchio::JointIndex jid;
+  bool changeFrame = !isLocal;
+  pinocchio::SE3 M;
+
   // Computes Jacobian in end-eff coordinates.
   if (isFrame) {
-    pinocchio::framesForwardKinematics(*m_model, *m_data);
-    pinocchio::getFrameJacobian(*m_model, *m_data, (pinocchio::Model::Index)jointId, pinocchio::LOCAL, tmp);
-    sotDEBUG(25) << "EndEffJacobian for " << m_model->frames.at((pinocchio::Model::Index)jointId).name << " is " << tmp
-                 << std::endl;
+    changeFrame = true;
+    fid = (pinocchio::FrameIndex)id;
+    const pinocchio::Frame& frame = m_model->frames[fid];
+    jid = frame.parent;
+
+    M = frame.placement.inverse();
+    if (!isLocal) // Express the jacobian is world coordinate system.
+      M.rotation() = m_data->oMf[fid].rotation() * M.rotation();
   } else {
-    // temp = m_model->getJointName((pinocchio::Model::Index)jointId);
-    pinocchio::getJointJacobian(*m_model, *m_data, (pinocchio::Model::Index)jointId, pinocchio::LOCAL, tmp);
-    sotDEBUG(25) << "EndEffJacobian for " << m_model->names[(pinocchio::Model::Index)jointId] << " is " << tmp
-                 << std::endl;
+    jid = (pinocchio::JointIndex)id;
+    if (!isLocal) { // Express the jacobian is world coordinate system.
+      M.rotation() = m_data->oMi[jid].rotation();
+      M.translation().setZero();
+    }
   }
-  res = tmp;
+  pinocchio::getJointJacobian(*m_model, *m_data, jid, pinocchio::LOCAL, res);
 
-  if (!isLocal) {
-    Eigen::Matrix3d rotation = (isFrame ? m_data->oMf : m_data->oMi)[jointId].rotation();
-    Eigen::Vector3d translation = Eigen::Vector3d::Zero();
-
-    res = (pinocchio::SE3(rotation, translation).toActionMatrix() * res);
-  }
+  if (changeFrame)
+    pinocchio::motionSet::se3Action(M, res, res);
 
   sotDEBUGOUT(25);
   return res;
