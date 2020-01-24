@@ -633,8 +633,8 @@ dg::Vector& DynamicPinocchio::computeZmp(dg::Vector& res, const int& time) {
 // Updates the jacobian matrix in m_data
 int& DynamicPinocchio::computeJacobians(int& dummy, const int& time) {
   sotDEBUGIN(25);
-  const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  pinocchio::computeJointJacobians(*m_model, *m_data, q);
+  forwardKinematicsSINTERN(time);
+  pinocchio::computeJointJacobians(*m_model, *m_data);
   sotDEBUG(25) << "Jacobians updated" << std::endl;
   sotDEBUGOUT(25);
   return dummy;
@@ -665,19 +665,15 @@ dg::Matrix& DynamicPinocchio::computeGenericJacobian(const bool isFrame, const i
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
-  if (res.rows() != 6 && res.cols() != m_model->nv) res.resize(6, m_model->nv);
+  if (res.rows() != 6 || res.cols() != m_model->nv) res = Matrix::Zero(6, m_model->nv);
   jacobiansSINTERN(time);
 
-  // TODO: Find a way to remove tmp object
-  pinocchio::Data::Matrix6x tmp = Eigen::MatrixXd::Zero(6, m_model->nv);
+  pinocchio::JointIndex id = isFrame
+    ? m_model->frames[(pinocchio::JointIndex)jointId].parent
+    : (pinocchio::JointIndex)jointId;
 
   // Computes Jacobian in world coordinates.
-  if (isFrame) {
-    pinocchio::getJointJacobian(*m_model, *m_data, m_model->frames[(pinocchio::Model::Index)jointId].parent,
-                                pinocchio::WORLD, tmp);
-  } else
-    pinocchio::getJointJacobian(*m_model, *m_data, (pinocchio::Model::Index)jointId, pinocchio::WORLD, tmp);
-  res = tmp;
+  pinocchio::getJointJacobian(*m_model, *m_data, id, pinocchio::WORLD, res);
   sotDEBUGOUT(25);
   return res;
 }
@@ -726,7 +722,7 @@ MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, 
   std::string temp;
   forwardKinematicsSINTERN(time);
   if (isFrame) {
-    pinocchio::framesForwardKinematics(*m_model, *m_data);
+    pinocchio::updateFramePlacements(*m_model, *m_data);
     res.matrix() = m_data->oMf[jointId].toHomogeneousMatrix();
     temp = m_model->frames.at((pinocchio::Model::Index)jointId).name;
   } else {
@@ -779,17 +775,18 @@ int& DynamicPinocchio::computeNewtonEuler(int& dummy, const int& time) {
 
 dg::Matrix& DynamicPinocchio::computeJcom(dg::Matrix& Jcom, const int& time) {
   sotDEBUGIN(25);
-
-  const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
-  Jcom = pinocchio::jacobianCenterOfMass(*m_model, *m_data, q, false);
+  forwardKinematicsSINTERN(time);
+  Jcom = pinocchio::jacobianCenterOfMass(*m_model, *m_data, false);
   sotDEBUGOUT(25);
   return Jcom;
 }
 
 dg::Vector& DynamicPinocchio::computeCom(dg::Vector& com, const int& time) {
   sotDEBUGIN(25);
-  forwardKinematicsSINTERN(time);
-  pinocchio::centerOfMass(*m_model, *m_data, false);
+  if (JcomSOUT.needUpdate(time)) {
+    forwardKinematicsSINTERN(time);
+    pinocchio::centerOfMass(*m_model, *m_data, false);
+  }
   com = m_data->com[0];
   sotDEBUGOUT(25);
   return com;
