@@ -641,6 +641,8 @@ int& DynamicPinocchio::computeJacobians(int& dummy, const int& time) {
 }
 int& DynamicPinocchio::computeForwardKinematics(int& dummy, const int& time) {
   sotDEBUGIN(25);
+  assert(m_model);
+  assert(m_data);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   const Eigen::VectorXd& v = pinocchioVelSINTERN.access(time);
   const Eigen::VectorXd& a = pinocchioAccSINTERN.access(time);
@@ -718,30 +720,28 @@ dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, c
   return res;
 }
 
-MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, const int jointId,
+MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, const int id,
                                                             MatrixHomogeneous& res, const int& time) {
   sotDEBUGIN(25);
-  assert(m_data);
-  std::string temp;
   forwardKinematicsSINTERN(time);
   if (isFrame) {
-    pinocchio::updateFramePlacements(*m_model, *m_data);
-    res.matrix() = m_data->oMf[jointId].toHomogeneousMatrix();
-    temp = m_model->frames.at((pinocchio::Model::Index)jointId).name;
+    const pinocchio::Frame& frame = m_model->frames[id];
+    res.matrix() = (m_data->oMi[frame.parent] * frame.placement).toHomogeneousMatrix();
   } else {
-    res.matrix() = m_data->oMi[jointId].toHomogeneousMatrix();
-    temp = m_model->names[(pinocchio::Model::Index)jointId];
+    res.matrix() = m_data->oMi[id].toHomogeneousMatrix();
   }
-  sotDEBUG(25) << "For " << temp << " with id: " << jointId << " position is " << res << std::endl;
+  sotDEBUG(25) << "For " << (isFrame
+     ? m_model->frames[id].name
+     : m_model->names[id])
+    << " with id: " << id << " position is " << res << std::endl;
   sotDEBUGOUT(25);
   return res;
 }
 
 dg::Vector& DynamicPinocchio::computeGenericVelocity(const int jointId, dg::Vector& res, const int& time) {
   sotDEBUGIN(25);
-  assert(m_data);
-  res.resize(6);
   forwardKinematicsSINTERN(time);
+  res.resize(6);
   const pinocchio::Motion& aRV = m_data->v[jointId];
   res << aRV.linear(), aRV.angular();
   sotDEBUGOUT(25);
@@ -750,9 +750,8 @@ dg::Vector& DynamicPinocchio::computeGenericVelocity(const int jointId, dg::Vect
 
 dg::Vector& DynamicPinocchio::computeGenericAcceleration(const int jointId, dg::Vector& res, const int& time) {
   sotDEBUGIN(25);
-  assert(m_data);
-  res.resize(6);
   forwardKinematicsSINTERN(time);
+  res.resize(6);
   const pinocchio::Motion& aRA = m_data->a[jointId];
   res << aRA.linear(), aRA.angular();
   sotDEBUGOUT(25);
