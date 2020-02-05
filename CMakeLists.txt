@@ -39,6 +39,9 @@ SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
 OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
 OPTION (INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
+OPTION(SUFFIX_SO_VERSION
+  "Suffix shared library name by a string depending on git status of project"
+  ON)
 
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
