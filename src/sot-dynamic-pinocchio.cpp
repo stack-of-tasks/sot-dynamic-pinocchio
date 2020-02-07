@@ -202,6 +202,9 @@ DynamicPinocchio::DynamicPinocchio(const std::string& name)
                                 "string (joint name)");
     addCommand("createAcceleration",
                makeCommandVoid2(*this, &DynamicPinocchio::cmd_createAccelerationSignal, docstring));
+    docstring="\n"
+      "  Return robot joint names.\n\n";
+    addCommand("getJointNames", new command::GetJointNames(*this, docstring));
   }
 
   sphericalJoints.clear();
