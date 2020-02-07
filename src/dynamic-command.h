@@ -60,6 +60,31 @@ class GetDimension : public Command {
   }
 };  // class GetDimension
 
+// Command getJointNames
+class GetJointNames : public Command {
+ public:
+  /// Create command and store it in Entity
+  /// \param entity instance of Entity owning this command
+  /// \param docstring documentation of the command
+  GetJointNames(DynamicPinocchio& entity, const std::string& docstring)
+      : Command(entity, std::vector<Value::Type>(), docstring){}
+  virtual Value doExecute() {
+    DynamicPinocchio& robot = static_cast<DynamicPinocchio&>(owner());
+    if (robot.m_model == 0x0){
+      SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+                                 "model has not been initialized.");
+    }
+    const std::vector<std::string>& jointNames = robot.m_model->names;
+    // Remove first joint names 'universe'
+    std::size_t n (jointNames.size());
+    assert(n >= 1);
+    std::vector<Value> res;
+    for (std::size_t i=1; i<jointNames.size(); ++i) {
+      res.push_back(Value(jointNames[i]));
+    }
+    return Value(res);
+  }
+};
 }  // namespace command
 } /* namespace sot */
 } /* namespace dynamicgraph */
