@@ -1,6 +1,6 @@
 <package format="2">
   <name>sot-dynamic-pinocchio</name>
-  <version>3.3.1</version>
+  <version>3.4.5</version>
   <description>
     Pinocchio bindings for dynamic-graph
   </description>
@@ -23,17 +23,17 @@
 
   <build_depend>sot-core</build_depend>
   <build_depend>pinocchio</build_depend>
-  
+
   <build_export_depend>pinocchio</build_export_depend>
-  
+
   <exec_depend>sot-core</exec_depend>
   <exec_depend>pinocchio</exec_depend>
-  
+
   <test_depend>gtest</test_depend>
 
   <doc_depend>doxygen</doc_depend>
   <doc_depend>dynamic_graph</doc_depend>
- 
+
 
   <export>
   </export>
