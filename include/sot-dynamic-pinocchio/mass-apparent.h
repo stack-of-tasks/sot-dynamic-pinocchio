@@ -17,13 +17,11 @@
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
 
-
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot/core/matrix-geometry.hh>
-
 
 /* STD */
 #include <string>
@@ -32,53 +30,48 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32)
-#  if defined (mass_apparent_EXPORTS)
-#    define SOTMASSAPPARENT_EXPORT __declspec(dllexport)
-#  else
-#    define SOTMASSAPPARENT_EXPORT __declspec(dllimport)
-#  endif
+#if defined(WIN32)
+#if defined(mass_apparent_EXPORTS)
+#define SOTMASSAPPARENT_EXPORT __declspec(dllexport)
 #else
-#  define SOTMASSAPPARENT_EXPORT
+#define SOTMASSAPPARENT_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SOTMASSAPPARENT_EXPORT
 #endif
 
+namespace dynamicgraph {
+namespace sot {
+namespace dg = dynamicgraph;
 
-namespace dynamicgraph { namespace sot {
-    namespace dg = dynamicgraph;
+/* --------------------------------------------------------------------- */
+/* --- CLASS ----------------------------------------------------------- */
+/* --------------------------------------------------------------------- */
+class SOTMASSAPPARENT_EXPORT MassApparent : public dg::Entity {
+ public:
+  static const std::string CLASS_NAME;
+  virtual const std::string& getClassName(void) const { return CLASS_NAME; }
 
-    /* --------------------------------------------------------------------- */
-    /* --- CLASS ----------------------------------------------------------- */
-    /* --------------------------------------------------------------------- */
-    class SOTMASSAPPARENT_EXPORT MassApparent
-      :public dg::Entity
-      {
-      public:
-	static const std::string CLASS_NAME;
-	virtual const std::string& getClassName( void ) const { return CLASS_NAME; }
+ public: /* --- CONSTRUCTION --- */
+  MassApparent(const std::string& name);
+  virtual ~MassApparent(void);
 
-      public: /* --- CONSTRUCTION --- */
+ public: /* --- SIGNAL --- */
+  dg::SignalPtr<dynamicgraph::Matrix, int> jacobianSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, int> inertiaInverseSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, int> massInverseSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, int> massSOUT;
 
-	MassApparent( const std::string& name );
-	virtual ~MassApparent( void );
+  dg::SignalPtr<dynamicgraph::Matrix, int> inertiaSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, int> inertiaInverseSOUT;
 
-      public: /* --- SIGNAL --- */
+ public: /* --- FUNCTIONS --- */
+  dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res, const int& time);
+  dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res, const int& time);
+  dynamicgraph::Matrix& computeInertiaInverse(dynamicgraph::Matrix& res, const int& time);
+};
 
-	dg::SignalPtr<dynamicgraph::Matrix,int> jacobianSIN;
-	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaInverseSIN;
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massInverseSOUT;
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> massSOUT;
+}  // namespace sot
+}  // namespace dynamicgraph
 
-	dg::SignalPtr<dynamicgraph::Matrix,int> inertiaSIN;
-	dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaInverseSOUT;
-
-      public: /* --- FUNCTIONS --- */
-	dynamicgraph::Matrix& computeMassInverse( dynamicgraph::Matrix& res,const int& time );
-	dynamicgraph::Matrix& computeMass( dynamicgraph::Matrix& res,const int& time );
-	dynamicgraph::Matrix& computeInertiaInverse( dynamicgraph::Matrix& res,const int& time );
-      };
-
-
-  } // namespace sot
-} // namespace dynamicgraph
-
-#endif // #ifndef __SOT_SOTMASSAPPARENT_H__
+#endif  // #ifndef __SOT_SOTMASSAPPARENT_H__

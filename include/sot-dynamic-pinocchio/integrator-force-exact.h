@@ -17,7 +17,6 @@
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
 
-
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
@@ -33,49 +32,39 @@
 /* --- API ------------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#if defined (WIN32)
-#  if defined (integrator_force_exact_EXPORTS)
-#    define SOTINTEGRATORFORCEEXACT_EXPORT __declspec(dllexport)
-#  else
-#    define SOTINTEGRATORFORCEEXACT_EXPORT __declspec(dllimport)
-#  endif
+#if defined(WIN32)
+#if defined(integrator_force_exact_EXPORTS)
+#define SOTINTEGRATORFORCEEXACT_EXPORT __declspec(dllexport)
 #else
-#  define SOTINTEGRATORFORCEEXACT_EXPORT
+#define SOTINTEGRATORFORCEEXACT_EXPORT __declspec(dllimport)
+#endif
+#else
+#define SOTINTEGRATORFORCEEXACT_EXPORT
 #endif
 
-
-namespace dynamicgraph { namespace sot {
+namespace dynamicgraph {
+namespace sot {
 namespace dg = dynamicgraph;
 
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact
-:public IntegratorForce
-{
+class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact : public IntegratorForce {
  public:
   static const std::string CLASS_NAME;
 
  protected:
-
  public: /* --- CONSTRUCTION --- */
-
-  IntegratorForceExact( const std::string& name );
-  virtual ~IntegratorForceExact( void );
+  IntegratorForceExact(const std::string& name);
+  virtual ~IntegratorForceExact(void);
 
  public: /* --- SIGNAL --- */
-
-
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Vector& computeVelocityExact( dynamicgraph::Vector& res,
-				    const int& time );
-
+  dynamicgraph::Vector& computeVelocityExact(dynamicgraph::Vector& res, const int& time);
 };
 
+} /* namespace sot */
+} /* namespace dynamicgraph */
 
-} /* namespace sot */} /* namespace dynamicgraph */
-
-
-
-#endif // #ifndef __SOT_SOTINTEGRATORFORCEEXACT_H__
+#endif  // #ifndef __SOT_SOTINTEGRATORFORCEEXACT_H__

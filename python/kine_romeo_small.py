@@ -1,34 +1,38 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
-
-from dynamic_graph.sot.core.matrix_util import matrixToTuple, vectorToTuple,rotate, matrixToRPY
-from dynamic_graph.sot.core.meta_tasks_kine import *
-from numpy import *
-
-# Create the robot romeo.
-from dynamic_graph.sot.romeo.robot import *
-robot = Robot('romeo_small', device=RobotSimu('romeo_small'))
+# flake8: noqa
 
 # Binds with ROS. assert that roscore is running.
 from dynamic_graph.ros import *
-ros = Ros(robot)
-
 # Create a simple kinematic solver.
 from dynamic_graph.sot.application.velocity.precomputed_tasks import initialize
-solver = initialize ( robot )
-
-#-------------------------------------------------------------------------------
-#----- MAIN LOOP ---------------------------------------------------------------
-#-------------------------------------------------------------------------------
+from dynamic_graph.sot.core.matrix_util import matrixToRPY, matrixToTuple, rotate, vectorToTuple
+from dynamic_graph.sot.core.meta_tasks_kine import *
+# -------------------------------------------------------------------------------
+# ----- MAIN LOOP ---------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # define the macro allowing to run the simulation.
-from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread,loopShortcuts
-dt=5e-3
+from dynamic_graph.sot.core.utils.thread_interruptible_loop import loopInThread, loopShortcuts
+# Create the robot romeo.
+from dynamic_graph.sot.romeo.robot import *
+from numpy import *
+
+robot = Robot('romeo_small', device=RobotSimu('romeo_small'))
+
+ros = Ros(robot)
+
+solver = initialize(robot)
+
+dt = 5e-3
+
+
 @loopInThread
 def inc():
     robot.device.increment(dt)
 
-runner=inc()
-[go,stop,next,n]=loopShortcuts(runner)
+
+runner = inc()
+[go, stop, next, n] = loopShortcuts(runner)
 
 # ---- TASKS -------------------------------------------------------------------
 # ---- TASKS -------------------------------------------------------------------
@@ -36,9 +40,10 @@ runner=inc()
 
 # ---- TASK GRIP ---
 # Defines a task for the right hand.
-taskRH=MetaTaskKine6d('rh',robot.dynamic,'right-wrist','right-wrist')
+taskRH = MetaTaskKine6d('rh', robot.dynamic, 'right-wrist', 'right-wrist')
 #  Move the operational point.
-handMgrip=eye(4); handMgrip[0:3,3] = (0.1,0,0)
+handMgrip = eye(4)
+handMgrip[0:3, 3] = (0.1, 0, 0)
 taskRH.opmodif = matrixToTuple(handMgrip)
 taskRH.feature.frame('desired')
 # robot.tasks['right-wrist'].add(taskRH.feature.name)
@@ -51,12 +56,12 @@ solver.sot.clear()
 
 # --- CONTACTS
 # define contactLF and contactRF
-for name,joint in [ ['LF','left-ankle'], ['RF','right-ankle' ] ]:
-    contact = MetaTaskKine6d('contact'+name,robot.dynamic,name,joint)
+for name, joint in [['LF', 'left-ankle'], ['RF', 'right-ankle']]:
+    contact = MetaTaskKine6d('contact' + name, robot.dynamic, name, joint)
     contact.feature.frame('desired')
     contact.gain.setConstant(10)
     contact.keep()
-    locals()['contact'+name] = contact
+    locals()['contact' + name] = contact
 
 # --- RUN ----------------------------------------------------------------------
 
@@ -65,16 +70,15 @@ for name,joint in [ ['LF','left-ankle'], ['RF','right-ankle' ] ]:
 # 2st param: objective
 # 3rd param: selected parameters
 # 4th param: gain
-target=(0.5,-0.2,0.8)
-gotoNd(taskRH,target,'111',(4.9,0.9,0.01,0.9))
+target = (0.5, -0.2, 0.8)
+gotoNd(taskRH, target, '111', (4.9, 0.9, 0.01, 0.9))
 
 # Fill the stack with some tasks.
 solver.push(contactRF.task)
 solver.push(contactLF.task)
-solver.push (robot.tasks ['com'])
+solver.push(robot.tasks['com'])
 
 solver.push(taskRH.task)
 
 # type inc to run one iteration, or go to run indefinitely.
 # go()
-

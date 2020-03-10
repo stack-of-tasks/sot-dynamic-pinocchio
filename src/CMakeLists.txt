@@ -35,9 +35,10 @@ SET(integrator-force-exact_plugins_dependencies integrator-force)
 FOREACH(lib ${plugins})
   SET(libname dp-${lib})
   ADD_LIBRARY(${libname} SHARED ${lib})
-  SET_TARGET_PROPERTIES(${libname} PROPERTIES
-    PREFIX ""
-    SOVERSION ${PROJECT_VERSION})
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES PREFIX "")
+  IF(SUFFIX_SO_VERSION)
+    SET_TARGET_PROPERTIES(${libname} PROPERTIES SOVERSION ${PROJECT_VERSION})
+  ENDIF()
 
   IF(${lib}_plugins_dependencies)
     ADD_DEPENDENCIES(${libname} "dp-${${lib}_plugins_dependencies}")
@@ -67,6 +68,7 @@ FOREACH(lib ${plugins})
       "src/python-module-py.cpp"
       )
     PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap pinocchio)
+    PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap sot-core)
   ENDIF(BUILD_PYTHON_INTERFACE)
 ENDFOREACH(lib)
 
