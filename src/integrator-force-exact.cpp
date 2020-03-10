@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/integrator-force-exact.h>
+#include <sot/dynamic-pinocchio/integrator-force-exact.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <sot/core/exception-dynamic.hh>

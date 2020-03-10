@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/zmpreffromcom.h>
+#include <sot/dynamic-pinocchio/zmpreffromcom.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 using namespace dynamicgraph::sot;

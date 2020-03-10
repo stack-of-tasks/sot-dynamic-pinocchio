@@ -10,7 +10,7 @@
 /* -------------------------------------------------------------------------- */
 /* --- INCLUDES ------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <sot/dynamic-pinocchio/dynamic-pinocchio.h>
 #include <iostream>
 #include <sstream>
 

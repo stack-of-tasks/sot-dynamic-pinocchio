@@ -9,7 +9,7 @@
 #include <pinocchio/fwd.hpp>
 #include <sot/core/debug.hh>
 
-#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <sot/dynamic-pinocchio/dynamic-pinocchio.h>
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
@@ -202,8 +202,9 @@ DynamicPinocchio::DynamicPinocchio(const std::string& name)
                                 "string (joint name)");
     addCommand("createAcceleration",
                makeCommandVoid2(*this, &DynamicPinocchio::cmd_createAccelerationSignal, docstring));
-    docstring="\n"
-      "  Return robot joint names.\n\n";
+    docstring =
+        "\n"
+        "  Return robot joint names.\n\n";
     addCommand("getJointNames", new command::GetJointNames(*this, docstring));
   }
 
@@ -673,9 +674,8 @@ dg::Matrix& DynamicPinocchio::computeGenericJacobian(const bool isFrame, const i
   if (res.rows() != 6 || res.cols() != m_model->nv) res = Matrix::Zero(6, m_model->nv);
   jacobiansSINTERN(time);
 
-  pinocchio::JointIndex id = isFrame
-    ? m_model->frames[(pinocchio::JointIndex)jointId].parent
-    : (pinocchio::JointIndex)jointId;
+  pinocchio::JointIndex id =
+      isFrame ? m_model->frames[(pinocchio::JointIndex)jointId].parent : (pinocchio::JointIndex)jointId;
 
   // Computes Jacobian in world coordinates.
   pinocchio::getJointJacobian(*m_model, *m_data, id, pinocchio::WORLD, res);
@@ -705,26 +705,25 @@ dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, c
     jid = frame.parent;
 
     M = frame.placement.inverse();
-    if (!isLocal) // Express the jacobian is world coordinate system.
+    if (!isLocal)  // Express the jacobian is world coordinate system.
       M.rotation() = m_data->oMf[fid].rotation() * M.rotation();
   } else {
     jid = (pinocchio::JointIndex)id;
-    if (!isLocal) { // Express the jacobian is world coordinate system.
+    if (!isLocal) {  // Express the jacobian is world coordinate system.
       M.rotation() = m_data->oMi[jid].rotation();
       M.translation().setZero();
     }
   }
   pinocchio::getJointJacobian(*m_model, *m_data, jid, pinocchio::LOCAL, res);
 
-  if (changeFrame)
-    pinocchio::motionSet::se3Action(M, res, res);
+  if (changeFrame) pinocchio::motionSet::se3Action(M, res, res);
 
   sotDEBUGOUT(25);
   return res;
 }
 
-MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, const int id,
-                                                            MatrixHomogeneous& res, const int& time) {
+MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, const int id, MatrixHomogeneous& res,
+                                                            const int& time) {
   sotDEBUGIN(25);
   forwardKinematicsSINTERN(time);
   if (isFrame) {
@@ -733,10 +732,8 @@ MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(const bool isFrame, 
   } else {
     res.matrix() = m_data->oMi[id].toHomogeneousMatrix();
   }
-  sotDEBUG(25) << "For " << (isFrame
-     ? m_model->frames[id].name
-     : m_model->names[id])
-    << " with id: " << id << " position is " << res << std::endl;
+  sotDEBUG(25) << "For " << (isFrame ? m_model->frames[id].name : m_model->names[id]) << " with id: " << id
+               << " position is " << res << std::endl;
   sotDEBUGOUT(25);
   return res;
 }

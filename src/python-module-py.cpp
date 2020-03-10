@@ -4,7 +4,7 @@
 
 #include <sot/core/debug.hh>
 
-#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <sot/dynamic-pinocchio/dynamic-pinocchio.h>
 #include <Python.h>
 #include <boost/python.hpp>
 #include <typeinfo>

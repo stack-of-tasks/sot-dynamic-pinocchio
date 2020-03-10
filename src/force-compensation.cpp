@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/force-compensation.h>
+#include <sot/dynamic-pinocchio/force-compensation.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <sot/core/macros-signal.hh>

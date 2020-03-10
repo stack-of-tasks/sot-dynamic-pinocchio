@@ -1,21 +1,9 @@
-# Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST,
-#                 Florent Lamiraux (CNRS/LAAS)
+# Copyright 2010, 2020, JRL, CNRS/AIST, LAAS-CNRS
+# François Bleibel
+# Olivier Stasse
+# Florent Lamiraux
+# Guilhem Saurel
 
-
-# Main Library
-ADD_LIBRARY(${PROJECT_NAME} SHARED sot-dynamic-pinocchio)
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} pinocchio)
-target_link_libraries(${PROJECT_NAME} sot-core::sot-core)
-target_link_libraries(${PROJECT_NAME} dynamic-graph::dynamic-graph)
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES})
-
-IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-  INSTALL(TARGETS ${PROJECT_NAME}
-    EXPORT ${TARGETS_EXPORT_NAME}
-    DESTINATION ${CMAKE_INSTALL_LIBDIR})
-ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-
-# List plug-ins that will be compiled.
 SET(plugins
   zmpreffromcom
   force-compensation
@@ -29,56 +17,42 @@ SET(plugins
   dynamic
   )
 
-SET(integrator-force-rk4_plugins_dependencies integrator-force)
-SET(integrator-force-exact_plugins_dependencies integrator-force)
+SET(integrator-force-rk4_plugins_deps integrator-force)
+SET(integrator-force-exact_plugins_deps integrator-force)
 
-FOREACH(lib ${plugins})
-  SET(libname dp-${lib})
-  ADD_LIBRARY(${libname} SHARED ${lib})
-  SET_TARGET_PROPERTIES(${libname} PROPERTIES PREFIX "")
+FOREACH(plugin ${plugins})
+  GET_FILENAME_COMPONENT(LIBRARY_NAME ${plugin} NAME)
+  ADD_LIBRARY(${LIBRARY_NAME} SHARED ${plugin})
+
   IF(SUFFIX_SO_VERSION)
-    SET_TARGET_PROPERTIES(${libname} PROPERTIES SOVERSION ${PROJECT_VERSION})
-  ENDIF()
+    SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
+  ENDIF(SUFFIX_SO_VERSION)
 
-  IF(${lib}_plugins_dependencies)
-    ADD_DEPENDENCIES(${libname} "dp-${${lib}_plugins_dependencies}")
-    TARGET_LINK_LIBRARIES(${libname} "dp-${${lib}_plugins_dependencies}")
-  ENDIF(${lib}_plugins_dependencies)
-
-  TARGET_LINK_LIBRARIES(${libname} ${PROJECT_NAME})
-  TARGET_LINK_LIBRARIES(${libname} ${Boost_LIBRARIES})
-
-  target_link_libraries(${libname} pinocchio)
-  target_link_libraries(${libname} sot-core::sot-core)
-  target_link_libraries(${libname} dynamic-graph::dynamic-graph)
+  TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${PROJECT_NAME} ${${LIBRARY_NAME}_deps})
 
   IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-    INSTALL(TARGETS ${libname} DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
+    INSTALL(TARGETS ${LIBRARY_NAME} EXPORT ${TARGETS_EXPORT_NAME}
+      DESTINATION ${DYNAMIC_GRAPH_PLUGINDIR})
   ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 
-  # build python submodule
   IF(BUILD_PYTHON_INTERFACE)
-    PKG_CONFIG_USE_DEPENDENCY(${libname} eigenpy)
-    STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${lib})
-
-    DYNAMIC_GRAPH_PYTHON_MODULE("sot/dynamics_pinocchio/${PYTHON_LIBRARY_NAME}"
-      ${libname}
-      sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap
-      1
-      "src/python-module-py.cpp"
-      )
-    PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap pinocchio)
-    PKG_CONFIG_USE_DEPENDENCY(sot-dynamic-pinocchio-${PYTHON_LIBRARY_NAME}-wrap sot-core)
+    STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${LIBRARY_NAME})
+    DYNAMIC_GRAPH_PYTHON_MODULE("${PYTHON_DIR}/${PYTHON_LIBRARY_NAME}"
+      ${LIBRARY_NAME} ${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap
+      1 "src/python-module-py.cpp")
+    TARGET_LINK_BOOST_PYTHON(${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap)
   ENDIF(BUILD_PYTHON_INTERFACE)
-ENDFOREACH(lib)
+ENDFOREACH(plugin)
 
-# Install empty __init__.py files in intermediate directories.
 IF(BUILD_PYTHON_INTERFACE)
-  INSTALL(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/__init__.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/humanoid_robot.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/tools.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/dynamic_graph/sot/dynamics_pinocchio/parser.py
-    DESTINATION ${PYTHON_SITELIB}/dynamic_graph/sot/dynamics_pinocchio
+  SET(${PY_NAME}_PYTHON
+    __init__.py
+    humanoid_robot.py
+    tools.py
+    parser.py
     )
+
+  FOREACH(py_file ${${PY_NAME}_PYTHON})
+    PYTHON_INSTALL_ON_SITE("dynamic_graph/${PYTHON_DIR}" ${py_file})
+  ENDFOREACH(py_file ${${PY_NAME}_PYTHON})
 ENDIF(BUILD_PYTHON_INTERFACE)

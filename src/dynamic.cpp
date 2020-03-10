@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <sot/dynamic-pinocchio/dynamic-pinocchio.h>
 #include <dynamic-graph/factory.h>
 
 using namespace dynamicgraph;

@@ -1,13 +1,13 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 
 SET(tests
-test_constructor
-#test_config
-#  dummy
-#  test_djj
-#  test_dyn
-#  test_results
-)
+  test_constructor
+  #test_config
+  #  dummy
+  #  test_djj
+  #  test_dyn
+  #  test_results
+  )
 
 SET(test_dyn_plugins_dependencies dynamic)
 
@@ -28,28 +28,17 @@ ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 LIST(APPEND LOGGING_WATCHED_VARIABLES samplespec sampleljr)
 
 FOREACH(test ${tests})
-  ADD_UNIT_TEST(${test} ${test})
+  ADD_UNIT_TEST(${test} ${test}.cpp)
 
   TARGET_LINK_LIBRARIES(${test}
-    dp-zmpreffromcom
-    dp-force-compensation
+    ${PROJECT_NAME} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${${test}_deps}
+    zmpreffromcom
+    force-compensation
     #integrator-force-exact
-    dp-mass-apparent
-    dp-integrator-force-rk4
-    dp-integrator-force
-    dp-angle-estimator
-    dp-waist-attitude-from-sensor
-    ${LIBRARY_NAME}
+    mass-apparent
+    integrator-force-rk4
+    integrator-force
+    angle-estimator
+    waist-attitude-from-sensor
     )
-
-  PKG_CONFIG_USE_DEPENDENCY(${test} pinocchio)
-  target_link_libraries(${test} sot-core::sot-core)
-  target_link_libraries(${test} dynamic-graph::dynamic-graph)
-
-  IF(${test}_plugins_dependencies)
-    ADD_DEPENDENCIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
-    TARGET_LINK_LIBRARIES(${EXECUTABLE_NAME} "${${test}_plugins_dependencies}")
-  ENDIF(${test}_plugins_dependencies)
-
-  TARGET_LINK_LIBRARIES(${test} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
 ENDFOREACH(test)

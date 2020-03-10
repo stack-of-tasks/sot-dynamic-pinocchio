@@ -9,7 +9,7 @@
 #include <boost/test/output_test_stream.hpp>
 
 /*-----------SOT DYNAMIC ------------*/
-#include <sot-dynamic-pinocchio/dynamic-pinocchio.h>
+#include <sot/dynamic-pinocchio/dynamic-pinocchio.h>
 #include <sot/core/debug.hh>
 
 /*-----------DYNAMIC GRAPH ------------*/

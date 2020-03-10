@@ -1,94 +1,86 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 
-<<<<<<< HEAD
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
+# Project properties
 SET(PROJECT_ORG stack-of-tasks)
-=======
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-
-SET(PROJECT_NAMESPACE stack-of-tasks)
->>>>>>> devel
 SET(PROJECT_NAME sot-dynamic-pinocchio)
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 SET(PROJECT_SUFFIX "-v3")
 
+# Project options
+OPTION(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
+OPTION(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
+OPTION(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
+
+# Project configuration
+IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+  SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+SET(CUSTOM_HEADER_DIR "sot/dynamic-pinocchio")
+SET(CXX_DISABLE_WERROR TRUE)
+SET(DOXYGEN_USE_MATHJAX YES)
+
+# JRL-cmakemodule setup
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/python.cmake)
-INCLUDE(cmake/test.cmake)
 
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
-SET(DOXYGEN_USE_MATHJAX YES)
-
-# Disable -Werror on Unix for now.
-SET(CXX_DISABLE_WERROR True)
-
-INCLUDE(cmake/base.cmake)
-
-# Specify the project.
-cmake_policy(SET CMP0048 NEW)
-PROJECT(${PROJECT_NAME}
-  LANGUAGES
-  CXX
-  VERSION
-  ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
-  )
-
-find_package (Boost REQUIRED
-  python filesystem system thread program_options unit_test_framework)
-find_package (Eigen3 REQUIRED NO_MODULE)
-
-INCLUDE(cmake/python.cmake)
-INCLUDE(cmake/test.cmake)
-
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
-SET(DOXYGEN_USE_MATHJAX YES)
-
-SET(PKG_CONFIG_ADDITIONAL_VARIABLES
-  ${PKG_CONFIG_ADDITIONAL_VARIABLES}
-  plugindirname
-  plugindir
-  )
-
+# Project definition
 COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
-# Search for dependencies.
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0.0")
-ADD_PROJECT_DEPENDENCY(dynamic-graph REQUIRED )
-ADD_PROJECT_DEPENDENCY(sot-core REQUIRED )
-#ADD_PROJECT_DEPENDENCY(sot-tools REQUIRED )
+# Project dependencies
+ADD_PROJECT_DEPENDENCY(sot-tools REQUIRED PKG_CONFIG_REQUIRES sot-tools)
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
-OPTION (BUILD_PYTHON_INTERFACE "Build the python binding" ON)
-OPTION (INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
-OPTION(SUFFIX_SO_VERSION
-  "Suffix shared library name by a string depending on git status of project"
-  ON)
-
 IF(BUILD_PYTHON_INTERFACE)
   FINDPYTHON()
-  ADD_PROJECT_DEPENDENCY(dynamic-graph-python REQUIRED)
+  STRING(REGEX REPLACE "-" "_" PYTHON_DIR ${CUSTOM_HEADER_DIR})
+  ADD_PROJECT_DEPENDENCY(dynamic-graph-python REQUIRED
+    PKG_CONFIG_REQUIRES dynamic-graph-python)
   SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} python)
-  INCLUDE_DIRECTORIES(SYSTEM ${PYTHON_INCLUDE_PATH})
-  ADD_REQUIRED_DEPENDENCY("eigenpy")
 ENDIF(BUILD_PYTHON_INTERFACE)
 
-# Add dependency toward sot-dynamic-pinocchio library in pkg-config file.
-PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
+SEARCH_FOR_BOOST()
 
-#SEARCH_FOR_BOOST()
-#SEARCH_FOR_EIGEN()
+# Main Library
+SET(${PROJECT_NAME}_HEADERS
+  include/${CUSTOM_HEADER_DIR}/dynamic-pinocchio.h
+  include/${CUSTOM_HEADER_DIR}/integrator-force-exact.h
+  include/${CUSTOM_HEADER_DIR}/zmpreffromcom.h
+  include/${CUSTOM_HEADER_DIR}/integrator-force.h
+  include/${CUSTOM_HEADER_DIR}/force-compensation.h
+  include/${CUSTOM_HEADER_DIR}/mass-apparent.h
+  include/${CUSTOM_HEADER_DIR}/waist-attitude-from-sensor.h
+  include/${CUSTOM_HEADER_DIR}/matrix-inertia.h
+  include/${CUSTOM_HEADER_DIR}/integrator-force-rk4.h
+  include/${CUSTOM_HEADER_DIR}/angle-estimator.h
+  )
 
-# Add subdirectories.
+SET(${PROJECT_NAME}_SOURCES
+  src/sot-dynamic-pinocchio
+  )
+
+ADD_LIBRARY(${PROJECT_NAME} SHARED
+  ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES}
+  sot-core::sot-core)
+
+IF(SUFFIX_SO_VERSION)
+  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
+ENDIF(SUFFIX_SO_VERSION)
+
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
-  ADD_SUBDIRECTORY(include/${CUSTOM_HEADER_DIR})
+  INSTALL(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
+
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(python)
+ADD_SUBDIRECTORY(doc)
 ADD_SUBDIRECTORY(unitTesting)
+
+PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})

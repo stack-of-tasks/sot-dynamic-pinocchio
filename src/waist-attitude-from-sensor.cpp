@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/waist-attitude-from-sensor.h>
+#include <sot/dynamic-pinocchio/waist-attitude-from-sensor.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 

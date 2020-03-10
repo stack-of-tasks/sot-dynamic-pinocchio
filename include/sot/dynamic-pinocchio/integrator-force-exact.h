@@ -23,7 +23,7 @@
 #include <dynamic-graph/signal-time-dependent.h>
 #include <sot/core/matrix-geometry.hh>
 
-#include <sot-dynamic-pinocchio/integrator-force.h>
+#include <sot/dynamic-pinocchio/integrator-force.h>
 
 /* STD */
 #include <string>

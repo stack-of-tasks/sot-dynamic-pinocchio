@@ -7,7 +7,7 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/mass-apparent.h>
+#include <sot/dynamic-pinocchio/mass-apparent.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 
