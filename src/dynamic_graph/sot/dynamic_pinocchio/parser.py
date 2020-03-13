@@ -5,7 +5,7 @@
 
 import xml.dom.minidom as dom
 
-from dynamic_graph.sot.dynamics_pinocchio.dynamic import DynamicPinocchio
+from dynamic_graph.sot.dynamic_pinocchio.dynamic import DynamicPinocchio
 from dynamic_graph.sot.tools.se3 import R3, SE3
 
 
