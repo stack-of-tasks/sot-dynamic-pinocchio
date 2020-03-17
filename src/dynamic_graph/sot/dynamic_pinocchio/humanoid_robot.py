@@ -6,8 +6,9 @@ from __future__ import print_function
 from functools import reduce
 
 from dynamic_graph import plug
-from dynamic_graph.sot.core import OpPointModifier, RobotSimu
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
+from dynamic_graph.sot.core.op_point_modifier import OpPointModifier
+from dynamic_graph.sot.core.robot_simu import RobotSimu
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.sot.dynamic_pinocchio.parser import Parser
 from dynamic_graph.tools import addTrace

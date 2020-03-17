@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import cos, sin, sqrt
 
-from dynamic import DynamicPinocchio as DynamicCpp
+from .dynamic import DynamicPinocchio as DynamicCpp
 
 # DynamicOld = Dynamic
 

@@ -7,12 +7,6 @@
 # ******************************************************************************
 
 import pinocchio as pin
-from dynamic_graph import plug
-from dynamic_graph.sot.core import SOT
-from dynamic_graph.sot.core.matrix_util import matrixToTuple
-from dynamic_graph.sot.core.meta_tasks_kine import MetaTaskKine6d, MetaTaskKineCom, gotoNd
-from dynamic_graph.sot.dynamic_pinocchio import fromSotToPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import HumanoidRobot
 from numpy import eye
 # -----------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -21,6 +15,13 @@ from numpy import eye
 # ---- DYN --------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 from pinocchio.robot_wrapper import RobotWrapper
+
+from dynamic_graph import plug
+from dynamic_graph.sot.core.matrix_util import matrixToTuple
+from dynamic_graph.sot.core.meta_tasks_kine import (MetaTaskKine6d, MetaTaskKineCom, gotoNd)
+from dynamic_graph.sot.core.sot import SOT
+from dynamic_graph.sot.dynamic_pinocchio import fromSotToPinocchio
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import HumanoidRobot
 
 # -----------------------------------------------------------------------------
 # SET THE PATH TO THE URDF AND MESHES
