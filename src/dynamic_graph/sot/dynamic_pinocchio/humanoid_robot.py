@@ -13,14 +13,12 @@ from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.tools import addTrace
 from dynamic_graph.tracer_real_time import TracerRealTime
 
-I3 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (2 - i) * (0., ), ), range(3), ())
-I4 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (3 - i) * (0., ), ), range(4), ())
+import pinocchio
 
-
-class AbstractHumanoidRobot(object):
+class AbstractRobot(object):
     """
     This class instantiates all the entities required to get a consistent
-    representation of a humanoid robot, mainly:
+    representation of a robot, mainly:
       - device : to integrate velocities into angular control,
       - dynamic: to compute forward geometry and kinematics,
       - zmpFromForces: to compute ZMP force foot force sensors,
@@ -51,7 +49,7 @@ class AbstractHumanoidRobot(object):
         - dimension: The configuration size.
     """
     def _initialize(self):
-        self.OperationalPoints = ['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze']
+        self.OperationalPoints = []
         """
         Operational points are specific interesting points of the robot
         used to control it.
@@ -122,42 +120,85 @@ class AbstractHumanoidRobot(object):
     def help(self):
         print(AbstractHumanoidRobot.__doc__)
 
-    def loadModelFromUrdf(self, name, urdfPath, dynamicType):
+    def _removeMimicJoints(self, urdfFile=None, urdfString=None):
+        """ Parse the URDF, extract the mimic joints and call removeJoints. """
+        # get mimic joints
+        import xml.etree.ElementTree as ET
+        if urdfFile is not None:
+            assert urdfString is None, "One and only one of input argument should be provided"
+            root = ET.parse(urdfFile)
+        else:
+            assert urdfString is not None, "One and only one of input argument should be provided"
+            root = ET.fromstring(urdfString)
+
+        mimicJoints = list()
+        for e in root.iter('joint'):
+            if 'name' in e.attrib:
+                name = e.attrib['name']
+                for c in e._children:
+                    if hasattr(c, 'tag') and c.tag == 'mimic':
+                        mimicJoints.append(name)
+        self.removeJoints(mimicJoints)
+
+    def removeJoints (self, joints):
+        """
+        - param joints: a list of joint names to be removed from the self.pinocchioModel
+        """
+        jointIds = list()
+        for j in joints:
+            if self.pinocchioModel.existJointName(j):
+                jointIds.append(self.pinocchioModel.getJointId(j))
+        if len(jointIds) > 0:
+            q = pinocchio.neutral(self.pinocchioModel)
+            self.pinocchioModel = pinocchio.buildReducedModel(self.pinocchioModel, jointIds, q)
+            self.pinocchioData = pinocchio.Data(self.pinocchioModel)
+
+    def loadModelFromString (self, urdfString, rootJointType=pinocchio.JointModelFreeFlyer,
+            removeMimicJoints=True):
+        """ Load a URDF model contained in a string
+        - param rootJointType: the root joint type. None for no root joint.
+        - param removeMimicJoints: if True, all the mimic joints found in the model are removed.
+        """
+        if rootJointType is None:
+            self.pinocchioModel = pinocchio.buildModelFromXML(urdfString)
+        else:
+            self.pinocchioModel = pinocchio.buildModelFromXML(urdfString, rootJointType())
+        self.pinocchioData = pinocchio.Data(self.pinocchioModel)
+        if removeMimicJoints:
+            self._removeMimicJoints(urdfString=urdfString)
+
+    def loadModelFromUrdf(self, urdfPath, urdfDir=None, rootJointType=pinocchio.JointModelFreeFlyer,
+            removeMimicJoints=True):
         """
         Load a model using the pinocchio urdf parser. This parser looks
         for urdf files in which kinematics and dynamics information
         have been added.
-
-        Additional information are located in two different XML files.
+        - param urdfPath: a path to the URDF file.
+        - param urdfDir: A list of directories. If None, will use ROS_PACKAGE_PATH.
         """
-        model = dynamicType(name)
-        # TODO: setproperty flags in sot-pinocchio
-        # self.setProperties(model)
-        model.setFile(urdfPath)
-        model.parse()
-        return model
+        if urdfPath.startswith("package://"):
+            from os import path
+            n1 = 10 # len("package://")
+            n2 = urdfPath.index(path.sep, n1)
+            pkg = urdfPath[n1:n2]
+            relpath = urdfPath[n2+1:]
 
-    # TODO: put these flags in sot-pinocchio
-    # def setProperties(self, model):
-    #    model.setProperty('TimeStep', str(self.timeStep))
-    #
-    #    model.setProperty('ComputeAcceleration', 'false')
-    #    model.setProperty('ComputeAccelerationCoM', 'false')
-    #    model.setProperty('ComputeBackwardDynamics', 'false')
-    #    model.setProperty('ComputeCoM', 'false')
-    #    model.setProperty('ComputeMomentum', 'false')
-    #    model.setProperty('ComputeSkewCom', 'false')
-    #    model.setProperty('ComputeVelocity', 'false')
-    #    model.setProperty('ComputeZMP', 'false')
-    #    model.setProperty('ComputeAccelerationCoM', 'true')
-    #    model.setProperty('ComputeCoM', 'true')
-    #    model.setProperty('ComputeVelocity', 'true')
-    #    model.setProperty('ComputeZMP', 'true')
-    #
-    #    if self.enableZmpComputation:
-    #        model.setProperty('ComputeBackwardDynamics', 'true')
-    #        model.setProperty('ComputeAcceleration', 'true')
-    #        model.setProperty('ComputeMomentum', 'true')
+            import rospkg
+            rospack = rospkg.RosPack()
+            abspkg = rospack.get_path(pkg)
+            urdfFile = path.join(abspkg, relpath)
+        else:
+            urdfFile = urdfPath
+        if urdfDir is None:
+            import os
+            urdfDir = os.environ["ROS_PACKAGE_PATH"].split(':')
+        if rootJointType is None:
+            self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile)
+        else:
+            self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile, rootJointType())
+        self.pinocchioData = pinocchio.Data(self.pinocchioModel)
+        if removeMimicJoints:
+            self._removeMimicJoints(urdfFile=urdfFile)
 
     def initializeOpPoints(self):
         for op in self.OperationalPoints:
@@ -327,6 +368,14 @@ class AbstractHumanoidRobot(object):
         for op in self.OperationalPoints:
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
             self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
+
+class AbstractHumanoidRobot(AbstractRobot):
+    def __init__(self, name, tracer=None):
+        AbstractRobot.__init__(self, name, tracer)
+
+    def _initialize(self):
+        AbstractRobot._initialize(self)
+        self.OperationalPoints.extend(['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze'])
 
 
 class HumanoidRobot(AbstractHumanoidRobot):
