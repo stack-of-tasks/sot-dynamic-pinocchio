@@ -10,7 +10,6 @@ from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.op_point_modifier import OpPointModifier
 from dynamic_graph.sot.core.robot_simu import RobotSimu
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.parser import Parser
 from dynamic_graph.tools import addTrace
 from dynamic_graph.tracer_real_time import TracerRealTime
 
@@ -122,22 +121,6 @@ class AbstractHumanoidRobot(object):
 
     def help(self):
         print(AbstractHumanoidRobot.__doc__)
-
-    def loadModelFromKxml(self, name, filename):
-        """
-        Load a model from a kxml file and return the parsed model.
-        This uses the Python parser class implement in
-        dynamic_graph.sot.dynamic_pinocchio.parser.
-
-        kxml is an extensible file format used by KineoWorks to store
-        both the robot mesh and its kinematic chain.
-
-        The parser also imports inertia matrices which is a
-        non-standard property.
-        """
-        model = Parser(name, filename).parse()
-        self.setProperties(model)
-        return model
 
     def loadModelFromUrdf(self, name, urdfPath, dynamicType):
         """
