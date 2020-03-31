@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 
-from dynamic_graph.sot.dynamics.tools import checkFinalConfiguration, clt, reach, robot, solver, timeStep
+from dynamic_graph.sot.dynamic_pinocchio.tools import checkFinalConfiguration, clt, reach, robot, solver, timeStep
 
 # Move left wrist
 reach(robot, 'left-wrist', 0.25, 0, 0.1)

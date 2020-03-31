@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
+import os
+print(os.environ)
 
-from dynamic_graph.sot.dynamics.feet_follower import FeetFollowerFromFile
-from dynamic_graph.sot.dynamics.tools import checkFinalConfiguration, clt, plug, robot, solver, timeStep
+from dynamic_graph.sot.dynamic_pinocchio.feet_follower import FeetFollowerFromFile
+from dynamic_graph.sot.dynamic_pinocchio.tools import checkFinalConfiguration, clt, plug, robot, solver, timeStep
 
 feetFollower = FeetFollowerFromFile('feet-follower')
 

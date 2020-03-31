@@ -4,7 +4,7 @@
 
 import unittest
 
-from dynamic_graph.sot.dynamics.humanoid_robot import HumanoidRobot
+from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import HumanoidRobot
 
 
 class HumanoidRobotTest(unittest.TestCase):
