@@ -18,14 +18,13 @@
   <build_depend version_gte="1.1" version_lt="2.0">genmsg</build_depend>
 
 
-  <build_depend>sot-core</build_depend>
-  <build_depend>pinocchio</build_depend>
-
+  <build_depend>sot-tools</build_depend>
   <build_depend>sot-core</build_depend>
   <build_depend>pinocchio</build_depend>
 
   <build_export_depend>pinocchio</build_export_depend>
 
+  <exec_depend>sot-tools</exec_depend>
   <exec_depend>sot-core</exec_depend>
   <exec_depend>pinocchio</exec_depend>
 
