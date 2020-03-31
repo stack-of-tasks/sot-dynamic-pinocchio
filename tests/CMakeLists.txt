@@ -42,3 +42,8 @@ FOREACH(test ${tests})
     waist-attitude-from-sensor
     )
 ENDFOREACH(test)
+
+IF(BUILD_PYTHON_INTERFACE)
+  ADD_SUBDIRECTORY(python)
+ENDIF(BUILD_PYTHON_INTERFACE)
+
