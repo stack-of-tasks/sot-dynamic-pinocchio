@@ -133,7 +133,7 @@ def checkFinalConfiguration(position, finalPosition):
 
 if 'argv' in sys.__dict__:
     from optparse import OptionParser
-    from dynamic_graph.sot.dynamics.solver import Solver
+    from dynamic_graph.sot.dynamic_pinocchio.solver import Solver
 
     # Parse options and enable robotviewer client if wanted.
     clt = None
