@@ -10,18 +10,22 @@ from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.op_point_modifier import OpPointModifier
 from dynamic_graph.sot.core.robot_simu import RobotSimu
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
-from dynamic_graph.sot.dynamic_pinocchio.parser import Parser
 from dynamic_graph.tools import addTrace
 from dynamic_graph.tracer_real_time import TracerRealTime
 
-I3 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (2 - i) * (0., ), ), range(3), ())
-I4 = reduce(lambda m, i: m + (i * (0., ) + (1., ) + (3 - i) * (0., ), ), range(4), ())
+import pinocchio, sys
 
+if sys.version_info.major == 2:
+    from abc import ABCMeta, abstractmethod
+    class ABC:
+        __metaclass__ = ABCMeta
+else:
+    from abc import ABC, abstractmethod
 
-class AbstractHumanoidRobot(object):
+class AbstractRobot(ABC):
     """
     This class instantiates all the entities required to get a consistent
-    representation of a humanoid robot, mainly:
+    representation of a robot, mainly:
       - device : to integrate velocities into angular control,
       - dynamic: to compute forward geometry and kinematics,
       - zmpFromForces: to compute ZMP force foot force sensors,
@@ -52,7 +56,7 @@ class AbstractHumanoidRobot(object):
         - dimension: The configuration size.
     """
     def _initialize(self):
-        self.OperationalPoints = ['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze']
+        self.OperationalPoints = []
         """
         Operational points are specific interesting points of the robot
         used to control it.
@@ -123,58 +127,85 @@ class AbstractHumanoidRobot(object):
     def help(self):
         print(AbstractHumanoidRobot.__doc__)
 
-    def loadModelFromKxml(self, name, filename):
+    def _removeMimicJoints(self, urdfFile=None, urdfString=None):
+        """ Parse the URDF, extract the mimic joints and call removeJoints. """
+        # get mimic joints
+        import xml.etree.ElementTree as ET
+        if urdfFile is not None:
+            assert urdfString is None, "One and only one of input argument should be provided"
+            root = ET.parse(urdfFile)
+        else:
+            assert urdfString is not None, "One and only one of input argument should be provided"
+            root = ET.fromstring(urdfString)
+
+        mimicJoints = list()
+        for e in root.iter('joint'):
+            if 'name' in e.attrib:
+                name = e.attrib['name']
+                for c in e._children:
+                    if hasattr(c, 'tag') and c.tag == 'mimic':
+                        mimicJoints.append(name)
+        self.removeJoints(mimicJoints)
+
+    def removeJoints (self, joints):
         """
-        Load a model from a kxml file and return the parsed model.
-        This uses the Python parser class implement in
-        dynamic_graph.sot.dynamic_pinocchio.parser.
-
-        kxml is an extensible file format used by KineoWorks to store
-        both the robot mesh and its kinematic chain.
-
-        The parser also imports inertia matrices which is a
-        non-standard property.
+        - param joints: a list of joint names to be removed from the self.pinocchioModel
         """
-        model = Parser(name, filename).parse()
-        self.setProperties(model)
-        return model
+        jointIds = list()
+        for j in joints:
+            if self.pinocchioModel.existJointName(j):
+                jointIds.append(self.pinocchioModel.getJointId(j))
+        if len(jointIds) > 0:
+            q = pinocchio.neutral(self.pinocchioModel)
+            self.pinocchioModel = pinocchio.buildReducedModel(self.pinocchioModel, jointIds, q)
+            self.pinocchioData = pinocchio.Data(self.pinocchioModel)
 
-    def loadModelFromUrdf(self, name, urdfPath, dynamicType):
+    def loadModelFromString (self, urdfString, rootJointType=pinocchio.JointModelFreeFlyer,
+            removeMimicJoints=True):
+        """ Load a URDF model contained in a string
+        - param rootJointType: the root joint type. None for no root joint.
+        - param removeMimicJoints: if True, all the mimic joints found in the model are removed.
+        """
+        if rootJointType is None:
+            self.pinocchioModel = pinocchio.buildModelFromXML(urdfString)
+        else:
+            self.pinocchioModel = pinocchio.buildModelFromXML(urdfString, rootJointType())
+        self.pinocchioData = pinocchio.Data(self.pinocchioModel)
+        if removeMimicJoints:
+            self._removeMimicJoints(urdfString=urdfString)
+
+    def loadModelFromUrdf(self, urdfPath, urdfDir=None, rootJointType=pinocchio.JointModelFreeFlyer,
+            removeMimicJoints=True):
         """
         Load a model using the pinocchio urdf parser. This parser looks
         for urdf files in which kinematics and dynamics information
         have been added.
-
-        Additional information are located in two different XML files.
+        - param urdfPath: a path to the URDF file.
+        - param urdfDir: A list of directories. If None, will use ROS_PACKAGE_PATH.
         """
-        model = dynamicType(name)
-        # TODO: setproperty flags in sot-pinocchio
-        # self.setProperties(model)
-        model.setFile(urdfPath)
-        model.parse()
-        return model
+        if urdfPath.startswith("package://"):
+            from os import path
+            n1 = 10 # len("package://")
+            n2 = urdfPath.index(path.sep, n1)
+            pkg = urdfPath[n1:n2]
+            relpath = urdfPath[n2+1:]
 
-    # TODO: put these flags in sot-pinocchio
-    # def setProperties(self, model):
-    #    model.setProperty('TimeStep', str(self.timeStep))
-    #
-    #    model.setProperty('ComputeAcceleration', 'false')
-    #    model.setProperty('ComputeAccelerationCoM', 'false')
-    #    model.setProperty('ComputeBackwardDynamics', 'false')
-    #    model.setProperty('ComputeCoM', 'false')
-    #    model.setProperty('ComputeMomentum', 'false')
-    #    model.setProperty('ComputeSkewCom', 'false')
-    #    model.setProperty('ComputeVelocity', 'false')
-    #    model.setProperty('ComputeZMP', 'false')
-    #    model.setProperty('ComputeAccelerationCoM', 'true')
-    #    model.setProperty('ComputeCoM', 'true')
-    #    model.setProperty('ComputeVelocity', 'true')
-    #    model.setProperty('ComputeZMP', 'true')
-    #
-    #    if self.enableZmpComputation:
-    #        model.setProperty('ComputeBackwardDynamics', 'true')
-    #        model.setProperty('ComputeAcceleration', 'true')
-    #        model.setProperty('ComputeMomentum', 'true')
+            import rospkg
+            rospack = rospkg.RosPack()
+            abspkg = rospack.get_path(pkg)
+            urdfFile = path.join(abspkg, relpath)
+        else:
+            urdfFile = urdfPath
+        if urdfDir is None:
+            import os
+            urdfDir = os.environ["ROS_PACKAGE_PATH"].split(':')
+        if rootJointType is None:
+            self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile)
+        else:
+            self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile, rootJointType())
+        self.pinocchioData = pinocchio.Data(self.pinocchioModel)
+        if removeMimicJoints:
+            self._removeMimicJoints(urdfFile=urdfFile)
 
     def initializeOpPoints(self):
         for op in self.OperationalPoints:
@@ -189,6 +220,28 @@ class AbstractHumanoidRobot(object):
         frame.jacobian.recompute(frame.jacobian.time + 1)
         return frame
 
+    def setJointValueInConfig(self, q, jointNames, jointValues):
+        """
+        q: configuration to update
+        jointNames: list of existing joint names in self.pinocchioModel
+        jointValues: corresponding joint values.
+        """
+        model = self.pinocchioModel
+        for jn, jv in zip(jointNames, jointValues):
+            assert model.existJointName(jn)
+            joint = model.joints[model.getJointId(jn)]
+            q[joint.idx_q] = jv
+
+    @abstractmethod
+    def defineHalfSitting (self, q):
+        """
+        Define half sitting configuration using the pinocchio Model (i.e.
+        with quaternions and not with euler angles).
+
+        method setJointValueInConfig may be usefull to implement this function.
+        """
+        pass
+
     def initializeRobot(self):
         """
         If the robot model is correctly loaded, this method will then
@@ -199,15 +252,35 @@ class AbstractHumanoidRobot(object):
         - the center of mass task used to keep the robot stability
         - one task per operational point to ease robot control
         """
-        if not self.dynamic:
-            raise RuntimeError("robots models have to be initialized first")
+        if not hasattr(self, 'dynamic'):
+            raise RuntimeError("Dynamic robot model must be initialized first")
 
-        if not self.device:
+        if not hasattr(self, 'device') or self.device is None:
+            #raise RuntimeError("A device is already defined.")
             self.device = RobotSimu(self.name + '_device')
+        self.device.resize(self.dynamic.getDimension())
         """
         Robot timestep
         """
         self.timeStep = self.device.getTimeStep()
+
+        # Compute half sitting configuration
+        import numpy
+        """
+        Half sitting configuration.
+        """
+        self.halfSitting = numpy.asarray(pinocchio.neutral(self.pinocchioModel)).flatten().tolist()
+        self.defineHalfSitting(self.halfSitting)
+        self.halfSitting[3:7] = [0., 0., 0.] # Replace quaternion by RPY.
+
+        # Set the device limits.
+        def get(s):
+            s.recompute(0)
+            return s.value
+        def opposite(v): return [ -x for x in v ]
+        self.device.setPositionBounds(get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
+        self.device.setVelocityBounds(opposite(get(self.dynamic.upperVl)), get(self.dynamic.upperVl))
+        self.device.setTorqueBounds(opposite(get(self.dynamic.upperTl)), get(self.dynamic.upperTl))
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
@@ -231,30 +304,6 @@ class AbstractHumanoidRobot(object):
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
             self.dynamic.acceleration.value = self.dimension * (0., )
-
-        # self.initializeOpPoints()
-
-        # TODO: hand parameters through srdf --- additional frames ---
-        # self.frames = dict()
-        # frameName = 'rightHand'
-        # self.frames [frameName] = self.createFrame (
-        #    "{0}_{1}".format (self.name, frameName),
-        #    self.dynamic.getHandParameter (True), "right-wrist")
-        # rightGripper is an alias for the rightHand:
-        # self.frames ['rightGripper'] = self.frames [frameName]
-
-        # frameName = 'leftHand'
-        # self.frames [frameName] = self.createFrame (
-        #    "{0}_{1}".format (self.name, frameName),
-        #    self.dynamic.getHandParameter (False), "left-wrist")
-        # leftGripper is an alias for the leftHand:
-        # self.frames ["leftGripper"] = self.frames [frameName]
-
-        # for (frameName, transformation, signalName) in self.AdditionalFrames:
-        #    self.frames[frameName] = self.createFrame(
-        #        "{0}_{1}".format(self.name, frameName),
-        #        transformation,
-        #        signalName)
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
@@ -345,42 +394,10 @@ class AbstractHumanoidRobot(object):
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
             self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
 
+class AbstractHumanoidRobot(AbstractRobot):
+    def __init__(self, name, tracer=None):
+        AbstractRobot.__init__(self, name, tracer)
 
-class HumanoidRobot(AbstractHumanoidRobot):
-    def __init__(self, name, pinocchio_model, pinocchio_data, initialConfig, OperationalPointsMap=None, tracer=None):
-        AbstractHumanoidRobot.__init__(self, name, tracer)
-
-        self.OperationalPoints.append('waist')
-        self.OperationalPoints.append('chest')
-        self.OperationalPointsMap = OperationalPointsMap
-
-        self.dynamic = DynamicPinocchio(self.name + "_dynamic")
-        self.dynamic.setModel(pinocchio_model)
-        self.dynamic.setData(pinocchio_data)
-        self.dimension = self.dynamic.getDimension()
-
-        self.device = RobotSimu(self.name + "_device")
-
-        self.device.resize(self.dynamic.getDimension())
-        self.halfSitting = initialConfig
-        self.device.set(self.halfSitting)
-        plug(self.device.state, self.dynamic.position)
-
-        if self.enableVelocityDerivator:
-            self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
-            self.velocityDerivator.dt.value = self.timeStep
-            plug(self.device.state, self.velocityDerivator.sin)
-            plug(self.velocityDerivator.sout, self.dynamic.velocity)
-        else:
-            self.dynamic.velocity.value = self.dimension * (0., )
-
-        if self.enableAccelerationDerivator:
-            self.accelerationDerivator = \
-                Derivator_of_Vector('accelerationDerivator')
-            self.accelerationDerivator.dt.value = self.timeStep
-            plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
-            plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
-        else:
-            self.dynamic.acceleration.value = self.dimension * (0., )
-        if self.OperationalPointsMap is not None:
-            self.initializeOpPoints()
+    def _initialize(self):
+        AbstractRobot._initialize(self)
+        self.OperationalPoints.extend(['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze'])

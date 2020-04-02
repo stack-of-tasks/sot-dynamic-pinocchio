@@ -49,7 +49,6 @@ IF(BUILD_PYTHON_INTERFACE)
     __init__.py
     humanoid_robot.py
     tools.py
-    parser.py
     )
 
   FOREACH(py_file ${${PY_NAME}_PYTHON})
