@@ -255,10 +255,9 @@ class AbstractRobot(ABC):
         if not hasattr(self, 'dynamic'):
             raise RuntimeError("Dynamic robot model must be initialized first")
 
-        if hasattr(self, 'device'):
-            raise RuntimeError("A device is already defined.")
-
-        self.device = RobotSimu(self.name + '_device')
+        if not hasattr(self, 'device') or self.device is None:
+            #raise RuntimeError("A device is already defined.")
+            self.device = RobotSimu(self.name + '_device')
         self.device.resize(self.dynamic.getDimension())
         """
         Robot timestep
