@@ -6,9 +6,9 @@ import unittest
 
 from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
 
-class Robot (AbstractHumanoidRobot):
-    def __init__ (self, name, urdfString=None, urdfFile=None):
-        import pinocchio
+
+class Robot(AbstractHumanoidRobot):
+    def __init__(self, name, urdfString=None, urdfFile=None):
         if urdfString is not None:
             self.loadModelFromString(urdfString)
         elif urdfFile is not None:
@@ -18,7 +18,7 @@ class Robot (AbstractHumanoidRobot):
 
         AbstractHumanoidRobot.__init__(self, name, None)
 
-    def defineHalfSitting (self, q):
+    def defineHalfSitting(self, q):
         pass
 
 
@@ -29,18 +29,19 @@ class HumanoidRobotTest(unittest.TestCase):
         self.r2d2_urdf_file = os.path.join(dir_path, "r2d2.urdf")
 
     def test_non_instanciable_robot(self):
-        class NonInstanciableRobot (AbstractHumanoidRobot):
+        class NonInstanciableRobot(AbstractHumanoidRobot):
             pass
+
         self.assertRaises(TypeError, NonInstanciableRobot, "non_instanciable_robot")
 
     def test_build_robot_from_string(self):
 
         with open(self.r2d2_urdf_file, 'r') as urdf:
             urdfString = urdf.read()
-        robot = Robot("test_build_robot_from_string", urdfString = urdfString)
+        Robot("test_build_robot_from_string", urdfString=urdfString)
 
     def test_build_robot_from_urdf(self):
-        robot = Robot("test_build_robot_from_string", urdfFile = self.r2d2_urdf_file)
+        Robot("test_build_robot_from_string", urdfFile=self.r2d2_urdf_file)
 
 
 if __name__ == '__main__':

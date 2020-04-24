@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 import os
-print(os.environ)
 
 from dynamic_graph.sot.dynamic_pinocchio.feet_follower import FeetFollowerFromFile
 from dynamic_graph.sot.dynamic_pinocchio.tools import checkFinalConfiguration, clt, plug, robot, solver, timeStep
+
+print(os.environ)
 
 feetFollower = FeetFollowerFromFile('feet-follower')
 

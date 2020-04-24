@@ -3,24 +3,24 @@
 
 from __future__ import print_function
 
-from functools import reduce
+import sys
 
+import pinocchio
 from dynamic_graph import plug
 from dynamic_graph.sot.core.derivator import Derivator_of_Vector
 from dynamic_graph.sot.core.op_point_modifier import OpPointModifier
 from dynamic_graph.sot.core.robot_simu import RobotSimu
-from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.tools import addTrace
 from dynamic_graph.tracer_real_time import TracerRealTime
 
-import pinocchio, sys
-
 if sys.version_info.major == 2:
     from abc import ABCMeta, abstractmethod
+
     class ABC:
         __metaclass__ = ABCMeta
 else:
     from abc import ABC, abstractmethod
+
 
 class AbstractRobot(ABC):
     """
@@ -147,7 +147,7 @@ class AbstractRobot(ABC):
                         mimicJoints.append(name)
         self.removeJoints(mimicJoints)
 
-    def removeJoints (self, joints):
+    def removeJoints(self, joints):
         """
         - param joints: a list of joint names to be removed from the self.pinocchioModel
         """
@@ -160,8 +160,7 @@ class AbstractRobot(ABC):
             self.pinocchioModel = pinocchio.buildReducedModel(self.pinocchioModel, jointIds, q)
             self.pinocchioData = pinocchio.Data(self.pinocchioModel)
 
-    def loadModelFromString (self, urdfString, rootJointType=pinocchio.JointModelFreeFlyer,
-            removeMimicJoints=True):
+    def loadModelFromString(self, urdfString, rootJointType=pinocchio.JointModelFreeFlyer, removeMimicJoints=True):
         """ Load a URDF model contained in a string
         - param rootJointType: the root joint type. None for no root joint.
         - param removeMimicJoints: if True, all the mimic joints found in the model are removed.
@@ -174,8 +173,11 @@ class AbstractRobot(ABC):
         if removeMimicJoints:
             self._removeMimicJoints(urdfString=urdfString)
 
-    def loadModelFromUrdf(self, urdfPath, urdfDir=None, rootJointType=pinocchio.JointModelFreeFlyer,
-            removeMimicJoints=True):
+    def loadModelFromUrdf(self,
+                          urdfPath,
+                          urdfDir=None,
+                          rootJointType=pinocchio.JointModelFreeFlyer,
+                          removeMimicJoints=True):
         """
         Load a model using the pinocchio urdf parser. This parser looks
         for urdf files in which kinematics and dynamics information
@@ -185,10 +187,10 @@ class AbstractRobot(ABC):
         """
         if urdfPath.startswith("package://"):
             from os import path
-            n1 = 10 # len("package://")
+            n1 = 10  # len("package://")
             n2 = urdfPath.index(path.sep, n1)
             pkg = urdfPath[n1:n2]
-            relpath = urdfPath[n2+1:]
+            relpath = urdfPath[n2 + 1:]
 
             import rospkg
             rospack = rospkg.RosPack()
@@ -233,7 +235,7 @@ class AbstractRobot(ABC):
             q[joint.idx_q] = jv
 
     @abstractmethod
-    def defineHalfSitting (self, q):
+    def defineHalfSitting(self, q):
         """
         Define half sitting configuration using the pinocchio Model (i.e.
         with quaternions and not with euler angles).
@@ -256,7 +258,7 @@ class AbstractRobot(ABC):
             raise RuntimeError("Dynamic robot model must be initialized first")
 
         if not hasattr(self, 'device') or self.device is None:
-            #raise RuntimeError("A device is already defined.")
+            # raise RuntimeError("A device is already defined.")
             self.device = RobotSimu(self.name + '_device')
         self.device.resize(self.dynamic.getDimension())
         """
@@ -271,13 +273,16 @@ class AbstractRobot(ABC):
         """
         self.halfSitting = numpy.asarray(pinocchio.neutral(self.pinocchioModel)).flatten().tolist()
         self.defineHalfSitting(self.halfSitting)
-        self.halfSitting[3:7] = [0., 0., 0.] # Replace quaternion by RPY.
+        self.halfSitting[3:7] = [0., 0., 0.]  # Replace quaternion by RPY.
 
         # Set the device limits.
         def get(s):
             s.recompute(0)
             return s.value
-        def opposite(v): return [ -x for x in v ]
+
+        def opposite(v):
+            return [-x for x in v]
+
         self.device.setPositionBounds(get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
         self.device.setVelocityBounds(opposite(get(self.dynamic.upperVl)), get(self.dynamic.upperVl))
         self.device.setTorqueBounds(opposite(get(self.dynamic.upperTl)), get(self.dynamic.upperTl))
@@ -393,6 +398,7 @@ class AbstractRobot(ABC):
         for op in self.OperationalPoints:
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
             self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
+
 
 class AbstractHumanoidRobot(AbstractRobot):
     def __init__(self, name, tracer=None):
