@@ -142,7 +142,7 @@ class AbstractRobot(ABC):
         for e in root.iter('joint'):
             if 'name' in e.attrib:
                 name = e.attrib['name']
-                for c in e._children:
+                for c in e:
                     if hasattr(c, 'tag') and c.tag == 'mimic':
                         mimicJoints.append(name)
         self.removeJoints(mimicJoints)
