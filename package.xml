@@ -1,6 +1,6 @@
 <package format="2">
   <name>sot-dynamic-pinocchio</name>
-  <version>3.5.0</version>
+  <version>3.5.1</version>
   <description>
     Pinocchio bindings for dynamic-graph
   </description>
