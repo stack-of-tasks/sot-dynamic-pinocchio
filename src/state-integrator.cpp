@@ -13,18 +13,19 @@
 /* SOT */
 #define ENABLE_RT_LOG
 
-#include "sot-dynamic-pinocchio/state-integrator.h"
+#include "sot/dynamic-pinocchio/state-integrator.h"
 #include <sot/core/debug.hh>
 using namespace std;
+
+#include <pinocchio/parsers/urdf.hpp>
+#include <pinocchio/algorithm/joint-configuration.hpp>
 
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/real-time-logger.h>
 #include <dynamic-graph/all-commands.h>
 #include <dynamic-graph/linear-algebra.h>
 #include <sot/core/matrix-geometry.hh>
-
-#include <pinocchio/parsers/urdf.hpp>
-#include <pinocchio/algorithm/joint-configuration.hpp>
+#include <sot/core/debug.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;

@@ -7,85 +7,76 @@
  *
  */
 
-#include <sot-dynamic-pinocchio/force-compensation.h>
+#include <sot/dynamic-pinocchio/force-compensation.h>
 #include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
 #include <sot/core/macros-signal.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(ForceCompensationPlugin,"ForceCompensation");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(ForceCompensationPlugin, "ForceCompensation");
 
 /* --- PLUGIN --------------------------------------------------------------- */
 /* --- PLUGIN --------------------------------------------------------------- */
 /* --- PLUGIN --------------------------------------------------------------- */
-ForceCompensation::
-ForceCompensation(void)
-  :usingPrecompensation(false)
-{}
+ForceCompensation::ForceCompensation(void) : usingPrecompensation(false) {}
 
+ForceCompensationPlugin::ForceCompensationPlugin(const std::string& name)
+    : Entity(name),
+      calibrationStarted(false)
 
-ForceCompensationPlugin::
-ForceCompensationPlugin( const std::string & name )
-  :Entity(name)
-  ,calibrationStarted(false)
+      ,
+      torsorSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::torsorIN"),
+      worldRhandSIN(NULL, "sotForceCompensation(" + name + ")::input(MatrixRotation)::worldRhand")
 
-  ,torsorSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::torsorIN")
-  ,worldRhandSIN(NULL,"sotForceCompensation("+name+")::input(MatrixRotation)::worldRhand")
+      ,
+      handRsensorSIN(NULL, "sotForceCompensation(" + name + ")::input(MatrixRotation)::handRsensor"),
+      translationSensorComSIN(NULL, "sotForceCompensation(" + name + ")::input(vector3)::sensorCom"),
+      gravitySIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::gravity"),
+      precompensationSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::precompensation"),
+      gainSensorSIN(NULL, "sotForceCompensation(" + name + ")::input(matrix6)::gain"),
+      deadZoneLimitSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::deadZoneLimit"),
+      transSensorJointSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::sensorJoint"),
+      inertiaJointSIN(NULL, "sotForceCompensation(" + name + ")::input(matrix6)::inertiaJoint"),
+      velocitySIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::velocity"),
+      accelerationSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::acceleration")
 
-  ,handRsensorSIN(NULL,"sotForceCompensation("+name+")::input(MatrixRotation)::handRsensor")
-  ,translationSensorComSIN(NULL,"sotForceCompensation("+name+")::input(vector3)::sensorCom")
-  ,gravitySIN(NULL,"sotForceCompensation("+name+")::input(vector6)::gravity")
-  ,precompensationSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::precompensation")
-  ,gainSensorSIN(NULL,"sotForceCompensation("+name+")::input(matrix6)::gain")
-  ,deadZoneLimitSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::deadZoneLimit")
-  ,transSensorJointSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::sensorJoint")  ,inertiaJointSIN(NULL,"sotForceCompensation("+name+")::input(matrix6)::inertiaJoint")
-  ,velocitySIN(NULL,"sotForceCompensation("+name+")::input(vector6)::velocity")
-  ,accelerationSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::acceleration")
+      ,
+      handXworldSOUT(SOT_INIT_SIGNAL_2(ForceCompensation::computeHandXworld, worldRhandSIN, MatrixRotation,
+                                       translationSensorComSIN, dynamicgraph::Vector),
+                     "sotForceCompensation(" + name + ")::output(MatrixForce)::handXworld"),
+      handVsensorSOUT(SOT_INIT_SIGNAL_1(ForceCompensation::computeHandVsensor, handRsensorSIN, MatrixRotation),
+                      "sotForceCompensation(" + name + ")::output(MatrixForce)::handVsensor"),
+      torsorDeadZoneSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::torsorNullifiedIN")
 
-  ,handXworldSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeHandXworld,
-				      worldRhandSIN,MatrixRotation,
-				      translationSensorComSIN,dynamicgraph::Vector ),
-		   "sotForceCompensation("+name+")::output(MatrixForce)::handXworld" )
-   ,handVsensorSOUT( SOT_INIT_SIGNAL_1( ForceCompensation::computeHandVsensor,
-					handRsensorSIN,MatrixRotation),
-		     "sotForceCompensation("+name+")::output(MatrixForce)::handVsensor" )
-   ,torsorDeadZoneSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::torsorNullifiedIN")
+      ,
+      sensorXhandSOUT(SOT_INIT_SIGNAL_2(ForceCompensation::computeSensorXhand, handRsensorSIN, MatrixRotation,
+                                        transSensorJointSIN, dynamicgraph::Vector),
+                      "sotForceCompensation(" + name + ")::output(MatrixForce)::sensorXhand")
+      //   ,inertiaSensorSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeInertiaSensor,
+      // 					  inertiaJointSIN,dynamicgraph::Matrix,
+      // 					  sensorXhandSOUT,MatrixForce ),
+      // 		       "ForceCompensation("+name+")::output(MatrixForce)::inertiaSensor" )
+      ,
+      momentumSOUT(
+          SOT_INIT_SIGNAL_4(ForceCompensation::computeMomentum, velocitySIN, dynamicgraph::Vector, accelerationSIN,
+                            dynamicgraph::Vector, sensorXhandSOUT, MatrixForce, inertiaJointSIN, dynamicgraph::Matrix),
+          "sotForceCompensation(" + name + ")::output(Vector6)::momentum"),
+      momentumSIN(NULL, "sotForceCompensation(" + name + ")::input(vector6)::momentumIN")
 
-  ,sensorXhandSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeSensorXhand,
-				       handRsensorSIN,MatrixRotation,
-				       transSensorJointSIN,dynamicgraph::Vector ),
-		   "sotForceCompensation("+name+")::output(MatrixForce)::sensorXhand" )
-//   ,inertiaSensorSOUT( SOT_INIT_SIGNAL_2( ForceCompensation::computeInertiaSensor,
-// 					  inertiaJointSIN,dynamicgraph::Matrix,
-// 					  sensorXhandSOUT,MatrixForce ),
-// 		       "ForceCompensation("+name+")::output(MatrixForce)::inertiaSensor" )
-   ,momentumSOUT( SOT_INIT_SIGNAL_4(ForceCompensation::computeMomentum,
-				    velocitySIN,dynamicgraph::Vector,
-				    accelerationSIN,dynamicgraph::Vector,
-				    sensorXhandSOUT,MatrixForce,
-				    inertiaJointSIN,dynamicgraph::Matrix),
-		  "sotForceCompensation("+name+")::output(Vector6)::momentum" )
-  ,momentumSIN(NULL,"sotForceCompensation("+name+")::input(vector6)::momentumIN")
-
-  ,torsorCompensatedSOUT( SOT_INIT_SIGNAL_7(ForceCompensation::computeTorsorCompensated,
-					    torsorSIN,dynamicgraph::Vector,
-					    precompensationSIN,dynamicgraph::Vector,
-					    gravitySIN,dynamicgraph::Vector,
-					    handXworldSOUT,MatrixForce,
-					    handVsensorSOUT,MatrixForce,
-					    gainSensorSIN,dynamicgraph::Matrix,
-					    momentumSIN,dynamicgraph::Vector),
-			  "sotForceCompensation("+name+")::output(Vector6)::torsor" )
-  ,torsorDeadZoneSOUT( SOT_INIT_SIGNAL_2(ForceCompensation::computeDeadZone,
-					 torsorDeadZoneSIN,dynamicgraph::Vector,
-					 deadZoneLimitSIN,dynamicgraph::Vector),
-		       "sotForceCompensation("+name+")::output(Vector6)::torsorNullified" )
-   ,calibrationTrigerSOUT( boost::bind(&ForceCompensationPlugin::calibrationTriger,
-				       this,_1,_2),
-			   torsorSIN << worldRhandSIN,
-			   "sotForceCompensation("+name+")::output(Dummy)::calibrationTriger")
-{
+      ,
+      torsorCompensatedSOUT(
+          SOT_INIT_SIGNAL_7(ForceCompensation::computeTorsorCompensated, torsorSIN, dynamicgraph::Vector,
+                            precompensationSIN, dynamicgraph::Vector, gravitySIN, dynamicgraph::Vector, handXworldSOUT,
+                            MatrixForce, handVsensorSOUT, MatrixForce, gainSensorSIN, dynamicgraph::Matrix,
+                            momentumSIN, dynamicgraph::Vector),
+          "sotForceCompensation(" + name + ")::output(Vector6)::torsor"),
+      torsorDeadZoneSOUT(SOT_INIT_SIGNAL_2(ForceCompensation::computeDeadZone, torsorDeadZoneSIN, dynamicgraph::Vector,
+                                           deadZoneLimitSIN, dynamicgraph::Vector),
+                         "sotForceCompensation(" + name + ")::output(Vector6)::torsorNullified"),
+      calibrationTrigerSOUT(boost::bind(&ForceCompensationPlugin::calibrationTriger, this, _1, _2),
+                            torsorSIN << worldRhandSIN,
+                            "sotForceCompensation(" + name + ")::output(Dummy)::calibrationTriger") {
   sotDEBUGIN(5);
 
   signalRegistration(torsorSIN);
@@ -98,7 +89,7 @@ ForceCompensationPlugin( const std::string & name )
   signalRegistration(deadZoneLimitSIN);
   signalRegistration(transSensorJointSIN);
   signalRegistration(inertiaJointSIN);
-  signalRegistration(velocitySIN );
+  signalRegistration(velocitySIN);
   signalRegistration(accelerationSIN);
   signalRegistration(handXworldSOUT);
   signalRegistration(handVsensorSOUT);
@@ -113,17 +104,14 @@ ForceCompensationPlugin( const std::string & name )
 
   // By default, I choose: momentum is not compensated.
   //  momentumSIN.plug( &momentumSOUT );
-  dynamicgraph::Vector v(6); v.fill(0); momentumSIN = v;
+  dynamicgraph::Vector v(6);
+  v.fill(0);
+  momentumSIN = v;
 
   sotDEBUGOUT(5);
 }
 
-
-ForceCompensationPlugin::
-~ForceCompensationPlugin( void )
-{
-  return;
-}
+ForceCompensationPlugin::~ForceCompensationPlugin(void) { return; }
 
 /* --- CALIB --------------------------------------------------------------- */
 /* --- CALIB --------------------------------------------------------------- */
@@ -131,18 +119,13 @@ ForceCompensationPlugin::
 
 MatrixRotation ForceCompensation::I3;
 
-void ForceCompensation::
-clearCalibration( void )
-{
+void ForceCompensation::clearCalibration(void) {
   torsorList.clear();
   rotationList.clear();
 }
 
-
-void ForceCompensation::
-addCalibrationValue( const dynamicgraph::Vector& /*torsor*/,
-		     const MatrixRotation & /*worldRhand*/ )
-{
+void ForceCompensation::addCalibrationValue(const dynamicgraph::Vector& /*torsor*/,
+                                            const MatrixRotation& /*worldRhand*/) {
   sotDEBUGIN(45);
 
   //   sotDEBUG(25) << "Add torsor: t"<<torsorList.size() <<" = " << torsor;
@@ -154,10 +137,8 @@ addCalibrationValue( const dynamicgraph::Vector& /*torsor*/,
   sotDEBUGOUT(45);
 }
 
-dynamicgraph::Vector ForceCompensation::
-calibrateTransSensorCom( const dynamicgraph::Vector& gravity,
-			 const MatrixRotation& /*handRsensor*/ )
-{
+dynamicgraph::Vector ForceCompensation::calibrateTransSensorCom(const dynamicgraph::Vector& gravity,
+                                                                const MatrixRotation& /*handRsensor*/) {
   //   sotDEBUGIN(25);
 
   //   dynamicgraph::Vector grav3(3);
@@ -167,7 +148,6 @@ calibrateTransSensorCom( const dynamicgraph::Vector& gravity,
   //   std::list< dynamicgraph::Vector >::iterator iterTorsor = torsorList.begin();
   //   std::list< MatrixRotation >::const_iterator iterRotation
   //     = rotationList.begin();
-
 
   //   const unsigned int NVAL = torsorList.size();
   //   if( 0==NVAL )
@@ -233,11 +213,9 @@ calibrateTransSensorCom( const dynamicgraph::Vector& gravity,
   return gravity;
 }
 
-dynamicgraph::Vector ForceCompensation::
-calibrateGravity( const MatrixRotation& /*handRsensor*/,
-		  bool /*precompensationCalibration*/,
-		  const MatrixRotation& /*hand0RsensorArg*/ )
-{
+dynamicgraph::Vector ForceCompensation::calibrateGravity(const MatrixRotation& /*handRsensor*/,
+                                                         bool /*precompensationCalibration*/,
+                                                         const MatrixRotation& /*hand0RsensorArg*/) {
   sotDEBUGIN(25);
 
   //   MatrixRotation hand0Rsensor;
@@ -302,65 +280,57 @@ calibrateGravity( const MatrixRotation& /*handRsensor*/,
   //   sotDEBUG(25)<<"mg = " << sumForce<<std::endl;
 
   sotDEBUGOUT(25);
-  dynamicgraph::Vector sumForce(3); sumForce.fill(0);
+  dynamicgraph::Vector sumForce(3);
+  sumForce.fill(0);
   return sumForce;
 }
 
-
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-MatrixForce& ForceCompensation::
-computeHandXworld( const MatrixRotation & worldRhand,
-		   const dynamicgraph::Vector & transSensorCom,
-		   MatrixForce& res )
-{
+MatrixForce& ForceCompensation::computeHandXworld(const MatrixRotation& worldRhand,
+                                                  const dynamicgraph::Vector& transSensorCom, MatrixForce& res) {
   sotDEBUGIN(35);
 
-  sotDEBUG(25) << "wRrh = " << worldRhand <<std::endl;
-  sotDEBUG(25) << "SC = " << transSensorCom <<std::endl;
+  sotDEBUG(25) << "wRrh = " << worldRhand << std::endl;
+  sotDEBUG(25) << "SC = " << transSensorCom << std::endl;
 
   MatrixHomogeneous scRw;
-  scRw.linear()=worldRhand.transpose();  scRw.translation()=transSensorCom;
-  sotDEBUG(25) << "scMw = " << scRw <<std::endl;
+  scRw.linear() = worldRhand.transpose();
+  scRw.translation() = transSensorCom;
+  sotDEBUG(25) << "scMw = " << scRw << std::endl;
 
   /////////////////////////////
   // res.buildFrom( scRw );
   Eigen::Vector3d _t = scRw.translation();
   MatrixRotation R(scRw.linear());
   Eigen::Matrix3d Tx;
-  Tx << 0, -_t(2), _t(1),
-    _t(2), 0, -_t(0),
-    -_t(1), _t(0), 0;
-  Eigen::Matrix3d sk; sk = Tx*R;
+  Tx << 0, -_t(2), _t(1), _t(2), 0, -_t(0), -_t(1), _t(0), 0;
+  Eigen::Matrix3d sk;
+  sk = Tx * R;
 
-  res.block<3,3>(0,0) = R;
-  res.block<3,3>(0,3).setZero();
-  res.block<3,3>(3,0) = sk;
-  res.block<3,3>(3,3) = R;
+  res.block<3, 3>(0, 0) = R;
+  res.block<3, 3>(0, 3).setZero();
+  res.block<3, 3>(3, 0) = sk;
+  res.block<3, 3>(3, 3) = R;
   ////////////////////////////
 
-
-  sotDEBUG(15) << "scXw = " << res <<std::endl;
+  sotDEBUG(15) << "scXw = " << res << std::endl;
 
   sotDEBUGOUT(35);
   return res;
 }
 
-MatrixForce& ForceCompensation::
-computeHandVsensor( const MatrixRotation & handRsensor,
-		    MatrixForce& res )
-{
+MatrixForce& ForceCompensation::computeHandVsensor(const MatrixRotation& handRsensor, MatrixForce& res) {
   sotDEBUGIN(35);
 
-  for( unsigned int i=0;i<3;++i )
-    for( unsigned int j=0;j<3;++j )
-      {
-	res(i,j)=handRsensor(i,j);
-	res(i+3,j+3)=handRsensor(i,j);
-	res(i+3,j)=0.;
-	res(i,j+3)=0.;
-      }
+  for (unsigned int i = 0; i < 3; ++i)
+    for (unsigned int j = 0; j < 3; ++j) {
+      res(i, j) = handRsensor(i, j);
+      res(i + 3, j + 3) = handRsensor(i, j);
+      res(i + 3, j) = 0.;
+      res(i, j + 3) = 0.;
+    }
 
   sotDEBUG(25) << "hVs" << res << std::endl;
 
@@ -368,11 +338,8 @@ computeHandVsensor( const MatrixRotation & handRsensor,
   return res;
 }
 
-MatrixForce& ForceCompensation::
-computeSensorXhand( const MatrixRotation & /*handRsensor*/,
-		    const dynamicgraph::Vector & transJointSensor,
-		    MatrixForce& res )
-{
+MatrixForce& ForceCompensation::computeSensorXhand(const MatrixRotation& /*handRsensor*/,
+                                                   const dynamicgraph::Vector& transJointSensor, MatrixForce& res) {
   sotDEBUGIN(35);
 
   /* Force Matrix to pass from the joint frame (ie frame located
@@ -381,14 +348,13 @@ computeSensorXhand( const MatrixRotation & /*handRsensor*/,
    * frame located at the sensor position bu oriented like the hand). */
 
   Eigen::Matrix3d Tx;
-  Tx << 0, -transJointSensor(2), transJointSensor(1),
-    transJointSensor(2), 0, -transJointSensor(0),
-    -transJointSensor(1), transJointSensor(0), 0;
+  Tx << 0, -transJointSensor(2), transJointSensor(1), transJointSensor(2), 0, -transJointSensor(0),
+      -transJointSensor(1), transJointSensor(0), 0;
 
-  res.block<3,3>(0,0).setIdentity();
-  res.block<3,3>(0,3).setZero();
-  res.block<3,3>(3,0) = Tx;
-  res.block<3,3>(3,3).setIdentity();
+  res.block<3, 3>(0, 0).setIdentity();
+  res.block<3, 3>(0, 3).setZero();
+  res.block<3, 3>(3, 0) = Tx;
+  res.block<3, 3>(3, 3).setIdentity();
 
   sotDEBUG(25) << "shXJ" << res << std::endl;
 
@@ -413,16 +379,10 @@ computeSensorXhand( const MatrixRotation & /*handRsensor*/,
 //   return res;
 // }
 
-
-dynamicgraph::Vector& ForceCompensation::
-computeTorsorCompensated( const dynamicgraph::Vector& torqueInput,
-			  const dynamicgraph::Vector& torquePrecompensation,
-			  const dynamicgraph::Vector& gravity,
-			  const MatrixForce& handXworld,
-			  const MatrixForce& handVsensor,
-			  const dynamicgraph::Matrix& gainSensor,
-			  const dynamicgraph::Vector& momentum,
-			  dynamicgraph::Vector& res )
+dynamicgraph::Vector& ForceCompensation::computeTorsorCompensated(
+    const dynamicgraph::Vector& torqueInput, const dynamicgraph::Vector& torquePrecompensation,
+    const dynamicgraph::Vector& gravity, const MatrixForce& handXworld, const MatrixForce& handVsensor,
+    const dynamicgraph::Matrix& gainSensor, const dynamicgraph::Vector& momentum, dynamicgraph::Vector& res)
 
 {
   sotDEBUGIN(35);
@@ -432,27 +392,26 @@ computeTorsorCompensated( const dynamicgraph::Vector& torqueInput,
 
   sotDEBUG(25) << "t_nc = " << torqueInput;
   dynamicgraph::Vector torquePrecompensated(6);
-  //if( usingPrecompensation )
-  torquePrecompensated = torqueInput+torquePrecompensation;
-  //else { torquePrecompensated = torqueInput; }
+  // if( usingPrecompensation )
+  torquePrecompensated = torqueInput + torquePrecompensation;
+  // else { torquePrecompensated = torqueInput; }
   sotDEBUG(25) << "t_pre = " << torquePrecompensated;
 
   dynamicgraph::Vector torqueS(6), torqueRH(6);
-  torqueS = gainSensor*torquePrecompensated;
-  res = handVsensor*torqueS;
+  torqueS = gainSensor * torquePrecompensated;
+  res = handVsensor * torqueS;
   sotDEBUG(25) << "t_rh = " << res;
 
   dynamicgraph::Vector grh(6);
-  grh = handXworld*gravity;
+  grh = handXworld * gravity;
   grh *= -1;
   sotDEBUG(25) << "g_rh = " << grh;
 
-  res+=grh;
+  res += grh;
   sotDEBUG(25) << "fcomp = " << res;
 
-  res+=momentum;
+  res += momentum;
   sotDEBUG(25) << "facc = " << res;
-
 
   /* TODO res += m xddot */
 
@@ -460,85 +419,83 @@ computeTorsorCompensated( const dynamicgraph::Vector& torqueInput,
   return res;
 }
 
-dynamicgraph::Vector& ForceCompensation::
-crossProduct_V_F( const dynamicgraph::Vector& velocity,
-		  const dynamicgraph::Vector& force,
-		  dynamicgraph::Vector& res )
-{
+dynamicgraph::Vector& ForceCompensation::crossProduct_V_F(const dynamicgraph::Vector& velocity,
+                                                          const dynamicgraph::Vector& force,
+                                                          dynamicgraph::Vector& res) {
   /* [ v;w] x [ f;tau ] = [ w x f; v x f + w x tau ] */
-  Eigen::Vector3d v,w,f,tau;
-  for( unsigned int i=0;i<3;++i )
-    {
-      v(i)=velocity(i); w(i) = velocity(i+3);
-      f(i) = force(i); tau(i) = force(i+3);
-    }
-  Eigen::Vector3d res1(3),res2a(3),res2b(3);
+  Eigen::Vector3d v, w, f, tau;
+  for (unsigned int i = 0; i < 3; ++i) {
+    v(i) = velocity(i);
+    w(i) = velocity(i + 3);
+    f(i) = force(i);
+    tau(i) = force(i + 3);
+  }
+  Eigen::Vector3d res1(3), res2a(3), res2b(3);
   res1 = w.cross(f);
   res2a = v.cross(f);
   res2b = w.cross(tau);
   res2a += res2b;
 
   res.resize(6);
-  for( unsigned int i=0;i<3;++i )
-    {
-      res(i)=res1(i); res(i+3)=res2a(i);
-    }
+  for (unsigned int i = 0; i < 3; ++i) {
+    res(i) = res1(i);
+    res(i + 3) = res2a(i);
+  }
   return res;
 }
 
-
-dynamicgraph::Vector& ForceCompensation::
-computeMomentum( const dynamicgraph::Vector& velocity,
-		 const dynamicgraph::Vector& acceleration,
-		 const MatrixForce& sensorXhand,
-		 const dynamicgraph::Matrix& inertiaJoint,
-		 dynamicgraph::Vector& res )
-{
+dynamicgraph::Vector& ForceCompensation::computeMomentum(const dynamicgraph::Vector& velocity,
+                                                         const dynamicgraph::Vector& acceleration,
+                                                         const MatrixForce& sensorXhand,
+                                                         const dynamicgraph::Matrix& inertiaJoint,
+                                                         dynamicgraph::Vector& res) {
   sotDEBUGIN(35);
 
   /* Fs + Fext = I acc + V x Iv */
-  dynamicgraph::Vector Iacc(6); Iacc = inertiaJoint* acceleration;
-  res.resize(6); res = sensorXhand*Iacc;
+  dynamicgraph::Vector Iacc(6);
+  Iacc = inertiaJoint * acceleration;
+  res.resize(6);
+  res = sensorXhand * Iacc;
 
-  dynamicgraph::Vector Iv(6); Iv = inertiaJoint*velocity;
-  dynamicgraph::Vector vIv(6); crossProduct_V_F( velocity,Iv,vIv );
-  dynamicgraph::Vector XvIv(6); XvIv = sensorXhand*vIv;
-  res+= XvIv;
+  dynamicgraph::Vector Iv(6);
+  Iv = inertiaJoint * velocity;
+  dynamicgraph::Vector vIv(6);
+  crossProduct_V_F(velocity, Iv, vIv);
+  dynamicgraph::Vector XvIv(6);
+  XvIv = sensorXhand * vIv;
+  res += XvIv;
 
   sotDEBUGOUT(35);
   return res;
 }
 
-dynamicgraph::Vector& ForceCompensation::
-computeDeadZone( const dynamicgraph::Vector& torqueInput,
-		 const dynamicgraph::Vector& deadZone,
-		 dynamicgraph::Vector& res )
-{
+dynamicgraph::Vector& ForceCompensation::computeDeadZone(const dynamicgraph::Vector& torqueInput,
+                                                         const dynamicgraph::Vector& deadZone,
+                                                         dynamicgraph::Vector& res) {
   sotDEBUGIN(35);
 
-  if( torqueInput.size()>deadZone.size() ) return res;
+  if (torqueInput.size() > deadZone.size()) return res;
   res.resize(torqueInput.size());
-  for( int i=0;i<torqueInput.size();++i )
-    {
-      const double th = fabs(deadZone(i));
-      if( (torqueInput(i)<th)&&(torqueInput(i)>-th) )
-	{ res(i)=0; }
-      else if(torqueInput(i)<0) res(i)=torqueInput(i)+th;
-      else res(i)=torqueInput(i)-th;
-    }
+  for (int i = 0; i < torqueInput.size(); ++i) {
+    const double th = fabs(deadZone(i));
+    if ((torqueInput(i) < th) && (torqueInput(i) > -th)) {
+      res(i) = 0;
+    } else if (torqueInput(i) < 0)
+      res(i) = torqueInput(i) + th;
+    else
+      res(i) = torqueInput(i) - th;
+  }
 
   sotDEBUGOUT(35);
   return res;
 }
 
-
-ForceCompensationPlugin::sotDummyType& ForceCompensationPlugin::
-calibrationTriger( ForceCompensationPlugin::sotDummyType& dummy,int /*time*/ )
-{
+ForceCompensationPlugin::sotDummyType& ForceCompensationPlugin::calibrationTriger(
+    ForceCompensationPlugin::sotDummyType& dummy, int /*time*/) {
   //   sotDEBUGIN(45);
   //   if(! calibrationStarted ) { sotDEBUGOUT(45); return dummy=0; }
 
   //   addCalibrationValue( torsorSIN(time),worldRhandSIN(time) );
   //   sotDEBUGOUT(45);
-  return dummy=1;
+  return dummy = 1;
 }
