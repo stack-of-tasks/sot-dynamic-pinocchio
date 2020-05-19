@@ -253,6 +253,7 @@ dg::Vector& DynamicPinocchio::getLowerPositionLimits(dg::Vector& res, const int&
 
   res.resize(m_model->nv);
   if (!sphericalJoints.empty()) {
+
     int fillingIndex = 0;  // SoTValue
     int origIndex = 0;     // PinocchioValue
     for (std::vector<int>::const_iterator it = sphericalJoints.begin(); it < sphericalJoints.end(); it++) {
@@ -266,12 +267,13 @@ dg::Vector& DynamicPinocchio::getLowerPositionLimits(dg::Vector& res, const int&
       }
       // Found a Spherical Joint.
       // Assuming that spherical joint limits are unset
-      res(fillingIndex) = std::numeric_limits<double>::min();
-      res(fillingIndex + 1) = std::numeric_limits<double>::min();
-      res(fillingIndex + 2) = std::numeric_limits<double>::min();
+      res(fillingIndex) = std::numeric_limits<double>::lowest();
+      res(fillingIndex + 1) = std::numeric_limits<double>::lowest();
+      res(fillingIndex + 2) = std::numeric_limits<double>::lowest();
       fillingIndex += 3;
       origIndex += 4;
     }
+
     assert(m_model->nv - fillingIndex == m_model->nq - origIndex);
     if (m_model->nv > fillingIndex)
       res.segment(fillingIndex, m_model->nv - fillingIndex) =

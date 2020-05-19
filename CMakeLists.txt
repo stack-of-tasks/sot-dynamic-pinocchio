@@ -34,6 +34,7 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 # Project dependencies
 ADD_PROJECT_DEPENDENCY(sot-tools REQUIRED PKG_CONFIG_REQUIRES sot-tools)
+ADD_PROJECT_DEPENDENCY(example-robot-data)
 
 SET(BOOST_COMPONENTS filesystem system unit_test_framework)
 
