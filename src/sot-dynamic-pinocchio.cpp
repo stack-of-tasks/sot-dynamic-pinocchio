@@ -267,9 +267,15 @@ dg::Vector& DynamicPinocchio::getLowerPositionLimits(dg::Vector& res, const int&
       }
       // Found a Spherical Joint.
       // Assuming that spherical joint limits are unset
-      res(fillingIndex) = std::numeric_limits<double>::lowest();
-      res(fillingIndex + 1) = std::numeric_limits<double>::lowest();
-      res(fillingIndex + 2) = std::numeric_limits<double>::lowest();
+      // Version C++11 
+      //res(fillingIndex) = std::numeric_limits<double>::lowest();
+      //res(fillingIndex + 1) = std::numeric_limits<double>::lowest();
+      //res(fillingIndex + 2) = std::numeric_limits<double>::lowest();
+      // For now use C++98
+      res(fillingIndex) = -std::numeric_limits<double>::max();
+      res(fillingIndex + 1) = -std::numeric_limits<double>::max();
+      res(fillingIndex + 2) = -std::numeric_limits<double>::max();
+
       fillingIndex += 3;
       origIndex += 4;
     }
