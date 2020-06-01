@@ -3,8 +3,8 @@ Encapsulate Pinocchio in SoT
 ===========
 
 [![Building Status](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio.svg?branch=master)](https://travis-ci.org/stack-of-tasks/sot-dynamic-pinocchio)
-[![Pipeline status](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/commits/master)
-[![Coverage report](https://gepgitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/sot-dynamic-pinocchio/master/coverage/)
+[![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/commits/master)
+[![Coverage report](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/sot-dynamic-pinocchio/master/coverage/)
 
 
 This software provides robot dynamic computation for dynamic-graph
