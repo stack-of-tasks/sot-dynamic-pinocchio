@@ -49,6 +49,8 @@ IF(BUILD_PYTHON_INTERFACE)
     __init__.py
     humanoid_robot.py
     tools.py
+    kine_romeo.py
+    kine_romeo_small.py
     )
 
   FOREACH(py_file ${${PY_NAME}_PYTHON})
