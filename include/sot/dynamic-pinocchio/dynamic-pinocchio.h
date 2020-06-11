@@ -166,6 +166,10 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
   void setData(pinocchio::Data*);
 
+  pinocchio::Model* getModel() { return m_model; };
+
+  pinocchio::Data* getData() { return m_data; };
+
   /* --- GETTERS --- */
 
   /// \brief Get joint position lower limits

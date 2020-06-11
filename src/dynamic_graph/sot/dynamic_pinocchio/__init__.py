@@ -1,27 +1,7 @@
 import numpy as np
 from numpy import cos, sin, sqrt
 
-from .dynamic import DynamicPinocchio as DynamicCpp
-
-# DynamicOld = Dynamic
-
-
-class DynamicPinocchio(DynamicCpp):
-    def __init__(self, name):
-        DynamicCpp.__init__(self, name)
-        self.model = None
-        self.data = None
-
-    def setData(self, pinocchio_data):
-        dynamic.wrap.set_pinocchio_data(self.obj, pinocchio_data)  # noqa TODO
-        self.data = pinocchio_data
-        return
-
-    def setModel(self, pinocchio_model):
-        dynamic.wrap.set_pinocchio_model(self.obj, pinocchio_model)  # noqa TODO
-        self.model = pinocchio_model
-        return
-
+from .dynamic import DynamicPinocchio
 
 def fromSotToPinocchio(q_sot, freeflyer=True):
     if freeflyer:
