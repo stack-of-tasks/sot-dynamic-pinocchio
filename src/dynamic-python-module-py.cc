@@ -9,7 +9,7 @@ typedef bp::return_value_policy<bp::reference_existing_object> reference_existin
 
 BOOST_PYTHON_MODULE(wrap)
 {
-  bp::import("dynamicgraph");
+  bp::import("dynamic_graph");
   bp::import("pinocchio");
 
   dg::python::exposeEntity<dgs::DynamicPinocchio>()
