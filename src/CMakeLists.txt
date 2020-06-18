@@ -18,7 +18,8 @@ SET(plugins
   )
 
 SET(integrator-force-rk4_plugins_deps integrator-force)
-SET(integrator-force-exact_plugins_deps integrator-force)
+SET(integrator-force-exact_plugins_deps integrator-force lapack)
+SET(mass-apparent_plugins_deps integrator-force)
 
 FOREACH(plugin ${plugins})
   GET_FILENAME_COMPONENT(LIBRARY_NAME ${plugin} NAME)
@@ -28,7 +29,8 @@ FOREACH(plugin ${plugins})
     SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
   ENDIF(SUFFIX_SO_VERSION)
 
-  TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${PROJECT_NAME} ${${LIBRARY_NAME}_deps})
+  TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
+    PUBLIC ${PROJECT_NAME} ${${LIBRARY_NAME}_plugins_deps})
 
   IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
     INSTALL(TARGETS ${LIBRARY_NAME} EXPORT ${TARGETS_EXPORT_NAME}
