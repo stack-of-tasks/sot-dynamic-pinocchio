@@ -25,6 +25,7 @@ SET(DOXYGEN_USE_MATHJAX YES)
 # JRL-cmakemodule setup
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/sphinx.cmake)
 
