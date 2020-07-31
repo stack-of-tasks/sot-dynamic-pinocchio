@@ -16,6 +16,8 @@
 
 using namespace std;
 #include <boost/test/unit_test.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <dynamic-graph/factory.h>
 #include <dynamic-graph/entity.h>
 #include <sot/core/matrix-geometry.hh>
@@ -49,17 +51,35 @@ BOOST_AUTO_TEST_CASE(test_state_integrator) {
 
   unsigned int debug_mode = 2;
 
-  std::string robot_description;
-  ifstream urdfFile;
-  std::string filename = "/opt/openrobots/share/simple_humanoid_description/urdf/simple_humanoid.urdf";
-  urdfFile.open(filename.c_str());
-  if (!urdfFile.is_open()) {
-    std::cerr << "Unable to open " << filename << std::endl;
-    BOOST_CHECK(false);
-    return;
+  // Get environment variable CMAKE_PREFIX_PATH
+  const string s_cmake_prefix_path = getenv( "CMAKE_PREFIX_PATH" );
+
+  // Read the various paths
+  vector<string> paths;
+  boost::split(paths, s_cmake_prefix_path, boost::is_any_of(":;"));
+
+  // Search simple_humanoid.urdf
+  string filename="";
+  for (auto test_path : paths)
+  {
+    filename = test_path +
+        string("/share/simple_humanoid_description/urdf/simple_humanoid.urdf");
+    if ( boost::filesystem::exists(filename))
+      break;
   }
-  stringstream strStream;
+
+  // If not found fails
+  if (filename.size()==0)
+  {
+    cerr << "Unable to find simple_humanoid.urdf" << endl;
+    exit(-1);
+  }
+
+  // Otherwise read the file
+  ifstream urdfFile(filename);
+  ostringstream strStream;
   strStream << urdfFile.rdbuf();
+  std::string robot_description;
   robot_description = strStream.str();
 
   /// Test reading the URDF file.
