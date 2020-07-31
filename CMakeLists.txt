@@ -30,6 +30,7 @@ SET(DOXYGEN_USE_MATHJAX YES)
 # JRL-cmakemodule setup
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/lapack.cmake)
 INCLUDE(cmake/python.cmake)
 INCLUDE(cmake/sphinx.cmake)
 
@@ -87,7 +88,6 @@ IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
 
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(python)
 ADD_SUBDIRECTORY(tests)
 
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
