@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(test_state_integrator) {
   // If not found fails
   if (filename.size()==0)
   {
-    cerr << "Unable to find simple_humanoid.urdf" << endl;
+    cerr << "Unable to find simple_humanoid_description/urdf/simple_humanoid.urdf in CMAKE_PREFIX_PATH" << endl;
     exit(-1);
   }
 
