@@ -7,8 +7,7 @@ after_success:
 - cd _travis/build/doc && ../../../cmake/github/update-doxygen-doc.sh
 branches:
   only:
-  - master
-  - topic/sot-pinocchio
+  - disabled_travis_because_not_relevant_anymore
 compiler:
 - clang
 - gcc
