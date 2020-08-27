@@ -75,8 +75,7 @@ class GetJointNames : public Command {
     }
     const std::vector<std::string>& jointNames = robot.m_model->names;
     // Remove first joint names 'universe'
-    std::size_t n(jointNames.size());
-    assert(n >= 1);
+    assert(jointNames.size() >= 1);
     std::vector<Value> res;
     for (std::size_t i = 1; i < jointNames.size(); ++i) {
       res.push_back(Value(jointNames[i]));
