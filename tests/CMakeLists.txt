@@ -31,7 +31,7 @@ FOREACH(test ${tests})
   ADD_UNIT_TEST(${test} ${test}.cpp)
 
   TARGET_LINK_LIBRARIES(${test}
-    ${PROJECT_NAME} ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${${test}_deps}
+    ${PROJECT_NAME} Boost::unit_test_framework ${${test}_deps}
     zmpreffromcom
     force-compensation
     #integrator-force-exact
