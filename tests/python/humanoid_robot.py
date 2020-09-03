@@ -3,10 +3,9 @@
 # Copyright 2011, Florent Lamiraux, Thomas Moulard, JRL, CNRS/AIST
 
 import unittest
-import pinocchio
 
 import numpy as np
-
+import pinocchio
 from dynamic_graph.sot.dynamic_pinocchio import DynamicPinocchio
 from dynamic_graph.sot.dynamic_pinocchio.humanoid_robot import AbstractHumanoidRobot
 
@@ -51,19 +50,19 @@ class HumanoidRobotTest(unittest.TestCase):
         arobot.dynamic = DynamicPinocchio(self.name + "_dynamic")
         arobot.dynamic.setModel(arobot.pinocchioModel)
         arobot.dynamic.setData(arobot.pinocchioData)
+        arobot.dynamic.add_signals()
 
         def get(s):
             s.recompute(0)
             return s.value
 
-        loc_lowerJl=np.array(get(arobot.dynamic.lowerJl))
-        pin_lowerJl=np.array(arobot.pinocchioModel.lowerPositionLimit[1:len(arobot.pinocchioModel.lowerPositionLimit
-)])
+        loc_lowerJl = np.array(get(arobot.dynamic.lowerJl))
+        pin_lowerJl = np.array(
+            arobot.pinocchioModel.lowerPositionLimit[1:len(arobot.pinocchioModel.lowerPositionLimit)])
 
-        for i in range(0,len(loc_lowerJl),1):
+        for i in range(0, len(loc_lowerJl), 1):
             if not loc_lowerJl[i] == pin_lowerJl[i]:
-                self.assertTrue(False,"lowerJl is not working")
-
+                self.assertTrue(False, "lowerJl is not working")
 
     def test_build_robot_from_urdf(self):
         Robot("test_build_robot_from_string", urdfFile=self.urdf_file_name)

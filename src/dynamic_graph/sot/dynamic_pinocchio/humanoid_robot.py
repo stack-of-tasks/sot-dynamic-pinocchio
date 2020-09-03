@@ -286,6 +286,7 @@ class AbstractRobot(ABC):
         def opposite(v):
             return [-x for x in v]
 
+        self.dynamic.add_signals()
         self.device.setPositionBounds( get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
         self.device.setVelocityBounds(-get(self.dynamic.upperVl), get(self.dynamic.upperVl))
         self.device.setTorqueBounds  (-get(self.dynamic.upperTl), get(self.dynamic.upperTl))
