@@ -12,7 +12,7 @@ BOOST_PYTHON_MODULE(wrap)
   bp::import("dynamic_graph");
   bp::import("pinocchio");
 
-  dg::python::exposeEntity<dgs::DynamicPinocchio>()
+  dg::python::exposeEntity<dgs::DynamicPinocchio, bp::bases<dg::Entity>, dg::python::AddCommands>()
     .add_property("model",
         bp::make_function(&dgs::DynamicPinocchio::getModel, reference_existing_object()),
         bp::make_function(&dgs::DynamicPinocchio::setModel))
