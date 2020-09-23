@@ -20,6 +20,7 @@ BOOST_PYTHON_MODULE(wrap)
         bp::make_function(&dgs::DynamicPinocchio::getData, reference_existing_object()),
         bp::make_function(&dgs::DynamicPinocchio::setData))
     .def("setModel", &dgs::DynamicPinocchio::setModel)
+    .def("createData", &dgs::DynamicPinocchio::createData)
     .def("setData", &dgs::DynamicPinocchio::setData)
     ;
 }

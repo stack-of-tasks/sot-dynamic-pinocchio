@@ -17,6 +17,7 @@
 /* STD */
 #include <string>
 #include <map>
+#include <memory>
 
 /* SOT */
 #include <pinocchio/fwd.hpp>
@@ -29,6 +30,7 @@
 #include <sot/core/matrix-geometry.hh>
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
+#include <sot/dynamic-pinocchio/deprecated.hh>
 
 /* PINOCCHIO */
 #include <pinocchio/macros.hpp>
@@ -80,7 +82,7 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
   /*  --- MODEL ATRIBUTES --- */
   pinocchio::Model* m_model;
-  pinocchio::Data* m_data;
+  std::unique_ptr<pinocchio::Data> m_data;
 
   /*  --- MODEL ATRIBUTES --- */
 
@@ -164,11 +166,15 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
   void setModel(pinocchio::Model*);
 
-  void setData(pinocchio::Data*);
+  void createData();
+
+  /// \deprecated this function does nothing. This class has its own
+  /// pinocchio::Data object, which can be access with \ref getData.
+  void setData(pinocchio::Data*) SOT_DYNAMIC_PINOCCHIO_DEPRECATED;
 
   pinocchio::Model* getModel() { return m_model; };
 
-  pinocchio::Data* getData() { return m_data; };
+  pinocchio::Data* getData() { return m_data.get(); };
 
   /* --- GETTERS --- */
 
