@@ -271,9 +271,12 @@ class AbstractRobot(ABC):
         """
         Half sitting configuration.
         """
-        self.halfSitting = numpy.asarray(pinocchio.neutral(self.pinocchioModel)).flatten().tolist()
+        self.halfSitting = pinocchio.neutral(self.pinocchioModel)
         self.defineHalfSitting(self.halfSitting)
-        self.halfSitting[3:7] = [0., 0., 0.]  # Replace quaternion by RPY.
+        self.halfSitting = numpy.array(self.halfSitting[:3].tolist()
+                + [0., 0., 0.]  # Replace quaternion by RPY.
+                + self.halfSitting[7:].tolist())
+        assert self.halfSitting.shape[0] == self.dynamic.getDimension()
 
         # Set the device limits.
         def get(s):
@@ -283,9 +286,10 @@ class AbstractRobot(ABC):
         def opposite(v):
             return [-x for x in v]
 
-        self.device.setPositionBounds(get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
-        self.device.setVelocityBounds(opposite(get(self.dynamic.upperVl)), get(self.dynamic.upperVl))
-        self.device.setTorqueBounds(opposite(get(self.dynamic.upperTl)), get(self.dynamic.upperTl))
+        self.dynamic.add_signals()
+        self.device.setPositionBounds( get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
+        self.device.setVelocityBounds(-get(self.dynamic.upperVl), get(self.dynamic.upperVl))
+        self.device.setTorqueBounds  (-get(self.dynamic.upperTl), get(self.dynamic.upperTl))
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
@@ -299,7 +303,7 @@ class AbstractRobot(ABC):
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = self.dimension * (0., )
+            self.dynamic.velocity.value = numpy.zeros([self.dimension,])
 
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
@@ -308,7 +312,7 @@ class AbstractRobot(ABC):
             plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = self.dimension * (0., )
+            self.dynamic.acceleration.value = numpy.zeros([self.dimension,])
 
     def addTrace(self, entityName, signalName):
         if self.tracer:

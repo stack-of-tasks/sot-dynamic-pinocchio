@@ -35,7 +35,7 @@ const std::string dg::sot::DynamicPinocchio::CLASS_NAME = "DynamicPinocchio";
 DynamicPinocchio::DynamicPinocchio(const std::string& name)
     : Entity(name),
       m_model(NULL),
-      m_data(NULL)
+      m_data()
 
       ,
       jointPositionSIN(NULL, "sotDynamicPinocchio(" + name + ")::input(vector)::position"),
@@ -241,9 +241,15 @@ void DynamicPinocchio::setModel(pinocchio::Model* modelPtr) {
       if (pinocchio::nq(this->m_model->joints[i]) == 4)  // Spherical Joint Only
         sphericalJoints.push_back(pinocchio::idx_v(this->m_model->joints[i]));
   }
+
+  createData();
 }
 
-void DynamicPinocchio::setData(pinocchio::Data* dataPtr) { this->m_data = dataPtr; }
+void DynamicPinocchio::setData(pinocchio::Data*) {}
+
+void DynamicPinocchio::createData() {
+  m_data.reset(new pinocchio::Data (*m_model));
+}
 
 /*--------------------------------GETTERS-------------------------------------------*/
 
@@ -713,8 +719,16 @@ dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, c
     jid = frame.parent;
 
     M = frame.placement.inverse();
-    if (!isLocal)  // Express the jacobian is world coordinate system.
-      M.rotation() = m_data->oMf[fid].rotation() * M.rotation();
+
+    if (!isLocal)  {// Express the jacobian is world coordinate system.
+      // Need to compute frame placement for oMf.
+      pinocchio::updateFramePlacement(*m_model, *m_data, fid);
+
+      pinocchio::SE3 T;
+      T.rotation() = m_data->oMf[fid].rotation();
+      T.translation().setZero();
+      M = T * M;
+    }
   } else {
     jid = (pinocchio::JointIndex)id;
     if (!isLocal) {  // Express the jacobian is world coordinate system.

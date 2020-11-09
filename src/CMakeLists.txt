@@ -18,7 +18,8 @@ SET(plugins
   )
 
 SET(integrator-force-rk4_plugins_deps integrator-force)
-SET(integrator-force-exact_plugins_deps integrator-force)
+SET(integrator-force-exact_plugins_deps integrator-force lapack)
+SET(mass-apparent_plugins_deps integrator-force)
 
 FOREACH(plugin ${plugins})
   GET_FILENAME_COMPONENT(LIBRARY_NAME ${plugin} NAME)
@@ -28,7 +29,8 @@ FOREACH(plugin ${plugins})
     SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
   ENDIF(SUFFIX_SO_VERSION)
 
-  TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${PROJECT_NAME} ${${LIBRARY_NAME}_deps})
+  TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
+    PUBLIC ${PROJECT_NAME} ${${LIBRARY_NAME}_plugins_deps})
 
   IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
     INSTALL(TARGETS ${LIBRARY_NAME} EXPORT ${TARGETS_EXPORT_NAME}
@@ -37,10 +39,15 @@ FOREACH(plugin ${plugins})
 
   IF(BUILD_PYTHON_INTERFACE)
     STRING(REPLACE - _ PYTHON_LIBRARY_NAME ${LIBRARY_NAME})
-    DYNAMIC_GRAPH_PYTHON_MODULE("${PYTHON_DIR}/${PYTHON_LIBRARY_NAME}"
-      ${LIBRARY_NAME} ${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap
-      1 "src/python-module-py.cpp")
-    TARGET_LINK_BOOST_PYTHON(${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${plugin}-python-module-py.cc")
+      DYNAMIC_GRAPH_PYTHON_MODULE("${PYTHON_DIR}/${PYTHON_LIBRARY_NAME}"
+        ${LIBRARY_NAME} ${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap
+        SOURCE_PYTHON_MODULE "${CMAKE_CURRENT_SOURCE_DIR}/${plugin}-python-module-py.cc")
+    elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${plugin}-python.hh")
+      DYNAMIC_GRAPH_PYTHON_MODULE("${PYTHON_DIR}/${PYTHON_LIBRARY_NAME}"
+        ${LIBRARY_NAME} ${PROJECT_NAME}-${PYTHON_LIBRARY_NAME}-wrap
+        MODULE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/${plugin}-python.hh")
+    endif()
   ENDIF(BUILD_PYTHON_INTERFACE)
 ENDFOREACH(plugin)
 
