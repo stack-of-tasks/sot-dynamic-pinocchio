@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>sot-dynamic-pinocchio</name>
-  <version>3.6.0</version>
+  <version>3.6.1</version>
   <description>
     Pinocchio bindings for dynamic-graph
   </description>
@@ -24,16 +24,16 @@
   <depend>sot-tools</depend>
   <depend>pinocchio</depend>
   <depend>dynamic-graph-python</depend>
-  
+
   <doc_depend>doxygen</doc_depend>
   <doc_depend>dynamic-graph</doc_depend>
-  
+
   <test_depend>gtest</test_depend>
-  
-  <buildtool_depend>cmake</buildtool_depend> 
-  
+
+  <buildtool_depend>cmake</buildtool_depend>
+
   <export>
     <build_type>cmake</build_type>
   </export>
-  
+
 </package>
