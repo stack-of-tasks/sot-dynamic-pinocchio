@@ -1,4 +1,5 @@
-<package format="2">
+<?xml version="1.0"?>
+<package format="3">
   <name>sot-dynamic-pinocchio</name>
   <version>3.6.0</version>
   <description>
@@ -14,27 +15,25 @@
   <author>Olivier Stasse</author>
   <author email="ostasse@laas.fr">ostasse@laas.fr</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <build_depend version_gte="1.1" version_lt="2.0">genmsg</build_depend>
-
-
-  <build_depend>sot-tools</build_depend>
-  <build_depend>sot-core</build_depend>
-  <build_depend>pinocchio</build_depend>
-
-  <build_export_depend>pinocchio</build_export_depend>
-
-  <exec_depend>sot-tools</exec_depend>
-  <exec_depend>sot-core</exec_depend>
-  <exec_depend>pinocchio</exec_depend>
-  <exec_depend>example-robot-data</exec_depend>
-
-  <test_depend>gtest</test_depend>
-
+  <build_depend>git</build_depend>
+  <build_depend>doxygen</build_depend>
+  <!-- The following tags are recommended by REP-136 -->
+  <exec_depend condition="$ROS_VERSION == 1">catkin</exec_depend>
+  <exec_depend condition="$ROS_VERSION == 2">ament_cmake</exec_depend>
+  <depend>sot-core</depend>
+  <depend>sot-tools</depend>
+  <depend>pinocchio</depend>
+  <depend>dynamic-graph-python</depend>
+  
   <doc_depend>doxygen</doc_depend>
-  <doc_depend>dynamic_graph</doc_depend>
-
-
+  <doc_depend>dynamic-graph</doc_depend>
+  
+  <test_depend>gtest</test_depend>
+  
+  <buildtool_depend>cmake</buildtool_depend> 
+  
   <export>
+    <build_type>cmake</build_type>
   </export>
+  
 </package>
