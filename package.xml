@@ -24,6 +24,8 @@
   <depend>sot-tools</depend>
   <depend>pinocchio</depend>
   <depend>dynamic-graph-python</depend>
+  <depend>liblapack-dev</depend>
+  <depend>libopenblas-dev</depend>
 
   <doc_depend>doxygen</doc_depend>
   <doc_depend>dynamic-graph</doc_depend>
