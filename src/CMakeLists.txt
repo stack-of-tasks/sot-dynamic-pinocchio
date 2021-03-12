@@ -1,8 +1,12 @@
-# Copyright 2010, 2020, JRL, CNRS/AIST, LAAS-CNRS
+# Copyright 2010-2021, JRL, CNRS/AIST, LAAS-CNRS
 # François Bleibel
 # Olivier Stasse
 # Florent Lamiraux
 # Guilhem Saurel
+
+
+# ROS buildfarm uses isolated environments, in which the build rpath is used
+SET(BUILD_WITH_INSTALL_RPATH TRUE)
 
 SET(plugins
   zmpreffromcom
@@ -24,6 +28,7 @@ SET(mass-apparent_plugins_deps integrator-force)
 FOREACH(plugin ${plugins})
   GET_FILENAME_COMPONENT(LIBRARY_NAME ${plugin} NAME)
   ADD_LIBRARY(${LIBRARY_NAME} SHARED ${plugin})
+  SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES INSTALL_RPATH $ORIGIN)
 
   IF(SUFFIX_SO_VERSION)
     SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION})
