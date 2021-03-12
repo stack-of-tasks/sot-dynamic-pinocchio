@@ -247,9 +247,7 @@ void DynamicPinocchio::setModel(pinocchio::Model* modelPtr) {
 
 void DynamicPinocchio::setData(pinocchio::Data*) {}
 
-void DynamicPinocchio::createData() {
-  m_data.reset(new pinocchio::Data (*m_model));
-}
+void DynamicPinocchio::createData() { m_data.reset(new pinocchio::Data(*m_model)); }
 
 /*--------------------------------GETTERS-------------------------------------------*/
 
@@ -259,7 +257,6 @@ dg::Vector& DynamicPinocchio::getLowerPositionLimits(dg::Vector& res, const int&
 
   res.resize(m_model->nv);
   if (!sphericalJoints.empty()) {
-
     int fillingIndex = 0;  // SoTValue
     int origIndex = 0;     // PinocchioValue
     for (std::vector<int>::const_iterator it = sphericalJoints.begin(); it < sphericalJoints.end(); it++) {
@@ -273,10 +270,10 @@ dg::Vector& DynamicPinocchio::getLowerPositionLimits(dg::Vector& res, const int&
       }
       // Found a Spherical Joint.
       // Assuming that spherical joint limits are unset
-      // Version C++11 
-      //res(fillingIndex) = std::numeric_limits<double>::lowest();
-      //res(fillingIndex + 1) = std::numeric_limits<double>::lowest();
-      //res(fillingIndex + 2) = std::numeric_limits<double>::lowest();
+      // Version C++11
+      // res(fillingIndex) = std::numeric_limits<double>::lowest();
+      // res(fillingIndex + 1) = std::numeric_limits<double>::lowest();
+      // res(fillingIndex + 2) = std::numeric_limits<double>::lowest();
       // For now use C++98
       res(fillingIndex) = -std::numeric_limits<double>::max();
       res(fillingIndex + 1) = -std::numeric_limits<double>::max();
@@ -720,7 +717,7 @@ dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame, c
 
     M = frame.placement.inverse();
 
-    if (!isLocal)  {// Express the jacobian is world coordinate system.
+    if (!isLocal) {  // Express the jacobian is world coordinate system.
       // Need to compute frame placement for oMf.
       pinocchio::updateFramePlacement(*m_model, *m_data, fid);
 
