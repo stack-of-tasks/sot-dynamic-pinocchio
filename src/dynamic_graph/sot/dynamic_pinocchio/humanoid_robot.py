@@ -273,9 +273,8 @@ class AbstractRobot(ABC):
         """
         self.halfSitting = pinocchio.neutral(self.pinocchioModel)
         self.defineHalfSitting(self.halfSitting)
-        self.halfSitting = numpy.array(self.halfSitting[:3].tolist()
-                + [0., 0., 0.]  # Replace quaternion by RPY.
-                + self.halfSitting[7:].tolist())
+        self.halfSitting = numpy.array(self.halfSitting[:3].tolist() + [0., 0., 0.]  # Replace quaternion by RPY.
+                                       + self.halfSitting[7:].tolist())
         assert self.halfSitting.shape[0] == self.dynamic.getDimension()
 
         # Set the device limits.
@@ -287,9 +286,9 @@ class AbstractRobot(ABC):
             return [-x for x in v]
 
         self.dynamic.add_signals()
-        self.device.setPositionBounds( get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
+        self.device.setPositionBounds(get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
         self.device.setVelocityBounds(-get(self.dynamic.upperVl), get(self.dynamic.upperVl))
-        self.device.setTorqueBounds  (-get(self.dynamic.upperTl), get(self.dynamic.upperTl))
+        self.device.setTorqueBounds(-get(self.dynamic.upperTl), get(self.dynamic.upperTl))
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
@@ -303,7 +302,9 @@ class AbstractRobot(ABC):
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = numpy.zeros([self.dimension,])
+            self.dynamic.velocity.value = numpy.zeros([
+                self.dimension,
+            ])
 
         if self.enableAccelerationDerivator:
             self.accelerationDerivator = \
@@ -312,7 +313,9 @@ class AbstractRobot(ABC):
             plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = numpy.zeros([self.dimension,])
+            self.dynamic.acceleration.value = numpy.zeros([
+                self.dimension,
+            ])
 
     def addTrace(self, entityName, signalName):
         if self.tracer:

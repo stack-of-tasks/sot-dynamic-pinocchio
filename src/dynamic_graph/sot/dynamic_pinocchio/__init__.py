@@ -1,7 +1,8 @@
 import numpy as np
 from numpy import cos, sin, sqrt
 
-from .dynamic import DynamicPinocchio
+from .dynamic import DynamicPinocchio  # noqa
+
 
 def fromSotToPinocchio(q_sot, freeflyer=True):
     if freeflyer:
