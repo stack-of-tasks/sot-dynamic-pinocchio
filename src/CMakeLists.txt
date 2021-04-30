@@ -19,6 +19,7 @@ SET(plugins
   waist-attitude-from-sensor
   zmp-from-forces
   dynamic
+  state-integrator
   )
 
 SET(integrator-force-rk4_plugins_deps integrator-force)

@@ -1,13 +1,14 @@
 # Copyright 2010, François Bleibel, Olivier Stasse, JRL, CNRS/AIST
 
 SET(tests
-  test_constructor
-  #test_config
-  #  dummy
-  #  test_djj
-  #  test_dyn
-  #  test_results
-  )
+test_constructor
+test_state_integrator
+#test_config
+#  dummy
+#  test_djj
+#  test_dyn
+#  test_results
+)
 
 SET(test_dyn_plugins_dependencies dynamic)
 
@@ -40,8 +41,12 @@ FOREACH(test ${tests})
     integrator-force
     angle-estimator
     waist-attitude-from-sensor
+    state-integrator
     )
 ENDFOREACH(test)
+
+configure_file(sot_controller.yaml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(sot_params.yaml ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 IF(BUILD_PYTHON_INTERFACE)
   ADD_SUBDIRECTORY(python)

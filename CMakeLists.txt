@@ -8,12 +8,17 @@ SET(PROJECT_NAME sot-dynamic-pinocchio)
 SET(PROJECT_DESCRIPTION "pinocchio bindings for dynamic-graph.")
 SET(PROJECT_URL "https://github.com/${PROJECT_ORG}/${PROJECT_NAME}")
 
+SET(URDFDOM_COMPILE_FLAGS " -DPINOCCHIO_URDFDOM_TYPEDEF_SHARED_PTR -DPINOCCHIO_URDFDOM_USE_STD_SHARED_PTR -DPINOCCHIO_WITH_URDFDOM")
+
+add_definitions(${URDFDOM_COMPILE_FLAGS})
+
 # Project options
 OPTION(BUILD_PYTHON_INTERFACE "Build the python bindings" ON)
 OPTION(INSTALL_PYTHON_INTERFACE_ONLY "Install *ONLY* the python bindings" OFF)
 OPTION(SUFFIX_SO_VERSION "Suffix library name with its version" ON)
 
 # Project configuration
+SET(CMAKE_CXX_STANDARD 11)
 IF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
   SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 ENDIF(NOT INSTALL_PYTHON_INTERFACE_ONLY)
@@ -64,6 +69,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/${CUSTOM_HEADER_DIR}/matrix-inertia.h
   include/${CUSTOM_HEADER_DIR}/integrator-force-rk4.h
   include/${CUSTOM_HEADER_DIR}/angle-estimator.h
+  include/${CUSTOM_HEADER_DIR}/state-integrator.h
   )
 
 SET(${PROJECT_NAME}_SOURCES
