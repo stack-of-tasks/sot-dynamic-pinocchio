@@ -147,6 +147,17 @@ class AbstractRobot(ABC):
                         mimicJoints.append(name)
         self.removeJoints(mimicJoints)
 
+    def _storeRootJointType(self, rootJointType):
+        if rootJointType == pinocchio.JointModelFreeFlyer:
+            self.rootJointType = 'freeflyer'
+        elif rootJointType == pinocchio.JointModelPlanar:
+            self.rootJointType = 'planar'
+        elif rootJointType == None:
+            self.rootJointType = 'fixed'
+        else:
+            raise TypeError('rootJointType should be either ' +
+                            'JointModelFreeflyer, JointModelPlanar, or None.')
+
     def removeJoints(self, joints):
         """
         - param joints: a list of joint names to be removed from the self.pinocchioModel
@@ -172,6 +183,7 @@ class AbstractRobot(ABC):
         self.pinocchioData = pinocchio.Data(self.pinocchioModel)
         if removeMimicJoints:
             self._removeMimicJoints(urdfString=urdfString)
+        self._storeRootJointType(rootJointType)
 
     def loadModelFromUrdf(self,
                           urdfPath,
@@ -208,6 +220,7 @@ class AbstractRobot(ABC):
         self.pinocchioData = pinocchio.Data(self.pinocchioModel)
         if removeMimicJoints:
             self._removeMimicJoints(urdfFile=urdfFile)
+        self._storeRootJointType(rootJointType)
 
     def initializeOpPoints(self):
         for op in self.OperationalPoints:
@@ -406,6 +419,21 @@ class AbstractRobot(ABC):
             self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
             self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
 
+    def getActuatedJoints(self):
+        """
+        Return the list of indices in the velocity vector of actuated
+        joints.
+
+        This method is particularly useful to define a posture task where only
+        the actuated joints are controlled.
+        """
+        if self.rootJointType == "freeflyer":
+            return range(6, self.dynamic.model.nv)
+        if self.rootJointType == "planar":
+            return range(3, self.dynamic.model.nv)
+        if self.rootJointType == "fixed":
+            return range(0, self.dynamic.model.nv)
+        raise TypeError("unknown rootJointType")
 
 class AbstractHumanoidRobot(AbstractRobot):
     def __init__(self, name, tracer=None):
