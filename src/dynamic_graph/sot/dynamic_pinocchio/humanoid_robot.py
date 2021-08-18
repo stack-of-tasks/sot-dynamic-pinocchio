@@ -200,7 +200,7 @@ class AbstractRobot(ABC):
             urdfFile = urdfPath
         if urdfDir is None:
             import os
-            urdfDir = os.environ["ROS_PACKAGE_PATH"].split(':')
+            urdfDir = os.environ.get("ROS_PACKAGE_PATH", "").split(':')
         if rootJointType is None:
             self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile)
         else:
