@@ -152,11 +152,10 @@ class AbstractRobot(ABC):
             self.rootJointType = 'freeflyer'
         elif rootJointType == pinocchio.JointModelPlanar:
             self.rootJointType = 'planar'
-        elif rootJointType == None:
+        elif rootJointType is None:
             self.rootJointType = 'fixed'
         else:
-            raise TypeError('rootJointType should be either ' +
-                            'JointModelFreeflyer, JointModelPlanar, or None.')
+            raise TypeError('rootJointType should be either JointModelFreeflyer, JointModelPlanar, or None.')
 
     def removeJoints(self, joints):
         """
@@ -434,6 +433,7 @@ class AbstractRobot(ABC):
         if self.rootJointType == "fixed":
             return range(0, self.dynamic.model.nv)
         raise TypeError("unknown rootJointType")
+
 
 class AbstractHumanoidRobot(AbstractRobot):
     def __init__(self, name, tracer=None):
