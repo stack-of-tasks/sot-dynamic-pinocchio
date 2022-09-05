@@ -9,12 +9,12 @@
 #ifndef DYNAMIC_COMMAND_H
 #define DYNAMIC_COMMAND_H
 
-#include <fstream>
-#include <boost/assign/list_of.hpp>
-
-#include <dynamic-graph/command.h>
-#include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command.h>
+
+#include <boost/assign/list_of.hpp>
+#include <fstream>
 
 namespace dynamicgraph {
 namespace sot {
@@ -71,7 +71,8 @@ class GetJointNames : public Command {
   virtual Value doExecute() {
     DynamicPinocchio& robot = static_cast<DynamicPinocchio&>(owner());
     if (robot.m_model == 0x0) {
-      SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC, "model has not been initialized.");
+      SOT_THROW ExceptionDynamic(ExceptionDynamic::GENERIC,
+                                 "model has not been initialized.");
     }
     const std::vector<std::string>& jointNames = robot.m_model->names;
     // Remove first joint names 'universe'

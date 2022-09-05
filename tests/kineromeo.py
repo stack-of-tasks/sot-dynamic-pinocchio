@@ -12,8 +12,10 @@ from dynamic_graph.sot.core import *
 from dynamic_graph.sot.core.matrix_util import matrixToTuple
 from dynamic_graph.sot.core.meta_tasks_kine import *
 from dynamic_graph.sot.dynamics import *
+
 # from dynamic_graph.sot.core.utils.viewer_helper import addRobotViewer,VisualPinger,updateComDisplay
 from numpy import *
+
 # Taking input from pinocchio
 from pinocchio.romeo_wrapper import RomeoWrapper
 
@@ -29,13 +31,13 @@ set_printoptions(suppress=True, precision=7)
 urdfPath = "~/git/sot/pinocchio/models/romeo.urdf"
 urdfDir = ["~/git/sot/pinocchio/models"]
 pinocchioRobot = RomeoWrapper(urdfPath, urdfDir, pin.JointModelFreeFlyer())
-robotName = 'romeo'
+robotName = "romeo"
 pinocchioRobot.initDisplay(loadModel=True)
 pinocchioRobot.display(pinocchioRobot.q0)
 initialConfig = (
     0,
     0,
-    .840252,
+    0.840252,
     0,
     0,
     0,  # FF
@@ -88,12 +90,12 @@ dyn.setData(pinocchioRobot.data)
 dyn.displayModel()
 
 robotDim = dyn.getDimension()
-inertiaRotor = (0, ) * 6 + (5e-4, ) * 31
-gearRatio = (0, ) * 6 + (200, ) * 31
+inertiaRotor = (0,) * 6 + (5e-4,) * 31
+gearRatio = (0,) * 6 + (200,) * 31
 dyn.inertiaRotor.value = inertiaRotor
 dyn.gearRatio.value = gearRatio
-dyn.velocity.value = robotDim * (0., )
-dyn.acceleration.value = robotDim * (0., )
+dyn.velocity.value = robotDim * (0.0,)
+dyn.acceleration.value = robotDim * (0.0,)
 
 # ------------------------------------------------------------------------------
 # --- ROBOT SIMULATION ---------------------------------------------------------
@@ -112,11 +114,11 @@ plug(robot.state, dyn.position)
 # ------------------------------------------------------------------------------
 # ---- Kinematic Stack of Tasks (SoT)  -----------------------------------------
 # ------------------------------------------------------------------------------
-sot = SOT('sot')
+sot = SOT("sot")
 sot.setSize(robotDim)
 plug(sot.control, robot.control)
 
-#--------------------------------DISPLAY-----------------------------------------
+# --------------------------------DISPLAY-----------------------------------------
 
 # ------------------------------------------------------------------------------
 # ---- TASKS -------------------------------------------------------------------
@@ -124,11 +126,11 @@ plug(sot.control, robot.control)
 # ---- TASK -----------------------------
 
 # ---- TASK GRIP
-taskRH = MetaTaskKine6d('rh', dyn, 'rh', 'RWristPitch')
+taskRH = MetaTaskKine6d("rh", dyn, "rh", "RWristPitch")
 handMgrip = eye(4)
 handMgrip[0:3, 3] = (0.1, 0, 0)
 taskRH.opmodif = matrixToTuple(handMgrip)
-taskRH.feature.frame('desired')
+taskRH.feature.frame("desired")
 # --- STATIC COM (if not walking)
 taskCom = MetaTaskKineCom(dyn)
 dyn.com.recompute(0)
@@ -137,19 +139,19 @@ taskCom.task.controlGain.value = 10
 
 # --- CONTACTS
 # define contactLF and contactRF
-for name, joint in [['LF', 'LAnkleRoll'], ['RF', 'RAnkleRoll']]:
-    contact = MetaTaskKine6d('contact' + name, dyn, name, joint)
-    contact.feature.frame('desired')
+for name, joint in [["LF", "LAnkleRoll"], ["RF", "RAnkleRoll"]]:
+    contact = MetaTaskKine6d("contact" + name, dyn, name, joint)
+    contact.feature.frame("desired")
     contact.gain.setConstant(10)
     contact.keep()
-    locals()['contact' + name] = contact
+    locals()["contact" + name] = contact
 
 target = (0.5, -0.2, 1.3)
 
 # addRobotViewer(robot, small=False)
 # robot.viewer.updateElementConfig('zmp',target+(0,0,0))
 
-gotoNd(taskRH, target, '111', (4.9, 0.9, 0.01, 0.9))
+gotoNd(taskRH, target, "111", (4.9, 0.9, 0.01, 0.9))
 sot.push(contactRF.task.name)
 sot.push(contactLF.task.name)
 sot.push(taskCom.task.name)

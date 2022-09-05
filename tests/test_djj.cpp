@@ -7,9 +7,10 @@
  *
  */
 
-#include <string>
 #include <cstdio>
 #include <jrl/mal/matrixabstractlayer.hh>
+#include <string>
+
 #include "jrl/dynamics/dynamicsfactory.hh"
 using namespace std;
 using namespace dynamicsJRLJapan;
@@ -48,10 +49,11 @@ void DisplayMatrix(MAL_MATRIX(&aJ, double)) {
 
 /* --- DISPLAY MASS PROPERTIES OF A CHAIN --- */
 void GoDownTree(const CjrlJoint *startJoint) {
-  cout << "Mass-inertie property of joint ranked :" << startJoint->rankInConfiguration() << endl;
+  cout << "Mass-inertie property of joint ranked :"
+       << startJoint->rankInConfiguration() << endl;
   cout << "Mass of the body: " << startJoint->linkedBody()->mass() << endl;
-  cout << "llimit: " << startJoint->lowerBound(0) * 180 / M_PI << " ulimit: " << startJoint->upperBound(0) * 180 / M_PI
-       << endl;
+  cout << "llimit: " << startJoint->lowerBound(0) * 180 / M_PI
+       << " ulimit: " << startJoint->upperBound(0) * 180 / M_PI << endl;
   cout << startJoint->currentTransformation() << endl;
 
   if (startJoint->countChildJoints() != 0) {
@@ -82,7 +84,8 @@ int main(int argc, char *argv[]) {
 
   /* ------------------------------------------------------------------------ */
   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
-  CjrlHumanoidDynamicRobot *aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
+  CjrlHumanoidDynamicRobot *aHDR =
+      aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
 
   // DynamicMultiBody * aDMB
   //     = (DynamicMultiBody *) aHDMB->getDynamicMultiBody();
@@ -90,7 +93,8 @@ int main(int argc, char *argv[]) {
   string RankFile = argv[3];
   // Parsing the file.
   string RobotFileName = aPath + aName;
-  dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR, RobotFileName, RankFile, SpecificitiesFile);
+  dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR, RobotFileName, RankFile,
+                                         SpecificitiesFile);
 
   cout << "-> Finished the initialization" << endl;
   /* ------------------------------------------------------------------------ */
@@ -101,7 +105,8 @@ int main(int argc, char *argv[]) {
 
   // Test the computation of the jacobian.
   double dInitPos[40] = {
-      0.0,   0.0,   -26.0, 50.0,  -24.0, 0.0, 0.0,  0.0, -26.0, 50.0, -24.0, 0.0,  // legs
+      0.0,   0.0,   -26.0, 50.0,  -24.0, 0.0, 0.0,
+      0.0,   -26.0, 50.0,  -24.0, 0.0,  // legs
 
       0.0,   0.0,   0.0,   0.0,  // chest and head
 
@@ -137,7 +142,8 @@ int main(int argc, char *argv[]) {
   aHDR->computeForwardKinematics();
   ZMPval = aHDR->zeroMomentumPoint();
   cout << "First value of ZMP : " << ZMPval << endl;
-  cout << "Should be equal to the CoM (on x-y): " << aHDR->positionCenterOfMass() << endl;
+  cout << "Should be equal to the CoM (on x-y): "
+       << aHDR->positionCenterOfMass() << endl;
 
   /* Get Rhand joint. */
 
@@ -178,9 +184,11 @@ int main(int argc, char *argv[]) {
 
   // This is mandatory for this implementation of computeForwardKinematics
   // to compute the derivative of the momentum.
-  string Properties[4] = {"TimeStep", "ComputeAcceleration", "ComputeBackwardDynamics", "ComputeZMP"};
+  string Properties[4] = {"TimeStep", "ComputeAcceleration",
+                          "ComputeBackwardDynamics", "ComputeZMP"};
   string Values[4] = {"0.005", "false", "false", "true"};
-  for (unsigned int i = 0; i < 4; i++) aHDR->setProperty(Properties[i], Values[i]);
+  for (unsigned int i = 0; i < 4; i++)
+    aHDR->setProperty(Properties[i], Values[i]);
 
   for (int i = 0; i < 4; i++) {
     aHDR->currentVelocity(aCurrentVel);
@@ -188,7 +196,8 @@ int main(int argc, char *argv[]) {
     aHDR->computeForwardKinematics();
     ZMPval = aHDR->zeroMomentumPoint();
     cout << i << "-th value of ZMP : " << ZMPval << endl;
-    cout << "Should be equal to the CoM: " << aHDR->positionCenterOfMass() << endl;
+    cout << "Should be equal to the CoM: " << aHDR->positionCenterOfMass()
+         << endl;
   }
 
   // The End!

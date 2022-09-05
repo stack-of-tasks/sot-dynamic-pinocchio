@@ -7,12 +7,13 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/angle-estimator.h>
-#include <sot/core/debug.hh>
-#include <dynamic-graph/factory.h>
-#include <dynamic-graph/command.h>
-#include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/angle-estimator.h>
+
+#include <sot/core/debug.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
@@ -21,39 +22,65 @@ DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(AngleEstimator, "AngleEstimator");
 
 AngleEstimator::AngleEstimator(const std::string& name)
     : Entity(name),
-      sensorWorldRotationSIN(NULL, "sotAngleEstimator(" + name + ")::input(MatrixRotation)::sensorWorldRotation"),
-      sensorEmbeddedPositionSIN(NULL, "sotAngleEstimator(" + name + ")::input(MatrixHomo)::sensorEmbeddedPosition"),
-      contactWorldPositionSIN(NULL, "sotAngleEstimator(" + name + ")::input(MatrixHomo)::contactWorldPosition"),
-      contactEmbeddedPositionSIN(NULL, "sotAngleEstimator(" + name + ")::input(MatrixHomo)::contactEmbeddedPosition")
+      sensorWorldRotationSIN(
+          NULL, "sotAngleEstimator(" + name +
+                    ")::input(MatrixRotation)::sensorWorldRotation"),
+      sensorEmbeddedPositionSIN(
+          NULL, "sotAngleEstimator(" + name +
+                    ")::input(MatrixHomo)::sensorEmbeddedPosition"),
+      contactWorldPositionSIN(NULL,
+                              "sotAngleEstimator(" + name +
+                                  ")::input(MatrixHomo)::contactWorldPosition"),
+      contactEmbeddedPositionSIN(
+          NULL, "sotAngleEstimator(" + name +
+                    ")::input(MatrixHomo)::contactEmbeddedPosition")
 
       ,
-      anglesSOUT(
-          boost::bind(&AngleEstimator::computeAngles, this, _1, _2),
-          sensorWorldRotationSIN << sensorEmbeddedPositionSIN << contactWorldPositionSIN << contactEmbeddedPositionSIN,
-          "sotAngleEstimator(" + name + ")::output(Vector)::angles"),
-      flexibilitySOUT(boost::bind(&AngleEstimator::computeFlexibilityFromAngles, this, _1, _2), anglesSOUT,
-                      "sotAngleEstimator(" + name + ")::output(matrixRotation)::flexibility"),
-      driftSOUT(boost::bind(&AngleEstimator::computeDriftFromAngles, this, _1, _2), anglesSOUT,
-                "sotAngleEstimator(" + name + ")::output(matrixRotation)::drift"),
-      sensorWorldRotationSOUT(boost::bind(&AngleEstimator::computeSensorWorldRotation, this, _1, _2),
-                              anglesSOUT << sensorWorldRotationSIN,
-                              "sotAngleEstimator(" + name + ")::output(matrixRotation)::sensorCorrectedRotation"),
-      waistWorldRotationSOUT(boost::bind(&AngleEstimator::computeWaistWorldRotation, this, _1, _2),
-                             sensorWorldRotationSOUT << sensorEmbeddedPositionSIN,
-                             "sotAngleEstimator(" + name + ")::output(matrixRotation)::waistWorldRotation"),
-      waistWorldPositionSOUT(boost::bind(&AngleEstimator::computeWaistWorldPosition, this, _1, _2),
-                             flexibilitySOUT << contactEmbeddedPositionSIN,
-                             "sotAngleEstimator(" + name + ")::output(MatrixHomogeneous)::waistWorldPosition"),
-      waistWorldPoseRPYSOUT(boost::bind(&AngleEstimator::computeWaistWorldPoseRPY, this, _1, _2),
-                            waistWorldPositionSOUT,
-                            "sotAngleEstimator(" + name + ")::output(vectorRollPitchYaw)::waistWorldPoseRPY")
+      anglesSOUT(boost::bind(&AngleEstimator::computeAngles, this, _1, _2),
+                 sensorWorldRotationSIN << sensorEmbeddedPositionSIN
+                                        << contactWorldPositionSIN
+                                        << contactEmbeddedPositionSIN,
+                 "sotAngleEstimator(" + name + ")::output(Vector)::angles"),
+      flexibilitySOUT(boost::bind(&AngleEstimator::computeFlexibilityFromAngles,
+                                  this, _1, _2),
+                      anglesSOUT,
+                      "sotAngleEstimator(" + name +
+                          ")::output(matrixRotation)::flexibility"),
+      driftSOUT(
+          boost::bind(&AngleEstimator::computeDriftFromAngles, this, _1, _2),
+          anglesSOUT,
+          "sotAngleEstimator(" + name + ")::output(matrixRotation)::drift"),
+      sensorWorldRotationSOUT(
+          boost::bind(&AngleEstimator::computeSensorWorldRotation, this, _1,
+                      _2),
+          anglesSOUT << sensorWorldRotationSIN,
+          "sotAngleEstimator(" + name +
+              ")::output(matrixRotation)::sensorCorrectedRotation"),
+      waistWorldRotationSOUT(
+          boost::bind(&AngleEstimator::computeWaistWorldRotation, this, _1, _2),
+          sensorWorldRotationSOUT << sensorEmbeddedPositionSIN,
+          "sotAngleEstimator(" + name +
+              ")::output(matrixRotation)::waistWorldRotation"),
+      waistWorldPositionSOUT(
+          boost::bind(&AngleEstimator::computeWaistWorldPosition, this, _1, _2),
+          flexibilitySOUT << contactEmbeddedPositionSIN,
+          "sotAngleEstimator(" + name +
+              ")::output(MatrixHomogeneous)::waistWorldPosition"),
+      waistWorldPoseRPYSOUT(
+          boost::bind(&AngleEstimator::computeWaistWorldPoseRPY, this, _1, _2),
+          waistWorldPositionSOUT,
+          "sotAngleEstimator(" + name +
+              ")::output(vectorRollPitchYaw)::waistWorldPoseRPY")
 
       ,
       jacobianSIN(NULL, "sotAngleEstimator(" + name + ")::input()::jacobian"),
       qdotSIN(NULL, "sotAngleEstimator(" + name + ")::input()::qdot"),
-      xff_dotSOUT(boost::bind(&AngleEstimator::compute_xff_dotSOUT, this, _1, _2), jacobianSIN << qdotSIN,
-                  "sotAngleEstimator(" + name + ")::output(vector)::xff_dot"),
-      qdotSOUT(boost::bind(&AngleEstimator::compute_qdotSOUT, this, _1, _2), xff_dotSOUT << qdotSIN,
+      xff_dotSOUT(
+          boost::bind(&AngleEstimator::compute_xff_dotSOUT, this, _1, _2),
+          jacobianSIN << qdotSIN,
+          "sotAngleEstimator(" + name + ")::output(vector)::xff_dot"),
+      qdotSOUT(boost::bind(&AngleEstimator::compute_qdotSOUT, this, _1, _2),
+               xff_dotSOUT << qdotSIN,
                "sotAngleEstimator(" + name + ")::output(vector)::qdotOUT")
 
       ,
@@ -81,23 +108,27 @@ AngleEstimator::AngleEstimator(const std::string& name)
     std::string docstring;
     docstring =
         "    \n"
-        "    Set flag specifying whether angle is measured from sensors or simulated.\n"
+        "    Set flag specifying whether angle is measured from sensors or "
+        "simulated.\n"
         "    \n"
         "      Input:\n"
         "        - a boolean value.\n"
         "    \n";
-    addCommand("setFromSensor", new ::dynamicgraph::command::Setter<AngleEstimator, bool>(
-                                    *this, &AngleEstimator::fromSensor, docstring));
+    addCommand("setFromSensor",
+               new ::dynamicgraph::command::Setter<AngleEstimator, bool>(
+                   *this, &AngleEstimator::fromSensor, docstring));
 
     docstring =
         "    \n"
-        "    Get flag specifying whether angle is measured from sensors or simulated.\n"
+        "    Get flag specifying whether angle is measured from sensors or "
+        "simulated.\n"
         "    \n"
         "      No input,\n"
         "      return a boolean value.\n"
         "    \n";
-    addCommand("getFromSensor", new ::dynamicgraph::command::Getter<AngleEstimator, bool>(
-                                    *this, &AngleEstimator::fromSensor, docstring));
+    addCommand("getFromSensor",
+               new ::dynamicgraph::command::Getter<AngleEstimator, bool>(
+                   *this, &AngleEstimator::fromSensor, docstring));
   }
 
   sotDEBUGOUT(5);
@@ -113,7 +144,8 @@ AngleEstimator::~AngleEstimator(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-dynamicgraph::Vector& AngleEstimator::computeAngles(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& AngleEstimator::computeAngles(dynamicgraph::Vector& res,
+                                                    const int& time) {
   sotDEBUGIN(15);
 
   res.resize(3);
@@ -177,7 +209,8 @@ dynamicgraph::Vector& AngleEstimator::computeAngles(dynamicgraph::Vector& res, c
 /* compute the transformation matrix of the flexibility, ie
  * feetRleg.
  */
-MatrixRotation& AngleEstimator::computeFlexibilityFromAngles(MatrixRotation& res, const int& time) {
+MatrixRotation& AngleEstimator::computeFlexibilityFromAngles(
+    MatrixRotation& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& angles = anglesSOUT(time);
@@ -206,7 +239,8 @@ MatrixRotation& AngleEstimator::computeFlexibilityFromAngles(MatrixRotation& res
  * transfo from the world frame to the estimated (drifted) world
  * frame: worldRworldest.
  */
-MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res, const int& time) {
+MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res,
+                                                       const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& angles = anglesSOUT(time);
@@ -231,7 +265,8 @@ MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res, cons
   return res;
 }
 
-MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res, const int& time) {
+MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res,
+                                                           const int& time) {
   sotDEBUGIN(15);
 
   const MatrixRotation& worldRworldest = driftSOUT(time);
@@ -243,7 +278,8 @@ MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res, 
   return res;
 }
 
-MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res, const int& time) {
+MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res,
+                                                          const int& time) {
   sotDEBUGIN(15);
 
   // chest = sensor
@@ -258,7 +294,8 @@ MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res, c
   return res;
 }
 
-MatrixHomogeneous& AngleEstimator::computeWaistWorldPosition(MatrixHomogeneous& res, const int& time) {
+MatrixHomogeneous& AngleEstimator::computeWaistWorldPosition(
+    MatrixHomogeneous& res, const int& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMleg = contactEmbeddedPositionSIN(time);
@@ -281,7 +318,8 @@ MatrixHomogeneous& AngleEstimator::computeWaistWorldPosition(MatrixHomogeneous& 
   return res;
 }
 
-dynamicgraph::Vector& AngleEstimator::computeWaistWorldPoseRPY(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& AngleEstimator::computeWaistWorldPoseRPY(
+    dynamicgraph::Vector& res, const int& time) {
   const MatrixHomogeneous& M = waistWorldPositionSOUT(time);
 
   VectorRollPitchYaw r = (M.linear().eulerAngles(2, 1, 0)).reverse();
@@ -299,7 +337,8 @@ dynamicgraph::Vector& AngleEstimator::computeWaistWorldPoseRPY(dynamicgraph::Vec
 
 /* --- VELOCITY SIGS -------------------------------------------------------- */
 
-dynamicgraph::Vector& AngleEstimator::compute_xff_dotSOUT(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& AngleEstimator::compute_xff_dotSOUT(
+    dynamicgraph::Vector& res, const int& time) {
   const dynamicgraph::Matrix& J = jacobianSIN(time);
   const dynamicgraph::Vector& dq = qdotSIN(time);
 
@@ -320,7 +359,8 @@ dynamicgraph::Vector& AngleEstimator::compute_xff_dotSOUT(dynamicgraph::Vector& 
   return res;
 }
 
-dynamicgraph::Vector& AngleEstimator::compute_qdotSOUT(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& AngleEstimator::compute_qdotSOUT(
+    dynamicgraph::Vector& res, const int& time) {
   const dynamicgraph::Vector& dq = qdotSIN(time);
   const dynamicgraph::Vector& dx = xff_dotSOUT(time);
 

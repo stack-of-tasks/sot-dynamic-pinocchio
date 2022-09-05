@@ -40,7 +40,7 @@ class HumanoidRobotTest(unittest.TestCase):
 
     def test_build_robot_from_string(self):
 
-        with open(self.urdf_file_name, 'r') as urdf:
+        with open(self.urdf_file_name, "r") as urdf:
             urdfString = urdf.read()
         arobot = Robot("test_build_robot_from_string", urdfString=urdfString)
 
@@ -56,7 +56,10 @@ class HumanoidRobotTest(unittest.TestCase):
 
         loc_lowerJl = np.array(get(arobot.dynamic.lowerJl))
         pin_lowerJl = np.array(
-            arobot.pinocchioModel.lowerPositionLimit[1:len(arobot.pinocchioModel.lowerPositionLimit)])
+            arobot.pinocchioModel.lowerPositionLimit[
+                1 : len(arobot.pinocchioModel.lowerPositionLimit)
+            ]
+        )
 
         for i in range(0, len(loc_lowerJl), 1):
             if not loc_lowerJl[i] == pin_lowerJl[i]:
@@ -66,5 +69,5 @@ class HumanoidRobotTest(unittest.TestCase):
         Robot("test_build_robot_from_string", urdfFile=self.urdf_file_name)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -58,48 +58,62 @@ class SOTFORCECOMPENSATION_EXPORT ForceCompensation {
 
  public:
   ForceCompensation(void);
-  static MatrixForce& computeHandXworld(const MatrixRotation& worldRhand, const dynamicgraph::Vector& transSensorCom,
-                                        MatrixForce& res);
+  static MatrixForce& computeHandXworld(
+      const MatrixRotation& worldRhand,
+      const dynamicgraph::Vector& transSensorCom, MatrixForce& res);
 
-  static MatrixForce& computeHandVsensor(const MatrixRotation& sensorRhand, MatrixForce& res);
-  static MatrixForce& computeSensorXhand(const MatrixRotation& sensorRhand, const dynamicgraph::Vector& transSensorCom,
+  static MatrixForce& computeHandVsensor(const MatrixRotation& sensorRhand,
                                          MatrixForce& res);
-  /*   static dynamicgraph::Matrix& computeInertiaSensor( const dynamicgraph::Matrix& inertiaJoint, */
+  static MatrixForce& computeSensorXhand(
+      const MatrixRotation& sensorRhand,
+      const dynamicgraph::Vector& transSensorCom, MatrixForce& res);
+  /*   static dynamicgraph::Matrix& computeInertiaSensor( const
+   * dynamicgraph::Matrix& inertiaJoint, */
   /* 					   const MatrixForce& sensorXhand, */
   /* 					   dynamicgraph::Matrix& res ); */
 
   static dynamicgraph::Vector& computeTorsorCompensated(
-      const dynamicgraph::Vector& torqueInput, const dynamicgraph::Vector& torquePrecompensation,
-      const dynamicgraph::Vector& gravity, const MatrixForce& handXworld, const MatrixForce& handVsensor,
-      const dynamicgraph::Matrix& gainSensor, const dynamicgraph::Vector& momentum, dynamicgraph::Vector& res);
+      const dynamicgraph::Vector& torqueInput,
+      const dynamicgraph::Vector& torquePrecompensation,
+      const dynamicgraph::Vector& gravity, const MatrixForce& handXworld,
+      const MatrixForce& handVsensor, const dynamicgraph::Matrix& gainSensor,
+      const dynamicgraph::Vector& momentum, dynamicgraph::Vector& res);
 
-  static dynamicgraph::Vector& crossProduct_V_F(const dynamicgraph::Vector& velocity,
-                                                const dynamicgraph::Vector& force, dynamicgraph::Vector& res);
-  static dynamicgraph::Vector& computeMomentum(const dynamicgraph::Vector& velocity,
-                                               const dynamicgraph::Vector& acceleration,
-                                               const MatrixForce& sensorXhand,
-                                               const dynamicgraph::Matrix& inertiaJoint, dynamicgraph::Vector& res);
+  static dynamicgraph::Vector& crossProduct_V_F(
+      const dynamicgraph::Vector& velocity, const dynamicgraph::Vector& force,
+      dynamicgraph::Vector& res);
+  static dynamicgraph::Vector& computeMomentum(
+      const dynamicgraph::Vector& velocity,
+      const dynamicgraph::Vector& acceleration, const MatrixForce& sensorXhand,
+      const dynamicgraph::Matrix& inertiaJoint, dynamicgraph::Vector& res);
 
-  static dynamicgraph::Vector& computeDeadZone(const dynamicgraph::Vector& torqueInput,
-                                               const dynamicgraph::Vector& deadZoneLimit, dynamicgraph::Vector& res);
+  static dynamicgraph::Vector& computeDeadZone(
+      const dynamicgraph::Vector& torqueInput,
+      const dynamicgraph::Vector& deadZoneLimit, dynamicgraph::Vector& res);
 
  public:  // CALIBRATION
   std::list<dynamicgraph::Vector> torsorList;
   std::list<MatrixRotation> rotationList;
 
   void clearCalibration(void);
-  void addCalibrationValue(const dynamicgraph::Vector& torsor, const MatrixRotation& worldRhand);
+  void addCalibrationValue(const dynamicgraph::Vector& torsor,
+                           const MatrixRotation& worldRhand);
 
-  dynamicgraph::Vector calibrateTransSensorCom(const dynamicgraph::Vector& gravity, const MatrixRotation& handRsensor);
-  dynamicgraph::Vector calibrateGravity(const MatrixRotation& handRsensor, bool precompensationCalibration = false,
-                                        const MatrixRotation& hand0Rsensor = I3);
+  dynamicgraph::Vector calibrateTransSensorCom(
+      const dynamicgraph::Vector& gravity, const MatrixRotation& handRsensor);
+  dynamicgraph::Vector calibrateGravity(
+      const MatrixRotation& handRsensor,
+      bool precompensationCalibration = false,
+      const MatrixRotation& hand0Rsensor = I3);
 };
 
 /* --------------------------------------------------------------------- */
 /* --- PLUGIN ---------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin : public dg::Entity, public ForceCompensation {
+class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin
+    : public dg::Entity,
+      public ForceCompensation {
  public:
   static const std::string CLASS_NAME;
   virtual const std::string& getClassName(void) const { return CLASS_NAME; }

@@ -11,8 +11,8 @@
 /* --- INCLUDE --------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 /* JRL dynamic */
 #include <jrl/mal/boost.hh>
@@ -31,8 +31,11 @@ using namespace std;
 int main(int argc, char *argv[]) {
   if (argc != 6) {
     cerr << " This program takes 4 arguments: " << endl;
-    cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE VRML_FILE_NAME " << endl;
-    cerr << " PATH_TO_SPECIFICITIES_XML PATH PATH_TO_MAP_JOINT_2_RANK INITIAL_CONFIGURATION_FILE" << endl;
+    cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE VRML_FILE_NAME "
+         << endl;
+    cerr << " PATH_TO_SPECIFICITIES_XML PATH PATH_TO_MAP_JOINT_2_RANK "
+            "INITIAL_CONFIGURATION_FILE"
+         << endl;
     exit(0);
   }
 
@@ -42,14 +45,18 @@ int main(int argc, char *argv[]) {
   string aMapFromJointToRank = argv[4];
 
   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
-  CjrlHumanoidDynamicRobot *aHDR = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
+  CjrlHumanoidDynamicRobot *aHDR =
+      aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
 
   string RobotFileName = aPath + aName;
-  dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR, RobotFileName, aMapFromJointToRank, aSpecificitiesFileName);
+  dynamicsJRLJapan::parseOpenHRPVRMLFile(
+      *aHDR, RobotFileName, aMapFromJointToRank, aSpecificitiesFileName);
 
-  CjrlHumanoidDynamicRobot *aHDR2 = aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
+  CjrlHumanoidDynamicRobot *aHDR2 =
+      aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
   //  cout << "aHDMB2 Finished the initialization"<< endl;
-  dynamicsJRLJapan::parseOpenHRPVRMLFile(*aHDR2, RobotFileName, aMapFromJointToRank, aSpecificitiesFileName);
+  dynamicsJRLJapan::parseOpenHRPVRMLFile(
+      *aHDR2, RobotFileName, aMapFromJointToRank, aSpecificitiesFileName);
 
   std::ifstream ReferenceStateFile;
   ReferenceStateFile.open("teleop-rstate.log");
@@ -84,7 +91,8 @@ int main(int argc, char *argv[]) {
   unsigned int NbIterations = 0;
 
   const CjrlJoint *ActualLeftFoot, *ActualRightFoot, *ActualRightHand;
-  const CjrlJoint *ReferenceLeftFoot, *ReferenceRightFoot, *ReferenceRightHand, *ReferenceLeftHand;
+  const CjrlJoint *ReferenceLeftFoot, *ReferenceRightFoot, *ReferenceRightHand,
+      *ReferenceLeftHand;
 
   ReferenceRightFoot = aHDR->rightFoot()->associatedAnkle();
   ReferenceLeftFoot = aHDR->leftFoot()->associatedAnkle();
@@ -111,13 +119,16 @@ int main(int argc, char *argv[]) {
   aHDR->setProperty(aProperty, aValue);
   aHDR2->setProperty(aProperty, aValue);
   while (!ActualStateFile.eof()) {
-    for (unsigned int i = 0; i < 100; i++) ReferenceStateFile >> m_ReferenceStateData[i];
+    for (unsigned int i = 0; i < 100; i++)
+      ReferenceStateFile >> m_ReferenceStateData[i];
 
-    for (unsigned int i = 0; i < 40; i++) m_ReferenceStateConf[i + 6] = m_ReferenceStateData[i];
+    for (unsigned int i = 0; i < 40; i++)
+      m_ReferenceStateConf[i + 6] = m_ReferenceStateData[i];
 
     if (NbIterations > 0) {
       for (unsigned int i = 0; i < 46; i++)
-        m_ReferenceStateSpeed[i] = (m_ReferenceStateConf[i] - m_ReferenceStateConfPrev[i]) / 0.005;
+        m_ReferenceStateSpeed[i] =
+            (m_ReferenceStateConf[i] - m_ReferenceStateConfPrev[i]) / 0.005;
     } else {
       for (unsigned int i = 0; i < 46; i++) m_ReferenceStateSpeed[i] = 0.0;
     }
@@ -139,13 +150,19 @@ int main(int argc, char *argv[]) {
     ReferenceLeftHandPosition = ReferenceLeftHand->currentTransformation();
     ReferenceSupportFootPosition = ReferenceRightFoot->currentTransformation();
 
-    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 0, 3) << " ";
-    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 1, 3) << " ";
-    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 2, 3) << endl;
+    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 0, 3)
+                 << " ";
+    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 1, 3)
+                 << " ";
+    FileRefRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceRightHandPosition, 2, 3)
+                 << endl;
 
-    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 0, 3) << " ";
-    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 1, 3) << " ";
-    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 2, 3) << endl;
+    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 0, 3)
+                 << " ";
+    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 1, 3)
+                 << " ";
+    FileRefLHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ReferenceLeftHandPosition, 2, 3)
+                 << endl;
 
     /*
     cout << ReferenceRightHandPosition(0,3) << " "
@@ -160,11 +177,13 @@ int main(int argc, char *argv[]) {
     for (unsigned int i = 0; i < 131; i++) {
       ActualStateFile >> m_ActualStateData[i];
     }
-    for (unsigned int i = 0; i < 40; i++) m_ActualStateConf[i + 6] = m_ActualStateData[i];
+    for (unsigned int i = 0; i < 40; i++)
+      m_ActualStateConf[i + 6] = m_ActualStateData[i];
 
     if (NbIterations > 0) {
       for (unsigned int i = 6; i < 46; i++)
-        m_ActualStateSpeed[i] = (m_ActualStateConf[i] - m_ActualStateConfPrev[i]) / 0.005;
+        m_ActualStateSpeed[i] =
+            (m_ActualStateConf[i] - m_ActualStateConfPrev[i]) / 0.005;
     } else {
       for (unsigned int i = 0; i < 46; i++) m_ActualStateSpeed[i] = 0.0;
     }
@@ -182,9 +201,12 @@ int main(int argc, char *argv[]) {
 
     ActualRightHandPosition = ActualRightHand->currentTransformation();
 
-    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 0, 3) << " ";
-    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 1, 3) << " ";
-    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 2, 3) << endl;
+    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 0, 3)
+                    << " ";
+    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 1, 3)
+                    << " ";
+    FileActualRHPos << MAL_S4x4_MATRIX_ACCESS_I_J(ActualRightHandPosition, 2, 3)
+                    << endl;
 
     NbIterations++;
   }

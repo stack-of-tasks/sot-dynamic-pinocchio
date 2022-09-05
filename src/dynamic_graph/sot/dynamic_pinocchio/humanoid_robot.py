@@ -18,6 +18,7 @@ if sys.version_info.major == 2:
 
     class ABC:
         __metaclass__ = ABCMeta
+
 else:
     from abc import ABC, abstractmethod
 
@@ -55,6 +56,7 @@ class AbstractRobot(ABC):
 
         - dimension: The configuration size.
     """
+
     def _initialize(self):
         self.OperationalPoints = []
         """
@@ -120,42 +122,57 @@ class AbstractRobot(ABC):
         Which signals should be traced.
         """
         self.tracedSignals = {
-            'dynamic': ["com", "zmp", "angularmomentum", "position", "velocity", "acceleration"],
-            'device': ['zmp', 'control', 'state']
+            "dynamic": [
+                "com",
+                "zmp",
+                "angularmomentum",
+                "position",
+                "velocity",
+                "acceleration",
+            ],
+            "device": ["zmp", "control", "state"],
         }
 
     def help(self):
         print(AbstractHumanoidRobot.__doc__)
 
     def _removeMimicJoints(self, urdfFile=None, urdfString=None):
-        """ Parse the URDF, extract the mimic joints and call removeJoints. """
+        """Parse the URDF, extract the mimic joints and call removeJoints."""
         # get mimic joints
         import xml.etree.ElementTree as ET
+
         if urdfFile is not None:
-            assert urdfString is None, "One and only one of input argument should be provided"
+            assert (
+                urdfString is None
+            ), "One and only one of input argument should be provided"
             root = ET.parse(urdfFile)
         else:
-            assert urdfString is not None, "One and only one of input argument should be provided"
+            assert (
+                urdfString is not None
+            ), "One and only one of input argument should be provided"
             root = ET.fromstring(urdfString)
 
         mimicJoints = list()
-        for e in root.iter('joint'):
-            if 'name' in e.attrib:
-                name = e.attrib['name']
+        for e in root.iter("joint"):
+            if "name" in e.attrib:
+                name = e.attrib["name"]
                 for c in e:
-                    if hasattr(c, 'tag') and c.tag == 'mimic':
+                    if hasattr(c, "tag") and c.tag == "mimic":
                         mimicJoints.append(name)
         self.removeJoints(mimicJoints)
 
     def _storeRootJointType(self, rootJointType):
         if rootJointType == pinocchio.JointModelFreeFlyer:
-            self.rootJointType = 'freeflyer'
+            self.rootJointType = "freeflyer"
         elif rootJointType == pinocchio.JointModelPlanar:
-            self.rootJointType = 'planar'
+            self.rootJointType = "planar"
         elif rootJointType is None:
-            self.rootJointType = 'fixed'
+            self.rootJointType = "fixed"
         else:
-            raise TypeError('rootJointType should be either JointModelFreeflyer, JointModelPlanar, or None.')
+            raise TypeError(
+                "rootJointType should be either JointModelFreeflyer, "
+                "JointModelPlanar, or None."
+            )
 
     def removeJoints(self, joints):
         """
@@ -167,28 +184,40 @@ class AbstractRobot(ABC):
                 jointIds.append(self.pinocchioModel.getJointId(j))
         if len(jointIds) > 0:
             q = pinocchio.neutral(self.pinocchioModel)
-            self.pinocchioModel = pinocchio.buildReducedModel(self.pinocchioModel, jointIds, q)
+            self.pinocchioModel = pinocchio.buildReducedModel(
+                self.pinocchioModel, jointIds, q
+            )
             self.pinocchioData = pinocchio.Data(self.pinocchioModel)
 
-    def loadModelFromString(self, urdfString, rootJointType=pinocchio.JointModelFreeFlyer, removeMimicJoints=True):
-        """ Load a URDF model contained in a string
+    def loadModelFromString(
+        self,
+        urdfString,
+        rootJointType=pinocchio.JointModelFreeFlyer,
+        removeMimicJoints=True,
+    ):
+        """Load a URDF model contained in a string
         - param rootJointType: the root joint type. None for no root joint.
-        - param removeMimicJoints: if True, all the mimic joints found in the model are removed.
+        - param removeMimicJoints: if True, all the mimic joints found in the model
+          are removed.
         """
         if rootJointType is None:
             self.pinocchioModel = pinocchio.buildModelFromXML(urdfString)
         else:
-            self.pinocchioModel = pinocchio.buildModelFromXML(urdfString, rootJointType())
+            self.pinocchioModel = pinocchio.buildModelFromXML(
+                urdfString, rootJointType()
+            )
         self.pinocchioData = pinocchio.Data(self.pinocchioModel)
         if removeMimicJoints:
             self._removeMimicJoints(urdfString=urdfString)
         self._storeRootJointType(rootJointType)
 
-    def loadModelFromUrdf(self,
-                          urdfPath,
-                          urdfDir=None,
-                          rootJointType=pinocchio.JointModelFreeFlyer,
-                          removeMimicJoints=True):
+    def loadModelFromUrdf(
+        self,
+        urdfPath,
+        urdfDir=None,
+        rootJointType=pinocchio.JointModelFreeFlyer,
+        removeMimicJoints=True,
+    ):
         """
         Load a model using the pinocchio urdf parser. This parser looks
         for urdf files in which kinematics and dynamics information
@@ -198,12 +227,14 @@ class AbstractRobot(ABC):
         """
         if urdfPath.startswith("package://"):
             from os import path
+
             n1 = 10  # len("package://")
             n2 = urdfPath.index(path.sep, n1)
             pkg = urdfPath[n1:n2]
-            relpath = urdfPath[n2 + 1:]
+            relpath = urdfPath[n2 + 1 :]
 
             import rospkg
+
             rospack = rospkg.RosPack()
             abspkg = rospack.get_path(pkg)
             urdfFile = path.join(abspkg, relpath)
@@ -211,11 +242,14 @@ class AbstractRobot(ABC):
             urdfFile = urdfPath
         if urdfDir is None:
             import os
-            urdfDir = os.environ.get("ROS_PACKAGE_PATH", "").split(':')
+
+            urdfDir = os.environ.get("ROS_PACKAGE_PATH", "").split(":")
         if rootJointType is None:
             self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile)
         else:
-            self.pinocchioModel = pinocchio.buildModelFromUrdf(urdfFile, rootJointType())
+            self.pinocchioModel = pinocchio.buildModelFromUrdf(
+                urdfFile, rootJointType()
+            )
         self.pinocchioData = pinocchio.Data(self.pinocchioModel)
         if removeMimicJoints:
             self._removeMimicJoints(urdfFile=urdfFile)
@@ -266,12 +300,12 @@ class AbstractRobot(ABC):
         - the center of mass task used to keep the robot stability
         - one task per operational point to ease robot control
         """
-        if not hasattr(self, 'dynamic'):
+        if not hasattr(self, "dynamic"):
             raise RuntimeError("Dynamic robot model must be initialized first")
 
-        if not hasattr(self, 'device') or self.device is None:
+        if not hasattr(self, "device") or self.device is None:
             # raise RuntimeError("A device is already defined.")
-            self.device = RobotSimu(self.name + '_device')
+            self.device = RobotSimu(self.name + "_device")
         self.device.resize(self.dynamic.getDimension())
         """
         Robot timestep
@@ -280,13 +314,17 @@ class AbstractRobot(ABC):
 
         # Compute half sitting configuration
         import numpy
+
         """
         Half sitting configuration.
         """
         self.halfSitting = pinocchio.neutral(self.pinocchioModel)
         self.defineHalfSitting(self.halfSitting)
-        self.halfSitting = numpy.array(self.halfSitting[:3].tolist() + [0., 0., 0.]  # Replace quaternion by RPY.
-                                       + self.halfSitting[7:].tolist())
+        self.halfSitting = numpy.array(
+            self.halfSitting[:3].tolist()
+            + [0.0, 0.0, 0.0]  # Replace quaternion by RPY.
+            + self.halfSitting[7:].tolist()
+        )
         assert self.halfSitting.shape[0] == self.dynamic.getDimension()
 
         # Set the device limits.
@@ -298,9 +336,15 @@ class AbstractRobot(ABC):
             return [-x for x in v]
 
         self.dynamic.add_signals()
-        self.device.setPositionBounds(get(self.dynamic.lowerJl), get(self.dynamic.upperJl))
-        self.device.setVelocityBounds(-get(self.dynamic.upperVl), get(self.dynamic.upperVl))
-        self.device.setTorqueBounds(-get(self.dynamic.upperTl), get(self.dynamic.upperTl))
+        self.device.setPositionBounds(
+            get(self.dynamic.lowerJl), get(self.dynamic.upperJl)
+        )
+        self.device.setVelocityBounds(
+            -get(self.dynamic.upperVl), get(self.dynamic.upperVl)
+        )
+        self.device.setTorqueBounds(
+            -get(self.dynamic.upperTl), get(self.dynamic.upperTl)
+        )
 
         # Freeflyer reference frame should be the same as global
         # frame so that operational point positions correspond to
@@ -309,60 +353,63 @@ class AbstractRobot(ABC):
         plug(self.device.state, self.dynamic.position)
 
         if self.enableVelocityDerivator:
-            self.velocityDerivator = Derivator_of_Vector('velocityDerivator')
+            self.velocityDerivator = Derivator_of_Vector("velocityDerivator")
             self.velocityDerivator.dt.value = self.timeStep
             plug(self.device.state, self.velocityDerivator.sin)
             plug(self.velocityDerivator.sout, self.dynamic.velocity)
         else:
-            self.dynamic.velocity.value = numpy.zeros([
-                self.dimension,
-            ])
+            self.dynamic.velocity.value = numpy.zeros(
+                [
+                    self.dimension,
+                ]
+            )
 
         if self.enableAccelerationDerivator:
-            self.accelerationDerivator = \
-                Derivator_of_Vector('accelerationDerivator')
+            self.accelerationDerivator = Derivator_of_Vector("accelerationDerivator")
             self.accelerationDerivator.dt.value = self.timeStep
             plug(self.velocityDerivator.sout, self.accelerationDerivator.sin)
             plug(self.accelerationDerivator.sout, self.dynamic.acceleration)
         else:
-            self.dynamic.acceleration.value = numpy.zeros([
-                self.dimension,
-            ])
+            self.dynamic.acceleration.value = numpy.zeros(
+                [
+                    self.dimension,
+                ]
+            )
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
-            self.autoRecomputedSignals.append('{0}.{1}'.format(entityName, signalName))
+            self.autoRecomputedSignals.append("{0}.{1}".format(entityName, signalName))
             addTrace(self, self.tracer, entityName, signalName)
 
     def initializeTracer(self):
         if not self.tracer:
-            self.tracer = TracerRealTime('trace')
+            self.tracer = TracerRealTime("trace")
             self.tracer.setBufferSize(self.tracerSize)
-            self.tracer.open('/tmp/', 'dg_', '.dat')
+            self.tracer.open("/tmp/", "dg_", ".dat")
             # Recompute trace.triger at each iteration to enable tracing.
-            self.device.after.addSignal('{0}.triger'.format(self.tracer.name))
+            self.device.after.addSignal("{0}.triger".format(self.tracer.name))
 
     def traceDefaultSignals(self):
         # Geometry / operational points
-        for s in self.OperationalPoints + self.tracedSignals['dynamic']:
+        for s in self.OperationalPoints + self.tracedSignals["dynamic"]:
             self.addTrace(self.dynamic.name, s)
 
         # Geometry / frames
         for (frameName, _, _) in self.AdditionalFrames:
-            for s in ['position', 'jacobian']:
+            for s in ["position", "jacobian"]:
                 self.addTrace(self.frames[frameName].name, s)
 
         # Device
-        for s in self.tracedSignals['device']:
+        for s in self.tracedSignals["device"]:
             self.addTrace(self.device.name, s)
         if type(self.device) != RobotSimu:
-            self.addTrace(self.device.name, 'robotState')
+            self.addTrace(self.device.name, "robotState")
 
         # Misc
         if self.enableVelocityDerivator:
-            self.addTrace(self.velocityDerivator.name, 'sout')
+            self.addTrace(self.velocityDerivator.name, "sout")
         if self.enableAccelerationDerivator:
-            self.addTrace(self.accelerationDerivator.name, 'sout')
+            self.addTrace(self.accelerationDerivator.name, "sout")
 
     def __init__(self, name, tracer=None):
         self._initialize()
@@ -415,8 +462,12 @@ class AbstractRobot(ABC):
         self.dynamic.Jcom.recompute(self.device.state.time + 1)
 
         for op in self.OperationalPoints:
-            self.dynamic.signal(self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
-            self.dynamic.signal('J' + self.OperationalPointsMap[op]).recompute(self.device.state.time + 1)
+            self.dynamic.signal(self.OperationalPointsMap[op]).recompute(
+                self.device.state.time + 1
+            )
+            self.dynamic.signal("J" + self.OperationalPointsMap[op]).recompute(
+                self.device.state.time + 1
+            )
 
     def getActuatedJoints(self):
         """
@@ -441,4 +492,6 @@ class AbstractHumanoidRobot(AbstractRobot):
 
     def _initialize(self):
         AbstractRobot._initialize(self)
-        self.OperationalPoints.extend(['left-wrist', 'right-wrist', 'left-ankle', 'right-ankle', 'gaze'])
+        self.OperationalPoints.extend(
+            ["left-wrist", "right-wrist", "left-ankle", "right-ankle", "gaze"]
+        )

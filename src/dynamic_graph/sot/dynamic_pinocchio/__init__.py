@@ -14,8 +14,13 @@ def fromSotToPinocchio(q_sot, freeflyer=True):
         sp = sin(p)
         sy = sin(y)
 
-        rotmat = np.matrix([[cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
-                            [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr], [-sp, cp * sr, cp * cr]])
+        rotmat = np.matrix(
+            [
+                [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
+                [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
+                [-sp, cp * sr, cp * cr],
+            ]
+        )
 
         d0 = rotmat[0, 0]
         d1 = rotmat[1, 1]
@@ -31,13 +36,13 @@ def fromSotToPinocchio(q_sot, freeflyer=True):
         else:
             # Trace is less than zero, so need to determine which
             # major diagonal is largest
-            if ((d0 > d1) and (d0 > d2)):
+            if (d0 > d1) and (d0 > d2):
                 s = 0.5 / sqrt(1 + d0 - d1 - d2)
                 _x = 0.5 * s
                 _y = (rotmat[0, 1] + rotmat[1, 0]) * s
                 _z = (rotmat[0, 2] + rotmat[2, 0]) * s
                 _r = (rotmat[1, 2] + rotmat[2, 1]) * s
-            elif (d1 > d2):
+            elif d1 > d2:
                 s = 0.5 / sqrt(1 + d0 - d1 - d2)
                 _x = (rotmat[0, 1] + rotmat[1, 0]) * s
                 _y = 0.5 * s

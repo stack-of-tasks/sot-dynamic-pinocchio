@@ -21,6 +21,7 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
 #include <sot/core/matrix-geometry.hh>
 
 /* STD */
@@ -66,9 +67,11 @@ class SOTMASSAPPARENT_EXPORT MassApparent : public dg::Entity {
   dg::SignalTimeDependent<dynamicgraph::Matrix, int> inertiaInverseSOUT;
 
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res, const int& time);
+  dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res,
+                                           const int& time);
   dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res, const int& time);
-  dynamicgraph::Matrix& computeInertiaInverse(dynamicgraph::Matrix& res, const int& time);
+  dynamicgraph::Matrix& computeInertiaInverse(dynamicgraph::Matrix& res,
+                                              const int& time);
 };
 
 }  // namespace sot

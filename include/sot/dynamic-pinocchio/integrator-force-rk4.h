@@ -21,9 +21,9 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-geometry.hh>
-
 #include <sot/dynamic-pinocchio/integrator-force.h>
+
+#include <sot/core/matrix-geometry.hh>
 
 /* STD */
 #include <string>
@@ -61,7 +61,8 @@ class SOTINTEGRATORFORCERK4_EXPORT IntegratorForceRK4 : public IntegratorForce {
 
  public: /* --- SIGNAL --- */
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Vector& computeDerivativeRK4(dynamicgraph::Vector& res, const int& time);
+  dynamicgraph::Vector& computeDerivativeRK4(dynamicgraph::Vector& res,
+                                             const int& time);
 };
 
 } /* namespace sot */

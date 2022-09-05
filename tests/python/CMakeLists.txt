@@ -1,6 +1,4 @@
-SET(${PROJECT_NAME}_PYTHON_TESTS
-  humanoid_robot
-  )
-FOREACH(TEST ${${PROJECT_NAME}_PYTHON_TESTS})
-  ADD_PYTHON_UNIT_TEST("py-${TEST}" "tests/python/${TEST}.py")
-ENDFOREACH(TEST ${${PROJECT_NAME}_PYTHON_TESTS})
+set(${PROJECT_NAME}_PYTHON_TESTS humanoid_robot)
+foreach(TEST ${${PROJECT_NAME}_PYTHON_TESTS})
+  add_python_unit_test("py-${TEST}" "tests/python/${TEST}.py")
+endforeach(TEST ${${PROJECT_NAME}_PYTHON_TESTS})

@@ -9,11 +9,11 @@
 #ifndef ANGLE_ESTIMATOR_COMMAND_H
 #define ANGLE_ESTIMATOR_COMMAND_H
 
-#include <boost/assign/list_of.hpp>
-
-#include <dynamic-graph/command.h>
-#include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command.h>
+
+#include <boost/assign/list_of.hpp>
 
 namespace dynamicgraph {
 namespace sot {
@@ -32,7 +32,9 @@ class FromSensor : public Command {
   /// \param entity instance of Entity owning this command
   /// \param docstring documentation of the command
   FromSensor(Dynamic& entity, const std::string& docstring)
-      : Command(entity, boost::assign::list_of(Value::STRING)(Value::STRING)(Value::STRING)(Value::STRING),
+      : Command(entity,
+                boost::assign::list_of(Value::STRING)(Value::STRING)(
+                    Value::STRING)(Value::STRING),
                 docstring) {}
   virtual Value doExecute() {
     Dynamic& robot = static_cast<Dynamic&>(owner());

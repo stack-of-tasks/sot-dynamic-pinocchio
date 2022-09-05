@@ -21,9 +21,9 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
-#include <sot/core/matrix-geometry.hh>
-
 #include <sot/dynamic-pinocchio/integrator-force.h>
+
+#include <sot/core/matrix-geometry.hh>
 
 /* STD */
 #include <string>
@@ -50,7 +50,8 @@ namespace dg = dynamicgraph;
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact : public IntegratorForce {
+class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact
+    : public IntegratorForce {
  public:
   static const std::string CLASS_NAME;
 
@@ -61,7 +62,8 @@ class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact : public IntegratorFor
 
  public: /* --- SIGNAL --- */
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Vector& computeVelocityExact(dynamicgraph::Vector& res, const int& time);
+  dynamicgraph::Vector& computeVelocityExact(dynamicgraph::Vector& res,
+                                             const int& time);
 };
 
 } /* namespace sot */

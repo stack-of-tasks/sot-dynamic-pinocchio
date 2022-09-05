@@ -7,9 +7,10 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/integrator-force.h>
-#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/integrator-force.h>
+
+#include <sot/core/debug.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
@@ -21,22 +22,29 @@ IntegratorForce::IntegratorForce(const std::string& name)
     : Entity(name),
       timeStep(TIME_STEP_DEFAULT),
       forceSIN(NULL, "sotIntegratorForce(" + name + ")::input(vector)::force"),
-      massInverseSIN(NULL, "sotIntegratorForce(" + name + ")::input(matrix)::massInverse"),
-      frictionSIN(NULL, "sotIntegratorForce(" + name + ")::input(matrix)::friction"),
-      velocityPrecSIN(NULL, "sotIntegratorForce(" + name + ")::input(matrix)::vprec")
+      massInverseSIN(
+          NULL, "sotIntegratorForce(" + name + ")::input(matrix)::massInverse"),
+      frictionSIN(NULL,
+                  "sotIntegratorForce(" + name + ")::input(matrix)::friction"),
+      velocityPrecSIN(NULL,
+                      "sotIntegratorForce(" + name + ")::input(matrix)::vprec")
 
       ,
-      velocityDerivativeSOUT(boost::bind(&IntegratorForce::computeDerivative, this, _1, _2),
-                             velocityPrecSIN << forceSIN << massInverseSIN << frictionSIN,
-                             "sotIntegratorForce(" + name + ")::output(Vector)::velocityDerivative"),
+      velocityDerivativeSOUT(
+          boost::bind(&IntegratorForce::computeDerivative, this, _1, _2),
+          velocityPrecSIN << forceSIN << massInverseSIN << frictionSIN,
+          "sotIntegratorForce(" + name +
+              ")::output(Vector)::velocityDerivative"),
       velocitySOUT(boost::bind(&IntegratorForce::computeIntegral, this, _1, _2),
                    velocityPrecSIN << velocityDerivativeSOUT,
                    "sotIntegratorForce(" + name + ")::output(Vector)::velocity")
 
       ,
       massSIN(NULL, "sotIntegratorForce(" + name + ")::input(matrix)::mass"),
-      massInverseSOUT(boost::bind(&IntegratorForce::computeMassInverse, this, _1, _2), massSIN,
-                      "sotIntegratorForce(" + name + ")::input(matrix)::massInverseOUT") {
+      massInverseSOUT(
+          boost::bind(&IntegratorForce::computeMassInverse, this, _1, _2),
+          massSIN,
+          "sotIntegratorForce(" + name + ")::input(matrix)::massInverseOUT") {
   sotDEBUGIN(5);
 
   signalRegistration(forceSIN);
@@ -67,7 +75,8 @@ IntegratorForce::~IntegratorForce(void) {
 /* The derivative of the signal is such that: M v_dot + B v = f. We deduce:
  * v_dot =  M^-1 (f - Bv)
  */
-dynamicgraph::Vector& IntegratorForce::computeDerivative(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& IntegratorForce::computeDerivative(
+    dynamicgraph::Vector& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);
@@ -94,7 +103,8 @@ dynamicgraph::Vector& IntegratorForce::computeDerivative(dynamicgraph::Vector& r
   return res;
 }
 
-dynamicgraph::Vector& IntegratorForce::computeIntegral(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& IntegratorForce::computeIntegral(
+    dynamicgraph::Vector& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& dvel = velocityDerivativeSOUT(time);
@@ -111,7 +121,8 @@ dynamicgraph::Vector& IntegratorForce::computeIntegral(dynamicgraph::Vector& res
   return res;
 }
 
-dynamicgraph::Matrix& IntegratorForce::computeMassInverse(dynamicgraph::Matrix& res, const int& time) {
+dynamicgraph::Matrix& IntegratorForce::computeMassInverse(
+    dynamicgraph::Matrix& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Matrix& mass = massSIN(time);

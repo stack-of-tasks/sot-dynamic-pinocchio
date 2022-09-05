@@ -7,25 +7,30 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/waist-attitude-from-sensor.h>
-#include <sot/core/debug.hh>
-#include <dynamic-graph/factory.h>
-
-#include <dynamic-graph/command.h>
-#include <dynamic-graph/command-setter.h>
 #include <dynamic-graph/command-getter.h>
+#include <dynamic-graph/command-setter.h>
+#include <dynamic-graph/command.h>
+#include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/waist-attitude-from-sensor.h>
+
+#include <sot/core/debug.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistAttitudeFromSensor, "WaistAttitudeFromSensor");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistAttitudeFromSensor,
+                                   "WaistAttitudeFromSensor");
 
 WaistAttitudeFromSensor::WaistAttitudeFromSensor(const std::string& name)
     : Entity(name),
-      attitudeSensorSIN(NULL, "sotWaistAttitudeFromSensor(" + name + ")::input(MatrixRotation)::attitudeIN"),
-      positionSensorSIN(NULL, "sotWaistAttitudeFromSensor(" + name + ")::input(matrixHomo)::position"),
-      attitudeWaistSOUT(boost::bind(&WaistAttitudeFromSensor::computeAttitudeWaist, this, _1, _2),
-                        attitudeSensorSIN << positionSensorSIN,
-                        "sotWaistAttitudeFromSensor(" + name + ")::output(RPY)::attitude") {
+      attitudeSensorSIN(NULL, "sotWaistAttitudeFromSensor(" + name +
+                                  ")::input(MatrixRotation)::attitudeIN"),
+      positionSensorSIN(NULL, "sotWaistAttitudeFromSensor(" + name +
+                                  ")::input(matrixHomo)::position"),
+      attitudeWaistSOUT(
+          boost::bind(&WaistAttitudeFromSensor::computeAttitudeWaist, this, _1,
+                      _2),
+          attitudeSensorSIN << positionSensorSIN,
+          "sotWaistAttitudeFromSensor(" + name + ")::output(RPY)::attitude") {
   sotDEBUGIN(5);
 
   signalRegistration(attitudeSensorSIN);
@@ -45,7 +50,8 @@ WaistAttitudeFromSensor::~WaistAttitudeFromSensor(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-VectorRollPitchYaw& WaistAttitudeFromSensor::computeAttitudeWaist(VectorRollPitchYaw& res, const int& time) {
+VectorRollPitchYaw& WaistAttitudeFromSensor::computeAttitudeWaist(
+    VectorRollPitchYaw& res, const int& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMchest = positionSensorSIN(time);
@@ -67,15 +73,21 @@ VectorRollPitchYaw& WaistAttitudeFromSensor::computeAttitudeWaist(VectorRollPitc
 /* === WaistPoseFromSensorAndContact ===================================== */
 /* === WaistPoseFromSensorAndContact ===================================== */
 
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistPoseFromSensorAndContact, "WaistPoseFromSensorAndContact");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(WaistPoseFromSensorAndContact,
+                                   "WaistPoseFromSensorAndContact");
 
-WaistPoseFromSensorAndContact::WaistPoseFromSensorAndContact(const std::string& name)
+WaistPoseFromSensorAndContact::WaistPoseFromSensorAndContact(
+    const std::string& name)
     : WaistAttitudeFromSensor(name),
       fromSensor_(false),
-      positionContactSIN(NULL, "sotWaistPoseFromSensorAndContact(" + name + ")::input(matrixHomo)::contact"),
-      positionWaistSOUT(boost::bind(&WaistPoseFromSensorAndContact::computePositionWaist, this, _1, _2),
-                        attitudeWaistSOUT << positionContactSIN,
-                        "sotWaistPoseFromSensorAndContact(" + name + ")::output(RPY+T)::positionWaist") {
+      positionContactSIN(NULL, "sotWaistPoseFromSensorAndContact(" + name +
+                                   ")::input(matrixHomo)::contact"),
+      positionWaistSOUT(
+          boost::bind(&WaistPoseFromSensorAndContact::computePositionWaist,
+                      this, _1, _2),
+          attitudeWaistSOUT << positionContactSIN,
+          "sotWaistPoseFromSensorAndContact(" + name +
+              ")::output(RPY+T)::positionWaist") {
   sotDEBUGIN(5);
 
   signalRegistration(positionContactSIN);
@@ -85,23 +97,29 @@ WaistPoseFromSensorAndContact::WaistPoseFromSensorAndContact(const std::string& 
   std::string docstring;
   docstring =
       "    \n"
-      "    Set flag specifying whether angles are measured from sensors or simulated.\n"
+      "    Set flag specifying whether angles are measured from sensors or "
+      "simulated.\n"
       "    \n"
       "      Input:\n"
       "        - a boolean value.\n"
       "    \n";
-  addCommand("setFromSensor", new ::dynamicgraph::command::Setter<WaistPoseFromSensorAndContact, bool>(
-                                  *this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
+  addCommand(
+      "setFromSensor",
+      new ::dynamicgraph::command::Setter<WaistPoseFromSensorAndContact, bool>(
+          *this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
 
   docstring =
       "    \n"
-      "    Get flag specifying whether angles are measured from sensors or simulated.\n"
+      "    Get flag specifying whether angles are measured from sensors or "
+      "simulated.\n"
       "    \n"
       "      No input,\n"
       "      return a boolean value.\n"
       "    \n";
-  addCommand("getFromSensor", new ::dynamicgraph::command::Getter<WaistPoseFromSensorAndContact, bool>(
-                                  *this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
+  addCommand(
+      "getFromSensor",
+      new ::dynamicgraph::command::Getter<WaistPoseFromSensorAndContact, bool>(
+          *this, &WaistPoseFromSensorAndContact::fromSensor, docstring));
 
   sotDEBUGOUT(5);
 }
@@ -116,7 +134,8 @@ WaistPoseFromSensorAndContact::~WaistPoseFromSensorAndContact(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-dynamicgraph::Vector& WaistPoseFromSensorAndContact::computePositionWaist(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& WaistPoseFromSensorAndContact::computePositionWaist(
+    dynamicgraph::Vector& res, const int& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMcontact = positionContactSIN(time);

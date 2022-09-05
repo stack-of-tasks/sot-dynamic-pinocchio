@@ -7,19 +7,23 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/integrator-force-exact.h>
-#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/integrator-force-exact.h>
+
+#include <sot/core/debug.hh>
 #include <sot/core/exception-dynamic.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
-DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceExact, "IntegratorForceExact");
+DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceExact,
+                                   "IntegratorForceExact");
 
-IntegratorForceExact::IntegratorForceExact(const std::string& name) : IntegratorForce(name) {
+IntegratorForceExact::IntegratorForceExact(const std::string& name)
+    : IntegratorForce(name) {
   sotDEBUGIN(5);
 
-  velocitySOUT.setFunction(boost::bind(&IntegratorForceExact::computeVelocityExact, this, _1, _2));
+  velocitySOUT.setFunction(
+      boost::bind(&IntegratorForceExact::computeVelocityExact, this, _1, _2));
   velocitySOUT.removeDependency(velocityDerivativeSOUT);
 
   sotDEBUGOUT(5);
@@ -37,8 +41,10 @@ IntegratorForceExact::~IntegratorForceExact(void) {
 /* --- EIGEN VALUE ---------------------------------------------------------- */
 
 extern "C" {
-void dgeev_(const char* jobvl, const char* jobvr, const int* n, double* a, const int* lda, double* wr, double* wi,
-            double* vl, const int* ldvl, double* vr, const int* ldvr, double* work, const int* lwork, int* info);
+void dgeev_(const char* jobvl, const char* jobvr, const int* n, double* a,
+            const int* lda, double* wr, double* wi, double* vl, const int* ldvl,
+            double* vr, const int* ldvr, double* work, const int* lwork,
+            int* info);
 }
 
 int geev(Matrix& a, Eigen::VectorXcd& w, Matrix& vl2, Matrix& vr2) {
@@ -57,33 +63,37 @@ int geev(Matrix& a, Eigen::VectorXcd& w, Matrix& vl2, Matrix& vr2) {
   int lwork = -1;
   double work_temp;
   int result = 0;
-  dgeev_(&jobvl, &jobvr, &n, MRAWDATA(a), &n, MRAWDATA(wr), MRAWDATA(wi), vl_real, &ldvl, vr_real, &ldvr, &work_temp,
-         &lwork, &result);
+  dgeev_(&jobvl, &jobvr, &n, MRAWDATA(a), &n, MRAWDATA(wr), MRAWDATA(wi),
+         vl_real, &ldvl, vr_real, &ldvr, &work_temp, &lwork, &result);
   if (result != 0) return result;
 
   lwork = (int)work_temp;
   Vector work(lwork);
-  dgeev_(&jobvl, &jobvr, &n, MRAWDATA(a), &n, MRAWDATA(wr), MRAWDATA(wi), vl_real, &ldvl, vr_real, &ldvr,
-         MRAWDATA(work), &lwork, &result);
+  dgeev_(&jobvl, &jobvr, &n, MRAWDATA(a), &n, MRAWDATA(wr), MRAWDATA(wi),
+         vl_real, &ldvl, vr_real, &ldvr, MRAWDATA(work), &lwork, &result);
 
   for (int i = 0; i < n; i++) w[i] = std::complex<double>(wr[i], wi[i]);
 
   return result;
 }
 
-static void eigenDecomp(const dynamicgraph::Matrix& M, dynamicgraph::Matrix& P, dynamicgraph::Vector& eig) {
+static void eigenDecomp(const dynamicgraph::Matrix& M, dynamicgraph::Matrix& P,
+                        dynamicgraph::Vector& eig) {
   long int SIZE = M.cols();
   Matrix Y(M);
   Eigen::VectorXcd evals(SIZE);
   Matrix vl(SIZE, SIZE);
   Matrix vr(SIZE, SIZE);
 
-  //  const int errCode = lapack::geev(Y, evals, &vl, &vr, lapack::optimal_workspace());
+  //  const int errCode = lapack::geev(Y, evals, &vl, &vr,
+  //  lapack::optimal_workspace());
   const int errCode = geev(Y, evals, vl, vr);
   if (errCode < 0) {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION, "Invalid argument to geev", "");
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION,
+                               "Invalid argument to geev", "");
   } else if (errCode > 0) {
-    SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION, "No convergence for given matrix", "");
+    SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION,
+                               "No convergence for given matrix", "");
   }
 
   P.resize(SIZE, SIZE);
@@ -94,14 +104,16 @@ static void eigenDecomp(const dynamicgraph::Matrix& M, dynamicgraph::Matrix& P, 
     }
     eig(i) = evals(i).real();
     if (fabsf(static_cast<float>(evals(i).imag())) > 1e-5) {
-      SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION, "Error imaginary part not null. ",
+      SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION,
+                                 "Error imaginary part not null. ",
                                  "(at position %d: %f)", i, evals(i).imag());
     }
   }
   return;
 }
 
-static void expMatrix(const dynamicgraph::Matrix& MiB, dynamicgraph::Matrix& Mexp) {
+static void expMatrix(const dynamicgraph::Matrix& MiB,
+                      dynamicgraph::Matrix& Mexp) {
   long int SIZE = MiB.cols();
 
   dynamicgraph::Matrix Pmib(MiB.cols(), MiB.cols());
@@ -133,7 +145,8 @@ static void expMatrix(const dynamicgraph::Matrix& MiB, dynamicgraph::Matrix& Mex
  * dv = exp( M^-1.B.t) ( v0-B^-1.f ) + B^-1.f
  */
 
-dynamicgraph::Vector& IntegratorForceExact::computeVelocityExact(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& IntegratorForceExact::computeVelocityExact(
+    dynamicgraph::Vector& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);

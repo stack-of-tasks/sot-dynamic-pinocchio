@@ -21,6 +21,7 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
 #include <sot/core/matrix-geometry.hh>
 
 /* STD */
@@ -64,7 +65,8 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom : public dg::Entity {
   virtual ~ZmprefFromCom(void);
 
  public: /* --- SIGNAL --- */
-  dynamicgraph::Vector& computeZmpref(dynamicgraph::Vector& res, const int& time);
+  dynamicgraph::Vector& computeZmpref(dynamicgraph::Vector& res,
+                                      const int& time);
 
   dg::SignalPtr<MatrixHomogeneous, int> waistPositionSIN;
   dg::SignalPtr<dynamicgraph::Vector, int> comPositionSIN;

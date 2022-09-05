@@ -7,18 +7,21 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/integrator-force-rk4.h>
-#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/integrator-force-rk4.h>
+
+#include <sot/core/debug.hh>
 
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(IntegratorForceRK4, "IntegratorForceRK4");
 
-IntegratorForceRK4::IntegratorForceRK4(const std::string& name) : IntegratorForce(name) {
+IntegratorForceRK4::IntegratorForceRK4(const std::string& name)
+    : IntegratorForce(name) {
   sotDEBUGIN(5);
 
-  velocityDerivativeSOUT.setFunction(boost::bind(&IntegratorForceRK4::computeDerivativeRK4, this, _1, _2));
+  velocityDerivativeSOUT.setFunction(
+      boost::bind(&IntegratorForceRK4::computeDerivativeRK4, this, _1, _2));
 
   sotDEBUGOUT(5);
 }
@@ -40,7 +43,8 @@ IntegratorForceRK4::~IntegratorForceRK4(void) {
  */
 static const double rk_fact[4] = {1., 2., 2., 1.};
 
-dynamicgraph::Vector& IntegratorForceRK4::computeDerivativeRK4(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& IntegratorForceRK4::computeDerivativeRK4(
+    dynamicgraph::Vector& res, const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);

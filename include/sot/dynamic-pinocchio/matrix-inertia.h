@@ -11,10 +11,9 @@
 #define __SOT_SOTMATRIXINERTIA_H__
 
 #include <ostream>
+#include <sot/core/matrix-geometry.hh>
 
 #include "dynamic-graph/linear-algebra.h"
-
-#include <sot/core/matrix-geometry.hh>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */

@@ -7,9 +7,10 @@
  *
  */
 
-#include <sot/dynamic-pinocchio/zmpreffromcom.h>
-#include <sot/core/debug.hh>
 #include <dynamic-graph/factory.h>
+#include <sot/dynamic-pinocchio/zmpreffromcom.h>
+
+#include <sot/core/debug.hh>
 using namespace dynamicgraph::sot;
 using namespace dynamicgraph;
 DYNAMICGRAPH_FACTORY_ENTITY_PLUGIN(ZmprefFromCom, "ZmprefFromCom");
@@ -21,8 +22,10 @@ ZmprefFromCom::ZmprefFromCom(const std::string& name)
     : Entity(name),
       dt(DT_DEFAULT),
       footHeight(FOOT_HEIGHT_DEFAULT),
-      waistPositionSIN(NULL, "sotZmprefFromCom(" + name + ")::input(MatrixHomo)::waist"),
-      comPositionSIN(NULL, "sotZmprefFromCom(" + name + ")::input(Vector)::com"),
+      waistPositionSIN(
+          NULL, "sotZmprefFromCom(" + name + ")::input(MatrixHomo)::waist"),
+      comPositionSIN(NULL,
+                     "sotZmprefFromCom(" + name + ")::input(Vector)::com"),
       dcomSIN(NULL, "sotZmprefFromCom(" + name + ")::input(Vector)::dcom"),
       zmprefSOUT(boost::bind(&ZmprefFromCom::computeZmpref, this, _1, _2),
                  waistPositionSIN << comPositionSIN << dcomSIN,
@@ -47,7 +50,8 @@ ZmprefFromCom::~ZmprefFromCom(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
-dynamicgraph::Vector& ZmprefFromCom::computeZmpref(dynamicgraph::Vector& res, const int& time) {
+dynamicgraph::Vector& ZmprefFromCom::computeZmpref(dynamicgraph::Vector& res,
+                                                   const int& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& com = comPositionSIN(time);

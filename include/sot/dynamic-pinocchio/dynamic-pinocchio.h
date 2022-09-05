@@ -15,29 +15,31 @@
 /* --------------------------------------------------------------------- */
 
 /* STD */
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 
 /* SOT */
-#include <pinocchio/fwd.hpp>
-#include <sot/core/flags.hh>
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
+#include <pinocchio/fwd.hpp>
 #include <sot/core/exception-dynamic.hh>
+#include <sot/core/flags.hh>
 #include <sot/core/matrix-geometry.hh>
 /* Matrix */
 #include <dynamic-graph/linear-algebra.h>
+
 #include <sot/dynamic-pinocchio/deprecated.hh>
 
 /* PINOCCHIO */
+#include <pinocchio/algorithm/frames.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/macros.hpp>
 #include <pinocchio/multibody/model.hpp>
-#include <pinocchio/algorithm/rnea.hpp>
-#include <pinocchio/algorithm/jacobian.hpp>
-#include <pinocchio/algorithm/frames.hpp>
 
 /* --------------------------------------------------------------------- */
 /* --- API ------------------------------------------------------------- */
@@ -88,18 +90,23 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
  public:
   /* --- SIGNAL ACTIVATION --- */
-  dg::SignalTimeDependent<dg::Matrix, int>& createEndeffJacobianSignal(const std::string& signame, const std::string&,
-                                                                       const bool isLocal = true);
-  dg::SignalTimeDependent<dg::Matrix, int>& createJacobianSignal(const std::string& signame, const std::string&);
+  dg::SignalTimeDependent<dg::Matrix, int>& createEndeffJacobianSignal(
+      const std::string& signame, const std::string&,
+      const bool isLocal = true);
+  dg::SignalTimeDependent<dg::Matrix, int>& createJacobianSignal(
+      const std::string& signame, const std::string&);
   void destroyJacobianSignal(const std::string& signame);
 
-  dg::SignalTimeDependent<MatrixHomogeneous, int>& createPositionSignal(const std::string&, const std::string&);
+  dg::SignalTimeDependent<MatrixHomogeneous, int>& createPositionSignal(
+      const std::string&, const std::string&);
   void destroyPositionSignal(const std::string& signame);
 
-  dg::SignalTimeDependent<dg::Vector, int>& createVelocitySignal(const std::string&, const std::string&);
+  dg::SignalTimeDependent<dg::Vector, int>& createVelocitySignal(
+      const std::string&, const std::string&);
   void destroyVelocitySignal(const std::string& signame);
 
-  dg::SignalTimeDependent<dg::Vector, int>& createAccelerationSignal(const std::string&, const std::string&);
+  dg::SignalTimeDependent<dg::Vector, int>& createAccelerationSignal(
+      const std::string&, const std::string&);
   void destroyAccelerationSignal(const std::string& signame);
 
   /*! @} */
@@ -134,10 +141,14 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
   dg::SignalTimeDependent<dg::Vector, int> comSOUT;
   dg::SignalTimeDependent<dg::Matrix, int> inertiaSOUT;
 
-  dg::SignalTimeDependent<dg::Matrix, int>& jacobiansSOUT(const std::string& name);
-  dg::SignalTimeDependent<MatrixHomogeneous, int>& positionsSOUT(const std::string& name);
-  dg::SignalTimeDependent<dg::Vector, int>& velocitiesSOUT(const std::string& name);
-  dg::SignalTimeDependent<dg::Vector, int>& accelerationsSOUT(const std::string& name);
+  dg::SignalTimeDependent<dg::Matrix, int>& jacobiansSOUT(
+      const std::string& name);
+  dg::SignalTimeDependent<MatrixHomogeneous, int>& positionsSOUT(
+      const std::string& name);
+  dg::SignalTimeDependent<dg::Vector, int>& velocitiesSOUT(
+      const std::string& name);
+  dg::SignalTimeDependent<dg::Vector, int>& accelerationsSOUT(
+      const std::string& name);
 
   dg::SignalTimeDependent<double, int> footHeightSOUT;
   dg::SignalTimeDependent<dg::Vector, int> upperJlSOUT;
@@ -205,13 +216,20 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
   //  dg::Vector& getAnklePositionInFootFrame() const;
 
  protected:
-  dg::Matrix& computeGenericJacobian(const bool isFrame, const int jointId, dg::Matrix& res, const int& time);
-  dg::Matrix& computeGenericEndeffJacobian(const bool isFrame, const bool isLocal, const int jointId, dg::Matrix& res,
+  dg::Matrix& computeGenericJacobian(const bool isFrame, const int jointId,
+                                     dg::Matrix& res, const int& time);
+  dg::Matrix& computeGenericEndeffJacobian(const bool isFrame,
+                                           const bool isLocal,
+                                           const int jointId, dg::Matrix& res,
                                            const int& time);
-  MatrixHomogeneous& computeGenericPosition(const bool isFrame, const int jointId, MatrixHomogeneous& res,
+  MatrixHomogeneous& computeGenericPosition(const bool isFrame,
+                                            const int jointId,
+                                            MatrixHomogeneous& res,
                                             const int& time);
-  dg::Vector& computeGenericVelocity(const int jointId, dg::Vector& res, const int& time);
-  dg::Vector& computeGenericAcceleration(const int jointId, dg::Vector& res, const int& time);
+  dg::Vector& computeGenericVelocity(const int jointId, dg::Vector& res,
+                                     const int& time);
+  dg::Vector& computeGenericAcceleration(const int jointId, dg::Vector& res,
+                                         const int& time);
 
   dg::Vector& computeZmp(dg::Vector& res, const int& time);
   dg::Vector& computeMomenta(dg::Vector& res, const int& time);
@@ -226,21 +244,27 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
  public: /* --- PARAMS --- */
   void cmd_createOpPointSignals(const std::string& sig, const std::string& j);
-  void cmd_createJacobianWorldSignal(const std::string& sig, const std::string& j);
-  void cmd_createJacobianEndEffectorSignal(const std::string& sig, const std::string& j);
-  void cmd_createJacobianEndEffectorWorldSignal(const std::string& sig, const std::string& j);
+  void cmd_createJacobianWorldSignal(const std::string& sig,
+                                     const std::string& j);
+  void cmd_createJacobianEndEffectorSignal(const std::string& sig,
+                                           const std::string& j);
+  void cmd_createJacobianEndEffectorWorldSignal(const std::string& sig,
+                                                const std::string& j);
   void cmd_createPositionSignal(const std::string& sig, const std::string& j);
   void cmd_createVelocitySignal(const std::string& sig, const std::string& j);
-  void cmd_createAccelerationSignal(const std::string& sig, const std::string& j);
+  void cmd_createAccelerationSignal(const std::string& sig,
+                                    const std::string& j);
 
  private:
   /// \brief map of joints in construction.
-  /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr to pinocchio Joint)
+  /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr
+  /// to pinocchio Joint)
   dg::Vector& getPinocchioPos(dg::Vector& q, const int& time);
   dg::Vector& getPinocchioVel(dg::Vector& v, const int& time);
   dg::Vector& getPinocchioAcc(dg::Vector& a, const int& time);
 
-  //\brief Index list for the first dof of (spherical joints)/ (spherical part of free-flyer joint).
+  //\brief Index list for the first dof of (spherical joints)/ (spherical part
+  // of free-flyer joint).
   std::vector<int> sphericalJoints;
 };
 

@@ -21,7 +21,7 @@ before_install:
 - sudo sh -c "echo \"deb http://robotpkg.openrobots.org/packages/debian/pub precise robotpkg\" >> /etc/apt/sources.list "
 - curl http://robotpkg.openrobots.org/packages/debian/robotpkg.key | sudo apt-key add -
 - sudo apt-get update -qq
-- sudo apt-get install -qq doxygen doxygen-latex libboost-all-dev libeigen3-dev liblapack-dev libblas-dev gfortran python-dev 
+- sudo apt-get install -qq doxygen doxygen-latex libboost-all-dev libeigen3-dev liblapack-dev libblas-dev gfortran python-dev
   python-sphinx python-numpy libtinyxml-dev robotpkg-console-bridge robotpkg-urdfdom-headers robotpkg-urdfdom robotpkg-eigenpy
 - sudo pip install cpp-coveralls
 language: cpp

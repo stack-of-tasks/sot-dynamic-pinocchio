@@ -34,6 +34,7 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
 #include <sot/core/matrix-geometry.hh>
 
 /* STD */
@@ -56,18 +57,28 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator : public dg::Entity {
   AngleEstimator(const std::string& name);
   virtual ~AngleEstimator(void);
 
- public:                                                                     /* --- SIGNAL --- */
-  dg::SignalPtr<MatrixRotation, int> sensorWorldRotationSIN;                 // estimate(worldRc)
-  dg::SignalPtr<MatrixHomogeneous, int> sensorEmbeddedPositionSIN;           // waistRchest
-  dg::SignalPtr<MatrixHomogeneous, int> contactWorldPositionSIN;             // estimate(worldRf)
-  dg::SignalPtr<MatrixHomogeneous, int> contactEmbeddedPositionSIN;          // waistRleg
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> anglesSOUT;             // [ flex1 flex2 yaw_drift ]
-  dg::SignalTimeDependent<MatrixRotation, int> flexibilitySOUT;              // footRleg
-  dg::SignalTimeDependent<MatrixRotation, int> driftSOUT;                    // Ryaw = worldRc est(wRc)^-1
-  dg::SignalTimeDependent<MatrixRotation, int> sensorWorldRotationSOUT;      // worldRc
-  dg::SignalTimeDependent<MatrixRotation, int> waistWorldRotationSOUT;       // worldRwaist
-  dg::SignalTimeDependent<MatrixHomogeneous, int> waistWorldPositionSOUT;    // worldMwaist
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> waistWorldPoseRPYSOUT;  // worldMwaist
+ public: /* --- SIGNAL --- */
+  dg::SignalPtr<MatrixRotation, int>
+      sensorWorldRotationSIN;  // estimate(worldRc)
+  dg::SignalPtr<MatrixHomogeneous, int>
+      sensorEmbeddedPositionSIN;  // waistRchest
+  dg::SignalPtr<MatrixHomogeneous, int>
+      contactWorldPositionSIN;  // estimate(worldRf)
+  dg::SignalPtr<MatrixHomogeneous, int>
+      contactEmbeddedPositionSIN;  // waistRleg
+  dg::SignalTimeDependent<dynamicgraph::Vector, int>
+      anglesSOUT;  // [ flex1 flex2 yaw_drift ]
+  dg::SignalTimeDependent<MatrixRotation, int> flexibilitySOUT;  // footRleg
+  dg::SignalTimeDependent<MatrixRotation, int>
+      driftSOUT;  // Ryaw = worldRc est(wRc)^-1
+  dg::SignalTimeDependent<MatrixRotation, int>
+      sensorWorldRotationSOUT;  // worldRc
+  dg::SignalTimeDependent<MatrixRotation, int>
+      waistWorldRotationSOUT;  // worldRwaist
+  dg::SignalTimeDependent<MatrixHomogeneous, int>
+      waistWorldPositionSOUT;  // worldMwaist
+  dg::SignalTimeDependent<dynamicgraph::Vector, int>
+      waistWorldPoseRPYSOUT;  // worldMwaist
 
   dg::SignalPtr<dynamicgraph::Matrix, int> jacobianSIN;
   dg::SignalPtr<dynamicgraph::Vector, int> qdotSIN;
@@ -75,15 +86,23 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator : public dg::Entity {
   dg::SignalTimeDependent<dynamicgraph::Vector, int> qdotSOUT;
 
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Vector& computeAngles(dynamicgraph::Vector& res, const int& time);
-  MatrixRotation& computeFlexibilityFromAngles(MatrixRotation& res, const int& time);
+  dynamicgraph::Vector& computeAngles(dynamicgraph::Vector& res,
+                                      const int& time);
+  MatrixRotation& computeFlexibilityFromAngles(MatrixRotation& res,
+                                               const int& time);
   MatrixRotation& computeDriftFromAngles(MatrixRotation& res, const int& time);
-  MatrixRotation& computeSensorWorldRotation(MatrixRotation& res, const int& time);
-  MatrixRotation& computeWaistWorldRotation(MatrixRotation& res, const int& time);
-  MatrixHomogeneous& computeWaistWorldPosition(MatrixHomogeneous& res, const int& time);
-  dynamicgraph::Vector& computeWaistWorldPoseRPY(dynamicgraph::Vector& res, const int& time);
-  dynamicgraph::Vector& compute_xff_dotSOUT(dynamicgraph::Vector& res, const int& time);
-  dynamicgraph::Vector& compute_qdotSOUT(dynamicgraph::Vector& res, const int& time);
+  MatrixRotation& computeSensorWorldRotation(MatrixRotation& res,
+                                             const int& time);
+  MatrixRotation& computeWaistWorldRotation(MatrixRotation& res,
+                                            const int& time);
+  MatrixHomogeneous& computeWaistWorldPosition(MatrixHomogeneous& res,
+                                               const int& time);
+  dynamicgraph::Vector& computeWaistWorldPoseRPY(dynamicgraph::Vector& res,
+                                                 const int& time);
+  dynamicgraph::Vector& compute_xff_dotSOUT(dynamicgraph::Vector& res,
+                                            const int& time);
+  dynamicgraph::Vector& compute_qdotSOUT(dynamicgraph::Vector& res,
+                                         const int& time);
 
  public: /* --- PARAMS --- */
   void fromSensor(const bool& fs) { fromSensor_ = fs; }

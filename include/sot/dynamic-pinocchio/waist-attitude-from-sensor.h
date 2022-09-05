@@ -21,6 +21,7 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
 #include <sot/core/matrix-geometry.hh>
 
 /* STD */
@@ -48,7 +49,8 @@ namespace dg = dynamicgraph;
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistAttitudeFromSensor : public dg::Entity {
+class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistAttitudeFromSensor
+    : public dg::Entity {
  public:
   static const std::string CLASS_NAME;
   virtual const std::string& getClassName(void) const { return CLASS_NAME; }
@@ -58,14 +60,16 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistAttitudeFromSensor : public dg::Ent
   virtual ~WaistAttitudeFromSensor(void);
 
  public: /* --- SIGNAL --- */
-  VectorRollPitchYaw& computeAttitudeWaist(VectorRollPitchYaw& res, const int& time);
+  VectorRollPitchYaw& computeAttitudeWaist(VectorRollPitchYaw& res,
+                                           const int& time);
 
   dg::SignalPtr<MatrixRotation, int> attitudeSensorSIN;
   dg::SignalPtr<MatrixHomogeneous, int> positionSensorSIN;
   dg::SignalTimeDependent<VectorRollPitchYaw, int> attitudeWaistSOUT;
 };
 
-class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact : public WaistAttitudeFromSensor {
+class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
+    : public WaistAttitudeFromSensor {
  public:
   static const std::string CLASS_NAME;
 
@@ -81,7 +85,8 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact : public W
   virtual ~WaistPoseFromSensorAndContact(void);
 
  public: /* --- SIGNAL --- */
-  dynamicgraph::Vector& computePositionWaist(dynamicgraph::Vector& res, const int& time);
+  dynamicgraph::Vector& computePositionWaist(dynamicgraph::Vector& res,
+                                             const int& time);
 
   dg::SignalPtr<MatrixHomogeneous, int> positionContactSIN;
   dg::SignalTimeDependent<dynamicgraph::Vector, int> positionWaistSOUT;

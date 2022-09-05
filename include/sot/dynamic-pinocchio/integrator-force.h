@@ -21,6 +21,7 @@
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
+
 #include <sot/core/matrix-geometry.hh>
 
 /* STD */
@@ -76,10 +77,13 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce : public dg::Entity {
   dg::SignalTimeDependent<dynamicgraph::Matrix, int> massInverseSOUT;
 
  public: /* --- FUNCTIONS --- */
-  dynamicgraph::Vector& computeDerivative(dynamicgraph::Vector& res, const int& time);
-  dynamicgraph::Vector& computeIntegral(dynamicgraph::Vector& res, const int& time);
+  dynamicgraph::Vector& computeDerivative(dynamicgraph::Vector& res,
+                                          const int& time);
+  dynamicgraph::Vector& computeIntegral(dynamicgraph::Vector& res,
+                                        const int& time);
 
-  dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res, const int& time);
+  dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res,
+                                           const int& time);
 };
 
 } /* namespace sot */
