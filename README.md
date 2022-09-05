@@ -1,11 +1,11 @@
-sot-dynamic-pinocchio
+# SoT Dynamic Pinocchio
+
 Encapsulate Pinocchio in SoT
-===========
 
-[![License](https://img.shields.io/badge/License-BSD%202--Clause-green.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Pipeline status](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/pipeline.svg)](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/commits/master)
-[![Coverage report](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/stack-of-tasks/sot-dynamic-pinocchio/master/coverage/)
-
+[![Coverage report](https://gitlab.laas.fr/stack-of-tasks/sot-dynamic-pinocchio/badges/master/coverage.svg?job=doc-coverage)](https://gepettoweb.laas.fr/doc/stack-of-tasks/sot-dynamic-pinocchio/master/coverage/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/stack-of-tasks/sot-dynamic-pinocchio/master.svg)](https://results.pre-commit.ci/latest/github/stack-of-tasks/sot-dynamic-pinocchio)
 
 This software provides robot dynamic computation for dynamic-graph
 by using pinocchio.
