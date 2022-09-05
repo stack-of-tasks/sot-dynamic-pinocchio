@@ -19,13 +19,16 @@
 #include <memory>
 #include <string>
 
+/* pinocchio */
+
+#include <pinocchio/fwd.hpp>
+
 /* SOT */
 #include <dynamic-graph/entity.h>
 #include <dynamic-graph/pool.h>
 #include <dynamic-graph/signal-ptr.h>
 #include <dynamic-graph/signal-time-dependent.h>
 
-#include <pinocchio/fwd.hpp>
 #include <sot/core/exception-dynamic.hh>
 #include <sot/core/flags.hh>
 #include <sot/core/matrix-geometry.hh>
