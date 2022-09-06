@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>sot-dynamic-pinocchio</name>
-  <version>3.6.4</version>
+  <version>3.6.5</version>
   <description>
     Pinocchio bindings for dynamic-graph
   </description>
