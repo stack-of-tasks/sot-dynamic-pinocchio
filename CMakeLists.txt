@@ -25,13 +25,17 @@ set(DOXYGEN_USE_MATHJAX YES)
 include(cmake/base.cmake)
 include(cmake/boost.cmake)
 include(cmake/lapack.cmake)
-include(cmake/python.cmake)
 
 # Project definition
 compute_project_args(PROJECT_ARGS LANGUAGES CXX)
 project(${PROJECT_NAME} ${PROJECT_ARGS})
 
 # Project dependencies
+if(BUILD_PYTHON_INTERFACE)
+  add_project_dependency(dynamic-graph-python 4.0.0 REQUIRED)
+  string(REGEX REPLACE "-" "_" PYTHON_DIR ${CUSTOM_HEADER_DIR})
+endif(BUILD_PYTHON_INTERFACE)
+
 add_project_dependency(sot-tools REQUIRED)
 
 if(BUILD_TESTING)
@@ -39,18 +43,11 @@ if(BUILD_TESTING)
   add_project_dependency(example-robot-data 3.8.0 REQUIRED)
 endif(BUILD_TESTING)
 
-if(BUILD_PYTHON_INTERFACE)
-  findpython()
-  search_for_boost_python(REQUIRED)
-  string(REGEX REPLACE "-" "_" PYTHON_DIR ${CUSTOM_HEADER_DIR})
-  add_project_dependency(dynamic-graph-python 4.0.0 REQUIRED)
-
-  if(Boost_VERSION GREATER 107299)
-    # Silence a warning about a deprecated use of boost bind by boost python at
-    # least fo boost 1.73 to 1.75
-    add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
-  endif()
-endif(BUILD_PYTHON_INTERFACE)
+if(Boost_VERSION GREATER 107299)
+  # Silence a warning about a deprecated use of boost bind by boost python at
+  # least fo boost 1.73 to 1.75
+  add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+endif()
 
 # Main Library
 set(${PROJECT_NAME}_HEADERS
