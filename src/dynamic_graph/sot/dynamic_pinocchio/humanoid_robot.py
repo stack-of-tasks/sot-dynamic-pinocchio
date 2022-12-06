@@ -325,7 +325,6 @@ class AbstractRobot(ABC):
             + [0.0, 0.0, 0.0]  # Replace quaternion by RPY.
             + self.halfSitting[7:].tolist()
         )
-        assert self.halfSitting.shape[0] == self.dynamic.getDimension()
 
         # Set the device limits.
         def get(s):
