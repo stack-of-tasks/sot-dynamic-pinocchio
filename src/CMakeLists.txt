@@ -17,7 +17,7 @@ set(plugins
     dynamic)
 
 set(integrator-force-rk4_plugins_deps integrator-force)
-set(integrator-force-exact_plugins_deps integrator-force lapack)
+set(integrator-force-exact_plugins_deps integrator-force)
 set(mass-apparent_plugins_deps integrator-force)
 
 foreach(plugin ${plugins})

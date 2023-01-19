@@ -85,8 +85,6 @@ static void eigenDecomp(const dynamicgraph::Matrix& M, dynamicgraph::Matrix& P,
   Matrix vl(SIZE, SIZE);
   Matrix vr(SIZE, SIZE);
 
-  //  const int errCode = lapack::geev(Y, evals, &vl, &vr,
-  //  lapack::optimal_workspace());
   const int errCode = geev(Y, evals, vl, vr);
   if (errCode < 0) {
     SOT_THROW ExceptionDynamic(ExceptionDynamic::INTEGRATION,
