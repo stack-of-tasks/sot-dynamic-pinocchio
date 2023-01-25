@@ -29,6 +29,7 @@
   <doc_depend>dynamic-graph</doc_depend>
 
   <test_depend>gtest</test_depend>
+  <test_depend>example-robot-data</test_depend>
 
   <buildtool_depend>cmake</buildtool_depend>
 
