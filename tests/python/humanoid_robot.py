@@ -39,7 +39,6 @@ class HumanoidRobotTest(unittest.TestCase):
         self.assertRaises(TypeError, NonInstanciableRobot, "non_instanciable_robot")
 
     def test_build_robot_from_string(self):
-
         with open(self.urdf_file_name, "r") as urdf:
             urdfString = urdf.read()
         arobot = Robot("test_build_robot_from_string", urdfString=urdfString)

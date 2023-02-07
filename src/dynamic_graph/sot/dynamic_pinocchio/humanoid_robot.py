@@ -394,7 +394,7 @@ class AbstractRobot(ABC):
             self.addTrace(self.dynamic.name, s)
 
         # Geometry / frames
-        for (frameName, _, _) in self.AdditionalFrames:
+        for frameName, _, _ in self.AdditionalFrames:
             for s in ["position", "jacobian"]:
                 self.addTrace(self.frames[frameName].name, s)
 
