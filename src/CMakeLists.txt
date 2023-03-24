@@ -57,8 +57,8 @@ foreach(plugin ${plugins})
 endforeach(plugin)
 
 if(BUILD_PYTHON_INTERFACE)
-  set(${PY_NAME}_PYTHON __init__.py humanoid_robot.py tools.py kine_romeo.py
-                        kine_romeo_small.py)
+  set(${PY_NAME}_PYTHON __init__.py humanoid_robot.py robot.py tools.py
+    kine_romeo.py kine_romeo_small.py robot.py)
 
   foreach(py_file ${${PY_NAME}_PYTHON})
     python_install_on_site("dynamic_graph/${PYTHON_DIR}" ${py_file})
