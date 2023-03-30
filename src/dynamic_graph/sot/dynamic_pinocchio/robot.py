@@ -82,29 +82,44 @@ class AbstractRobot(ABC):
             numpy.zeros(self.pinocchioModel.nv)
         self.dynamic.signal("acceleration").value = \
             numpy.zeros(self.pinocchioModel.nv)
+        self.device = device
         if not device is None:
-            self.device = device
             self.selector = Selec_of_vector(self.name + "_selector")
             plug(self.integrator.signal("configuration"),
                  self.selector.signal("sin"))
             plug(self.selector.signal("sout"), self.device.signal("control"))
             self.timeStep = self.device.getTimeStep()
+        plug(self.integrator.signal("configuration"),
+             self.dynamic.signal("position"))
+
+    def initializeEntities(self):
+        if not self.device is None:
             # Set the device limits.
             def get(s):
                 s.recompute(0)
                 return s.value
-
-            self.device.setPositionBounds(
-                get(self.dynamic.lowerJl), get(self.dynamic.upperJl)
-            )
-            self.device.setVelocityBounds(
-                -get(self.dynamic.upperVl), get(self.dynamic.upperVl)
-            )
-            self.device.setTorqueBounds(
-                -get(self.dynamic.upperTl), get(self.dynamic.upperTl)
-            )
-        plug(self.integrator.signal("configuration"),
-             self.dynamic.signal("position"))
+            lb = get(self.dynamic.lowerJl)
+            ub = get(self.dynamic.upperJl)
+            actuatedJoints = self.getActuatedJoints()
+            # Joint bounds
+            lb_device = numpy.zeros(len(actuatedJoints))
+            ub_device = numpy.zeros(len(actuatedJoints))
+            for i,j in enumerate(actuatedJoints):
+                lb_device[i] = lb[j]
+                ub_device[i] = ub[j]
+            self.device.setPositionBounds(lb_device , ub_device)
+            # velocity bounds
+            ub = get(self.dynamic.upperVl)
+            ub_device = numpy.zeros(len(actuatedJoints))
+            for i,j in enumerate(actuatedJoints):
+                ub_device[i] = ub[j]
+            self.device.setVelocityBounds(-ub_device, ub_device)
+            # torque bounds
+            ub = get(self.dynamic.upperTl)
+            ub_device = numpy.zeros(len(actuatedJoints))
+            for i,j in enumerate(actuatedJoints):
+                ub_device[i] = ub[j]
+            self.device.setTorqueBounds(-ub_device, ub_device)
 
     def _removeMimicJoints(self, urdfFile=None, urdfString=None):
         """Parse the URDF, extract the mimic joints and call removeJoints."""
