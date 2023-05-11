@@ -31,7 +31,7 @@ from dynamic_graph.sot.core.operator import Selec_of_vector
 from dynamic_graph.sot.core import Integrator
 from dynamic_graph.tracer_real_time import TracerRealTime
 from dynamic_graph import plug
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class AbstractRobot(ABC):
@@ -84,7 +84,7 @@ class AbstractRobot(ABC):
         self.dynamic.signal("velocity").value = numpy.zeros(self.pinocchioModel.nv)
         self.dynamic.signal("acceleration").value = numpy.zeros(self.pinocchioModel.nv)
         self.device = device
-        if not device is None:
+        if device is not None:
             self.selector = Selec_of_vector(self.name + "_selector")
             plug(self.integrator.signal("configuration"), self.selector.signal("sin"))
             plug(self.selector.signal("sout"), self.device.signal("control"))
@@ -92,7 +92,7 @@ class AbstractRobot(ABC):
         plug(self.integrator.signal("configuration"), self.dynamic.signal("position"))
 
     def initializeEntities(self):
-        if not self.device is None:
+        if self.device is not None:
             # Set the device limits.
             def get(s):
                 s.recompute(0)
