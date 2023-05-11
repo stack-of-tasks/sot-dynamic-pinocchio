@@ -33,6 +33,7 @@ from dynamic_graph.tracer_real_time import TracerRealTime
 from dynamic_graph import plug
 from abc import ABC, abstractmethod
 
+
 class AbstractRobot(ABC):
     """
     This class instantiates all the entities required to get a consistent
@@ -63,11 +64,13 @@ class AbstractRobot(ABC):
             print("Loading from file " + self.defaultFilename)
             self.loadModelFromUrdf(self.defaultFilename, rootJointType=None)
         else:
-            print("Using ROS parameter \"/robot_description\"")
+            print('Using ROS parameter "/robot_description"')
             import rospy
+
             if self.rosParamName not in rospy.get_param_names():
-                raise RuntimeError('"' + self.rosParamName +
-                                   '" is not a ROS parameter.')
+                raise RuntimeError(
+                    '"' + self.rosParamName + '" is not a ROS parameter.'
+                )
             s = rospy.get_param(self.rosParamName)
             self.loadModelFromString(s, rootJointType=None)
 
@@ -78,19 +81,15 @@ class AbstractRobot(ABC):
         self.integrator = Integrator(self.name + "_integrator")
         self.integrator.setModel(self.pinocchioModel)
         self.dynamic.add_signals()
-        self.dynamic.signal("velocity").value = \
-            numpy.zeros(self.pinocchioModel.nv)
-        self.dynamic.signal("acceleration").value = \
-            numpy.zeros(self.pinocchioModel.nv)
+        self.dynamic.signal("velocity").value = numpy.zeros(self.pinocchioModel.nv)
+        self.dynamic.signal("acceleration").value = numpy.zeros(self.pinocchioModel.nv)
         self.device = device
         if not device is None:
             self.selector = Selec_of_vector(self.name + "_selector")
-            plug(self.integrator.signal("configuration"),
-                 self.selector.signal("sin"))
+            plug(self.integrator.signal("configuration"), self.selector.signal("sin"))
             plug(self.selector.signal("sout"), self.device.signal("control"))
             self.timeStep = self.device.getTimeStep()
-        plug(self.integrator.signal("configuration"),
-             self.dynamic.signal("position"))
+        plug(self.integrator.signal("configuration"), self.dynamic.signal("position"))
 
     def initializeEntities(self):
         if not self.device is None:
@@ -98,26 +97,27 @@ class AbstractRobot(ABC):
             def get(s):
                 s.recompute(0)
                 return s.value
+
             lb = get(self.dynamic.lowerJl)
             ub = get(self.dynamic.upperJl)
             actuatedJoints = self.getActuatedJoints()
             # Joint bounds
             lb_device = numpy.zeros(len(actuatedJoints))
             ub_device = numpy.zeros(len(actuatedJoints))
-            for i,j in enumerate(actuatedJoints):
+            for i, j in enumerate(actuatedJoints):
                 lb_device[i] = lb[j]
                 ub_device[i] = ub[j]
-            self.device.setPositionBounds(lb_device , ub_device)
+            self.device.setPositionBounds(lb_device, ub_device)
             # velocity bounds
             ub = get(self.dynamic.upperVl)
             ub_device = numpy.zeros(len(actuatedJoints))
-            for i,j in enumerate(actuatedJoints):
+            for i, j in enumerate(actuatedJoints):
                 ub_device[i] = ub[j]
             self.device.setVelocityBounds(-ub_device, ub_device)
             # torque bounds
             ub = get(self.dynamic.upperTl)
             ub_device = numpy.zeros(len(actuatedJoints))
-            for i,j in enumerate(actuatedJoints):
+            for i, j in enumerate(actuatedJoints):
                 ub_device[i] = ub[j]
             self.device.setTorqueBounds(-ub_device, ub_device)
 
@@ -258,13 +258,11 @@ class AbstractRobot(ABC):
             self.tracer.setBufferSize(self.tracerSize)
             self.tracer.open("/tmp/", "dg_", ".dat")
             # Recompute trace.triger at each iteration to enable tracing.
-            self.integrator.after.addSignal("{0}.triger".format(
-                self.tracer.name))
+            self.integrator.after.addSignal("{0}.triger".format(self.tracer.name))
 
     def addTrace(self, entityName, signalName):
         if self.tracer:
-            self.autoRecomputedSignals.append("{0}.{1}".
-                                              format(entityName, signalName))
+            self.autoRecomputedSignals.append("{0}.{1}".format(entityName, signalName))
             signal = f"{entityName}.{signalName}"
             filename = f"{entityName}-{signalName}".replace("/", "_")
             self.tracer.add(signal, filename)
