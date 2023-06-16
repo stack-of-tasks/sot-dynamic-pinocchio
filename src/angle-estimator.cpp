@@ -145,7 +145,7 @@ AngleEstimator::~AngleEstimator(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 dynamicgraph::Vector& AngleEstimator::computeAngles(dynamicgraph::Vector& res,
-                                                    const int& time) {
+                                                    const sigtime_t& time) {
   sotDEBUGIN(15);
 
   res.resize(3);
@@ -210,7 +210,7 @@ dynamicgraph::Vector& AngleEstimator::computeAngles(dynamicgraph::Vector& res,
  * feetRleg.
  */
 MatrixRotation& AngleEstimator::computeFlexibilityFromAngles(
-    MatrixRotation& res, const int& time) {
+    MatrixRotation& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& angles = anglesSOUT(time);
@@ -240,7 +240,7 @@ MatrixRotation& AngleEstimator::computeFlexibilityFromAngles(
  * frame: worldRworldest.
  */
 MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res,
-                                                       const int& time) {
+                                                       const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& angles = anglesSOUT(time);
@@ -266,7 +266,7 @@ MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res,
 }
 
 MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res,
-                                                           const int& time) {
+                                                           const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const MatrixRotation& worldRworldest = driftSOUT(time);
@@ -279,7 +279,7 @@ MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res,
 }
 
 MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res,
-                                                          const int& time) {
+                                                          const sigtime_t& time) {
   sotDEBUGIN(15);
 
   // chest = sensor
@@ -295,7 +295,7 @@ MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res,
 }
 
 MatrixHomogeneous& AngleEstimator::computeWaistWorldPosition(
-    MatrixHomogeneous& res, const int& time) {
+    MatrixHomogeneous& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMleg = contactEmbeddedPositionSIN(time);
@@ -319,7 +319,7 @@ MatrixHomogeneous& AngleEstimator::computeWaistWorldPosition(
 }
 
 dynamicgraph::Vector& AngleEstimator::computeWaistWorldPoseRPY(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   const MatrixHomogeneous& M = waistWorldPositionSOUT(time);
 
   VectorRollPitchYaw r = (M.linear().eulerAngles(2, 1, 0)).reverse();
@@ -338,7 +338,7 @@ dynamicgraph::Vector& AngleEstimator::computeWaistWorldPoseRPY(
 /* --- VELOCITY SIGS -------------------------------------------------------- */
 
 dynamicgraph::Vector& AngleEstimator::compute_xff_dotSOUT(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   const dynamicgraph::Matrix& J = jacobianSIN(time);
   const dynamicgraph::Vector& dq = qdotSIN(time);
 
@@ -360,7 +360,7 @@ dynamicgraph::Vector& AngleEstimator::compute_xff_dotSOUT(
 }
 
 dynamicgraph::Vector& AngleEstimator::compute_qdotSOUT(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   const dynamicgraph::Vector& dq = qdotSIN(time);
   const dynamicgraph::Vector& dx = xff_dotSOUT(time);
 

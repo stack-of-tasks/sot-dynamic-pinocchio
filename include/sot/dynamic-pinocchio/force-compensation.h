@@ -125,41 +125,41 @@ class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin
 
  public: /* --- SIGNAL --- */
   /* --- INPUTS --- */
-  dg::SignalPtr<dynamicgraph::Vector, int> torsorSIN;
-  dg::SignalPtr<MatrixRotation, int> worldRhandSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> torsorSIN;
+  dg::SignalPtr<MatrixRotation, sigtime_t> worldRhandSIN;
 
   /* --- CONSTANTS --- */
-  dg::SignalPtr<MatrixRotation, int> handRsensorSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> translationSensorComSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> gravitySIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> precompensationSIN;
-  dg::SignalPtr<dynamicgraph::Matrix, int> gainSensorSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> deadZoneLimitSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> transSensorJointSIN;
-  dg::SignalPtr<dynamicgraph::Matrix, int> inertiaJointSIN;
+  dg::SignalPtr<MatrixRotation, sigtime_t> handRsensorSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> translationSensorComSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> gravitySIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> precompensationSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> gainSensorSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> deadZoneLimitSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> transSensorJointSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> inertiaJointSIN;
 
-  dg::SignalPtr<dynamicgraph::Vector, int> velocitySIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> accelerationSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> velocitySIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> accelerationSIN;
 
   /* --- INTERMEDIATE OUTPUTS --- */
-  dg::SignalTimeDependent<MatrixForce, int> handXworldSOUT;
-  dg::SignalTimeDependent<MatrixForce, int> handVsensorSOUT;
-  dg::SignalPtr<dynamicgraph::Vector, int> torsorDeadZoneSIN;
+  dg::SignalTimeDependent<MatrixForce, sigtime_t> handXworldSOUT;
+  dg::SignalTimeDependent<MatrixForce, sigtime_t> handVsensorSOUT;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> torsorDeadZoneSIN;
 
-  dg::SignalTimeDependent<MatrixForce, int> sensorXhandSOUT;
-  // dg::SignalTimeDependent<dynamicgraph::Matrix,int> inertiaSensorSOUT;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> momentumSOUT;
-  dg::SignalPtr<dynamicgraph::Vector, int> momentumSIN;
+  dg::SignalTimeDependent<MatrixForce, sigtime_t> sensorXhandSOUT;
+  // dg::SignalTimeDependent<dynamicgraph::Matrix,sigtime_t> inertiaSensorSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> momentumSOUT;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> momentumSIN;
 
   /* --- OUTPUTS --- */
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> torsorCompensatedSOUT;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> torsorDeadZoneSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> torsorCompensatedSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> torsorDeadZoneSOUT;
 
   typedef int sotDummyType;
-  dg::SignalTimeDependent<sotDummyType, int> calibrationTrigerSOUT;
+  dg::SignalTimeDependent<sotDummyType, sigtime_t> calibrationTrigerSOUT;
 
  public: /* --- COMMANDLINE --- */
-  sotDummyType& calibrationTriger(sotDummyType& dummy, int time);
+  sotDummyType& calibrationTriger(sotDummyType& dummy, sigtime_t time);
 };
 
 }  // namespace sot

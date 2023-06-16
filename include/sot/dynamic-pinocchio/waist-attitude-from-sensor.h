@@ -61,11 +61,11 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistAttitudeFromSensor
 
  public: /* --- SIGNAL --- */
   VectorRollPitchYaw& computeAttitudeWaist(VectorRollPitchYaw& res,
-                                           const int& time);
+                                           const sigtime_t& time);
 
-  dg::SignalPtr<MatrixRotation, int> attitudeSensorSIN;
-  dg::SignalPtr<MatrixHomogeneous, int> positionSensorSIN;
-  dg::SignalTimeDependent<VectorRollPitchYaw, int> attitudeWaistSOUT;
+  dg::SignalPtr<MatrixRotation, sigtime_t> attitudeSensorSIN;
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t> positionSensorSIN;
+  dg::SignalTimeDependent<VectorRollPitchYaw, sigtime_t> attitudeWaistSOUT;
 };
 
 class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
@@ -86,10 +86,10 @@ class SOTWAISTATTITUDEFROMSENSOR_EXPORT WaistPoseFromSensorAndContact
 
  public: /* --- SIGNAL --- */
   dynamicgraph::Vector& computePositionWaist(dynamicgraph::Vector& res,
-                                             const int& time);
+                                             const sigtime_t& time);
 
-  dg::SignalPtr<MatrixHomogeneous, int> positionContactSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> positionWaistSOUT;
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t> positionContactSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> positionWaistSOUT;
 };
 
 } /* namespace sot */

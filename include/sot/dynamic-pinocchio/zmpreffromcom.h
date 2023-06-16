@@ -66,12 +66,12 @@ class SOTZMPREFFROMCOM_EXPORT ZmprefFromCom : public dg::Entity {
 
  public: /* --- SIGNAL --- */
   dynamicgraph::Vector& computeZmpref(dynamicgraph::Vector& res,
-                                      const int& time);
+                                      const sigtime_t& time);
 
-  dg::SignalPtr<MatrixHomogeneous, int> waistPositionSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> comPositionSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> dcomSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> zmprefSOUT;
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t> waistPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> comPositionSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> dcomSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> zmprefSOUT;
 };
 
 } /* namespace sot */

@@ -58,20 +58,20 @@ class SOTMASSAPPARENT_EXPORT MassApparent : public dg::Entity {
   virtual ~MassApparent(void);
 
  public: /* --- SIGNAL --- */
-  dg::SignalPtr<dynamicgraph::Matrix, int> jacobianSIN;
-  dg::SignalPtr<dynamicgraph::Matrix, int> inertiaInverseSIN;
-  dg::SignalTimeDependent<dynamicgraph::Matrix, int> massInverseSOUT;
-  dg::SignalTimeDependent<dynamicgraph::Matrix, int> massSOUT;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> jacobianSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> inertiaInverseSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, sigtime_t> massInverseSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, sigtime_t> massSOUT;
 
-  dg::SignalPtr<dynamicgraph::Matrix, int> inertiaSIN;
-  dg::SignalTimeDependent<dynamicgraph::Matrix, int> inertiaInverseSOUT;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> inertiaSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, sigtime_t> inertiaInverseSOUT;
 
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res,
-                                           const int& time);
-  dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res, const int& time);
+                                           const sigtime_t& time);
+  dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res, const sigtime_t& time);
   dynamicgraph::Matrix& computeInertiaInverse(dynamicgraph::Matrix& res,
-                                              const int& time);
+                                              const sigtime_t& time);
 };
 
 }  // namespace sot

@@ -51,7 +51,7 @@ ZmprefFromCom::~ZmprefFromCom(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 dynamicgraph::Vector& ZmprefFromCom::computeZmpref(dynamicgraph::Vector& res,
-                                                   const int& time) {
+                                                   const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& com = comPositionSIN(time);
