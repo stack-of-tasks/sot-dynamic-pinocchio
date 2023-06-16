@@ -51,7 +51,7 @@ WaistAttitudeFromSensor::~WaistAttitudeFromSensor(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 VectorRollPitchYaw& WaistAttitudeFromSensor::computeAttitudeWaist(
-    VectorRollPitchYaw& res, const int& time) {
+    VectorRollPitchYaw& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMchest = positionSensorSIN(time);
@@ -135,7 +135,7 @@ WaistPoseFromSensorAndContact::~WaistPoseFromSensorAndContact(void) {
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 dynamicgraph::Vector& WaistPoseFromSensorAndContact::computePositionWaist(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const MatrixHomogeneous& waistMcontact = positionContactSIN(time);

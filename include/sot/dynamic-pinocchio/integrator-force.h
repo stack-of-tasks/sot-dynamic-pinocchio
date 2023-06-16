@@ -63,27 +63,27 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce : public dg::Entity {
   virtual ~IntegratorForce(void);
 
  public: /* --- SIGNAL --- */
-  dg::SignalPtr<dynamicgraph::Vector, int> forceSIN;
-  dg::SignalPtr<dynamicgraph::Matrix, int> massInverseSIN;
-  dg::SignalPtr<dynamicgraph::Matrix, int> frictionSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> forceSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> massInverseSIN;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> frictionSIN;
 
   /* Memory of the previous iteration. The sig is fed by the previous
    * computations. */
-  dg::SignalPtr<dynamicgraph::Vector, int> velocityPrecSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> velocityDerivativeSOUT;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> velocitySOUT;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> velocityPrecSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> velocityDerivativeSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> velocitySOUT;
 
-  dg::SignalPtr<dynamicgraph::Matrix, int> massSIN;
-  dg::SignalTimeDependent<dynamicgraph::Matrix, int> massInverseSOUT;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> massSIN;
+  dg::SignalTimeDependent<dynamicgraph::Matrix, sigtime_t> massInverseSOUT;
 
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeDerivative(dynamicgraph::Vector& res,
-                                          const int& time);
+                                          const sigtime_t& time);
   dynamicgraph::Vector& computeIntegral(dynamicgraph::Vector& res,
-                                        const int& time);
+                                        const sigtime_t& time);
 
   dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res,
-                                           const int& time);
+                                           const sigtime_t& time);
 };
 
 } /* namespace sot */

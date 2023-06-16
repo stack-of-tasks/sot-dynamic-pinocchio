@@ -93,78 +93,78 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
 
  public:
   /* --- SIGNAL ACTIVATION --- */
-  dg::SignalTimeDependent<dg::Matrix, int>& createEndeffJacobianSignal(
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t>& createEndeffJacobianSignal(
       const std::string& signame, const std::string&,
       const bool isLocal = true);
-  dg::SignalTimeDependent<dg::Matrix, int>& createJacobianSignal(
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t>& createJacobianSignal(
       const std::string& signame, const std::string&);
   void destroyJacobianSignal(const std::string& signame);
 
-  dg::SignalTimeDependent<MatrixHomogeneous, int>& createPositionSignal(
+  dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>& createPositionSignal(
       const std::string&, const std::string&);
   void destroyPositionSignal(const std::string& signame);
 
-  dg::SignalTimeDependent<dg::Vector, int>& createVelocitySignal(
+  dg::SignalTimeDependent<dg::Vector, sigtime_t>& createVelocitySignal(
       const std::string&, const std::string&);
   void destroyVelocitySignal(const std::string& signame);
 
-  dg::SignalTimeDependent<dg::Vector, int>& createAccelerationSignal(
+  dg::SignalTimeDependent<dg::Vector, sigtime_t>& createAccelerationSignal(
       const std::string&, const std::string&);
   void destroyAccelerationSignal(const std::string& signame);
 
   /*! @} */
-  std::list<dg::SignalBase<int>*> genericSignalRefs;
+  std::list<dg::SignalBase<sigtime_t>*> genericSignalRefs;
 
  public:
   /* --- SIGNAL --- */
   typedef int Dummy;
-  dg::SignalPtr<dg::Vector, int> jointPositionSIN;
-  dg::SignalPtr<dg::Vector, int> freeFlyerPositionSIN;
-  dg::SignalPtr<dg::Vector, int> jointVelocitySIN;
-  dg::SignalPtr<dg::Vector, int> freeFlyerVelocitySIN;
-  dg::SignalPtr<dg::Vector, int> jointAccelerationSIN;
-  dg::SignalPtr<dg::Vector, int> freeFlyerAccelerationSIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> jointPositionSIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> freeFlyerPositionSIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> jointVelocitySIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> freeFlyerVelocitySIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> jointAccelerationSIN;
+  dg::SignalPtr<dg::Vector, sigtime_t> freeFlyerAccelerationSIN;
 
-  dg::SignalTimeDependent<dg::Vector, int> pinocchioPosSINTERN;
-  dg::SignalTimeDependent<dg::Vector, int> pinocchioVelSINTERN;
-  dg::SignalTimeDependent<dg::Vector, int> pinocchioAccSINTERN;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> pinocchioPosSINTERN;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> pinocchioVelSINTERN;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> pinocchioAccSINTERN;
 
-  dg::SignalTimeDependent<Dummy, int> newtonEulerSINTERN;
-  dg::SignalTimeDependent<Dummy, int> jacobiansSINTERN;
-  dg::SignalTimeDependent<Dummy, int> forwardKinematicsSINTERN;
-  dg::SignalTimeDependent<Dummy, int> ccrbaSINTERN;
+  dg::SignalTimeDependent<Dummy, sigtime_t> newtonEulerSINTERN;
+  dg::SignalTimeDependent<Dummy, sigtime_t> jacobiansSINTERN;
+  dg::SignalTimeDependent<Dummy, sigtime_t> forwardKinematicsSINTERN;
+  dg::SignalTimeDependent<Dummy, sigtime_t> ccrbaSINTERN;
 
-  int& computeNewtonEuler(int& dummy, const int& time);
-  int& computeForwardKinematics(int& dummy, const int& time);
-  int& computeCcrba(int& dummy, const int& time);
-  int& computeJacobians(int& dummy, const int& time);
+  int& computeNewtonEuler(int& dummy, const sigtime_t& time);
+  int& computeForwardKinematics(int& dummy, const sigtime_t& time);
+  int& computeCcrba(int& dummy, const sigtime_t& time);
+  int& computeJacobians(int& dummy, const sigtime_t& time);
 
-  dg::SignalTimeDependent<dg::Vector, int> zmpSOUT;
-  dg::SignalTimeDependent<dg::Matrix, int> JcomSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> comSOUT;
-  dg::SignalTimeDependent<dg::Matrix, int> inertiaSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> zmpSOUT;
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t> JcomSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> comSOUT;
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t> inertiaSOUT;
 
-  dg::SignalTimeDependent<dg::Matrix, int>& jacobiansSOUT(
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t>& jacobiansSOUT(
       const std::string& name);
-  dg::SignalTimeDependent<MatrixHomogeneous, int>& positionsSOUT(
+  dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>& positionsSOUT(
       const std::string& name);
-  dg::SignalTimeDependent<dg::Vector, int>& velocitiesSOUT(
+  dg::SignalTimeDependent<dg::Vector, sigtime_t>& velocitiesSOUT(
       const std::string& name);
-  dg::SignalTimeDependent<dg::Vector, int>& accelerationsSOUT(
+  dg::SignalTimeDependent<dg::Vector, sigtime_t>& accelerationsSOUT(
       const std::string& name);
 
-  dg::SignalTimeDependent<double, int> footHeightSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> upperJlSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> lowerJlSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> upperVlSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> upperTlSOUT;
+  dg::SignalTimeDependent<double, sigtime_t> footHeightSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> upperJlSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> lowerJlSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> upperVlSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> upperTlSOUT;
 
-  dg::Signal<dg::Vector, int> inertiaRotorSOUT;
-  dg::Signal<dg::Vector, int> gearRatioSOUT;
-  dg::SignalTimeDependent<dg::Matrix, int> inertiaRealSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> MomentaSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> AngularMomentumSOUT;
-  dg::SignalTimeDependent<dg::Vector, int> dynamicDriftSOUT;
+  dg::Signal<dg::Vector, sigtime_t> inertiaRotorSOUT;
+  dg::Signal<dg::Vector, sigtime_t> gearRatioSOUT;
+  dg::SignalTimeDependent<dg::Matrix, sigtime_t> inertiaRealSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> MomentaSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> AngularMomentumSOUT;
+  dg::SignalTimeDependent<dg::Vector, sigtime_t> dynamicDriftSOUT;
 
  public:
   /* --- CONSTRUCTOR --- */
@@ -196,54 +196,54 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getLowerPositionLimits(dg::Vector& res, const int&) const;
+  dg::Vector& getLowerPositionLimits(dg::Vector& res, const sigtime_t&) const;
 
   /// \brief Get joint position upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getUpperPositionLimits(dg::Vector& res, const int&) const;
+  dg::Vector& getUpperPositionLimits(dg::Vector& res, const sigtime_t&) const;
 
   /// \brief Get joint velocity upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getUpperVelocityLimits(dg::Vector& res, const int&) const;
+  dg::Vector& getUpperVelocityLimits(dg::Vector& res, const sigtime_t&) const;
 
   /// \brief Get joint effort upper limits
   ///
   /// \param[out] result vector
   /// \return result vector
-  dg::Vector& getMaxEffortLimits(dg::Vector& res, const int&) const;
+  dg::Vector& getMaxEffortLimits(dg::Vector& res, const sigtime_t&) const;
 
   //  dg::Vector& getAnklePositionInFootFrame() const;
 
  protected:
   dg::Matrix& computeGenericJacobian(const bool isFrame, const int jointId,
-                                     dg::Matrix& res, const int& time);
+                                     dg::Matrix& res, const sigtime_t& time);
   dg::Matrix& computeGenericEndeffJacobian(const bool isFrame,
                                            const bool isLocal,
                                            const int jointId, dg::Matrix& res,
-                                           const int& time);
+                                           const sigtime_t& time);
   MatrixHomogeneous& computeGenericPosition(const bool isFrame,
                                             const int jointId,
                                             MatrixHomogeneous& res,
-                                            const int& time);
+                                            const sigtime_t& time);
   dg::Vector& computeGenericVelocity(const int jointId, dg::Vector& res,
-                                     const int& time);
+                                     const sigtime_t& time);
   dg::Vector& computeGenericAcceleration(const int jointId, dg::Vector& res,
-                                         const int& time);
+                                         const sigtime_t& time);
 
-  dg::Vector& computeZmp(dg::Vector& res, const int& time);
-  dg::Vector& computeMomenta(dg::Vector& res, const int& time);
-  dg::Vector& computeAngularMomentum(dg::Vector& res, const int& time);
-  dg::Matrix& computeJcom(dg::Matrix& res, const int& time);
-  dg::Vector& computeCom(dg::Vector& res, const int& time);
-  dg::Matrix& computeInertia(dg::Matrix& res, const int& time);
-  dg::Matrix& computeInertiaReal(dg::Matrix& res, const int& time);
-  double& computeFootHeight(double& res, const int& time);
+  dg::Vector& computeZmp(dg::Vector& res, const sigtime_t& time);
+  dg::Vector& computeMomenta(dg::Vector& res, const sigtime_t& time);
+  dg::Vector& computeAngularMomentum(dg::Vector& res, const sigtime_t& time);
+  dg::Matrix& computeJcom(dg::Matrix& res, const sigtime_t& time);
+  dg::Vector& computeCom(dg::Vector& res, const sigtime_t& time);
+  dg::Matrix& computeInertia(dg::Matrix& res, const sigtime_t& time);
+  dg::Matrix& computeInertiaReal(dg::Matrix& res, const sigtime_t& time);
+  double& computeFootHeight(double& res, const sigtime_t& time);
 
-  dg::Vector& computeTorqueDrift(dg::Vector& res, const int& time);
+  dg::Vector& computeTorqueDrift(dg::Vector& res, const sigtime_t& time);
 
  public: /* --- PARAMS --- */
   void cmd_createOpPointSignals(const std::string& sig, const std::string& j);
@@ -262,9 +262,9 @@ class SOTDYNAMIC_EXPORT DynamicPinocchio : public dg::Entity {
   /// \brief map of joints in construction.
   /// map: jointName -> (jointType,jointPosition (in parent frame), function_ptr
   /// to pinocchio Joint)
-  dg::Vector& getPinocchioPos(dg::Vector& q, const int& time);
-  dg::Vector& getPinocchioVel(dg::Vector& v, const int& time);
-  dg::Vector& getPinocchioAcc(dg::Vector& a, const int& time);
+  dg::Vector& getPinocchioPos(dg::Vector& q, const sigtime_t& time);
+  dg::Vector& getPinocchioVel(dg::Vector& v, const sigtime_t& time);
+  dg::Vector& getPinocchioAcc(dg::Vector& a, const sigtime_t& time);
 
   //\brief Index list for the first dof of (spherical joints)/ (spherical part
   // of free-flyer joint).

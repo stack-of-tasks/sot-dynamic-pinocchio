@@ -58,51 +58,51 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator : public dg::Entity {
   virtual ~AngleEstimator(void);
 
  public: /* --- SIGNAL --- */
-  dg::SignalPtr<MatrixRotation, int>
+  dg::SignalPtr<MatrixRotation, sigtime_t>
       sensorWorldRotationSIN;  // estimate(worldRc)
-  dg::SignalPtr<MatrixHomogeneous, int>
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t>
       sensorEmbeddedPositionSIN;  // waistRchest
-  dg::SignalPtr<MatrixHomogeneous, int>
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t>
       contactWorldPositionSIN;  // estimate(worldRf)
-  dg::SignalPtr<MatrixHomogeneous, int>
+  dg::SignalPtr<MatrixHomogeneous, sigtime_t>
       contactEmbeddedPositionSIN;  // waistRleg
-  dg::SignalTimeDependent<dynamicgraph::Vector, int>
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t>
       anglesSOUT;  // [ flex1 flex2 yaw_drift ]
-  dg::SignalTimeDependent<MatrixRotation, int> flexibilitySOUT;  // footRleg
-  dg::SignalTimeDependent<MatrixRotation, int>
+  dg::SignalTimeDependent<MatrixRotation, sigtime_t> flexibilitySOUT;  // footRleg
+  dg::SignalTimeDependent<MatrixRotation, sigtime_t>
       driftSOUT;  // Ryaw = worldRc est(wRc)^-1
-  dg::SignalTimeDependent<MatrixRotation, int>
+  dg::SignalTimeDependent<MatrixRotation, sigtime_t>
       sensorWorldRotationSOUT;  // worldRc
-  dg::SignalTimeDependent<MatrixRotation, int>
+  dg::SignalTimeDependent<MatrixRotation, sigtime_t>
       waistWorldRotationSOUT;  // worldRwaist
-  dg::SignalTimeDependent<MatrixHomogeneous, int>
+  dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>
       waistWorldPositionSOUT;  // worldMwaist
-  dg::SignalTimeDependent<dynamicgraph::Vector, int>
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t>
       waistWorldPoseRPYSOUT;  // worldMwaist
 
-  dg::SignalPtr<dynamicgraph::Matrix, int> jacobianSIN;
-  dg::SignalPtr<dynamicgraph::Vector, int> qdotSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> xff_dotSOUT;
-  dg::SignalTimeDependent<dynamicgraph::Vector, int> qdotSOUT;
+  dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> jacobianSIN;
+  dg::SignalPtr<dynamicgraph::Vector, sigtime_t> qdotSIN;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> xff_dotSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> qdotSOUT;
 
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeAngles(dynamicgraph::Vector& res,
-                                      const int& time);
+                                      const sigtime_t& time);
   MatrixRotation& computeFlexibilityFromAngles(MatrixRotation& res,
-                                               const int& time);
-  MatrixRotation& computeDriftFromAngles(MatrixRotation& res, const int& time);
+                                               const sigtime_t& time);
+  MatrixRotation& computeDriftFromAngles(MatrixRotation& res, const sigtime_t& time);
   MatrixRotation& computeSensorWorldRotation(MatrixRotation& res,
-                                             const int& time);
+                                             const sigtime_t& time);
   MatrixRotation& computeWaistWorldRotation(MatrixRotation& res,
-                                            const int& time);
+                                            const sigtime_t& time);
   MatrixHomogeneous& computeWaistWorldPosition(MatrixHomogeneous& res,
-                                               const int& time);
+                                               const sigtime_t& time);
   dynamicgraph::Vector& computeWaistWorldPoseRPY(dynamicgraph::Vector& res,
-                                                 const int& time);
+                                                 const sigtime_t& time);
   dynamicgraph::Vector& compute_xff_dotSOUT(dynamicgraph::Vector& res,
-                                            const int& time);
+                                            const sigtime_t& time);
   dynamicgraph::Vector& compute_qdotSOUT(dynamicgraph::Vector& res,
-                                         const int& time);
+                                         const sigtime_t& time);
 
  public: /* --- PARAMS --- */
   void fromSensor(const bool& fs) { fromSensor_ = fs; }

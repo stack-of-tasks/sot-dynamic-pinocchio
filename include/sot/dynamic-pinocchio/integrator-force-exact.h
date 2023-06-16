@@ -63,7 +63,7 @@ class SOTINTEGRATORFORCEEXACT_EXPORT IntegratorForceExact
  public: /* --- SIGNAL --- */
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeVelocityExact(dynamicgraph::Vector& res,
-                                             const int& time);
+                                             const sigtime_t& time);
 };
 
 } /* namespace sot */

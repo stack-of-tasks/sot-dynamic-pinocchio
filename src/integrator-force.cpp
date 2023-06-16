@@ -76,7 +76,7 @@ IntegratorForce::~IntegratorForce(void) {
  * v_dot =  M^-1 (f - Bv)
  */
 dynamicgraph::Vector& IntegratorForce::computeDerivative(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);
@@ -104,7 +104,7 @@ dynamicgraph::Vector& IntegratorForce::computeDerivative(
 }
 
 dynamicgraph::Vector& IntegratorForce::computeIntegral(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& dvel = velocityDerivativeSOUT(time);
@@ -122,7 +122,7 @@ dynamicgraph::Vector& IntegratorForce::computeIntegral(
 }
 
 dynamicgraph::Matrix& IntegratorForce::computeMassInverse(
-    dynamicgraph::Matrix& res, const int& time) {
+    dynamicgraph::Matrix& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Matrix& mass = massSIN(time);

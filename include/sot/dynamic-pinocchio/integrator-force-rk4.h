@@ -62,7 +62,7 @@ class SOTINTEGRATORFORCERK4_EXPORT IntegratorForceRK4 : public IntegratorForce {
  public: /* --- SIGNAL --- */
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Vector& computeDerivativeRK4(dynamicgraph::Vector& res,
-                                             const int& time);
+                                             const sigtime_t& time);
 };
 
 } /* namespace sot */

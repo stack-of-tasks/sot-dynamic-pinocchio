@@ -44,7 +44,7 @@ IntegratorForceRK4::~IntegratorForceRK4(void) {
 static const double rk_fact[4] = {1., 2., 2., 1.};
 
 dynamicgraph::Vector& IntegratorForceRK4::computeDerivativeRK4(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);

@@ -542,7 +542,7 @@ dynamicgraph::Vector& ForceCompensation::computeDeadZone(
 
 ForceCompensationPlugin::sotDummyType&
 ForceCompensationPlugin::calibrationTriger(
-    ForceCompensationPlugin::sotDummyType& dummy, int /*time*/) {
+    ForceCompensationPlugin::sotDummyType& dummy, sigtime_t /*time*/) {
   //   sotDEBUGIN(45);
   //   if(! calibrationStarted ) { sotDEBUGOUT(45); return dummy=0; }
 

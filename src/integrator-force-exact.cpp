@@ -144,7 +144,7 @@ static void expMatrix(const dynamicgraph::Matrix& MiB,
  */
 
 dynamicgraph::Vector& IntegratorForceExact::computeVelocityExact(
-    dynamicgraph::Vector& res, const int& time) {
+    dynamicgraph::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Vector& force = forceSIN(time);

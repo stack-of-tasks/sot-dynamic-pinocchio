@@ -55,7 +55,7 @@ MassApparent::~MassApparent(void) { return; }
 /* --- SIGNALS -------------------------------------------------------------- */
 /* --- SIGNALS -------------------------------------------------------------- */
 dynamicgraph::Matrix& MassApparent::computeMassInverse(
-    dynamicgraph::Matrix& res, const int& time) {
+    dynamicgraph::Matrix& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Matrix& J = jacobianSIN(time);
@@ -72,7 +72,7 @@ dynamicgraph::Matrix& MassApparent::computeMassInverse(
 }
 
 dynamicgraph::Matrix& MassApparent::computeMass(dynamicgraph::Matrix& res,
-                                                const int& time) {
+                                                const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Matrix& omega = massInverseSOUT(time);
@@ -83,7 +83,7 @@ dynamicgraph::Matrix& MassApparent::computeMass(dynamicgraph::Matrix& res,
 }
 
 dynamicgraph::Matrix& MassApparent::computeInertiaInverse(
-    dynamicgraph::Matrix& res, const int& time) {
+    dynamicgraph::Matrix& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const dynamicgraph::Matrix& A = inertiaSIN(time);

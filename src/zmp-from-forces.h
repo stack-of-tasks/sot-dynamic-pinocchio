@@ -23,7 +23,8 @@ using dynamicgraph::SignalPtr;
 using dynamicgraph::SignalTimeDependent;
 using dynamicgraph::Vector;
 using dynamicgraph::sot::MatrixHomogeneous;
-
+using dynamicgraph::sigtime_t;
+  
 class ZmpFromForces : public Entity {
   DYNAMIC_GRAPH_ENTITY_DECL();
 
@@ -37,9 +38,9 @@ class ZmpFromForces : public Entity {
       std::ostringstream forceName, positionName;
       forceName << CLASS_NAME << "::input(vector6)::force_" << i;
       positionName << CLASS_NAME << "::input(MatrixHomo)::sensorPosition_" << i;
-      forcesSIN_[i] = new SignalPtr<Vector, int>(0, forceName.str());
+      forcesSIN_[i] = new SignalPtr<Vector, sigtime_t>(0, forceName.str());
       sensorPositionsSIN_[i] =
-          new SignalPtr<MatrixHomogeneous, int>(0, positionName.str());
+          new SignalPtr<MatrixHomogeneous, sigtime_t>(0, positionName.str());
       signalRegistration(*forcesSIN_[i]);
       signalRegistration(*sensorPositionsSIN_[i]);
       zmpSOUT_.addDependency(*forcesSIN_[i]);
@@ -108,9 +109,9 @@ class ZmpFromForces : public Entity {
     return zmp;
   }
   // Force as measured by force sensor on the foot
-  SignalPtr<Vector, int>* forcesSIN_[footNumber];
-  SignalPtr<MatrixHomogeneous, int>* sensorPositionsSIN_[footNumber];
-  SignalTimeDependent<Vector, int> zmpSOUT_;
+  SignalPtr<Vector, sigtime_t>* forcesSIN_[footNumber];
+  SignalPtr<MatrixHomogeneous, sigtime_t>* sensorPositionsSIN_[footNumber];
+  SignalTimeDependent<Vector, sigtime_t> zmpSOUT_;
 };  // class ZmpFromForces
 }  // namespace dynamic
 }  // namespace sot
