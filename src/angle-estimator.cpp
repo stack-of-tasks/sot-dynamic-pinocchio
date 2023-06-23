@@ -265,8 +265,8 @@ MatrixRotation& AngleEstimator::computeDriftFromAngles(MatrixRotation& res,
   return res;
 }
 
-MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res,
-                                                           const sigtime_t& time) {
+MatrixRotation& AngleEstimator::computeSensorWorldRotation(
+    MatrixRotation& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   const MatrixRotation& worldRworldest = driftSOUT(time);
@@ -278,8 +278,8 @@ MatrixRotation& AngleEstimator::computeSensorWorldRotation(MatrixRotation& res,
   return res;
 }
 
-MatrixRotation& AngleEstimator::computeWaistWorldRotation(MatrixRotation& res,
-                                                          const sigtime_t& time) {
+MatrixRotation& AngleEstimator::computeWaistWorldRotation(
+    MatrixRotation& res, const sigtime_t& time) {
   sotDEBUGIN(15);
 
   // chest = sensor
