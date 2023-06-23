@@ -308,8 +308,6 @@ void DynamicPinocchio::setModel(pinocchio::Model* modelPtr) {
   createData();
 }
 
-void DynamicPinocchio::setData(pinocchio::Data*) {}
-
 void DynamicPinocchio::createData() {
   m_data.reset(new pinocchio::Data(*m_model));
 }
