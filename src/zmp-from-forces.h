@@ -21,10 +21,10 @@ namespace dynamic {
 using dynamicgraph::Entity;
 using dynamicgraph::SignalPtr;
 using dynamicgraph::SignalTimeDependent;
+using dynamicgraph::sigtime_t;
 using dynamicgraph::Vector;
 using dynamicgraph::sot::MatrixHomogeneous;
-using dynamicgraph::sigtime_t;
-  
+
 class ZmpFromForces : public Entity {
   DYNAMIC_GRAPH_ENTITY_DECL();
 

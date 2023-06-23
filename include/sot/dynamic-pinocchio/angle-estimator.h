@@ -68,7 +68,8 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator : public dg::Entity {
       contactEmbeddedPositionSIN;  // waistRleg
   dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t>
       anglesSOUT;  // [ flex1 flex2 yaw_drift ]
-  dg::SignalTimeDependent<MatrixRotation, sigtime_t> flexibilitySOUT;  // footRleg
+  dg::SignalTimeDependent<MatrixRotation, sigtime_t>
+      flexibilitySOUT;  // footRleg
   dg::SignalTimeDependent<MatrixRotation, sigtime_t>
       driftSOUT;  // Ryaw = worldRc est(wRc)^-1
   dg::SignalTimeDependent<MatrixRotation, sigtime_t>
@@ -90,7 +91,8 @@ class SOTANGLEESTIMATOR_EXPORT AngleEstimator : public dg::Entity {
                                       const sigtime_t& time);
   MatrixRotation& computeFlexibilityFromAngles(MatrixRotation& res,
                                                const sigtime_t& time);
-  MatrixRotation& computeDriftFromAngles(MatrixRotation& res, const sigtime_t& time);
+  MatrixRotation& computeDriftFromAngles(MatrixRotation& res,
+                                         const sigtime_t& time);
   MatrixRotation& computeSensorWorldRotation(MatrixRotation& res,
                                              const sigtime_t& time);
   MatrixRotation& computeWaistWorldRotation(MatrixRotation& res,

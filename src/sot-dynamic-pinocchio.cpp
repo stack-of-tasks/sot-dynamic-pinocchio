@@ -285,7 +285,8 @@ DynamicPinocchio::~DynamicPinocchio(void) {
   // has. if (0!=m_data ) { delete m_data ; m_data =NULL; } if (0!=m_model) {
   // delete m_model; m_model=NULL; }
 
-  for (std::list<SignalBase<sigtime_t>*>::iterator iter = genericSignalRefs.begin();
+  for (std::list<SignalBase<sigtime_t>*>::iterator iter =
+           genericSignalRefs.begin();
        iter != genericSignalRefs.end(); ++iter) {
     SignalBase<sigtime_t>* sigPtr = *iter;
     delete sigPtr;
@@ -427,7 +428,8 @@ dg::Vector& DynamicPinocchio::getMaxEffortLimits(dg::Vector& res,
 }
 
 /* ---------------- INTERNAL ------------------------------------------------ */
-dg::Vector& DynamicPinocchio::getPinocchioPos(dg::Vector& q, const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::getPinocchioPos(dg::Vector& q,
+                                              const sigtime_t& time) {
   sotDEBUGIN(15);
   dg::Vector qJoints = jointPositionSIN.access(time);
   if (!sphericalJoints.empty()) {
@@ -472,7 +474,8 @@ dg::Vector& DynamicPinocchio::getPinocchioPos(dg::Vector& q, const sigtime_t& ti
   return q;
 }
 
-dg::Vector& DynamicPinocchio::getPinocchioVel(dg::Vector& v, const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::getPinocchioVel(dg::Vector& v,
+                                              const sigtime_t& time) {
   const Eigen::VectorXd vJoints = jointVelocitySIN.access(time);
   if (freeFlyerVelocitySIN) {
     const Eigen::VectorXd vFF = freeFlyerVelocitySIN.access(time);
@@ -486,7 +489,8 @@ dg::Vector& DynamicPinocchio::getPinocchioVel(dg::Vector& v, const sigtime_t& ti
   }
 }
 
-dg::Vector& DynamicPinocchio::getPinocchioAcc(dg::Vector& a, const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::getPinocchioAcc(dg::Vector& a,
+                                              const sigtime_t& time) {
   const Eigen::VectorXd aJoints = jointAccelerationSIN.access(time);
   if (freeFlyerAccelerationSIN) {
     const Eigen::VectorXd aFF = freeFlyerAccelerationSIN.access(time);
@@ -595,8 +599,9 @@ DynamicPinocchio::createPositionSignal(const std::string& signame,
   return *sig;
 }
 
-SignalTimeDependent<dg::Vector, sigtime_t>& DynamicPinocchio::createVelocitySignal(
-    const std::string& signame, const std::string& jointName) {
+SignalTimeDependent<dg::Vector, sigtime_t>&
+DynamicPinocchio::createVelocitySignal(const std::string& signame,
+                                       const std::string& jointName) {
   sotDEBUGIN(15);
   assert(m_model);
   long int jointId = m_model->getJointId(jointName);
@@ -639,7 +644,8 @@ void DynamicPinocchio::destroyJacobianSignal(const std::string& signame) {
 
   bool deletable = false;
   dg::SignalTimeDependent<dg::Matrix, sigtime_t>* sig = &jacobiansSOUT(signame);
-  for (std::list<SignalBase<sigtime_t>*>::iterator iter = genericSignalRefs.begin();
+  for (std::list<SignalBase<sigtime_t>*>::iterator iter =
+           genericSignalRefs.begin();
        iter != genericSignalRefs.end(); ++iter) {
     if ((*iter) == sig) {
       genericSignalRefs.erase(iter);
@@ -662,7 +668,8 @@ void DynamicPinocchio::destroyPositionSignal(const std::string& signame) {
   bool deletable = false;
   dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>* sig =
       &positionsSOUT(signame);
-  for (std::list<SignalBase<sigtime_t>*>::iterator iter = genericSignalRefs.begin();
+  for (std::list<SignalBase<sigtime_t>*>::iterator iter =
+           genericSignalRefs.begin();
        iter != genericSignalRefs.end(); ++iter) {
     if ((*iter) == sig) {
       genericSignalRefs.erase(iter);
@@ -686,7 +693,8 @@ void DynamicPinocchio::destroyVelocitySignal(const std::string& signame) {
   sotDEBUGIN(15);
   bool deletable = false;
   SignalTimeDependent<dg::Vector, sigtime_t>* sig = &velocitiesSOUT(signame);
-  for (std::list<SignalBase<sigtime_t>*>::iterator iter = genericSignalRefs.begin();
+  for (std::list<SignalBase<sigtime_t>*>::iterator iter =
+           genericSignalRefs.begin();
        iter != genericSignalRefs.end(); ++iter) {
     if ((*iter) == sig) {
       genericSignalRefs.erase(iter);
@@ -709,8 +717,10 @@ void DynamicPinocchio::destroyVelocitySignal(const std::string& signame) {
 void DynamicPinocchio::destroyAccelerationSignal(const std::string& signame) {
   sotDEBUGIN(15);
   bool deletable = false;
-  dg::SignalTimeDependent<dg::Vector, sigtime_t>* sig = &accelerationsSOUT(signame);
-  for (std::list<SignalBase<sigtime_t>*>::iterator iter = genericSignalRefs.begin();
+  dg::SignalTimeDependent<dg::Vector, sigtime_t>* sig =
+      &accelerationsSOUT(signame);
+  for (std::list<SignalBase<sigtime_t>*>::iterator iter =
+           genericSignalRefs.begin();
        iter != genericSignalRefs.end(); ++iter) {
     if ((*iter) == sig) {
       genericSignalRefs.erase(iter);
@@ -735,7 +745,8 @@ void DynamicPinocchio::destroyAccelerationSignal(const std::string& signame) {
 /* --------------------- COMPUTE
  * ------------------------------------------------- */
 
-dg::Vector& DynamicPinocchio::computeZmp(dg::Vector& res, const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::computeZmp(dg::Vector& res,
+                                         const sigtime_t& time) {
   // TODO: To be verified
   sotDEBUGIN(25);
   assert(m_data);
@@ -765,7 +776,8 @@ int& DynamicPinocchio::computeJacobians(int& dummy, const sigtime_t& time) {
   sotDEBUGOUT(25);
   return dummy;
 }
-int& DynamicPinocchio::computeForwardKinematics(int& dummy, const sigtime_t& time) {
+int& DynamicPinocchio::computeForwardKinematics(int& dummy,
+                                                const sigtime_t& time) {
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
@@ -809,11 +821,9 @@ dg::Matrix& DynamicPinocchio::computeGenericJacobian(const bool isFrame,
   return res;
 }
 
-dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame,
-                                                           const bool isLocal,
-                                                           const int id,
-                                                           dg::Matrix& res,
-                                                           const sigtime_t& time) {
+dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(
+    const bool isFrame, const bool isLocal, const int id, dg::Matrix& res,
+    const sigtime_t& time) {
   sotDEBUGIN(25);
   assert(m_model);
   assert(m_data);
@@ -861,7 +871,8 @@ dg::Matrix& DynamicPinocchio::computeGenericEndeffJacobian(const bool isFrame,
 }
 
 MatrixHomogeneous& DynamicPinocchio::computeGenericPosition(
-    const bool isFrame, const int id, MatrixHomogeneous& res, const sigtime_t& time) {
+    const bool isFrame, const int id, MatrixHomogeneous& res,
+    const sigtime_t& time) {
   sotDEBUGIN(25);
   forwardKinematicsSINTERN(time);
   if (isFrame) {
@@ -890,9 +901,8 @@ dg::Vector& DynamicPinocchio::computeGenericVelocity(const int jointId,
   return res;
 }
 
-dg::Vector& DynamicPinocchio::computeGenericAcceleration(const int jointId,
-                                                         dg::Vector& res,
-                                                         const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::computeGenericAcceleration(
+    const int jointId, dg::Vector& res, const sigtime_t& time) {
   sotDEBUGIN(25);
   forwardKinematicsSINTERN(time);
   res.resize(6);
@@ -919,7 +929,8 @@ int& DynamicPinocchio::computeNewtonEuler(int& dummy, const sigtime_t& time) {
   return dummy;
 }
 
-dg::Matrix& DynamicPinocchio::computeJcom(dg::Matrix& Jcom, const sigtime_t& time) {
+dg::Matrix& DynamicPinocchio::computeJcom(dg::Matrix& Jcom,
+                                          const sigtime_t& time) {
   sotDEBUGIN(25);
   forwardKinematicsSINTERN(time);
   Jcom = pinocchio::jacobianCenterOfMass(*m_model, *m_data, false);
@@ -927,7 +938,8 @@ dg::Matrix& DynamicPinocchio::computeJcom(dg::Matrix& Jcom, const sigtime_t& tim
   return Jcom;
 }
 
-dg::Vector& DynamicPinocchio::computeCom(dg::Vector& com, const sigtime_t& time) {
+dg::Vector& DynamicPinocchio::computeCom(dg::Vector& com,
+                                         const sigtime_t& time) {
   sotDEBUGIN(25);
   if (JcomSOUT.needUpdate(time)) {
     forwardKinematicsSINTERN(time);
@@ -938,7 +950,8 @@ dg::Vector& DynamicPinocchio::computeCom(dg::Vector& com, const sigtime_t& time)
   return com;
 }
 
-dg::Matrix& DynamicPinocchio::computeInertia(dg::Matrix& res, const sigtime_t& time) {
+dg::Matrix& DynamicPinocchio::computeInertia(dg::Matrix& res,
+                                             const sigtime_t& time) {
   sotDEBUGIN(25);
   const Eigen::VectorXd& q = pinocchioPosSINTERN.access(time);
   res = pinocchio::crba(*m_model, *m_data, q);
@@ -1023,7 +1036,7 @@ dg::SignalTimeDependent<dg::Matrix, sigtime_t>& DynamicPinocchio::jacobiansSOUT(
     dg::SignalTimeDependent<dg::Matrix, sigtime_t>& res =
         dynamic_cast<dg::SignalTimeDependent<dg::Matrix, sigtime_t>&>(sigabs);
     return res;
-  } catch (const std::bad_cast &e) {
+  } catch (const std::bad_cast& e) {
     SOT_THROW ExceptionSignal(ExceptionSignal::BAD_CAST, "Impossible cast.",
                               " (while getting signal <%s> of type matrix.",
                               name.c_str());
@@ -1034,37 +1047,38 @@ DynamicPinocchio::positionsSOUT(const std::string& name) {
   SignalBase<sigtime_t>& sigabs = Entity::getSignal(name);
   try {
     dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>& res =
-        dynamic_cast<dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>&>(sigabs);
+        dynamic_cast<dg::SignalTimeDependent<MatrixHomogeneous, sigtime_t>&>(
+            sigabs);
     return res;
-  } catch (const std::bad_cast &e) {
+  } catch (const std::bad_cast& e) {
     SOT_THROW ExceptionSignal(ExceptionSignal::BAD_CAST, "Impossible cast.",
                               " (while getting signal <%s> of type matrixHomo.",
                               name.c_str());
   }
 }
 
-dg::SignalTimeDependent<dg::Vector, sigtime_t>& DynamicPinocchio::velocitiesSOUT(
-    const std::string& name) {
+dg::SignalTimeDependent<dg::Vector, sigtime_t>&
+DynamicPinocchio::velocitiesSOUT(const std::string& name) {
   SignalBase<sigtime_t>& sigabs = Entity::getSignal(name);
   try {
     dg::SignalTimeDependent<dg::Vector, sigtime_t>& res =
         dynamic_cast<dg::SignalTimeDependent<dg::Vector, sigtime_t>&>(sigabs);
     return res;
-  } catch (const std::bad_cast &e) {
+  } catch (const std::bad_cast& e) {
     SOT_THROW ExceptionSignal(ExceptionSignal::BAD_CAST, "Impossible cast.",
                               " (while getting signal <%s> of type Vector.",
                               name.c_str());
   }
 }
 
-dg::SignalTimeDependent<dg::Vector, sigtime_t>& DynamicPinocchio::accelerationsSOUT(
-    const std::string& name) {
+dg::SignalTimeDependent<dg::Vector, sigtime_t>&
+DynamicPinocchio::accelerationsSOUT(const std::string& name) {
   SignalBase<sigtime_t>& sigabs = Entity::getSignal(name);
   try {
     dg::SignalTimeDependent<dg::Vector, sigtime_t>& res =
         dynamic_cast<dg::SignalTimeDependent<dg::Vector, sigtime_t>&>(sigabs);
     return res;
-  } catch (const std::bad_cast &e) {
+  } catch (const std::bad_cast& e) {
     SOT_THROW ExceptionSignal(ExceptionSignal::BAD_CAST, "Impossible cast.",
                               " (while getting signal <%s> of type Vector.",
                               name.c_str());

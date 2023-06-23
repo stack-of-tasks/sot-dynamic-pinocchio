@@ -152,7 +152,8 @@ class SOTFORCECOMPENSATION_EXPORT ForceCompensationPlugin
   dg::SignalPtr<dynamicgraph::Vector, sigtime_t> momentumSIN;
 
   /* --- OUTPUTS --- */
-  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> torsorCompensatedSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t>
+      torsorCompensatedSOUT;
   dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> torsorDeadZoneSOUT;
 
   typedef int sotDummyType;

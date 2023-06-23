@@ -70,7 +70,8 @@ class SOTINTEGRATORFORCE_EXPORT IntegratorForce : public dg::Entity {
   /* Memory of the previous iteration. The sig is fed by the previous
    * computations. */
   dg::SignalPtr<dynamicgraph::Vector, sigtime_t> velocityPrecSIN;
-  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> velocityDerivativeSOUT;
+  dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t>
+      velocityDerivativeSOUT;
   dg::SignalTimeDependent<dynamicgraph::Vector, sigtime_t> velocitySOUT;
 
   dg::SignalPtr<dynamicgraph::Matrix, sigtime_t> massSIN;

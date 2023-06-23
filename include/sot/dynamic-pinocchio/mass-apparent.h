@@ -69,7 +69,8 @@ class SOTMASSAPPARENT_EXPORT MassApparent : public dg::Entity {
  public: /* --- FUNCTIONS --- */
   dynamicgraph::Matrix& computeMassInverse(dynamicgraph::Matrix& res,
                                            const sigtime_t& time);
-  dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res, const sigtime_t& time);
+  dynamicgraph::Matrix& computeMass(dynamicgraph::Matrix& res,
+                                    const sigtime_t& time);
   dynamicgraph::Matrix& computeInertiaInverse(dynamicgraph::Matrix& res,
                                               const sigtime_t& time);
 };
