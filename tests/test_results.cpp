@@ -28,7 +28,7 @@ namespace djj = dynamicsJRLJapan;
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   if (argc != 6) {
     cerr << " This program takes 4 arguments: " << endl;
     cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE VRML_FILE_NAME "
@@ -45,14 +45,14 @@ int main(int argc, char *argv[]) {
   string aMapFromJointToRank = argv[4];
 
   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
-  CjrlHumanoidDynamicRobot *aHDR =
+  CjrlHumanoidDynamicRobot* aHDR =
       aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
 
   string RobotFileName = aPath + aName;
   dynamicsJRLJapan::parseOpenHRPVRMLFile(
       *aHDR, RobotFileName, aMapFromJointToRank, aSpecificitiesFileName);
 
-  CjrlHumanoidDynamicRobot *aHDR2 =
+  CjrlHumanoidDynamicRobot* aHDR2 =
       aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
   //  cout << "aHDMB2 Finished the initialization"<< endl;
   dynamicsJRLJapan::parseOpenHRPVRMLFile(
