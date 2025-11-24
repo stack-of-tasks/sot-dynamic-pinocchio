@@ -16,7 +16,7 @@ using namespace std;
 using namespace dynamicsJRLJapan;
 
 /* --- DISPLAY TREE --------------------------------------------------------- */
-void RecursiveDisplayOfJoints(const CjrlJoint *aJoint) {
+void RecursiveDisplayOfJoints(const CjrlJoint* aJoint) {
   if (aJoint == 0) return;
   int NbChildren = aJoint->countChildJoints();
   cout << " rank : " << aJoint->rankInConfiguration() << endl;
@@ -26,8 +26,8 @@ void RecursiveDisplayOfJoints(const CjrlJoint *aJoint) {
   }
 }
 
-void DisplayDynamicRobotInformation(CjrlDynamicRobot *aDynamicRobot) {
-  std::vector<CjrlJoint *> aVec = aDynamicRobot->jointVector();
+void DisplayDynamicRobotInformation(CjrlDynamicRobot* aDynamicRobot) {
+  std::vector<CjrlJoint*> aVec = aDynamicRobot->jointVector();
   int r = aVec.size();
   cout << "Number of joints :" << r << endl;
   for (int i = 0; i < r; i++) {
@@ -48,7 +48,7 @@ void DisplayMatrix(MAL_MATRIX(&aJ, double)) {
 }
 
 /* --- DISPLAY MASS PROPERTIES OF A CHAIN --- */
-void GoDownTree(const CjrlJoint *startJoint) {
+void GoDownTree(const CjrlJoint* startJoint) {
   cout << "Mass-inertie property of joint ranked :"
        << startJoint->rankInConfiguration() << endl;
   cout << "Mass of the body: " << startJoint->linkedBody()->mass() << endl;
@@ -57,7 +57,7 @@ void GoDownTree(const CjrlJoint *startJoint) {
   cout << startJoint->currentTransformation() << endl;
 
   if (startJoint->countChildJoints() != 0) {
-    const CjrlJoint *childJoint = startJoint->childJoint(0);
+    const CjrlJoint* childJoint = startJoint->childJoint(0);
     GoDownTree(childJoint);
   }
 }
@@ -65,7 +65,7 @@ void GoDownTree(const CjrlJoint *startJoint) {
 /* --- MAIN ----------------------------------------------------------------- */
 /* --- MAIN ----------------------------------------------------------------- */
 /* --- MAIN ----------------------------------------------------------------- */
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   if (argc != 4) {
     cerr << " This program takes 3 arguments: " << endl;
     cerr << "./TestHumanoidDynamicRobot PATH_TO_VRML_FILE "
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
   /* ------------------------------------------------------------------------ */
   dynamicsJRLJapan::ObjectFactory aRobotDynamicsObjectConstructor;
-  CjrlHumanoidDynamicRobot *aHDR =
+  CjrlHumanoidDynamicRobot* aHDR =
       aRobotDynamicsObjectConstructor.createHumanoidDynamicRobot();
 
   // DynamicMultiBody * aDMB
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   /* ------------------------------------------------------------------------ */
 
   // Display tree of the joints.
-  CjrlJoint *rootJoint = aHDR->rootJoint();
+  CjrlJoint* rootJoint = aHDR->rootJoint();
   RecursiveDisplayOfJoints(rootJoint);
 
   // Test the computation of the jacobian.
@@ -151,8 +151,8 @@ int main(int argc, char *argv[]) {
   cout << "Rank of the left hand " << endl;
   cout << aHDR->leftWrist()->rankInConfiguration() << endl;
 
-  vector<CjrlJoint *> aVec = aHDR->jointVector();
-  CjrlJoint *aJoint = aVec[22];
+  vector<CjrlJoint*> aVec = aHDR->jointVector();
+  CjrlJoint* aJoint = aVec[22];
   aJoint->computeJacobianJointWrtConfig();
   MAL_MATRIX(aJ, double);
   aJ = aJoint->jacobianJointWrtConfig();
